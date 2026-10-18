@@ -1,0 +1,1185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-10-18T19:28:44.154609+02:00 by Eclipse SUMO netconvert 1.28.0
+<netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <type-files value="${SUMO_HOME}\data\typemap\osmNetconvert.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertUrbanDe.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertPedestrians.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertAerialway.typ.xml"/>
+        <osm-files value="osm_bbox.osm.xml.gz"/>
+    </input>
+
+    <output>
+        <output-file value="osm.net.xml.gz"/>
+        <output.street-names value="true"/>
+        <output.original-names value="true"/>
+        <ptstop-output value="osm_stops.add.xml"/>
+        <ptline-output value="osm_ptlines.xml"/>
+        <ptline-clean-up value="true"/>
+    </output>
+
+    <projection>
+        <proj.utm value="true"/>
+    </projection>
+
+    <processing>
+        <geometry.remove value="true"/>
+    </processing>
+
+    <tls_building>
+        <tls.discard-simple value="true"/>
+        <tls.join value="true"/>
+        <tls.guess-signals value="true"/>
+        <tls.default-type value="actuated"/>
+    </tls_building>
+
+    <ramp_guessing>
+        <ramps.guess value="true"/>
+    </ramp_guessing>
+
+    <junctions>
+        <junctions.join value="true"/>
+    </junctions>
+
+    <pedestrian>
+        <crossings.guess value="true"/>
+    </pedestrian>
+
+    <railway>
+        <railway.topology.repair value="true"/>
+    </railway>
+
+    <formats>
+        <osm.sidewalks value="true"/>
+    </formats>
+
+</netconvertConfiguration>
+-->
+
+<ptLines xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/ptlines_file.xsd">
+    <ptLine id="1024284" name="Bus 123: Gara de Nord =&gt; C.E.T. Sud Vitan" line="123" type="bus" vClass="bus" color="29,113,184" completeness="0.19" missingAfter="27">
+        <route edges="668979222 23555559#2 1305940790#0 1305940790#1 1305940790#2 1305940790#3 1305940790#4 668176613#0 154229441#0 154229441#1 668175351#0 668175351#1 65750938#0 65750938#1 65750938#2 87716921 227497624 667035478#1 667035478#2 667035477#1 667035477#3 667035475 665627974#0 895746209#1 154325238#1 665627973#0 665627973#1 160469880 1452916275 160469879#0 160469879#1 160469879#2 160469879#3 665627971#0 196673062#1 196673062#2 665627968#0 4865822 894655781#1 665627965 665627961"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+        <busStop id="2519055695" name="Witing"/>
+        <busStop id="2519055686" name="Pod Cotroceni"/>
+        <busStop id="5258245718" name="Spitalul Universitar"/>
+        <busStop id="2250275679" name="Pod Eroilor"/>
+        <busStop id="302468096" name="Facultatea de Medicină Veterinară"/>
+        <busStop id="2517228825" name="Pod Hașdeu"/>
+        <busStop id="2517228829" name="Pod Izvor"/>
+    </ptLine>
+    <ptLine id="11697878" name="Magistrala 5 (Valea Ialomiței → Eroilor)" line="M5" type="subway" vClass="subway" color="255,128,64" completeness="0.38" missingBefore="5">
+        <route edges="-849446529 -1359033043#1 -1359033043#0 -907822092"/>
+        <busStop id="-9497950456" name="Orizont"/>
+        <busStop id="-9492184764" name="Academia Militară"/>
+        <busStop id="-8429628102" name="Eroilor 2"/>
+    </ptLine>
+    <ptLine id="11697879" name="Magistrala 5 (Eroilor → Valea Ialomiței)" line="M5" type="subway" vClass="subway" color="255,128,64" completeness="0.88" missingAfter="1">
+        <route edges="907822104 1359033042#1 1030359616#0"/>
+        <busStop id="8429628095" name="Eroilor 2"/>
+        <busStop id="9497980500" name="Academia Militară"/>
+        <busStop id="9497980492" name="Orizont"/>
+        <busStop id="9497950460" name="Favorit"/>
+        <busStop id="9491084760" name="Tudor Vladimirescu"/>
+        <busStop id="7925084881" name="Parc Drumul Taberei"/>
+        <busStop id="7925090290" name="Romancierilor"/>
+    </ptLine>
+    <ptLine id="11697882" name="Magistrala 5 (Râul Doamnei → Eroilor)" line="M5" type="subway" vClass="subway" color="255,128,64" completeness="0.33" missingBefore="6">
+        <route edges="-849446529 -1359033043#1 -1359033043#0 -907822092"/>
+        <busStop id="-9497950456" name="Orizont"/>
+        <busStop id="-9492184764" name="Academia Militară"/>
+        <busStop id="-8429628102" name="Eroilor 2"/>
+    </ptLine>
+    <ptLine id="11697884" name="Magistrala 5 (Eroilor → Râul Doamnei)" line="M5" type="subway" vClass="subway" color="255,128,64" completeness="0.78" missingAfter="2">
+        <route edges="907822104 1359033042#1 1030359616#0"/>
+        <busStop id="8429628095" name="Eroilor 2"/>
+        <busStop id="9497980500" name="Academia Militară"/>
+        <busStop id="9497980492" name="Orizont"/>
+        <busStop id="9497950460" name="Favorit"/>
+        <busStop id="9491084760" name="Tudor Vladimirescu"/>
+        <busStop id="7925084881" name="Parc Drumul Taberei"/>
+        <busStop id="7925090290" name="Romancierilor"/>
+    </ptLine>
+    <ptLine id="12121916" name="Bus 137: Piața 21 Decembrie 1989 → Carrefour Militari" line="137" type="bus" vClass="bus" color="0,84,166" completeness="0.12" missingAfter="42">
+        <route edges="891089879#0 891089879#1 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 8138326 452075789 196639093#1 180685585#1 180685585#2 180685585#3 180685585#4 180685585#5 180685585#6 180685585#7 180685585#9 160469881#0 160469881#1 229820743#0 229820743#1 666701065 -227497585 -1367423376#0 -229237069#1 -229237069#0 -241077288 -854160103 -1492098647 -241077488 -16277426#1"/>
+        <busStop id="2519567784" name="Piața 21 Decembrie 1989"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="2387001480" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2519567779" name="Facultatea de Drept"/>
+        <busStop id="2519078579" name="Opera Națională"/>
+        <busStop id="-2519567790" name="Spitalul Universitar"/>
+        <busStop id="-2519567763" name="Carol Davila"/>
+    </ptLine>
+    <ptLine id="12222275" name="Tram 46: Gara de Nord =&gt; Republica" line="46" type="tram" vClass="tram" color="190,22,34" completeness="0.48" missingAfter="11">
+        <route edges="289213552#0 289213552#1 669189552 1460913162#0 920117625#4 920117620#1 920117620#2 920117620#3 920127991#1 920127991#2 920127991#3 920127991#4 920127991#5 920127991#7 920127991#8 27011698#0 27011698#2 27011698#3 27011698#4 27011698#5 27011698#6 27011698#7 27011698#8 27011698#9 27011698#10 27011698#11 27011698#12 27011698#13 27011698#14 27011698#16 27011698#17 920127990#1 920127990#2 668693648#1 668693648#2 668693648#3 668693648#4 668693648#5 668693648#6 668693648#7 898553672#0 898553672#4 898553672#5"/>
+        <busStop id="2927667933" name="Gara de Nord"/>
+        <busStop id="2927667936" name="Piața Victoriei"/>
+        <busStop id="8544117694" name="Piața Victoriei"/>
+        <busStop id="8544117710" name="Spitalul Grigore Alexandrescu"/>
+        <busStop id="8544188928" name="Roma"/>
+        <busStop id="1770588416" name="Calea Dorobanților"/>
+        <busStop id="1770588420" name="Stadion Dinamo"/>
+        <busStop id="599983930" name="Vasile Lascăr"/>
+        <busStop id="296077860" name="Doctor Grozovici"/>
+        <busStop id="305354258" name="Lizeanu"/>
+        <busStop id="1456569558" name="Bucur Obor"/>
+        <busStop id="419265619" name="Bd. Ferdinand"/>
+        <busStop id="1770588418" name="Piața Iancului"/>
+    </ptLine>
+    <ptLine id="12268195" name="Bus 301: Piața Romană → Pasaj CFR Tunari" line="301" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingAfter="46">
+        <route edges="668307642#1 130848152#2 778823270 119238380#0 119238380#1 723802758 669156737#0 669156737#2 669156737#3 -452252360 -407982022#8 -407982022#6 -407982022#5 -407982022#4 -407982022#3 -407982022#2 -407982022#1 -407982022#0 -231257019#5 -231257019#4 -231257019#3 -231257019#2 -231257019#0 30357216#0 229478409 229478451 229478868"/>
+        <busStop id="2522849391" name="Piața Romană"/>
+        <busStop id="-3211285361" name="A.S.E."/>
+        <busStop id="2389847202" name="Perla"/>
+    </ptLine>
+    <ptLine id="12432665" name="Tren: Gara de Nord - Aeroport Henri Coandă" line="R-E 10701" type="train" vClass="rail" completeness="0.25" missingAfter="3">
+        <route edges="35872855#0 35872855#1 620591207 -398140721 912886182#0 912886182#1 916013883 1221367948 930736595"/>
+        <busStop id="5861246145" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="12432666" name="Tren: Aeroport Henri Coandă - Gara de Nord" line="R-E 10702" type="train" vClass="rail" completeness="0.25" missingBefore="3">
+        <route edges="-930736595 -1221367948 916013883 -912886182#0 398140721 -620591207 -35872855#1 -35872855#0"/>
+        <busStop id="5861246145" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="12440299" name="Tren: București Nord - București Obor" line="R 8093" type="train" vClass="rail" completeness="0.25" missingAfter="3">
+        <route edges="-620591210#1 -620591210#0 -912404242 -916738171 -620369385 238559599#0 238559599#1 238559599#2 -398140720#2 -398140720#1 -398140720#0 -1221367947 -621469234"/>
+        <busStop id="5861246141" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="12440300" name="Tren: București Obor - București Nord" line="R 8091" type="train" vClass="rail" completeness="0.25" missingBefore="2" missingAfter="1">
+        <route edges="621469234 1221367947 398140720#0 398140720#1 398140720#2 -238559599#2 -238559599#1 -238559599#0 620369385 398140724#0 398140724#1"/>
+        <busStop id="5861246143" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="12440924" line="R 9000" type="train" vClass="rail" completeness="0.15" missingBefore="11">
+        <route edges="398110752#0 398110752#1 1221367951 909796431 620591200#0 620591200#1"/>
+        <busStop id="5907694981" name="București Barasab"/>
+        <busStop id="5861246152" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="12458950" name="Bus 203: Greenfield → Piața Victoriei" line="203" type="bus" vClass="bus" color="29,113,184" completeness="0.10" missingBefore="27">
+        <route edges="1372391887#0 1372391887#4 1372391887#5 1372391887#6 1372391887#7 1372391887#8 1372391887#9 723764940 178060182 14254203 22878024 139713886 217750198#0 -125898148#1"/>
+        <busStop id="8531076543" name="Piața Victoriei"/>
+        <busStop id="60291019" name="Piata Victoriei"/>
+        <busStop id="12110547464" name="Piața Victoriei"/>
+    </ptLine>
+    <ptLine id="12458951" name="Bus 203: Piața Victoriei → Greenfield" line="203" type="bus" vClass="bus" color="29,113,184" completeness="0.03" missingAfter="33">
+        <route edges="-125898148#1 -1117596105 -1117596107 -1046584037 44479844#0"/>
+        <busStop id="-12110547464" name="Piața Victoriei"/>
+    </ptLine>
+    <ptLine id="12460306" name="Bus 361: Complex Comercial Băneasa =&gt; Piața Unirii" line="361" type="bus" vClass="bus" color="29,113,184" completeness="0.18" missingBefore="15" missingAfter="8">
+        <route edges="1372391887#0 1372391887#4 1372391887#5 1372391887#6 1372391887#7 1372391887#8 1372391887#9 723764940 178060182 14254203 4865914#0 4865914#2 4865914#4 4865914#5 4865914#6 4865914#8 4865914#10 4865914#11 4865914#13 4865914#14 313014418#0 313014418#2 313014418#4 313014418#6 313014418#8 313014418#9 313014418#11 313014418#13 1165343128#0 1165343128#1 1165343128#3 139713885#1 186554856 244668685 668989983#0 668989981#0 668989981#1 668989981#2 180685587#2 180685587#3 180685587#5 180685587#6 180685587#7 180685587#8 180685587#9 1459923148#1 1459923148#2 1459923149#0 762618611#0 762618611#1 762618611#2 762618611#3"/>
+        <busStop id="8531076543" name="Piața Victoriei"/>
+        <busStop id="60291019" name="Piata Victoriei"/>
+        <busStop id="10155046381" name="Piața Victoriei"/>
+        <busStop id="8419250539" name="Gheorghe Manu"/>
+        <busStop id="8419250537" name="Calea Griviței"/>
+        <busStop id="6318936107" name="Piața Revoluției"/>
+    </ptLine>
+    <ptLine id="12460307" name="Bus 361: Piața Unirii =&gt; Complex Comercial Băneasa" line="361" type="bus" vClass="bus" color="29,113,184" completeness="0.13" missingBefore="2" missingAfter="15">
+        <route edges="241211914#0 241211914#2 1459912404 232078365 218268092#0 218268113#0 668309192 14140940 229477788#0 229477788#1 229477788#2 229477788#3 231769534#0 231769534#3 231769534#4 231769534#5 139713882 443138260#0 119241030#1 119241030#2 669726791#1 448266581#1 448266581#2 668307642#1 130848152#2 778823271 448266586 448266584 130848151 28869538#0 28869538#1 668307633#0 668307633#2 668307633#3 668307630 4045775#0 4045775#1 667696381#0 668307628#0 668307628#1 668307627 244656971#1 244656971#2 542791322#0 232080905 139713886 217750198#0 -125898148#1 -1117596105 -1117596107 -1046584037 44479844#0"/>
+        <busStop id="2389982923" name="Universitate"/>
+        <busStop id="31402322" name="Piața Romană"/>
+        <busStop id="2522849393" name="Piața Victoriei"/>
+    </ptLine>
+    <ptLine id="1274386" name="Tram 1: Romprim =&gt; Mihai Bravu =&gt; Banu Manta =&gt; Romprim" line="1" type="tram" vClass="tram" color="190,22,34" completeness="0.25" missingBefore="17" missingAfter="22">
+        <route edges="897293743 894254311#4 894254311#5 205040187#1 205040187#2 205040187#3 205040187#4 205040187#5 205040187#6 205040187#7 205040187#8 45668230#0 45668230#1 45668230#2 45668230#3 45668230#5 45668230#6 45668230#7 45668230#8 45668229#1 45668229#3 45668229#4 45668229#5 45668229#6 45668229#7 45668229#8 45668229#9 45668229#10 45668229#11 45764482#0 45764482#2 45764482#4 45764482#5 45764482#7 45764482#8 45764482#9 920117610#1 920117610#2 920117610#3 920117610#4 243476552 40503646#2 85841976#1 85841976#3 660931074#0 660931074#1 660931074#2 660931074#4"/>
+        <busStop id="1456569557" name="Bd. Ferdinand"/>
+        <busStop id="8311499848" name="Bucur Obor"/>
+        <busStop id="599983943" name="Lizeanu"/>
+        <busStop id="599983938" name="Doctor Grozovici"/>
+        <busStop id="419268470" name="Vasile Lascăr"/>
+        <busStop id="419268471" name="Stadion Dinamo"/>
+        <busStop id="841973777" name="Calea Dorobanților"/>
+        <busStop id="419268473" name="Roma"/>
+        <busStop id="491073949" name="Spitalul Grigore Alexandrescu"/>
+        <busStop id="8544117695" name="Piața Victoriei"/>
+        <busStop id="491073994" name="Dr. Felix"/>
+        <busStop id="6187888840" name="Bd. Banu Manta"/>
+        <busStop id="1775175278" name="Pasajul Basarab"/>
+    </ptLine>
+    <ptLine id="1279256" name="Tram 16: Piața Sfânta Vineri =&gt; Platforma Industrială Pipera" line="16" type="tram" vClass="tram" color="190,22,34" completeness="0.10" missingBefore="1" missingAfter="10">
+        <route edges="1224993981#5 1224993952#0 1224993952#1 1224993952#2 1224993953#1"/>
+        <busStop id="583423" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="11360085899" name="Reînvierii"/>
+    </ptLine>
+    <ptLine id="1282338" name="Tram 24: Vasile Pârvan =&gt; Cartier Dămăroaia" line="24" type="tram" vClass="tram" color="190,22,34" completeness="0.21" missingAfter="12">
+        <route edges="1262110923 23489786 23489782#0 23489782#1 23489764#0 23489764#1 28775182 267004741#0 267004741#1 267004741#3 256343304#0"/>
+        <busStop id="8382055513" name="Vasile Pârvan"/>
+        <busStop id="8382055481" name="Cișmigiu Vest"/>
+        <busStop id="8382055480" name="Ostașilor"/>
+        <busStop id="2927667936" name="Piața Victoriei"/>
+    </ptLine>
+    <ptLine id="13199266" name="Tram 44: Vasile Pârvan =&gt; Cartier 16 Februarie" line="44" type="tram" vClass="tram" color="190,22,34" completeness="0.28" missingAfter="11">
+        <route edges="1262110923 23489786 23489782#0 23489782#1 23489764#0 23489764#1 28775182 267004741#0 267004741#1 267004741#3 256343304#0 660927519#2 660927514#1 905360051#0 905360051#2"/>
+        <busStop id="8382055513" name="Vasile Pârvan"/>
+        <busStop id="8382055481" name="Cișmigiu Vest"/>
+        <busStop id="8382055480" name="Ostașilor"/>
+        <busStop id="6187848881" name="Gara Basarab"/>
+        <busStop id="6187848865" name="Calea Giulești"/>
+    </ptLine>
+    <ptLine id="13199267" name="Tram 44: Cartier 16 Februarie =&gt; Vasile Pârvan" line="44" type="tram" vClass="tram" color="190,22,34" completeness="0.19" missingBefore="11">
+        <route edges="47373428#3 47373428#3 47373428#2 47373428#1 47373428#0 982234618 660927520#1 660927520#2"/>
+        <busStop id="6187848834" name="Calea Giulești"/>
+        <busStop id="9084090059" name="Gara Basarab"/>
+        <busStop id="8382055513" name="Vasile Pârvan"/>
+    </ptLine>
+    <ptLine id="1435579" name="Bus 137: Carrefour Militari → Piața 21 Decembrie 1989" line="137" type="bus" vClass="bus" color="29,113,184" completeness="0.10" missingBefore="47" missingAfter="2">
+        <route edges="16277426#0 241077488 1492098647 854160103 241077288 229237069#0 229237069#1 1367423376#0 27552707 23123525#1 666205900 198516661#0 198516661#1 207025496#0 246129080 206994123 314033562 314034006 314034007 231253170 23123526#0 23123526#1 265969687#0 265969687#1 265969687#2 265969687#3 265969687#4 265969687#5 1484735771 265969686#0 265969686#1 265969686#2 265969686#3 265969686#4 265969686#5 265969686#6 265969686#8 50584795 246131187#0 139713885#1 186554856 180685590#0 180685590#1 180685590#2 180685590#3 180685590#4 180685590#6 69344025#1 226281310#1 241212350#0 241212350#1 196636258#0 196636258#1"/>
+        <busStop id="2519567785" name="Pod Eroilor"/>
+        <busStop id="2519623179" name="Berzei"/>
+        <busStop id="3633229027" name="Constantin Cristescu"/>
+        <busStop id="2519623181" name="Cișmigiu"/>
+        <busStop id="2519623178" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="2519567784" name="Piața 21 Decembrie 1989"/>
+    </ptLine>
+    <ptLine id="16225058" name="INT 12503: Istanbul =&gt; Bucharest" line="INT 12503" type="train" vClass="rail" nightService="only" completeness="0.08" missingAfter="12">
+        <route edges="-620591200#1 -620591200#0 -909796431 -1221367951 -398110752#1 -398110752#0"/>
+        <busStop id="5861246152" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="16457120" name="Bus 331B: Petrom City =&gt; Piața Romană" line="331B" type="bus" vClass="bus" color="29,113,184" completeness="0.11" missingBefore="30">
+        <route edges="227396567 12823663#0 -1560011924 -229478868 -229478451 -229478409 -30357216#1 231257019#0 231257019#2 231257019#3 231257019#4 231257019#5 407982022#0 407982022#1 407982022#2 407982022#3 407982022#4 407982022#5 407982022#6 407982022#7 452252360 244656972#0 308038298 1187814135 27009359 69546523 255865983 131471728#0 131471728#1 131471728#2 669726791#1 448266581#1 448266581#2 668307642#1"/>
+        <busStop id="-2389847203" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="3063897934" name="A.S.E."/>
+        <busStop id="2333696428" name="Piața Alexandru Lahovari"/>
+        <busStop id="2522849391" name="Piața Romană"/>
+    </ptLine>
+    <ptLine id="16457565" name="Bus 331B: Piața Romană =&gt; Petrom City" line="331B" type="bus" vClass="bus" color="29,113,184" completeness="0.09" missingAfter="28">
+        <route edges="448266581#2 668307642#1 130848152#2 778823270 119238380#0 119238380#1 723802758 669156737#0 669156737#2 669156737#3 -452252360 -407982022#8 -407982022#6 -407982022#5 -407982022#4 -407982022#3 -407982022#2 -407982022#1 -407982022#0 -231257019#5 -231257019#4 -231257019#3 -231257019#2 -231257019#0 30357216#0 229478409 229478451 229478868 44479844#0"/>
+        <busStop id="2522849391" name="Piața Romană"/>
+        <busStop id="-3211285361" name="A.S.E."/>
+        <busStop id="2389847202" name="Perla"/>
+    </ptLine>
+    <ptLine id="17053144" name="Bus 461: Pod C.F.R. Afumați =&gt; Șoseaua Ștefan cel Mare" line="461" type="bus" vClass="bus" completeness="0.02" missingBefore="54" missingAfter="2">
+        <busStop id="-582478465" name="Șoseaua Ștefan cel Mare"/>
+    </ptLine>
+    <ptLine id="17053145" name="Bus 461: Șoseaua Ștefan cel Mare =&gt; Pod C.F.R. Afumați" line="461" type="bus" vClass="bus" completeness="0.04" missingAfter="51">
+        <route edges="-669019902#0 -1308416610#1 -1308416610#0 -1241220348#2 229478410#0 229478410#1 669014062#0 669014062#2 30357216#0 229478409 229478451 229478868"/>
+        <busStop id="-582478465" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="2389847202" name="Perla"/>
+    </ptLine>
+    <ptLine id="1766705" name="Bus 301: Pasaj CFR Tunari → Piața Romană" line="301" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingBefore="23" missingAfter="21">
+        <route edges="-229478868 -229478451 -229478409 -30357216#1 231257019#0 231257019#2 231257019#3 231257019#4 231257019#5 407982022#0 407982022#1 407982022#2 407982022#3 407982022#4 407982022#5 407982022#6 407982022#7 452252360 244656972#0 308038298 1187814135 27009359 69546523 255865983 131471728#0 131471728#1 131471728#2 669726791#1 448266581#1 448266581#2 668307642#1"/>
+        <busStop id="-2389847203" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="2333696428" name="Piața Alexandru Lahovari"/>
+        <busStop id="2522849391" name="Piața Romană"/>
+    </ptLine>
+    <ptLine id="1766839" name="Bus 182: Institutul Oncologic → Gara Basarab" line="182" type="bus" vClass="bus" color="29,113,184" completeness="0.23" missingBefore="28" missingAfter="1">
+        <route edges="227385581#0 227385581#2 28246318#0 28246318#1 229481340#0 229481340#1 229481340#2 229481340#3 1358411316#0 1358411316#3 1358411314#0 1358411314#1 1358411314#4 1358411314#5 1358411314#8 1358411332#0 1358411332#1 1358411332#2 1358411334#0 1358411334#1 1358411334#2 186665789#0 186665789#1 186665789#2 23123512 289213549#0 289213549#1 289213549#2 227617356#0 227617356#2 895504659#1 4902766#0 4902766#1 4902766#2 450735439 451333767#0 451333767#1 668922201#0"/>
+        <busStop id="2384913752" name="Gara de Nord"/>
+        <busStop id="8403206545" name="Bd. Lacul Tei"/>
+        <busStop id="4191634966" name="Stadionul Dinamo"/>
+        <busStop id="12571526320" name="Calea Dorobanților"/>
+        <busStop id="12572079171" name="Roma"/>
+        <busStop id="12572079172" name="Pasaj Victoria"/>
+        <busStop id="12572079173" name="Spitalul Grigore Alexandrescu"/>
+        <busStop id="12572079199" name="Piața Victoriei"/>
+        <busStop id="12572087506" name="Dr. Felix"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2517418575" name="Gara Basarab"/>
+    </ptLine>
+    <ptLine id="1766861" name="Bus 182: Gara Basarab → Institutul Oncologic" line="182" type="bus" vClass="bus" color="29,113,184" completeness="0.07" missingAfter="50">
+        <route edges="668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222 -450735438 668979223#0 229952086#1 229952086#2 295382937#0 295382937#1 669144908 668532083#0 227617362#0 227617362#2 -289213549#2 -289213549#1 -289213549#0 -23123512 1307769365#0 131484730#0 131484730#1 131484730#2 131484730#3 131484730#4 131484730#5 131484730#6 131484730#7 131484730#9 131484717 131484721#0 668700421#0 668700421#1 668700421#2 668700427#0 668700427#1 669011086#3 525997205#1 525997205#2"/>
+        <busStop id="2362383216" name="Gara de Nord"/>
+        <busStop id="2388401689" name="G-ral Alexandru Cernat"/>
+        <busStop id="2388401697" name="Petru Rareș"/>
+        <busStop id="2389847192" name="Bd. Banu Manta"/>
+    </ptLine>
+    <ptLine id="1773632" name="Bus 330: Complex Comercial Băneasa =&gt; Parc Teilor" line="330" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingBefore="25" missingAfter="40">
+        <route edges="227385581#0 227385581#2 242242984#1 23811638#2 65478576#0 65478576#1 65478576#2 731559933#1 13604358#1 670518551 670518540 231916546#0 231916546#1 231916546#2 668283826#0 196657054"/>
+        <busStop id="8403206545" name="Bd. Lacul Tei"/>
+        <busStop id="8403206542" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="3488744495" name="Bucur Obor"/>
+        <busStop id="2395321518" name="Șoseaua Mihai Bravu 88"/>
+    </ptLine>
+    <ptLine id="1773634" name="Bus 330: Parc Teilor =&gt; Complex Comercial Băneasa" line="330" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingBefore="28" missingAfter="35">
+        <route edges="231916547#0 196657059#1 196657059#2 196657059#3 196657059#4 668930962 13605580 668930964#0 668930964#1 668930964#2 65478546#2 1358379914#0 1358379914#1 1358379914#4 1358379914#10 1358379914#11 1358379914#14 1358379914#15 1358379914#16 1358379914#19 1358379914#20 1358379914#21 1358379914#24 1358379914#27 229481341#0 669011086#3 525997205#1 525997205#2"/>
+        <busStop id="4191634964" name="Piața Iancului"/>
+        <busStop id="2395321515" name="Șoseaua Mihai Bravu 33"/>
+        <busStop id="2483542001" name="Bucur Obor"/>
+        <busStop id="2128212807" name="Barbu Văcărescu"/>
+    </ptLine>
+    <ptLine id="1776396" name="Bus 331: Cartier Dămăroaia → Piața Romană" line="331" type="bus" vClass="bus" color="29,113,184" completeness="0.12" missingBefore="24">
+        <route edges="227396567 12823663#0 -1560011924 -229478868 -229478451 -229478409 -30357216#1 231257019#0 231257019#2 231257019#3 231257019#4 231257019#5 407982022#0 407982022#1 407982022#2 407982022#3 407982022#4 407982022#5 407982022#6 407982022#7 452252360 244656972#0 308038298 1187814135 27009359 69546523 255865983 131471728#0 131471728#1 131471728#2 669726791#1 448266581#1 448266581#2 668307642#1"/>
+        <busStop id="-2389847203" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="3063897934" name="A.S.E."/>
+        <busStop id="2333696428" name="Piața Alexandru Lahovari"/>
+        <busStop id="2522849391" name="Piața Romană"/>
+    </ptLine>
+    <ptLine id="1776397" name="Bus 331: Piața Romană → Cartier Dămăroaia" line="331" type="bus" vClass="bus" color="29,113,184" completeness="0.08" missingAfter="32">
+        <route edges="668307642#1 130848152#2 778823271 448266586 1214130905 119238380#0 119238380#1 723802758 669156737#0 669156737#2 669156737#3 -452252360 -407982022#8 -407982022#6 -407982022#5 -407982022#4 -407982022#3 -407982022#2 -407982022#1 -407982022#0 -231257019#5 -231257019#4 -231257019#3 -231257019#2 -231257019#0 30357216#0 229478409 229478451 229478868 44479844#0"/>
+        <busStop id="2522849391" name="Piața Romană"/>
+        <busStop id="-3211285361" name="A.S.E."/>
+        <busStop id="2389847202" name="Perla"/>
+    </ptLine>
+    <ptLine id="1777830" name="Bus 335: Faur → Complex Comercial Băneasa" line="335" type="bus" vClass="bus" color="29,113,184" completeness="0.07" missingBefore="20" missingAfter="31">
+        <route edges="231916547#0 196657059#1 196657059#2 196657059#3 196657059#4 668930962 13605580 668930964#0 668930964#1 668930964#2 65478546#2 1358379914#0 1358379914#1 1358379914#4 1358379914#10 1358379914#11 1358379914#14 1358379914#15 1358379914#16 1358379914#19 1358379914#20 1358379914#21 1358379914#24 1358379914#27 229481341#0 672097002#0 229481340#0 229481340#1 229481340#2 229481340#3 229478410#0 229478410#1 669014062#0 669014062#2 30357216#0 229478409 229478451 229478868 44479844#0"/>
+        <busStop id="4191634964" name="Piața Iancului"/>
+        <busStop id="2395321515" name="Șoseaua Mihai Bravu 33"/>
+        <busStop id="2483542001" name="Bucur Obor"/>
+        <busStop id="2389847202" name="Perla"/>
+    </ptLine>
+    <ptLine id="1777831" name="Bus 335: Complex Comercial Băneasa → Faur" line="335" type="bus" vClass="bus" color="29,113,184" completeness="0.05" missingBefore="19" missingAfter="33">
+        <route edges="227396567 12823663#0 -1560011924 -229478868 -229478451 -229478409 -30357216#1 23811638#2 65478576#0 65478576#1 65478576#2 731559933#1 13604358#1 670518551 670518540 231916546#0 231916546#1 231916546#2 668283826#0 196657054"/>
+        <busStop id="-2389847203" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="3488744495" name="Bucur Obor"/>
+        <busStop id="2395321518" name="Șoseaua Mihai Bravu 88"/>
+    </ptLine>
+    <ptLine id="1778583" name="Bus 282: Gara Basarab → Șoseaua Fundeni" line="282" type="bus" vClass="bus" color="29,113,184" completeness="0.10" missingAfter="51">
+        <route edges="668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222 -450735438 668979223#0 229952086#1 229952086#2 295382937#0 295382937#1 669144908 668532083#0 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 1307769366#1 23554631#1 23554631#2 23554631#3 23554631#4 125909047 668700423 131484721#0 379391760#2 379391760#5 379391760#6 1535669335 1535669336#0 1535669336#1 1535669336#2 227396567 12823663#0 -1560011924"/>
+        <busStop id="8282092707" name="Gara Basarab"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+        <busStop id="-12300335993" name="Gara de Nord"/>
+        <busStop id="1344579108" name="Șoseaua Nicolae Titulescu"/>
+        <busStop id="8378931526" name="Primăria Sector 1"/>
+        <busStop id="2388401686" name="Bd. Ion Mihalache"/>
+    </ptLine>
+    <ptLine id="18252838" name="Bus 467: Pod C.F.R. Afumați =&gt; Bucur Obor" line="467" type="bus" vClass="bus" color="102,36,131" completeness="0.05" missingBefore="35" missingAfter="1">
+        <route edges="23500154#0 23500154#1 1229533330#0 1343990130#0 1343990130#1 1343990130#2"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="18432026" name="Bus 97: Pasaj Mihai Bravu =&gt; Clăbucet" line="97" type="trolleybus" vClass="bus" color="green" completeness="0.26" missingBefore="11" missingAfter="34">
+        <route edges="1117820481 27014190#0 1494488814 27844756#0 27844756#1 1495252175 1495252176#0 1495252176#1 1495252177 1495252178 1495252179 1495252181 1495252184 1494488815 229781423 1495715446 15488620#0 15488620#1 37190330#1 37190330#2 229238396#0 15489228#1 -15489185 -229673021#2 -229673021#1 -229673021#0 -894634967#2 -894634967#1 -894634967#0 -671635091 -671635092#1 -227364750#2 -229673022 -227364752#1 -1304913938#1 -229673024#1 -373482266#5 -373482266#4 -373482266#3 -373482266#1 -232079825#4 -232079825#2 -232079825#1 -452252360 232079775#0 232079775#1 232079775#2 232079775#4 130848151 448266588#0 448266585 448266587 778823267 778823268#1 231435896 125496883#0 125496883#1 125496888#0 125496888#1 1486385191#0 313014417#0 313014417#2 295377943 723800304#0 23123521#0 23123521#1 23123521#2 23123521#3 23123521#4 301860564 448266591#0 241217409#0 241217409#1 237797962#0 237797962#1 237797962#2 668510236 227617363#0 227617363#1 227617363#2 227617363#3 668510237#0 668510237#1 668510237#2 668510234 450735440 295382937#0 295382937#1 669144908 668532083#0 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 -723496082 -388321481#2 -860582050 -229624959 -612914829 -229624957 -229624955 -1117590360#3 -1117590360#1 -229624958 -229624952"/>
+        <busStop id="2990854843" name="Matei Basarab"/>
+        <busStop id="2990854840" name="Hala Traian"/>
+        <busStop id="11360968308" name="Mecet"/>
+        <busStop id="2389982905" name="Foișorul de Foc"/>
+        <busStop id="-590206839" name="Calea Moșilor"/>
+        <busStop id="-590208133" name="Piața Gemeni"/>
+        <busStop id="-2352303603" name="Piața Spaniei"/>
+        <busStop id="-12427766016" name="Calea Dorobanților"/>
+        <busStop id="31402322" name="Piața Romană"/>
+        <busStop id="2990854837" name="Calea Victoriei"/>
+        <busStop id="2990854732" name="Biblioteca Academiei Române"/>
+        <busStop id="2990887289" name="Popa Tatu"/>
+        <busStop id="2990827632" name="Ministerul Transporturilor"/>
+        <busStop id="-2517418574" name="Gara de Nord"/>
+        <busStop id="-2517420012" name="Nicolae Titulescu"/>
+        <busStop id="-6180590317" name="Stoica Ludescu"/>
+    </ptLine>
+    <ptLine id="18432027" name="Bus 97: Clăbucet =&gt; Pasaj Mihai Bravu" line="97" type="trolleybus" vClass="bus" color="green" completeness="0.23" missingBefore="11" missingAfter="35">
+        <route edges="1117820481 27014190#0 1494488814 27844756#0 27844756#1 1495252175 1495252176#0 1495252176#1 1495252177 1495252178 1495252179 1495252181 1495252184 1494488815 -206009884#1 206009885#0 206009885#1 15488620#0 15488620#1 37190330#1 37190330#2 -15489185 -229673021#2 -229673021#1 -229673021#0 -894634967#2 -894634967#1 -894634967#0 -671635091 -671635092#1 -227364750#2 -229673022 -227364752#1 -1304913938#1 -229673024#1 -373482266#5 -373482266#4 -373482266#3 -373482266#1 -232079825#4 -232079825#2 -232079825#1 778823268#1 231435896 125496883#0 125496883#1 125496888#0 125496888#1 1486385191#0 313014417#0 313014417#2 295377943 -191987908#7 -191987908#6 -191987908#5 -191987908#4 -191987908#2 -244656973#5 -244656973#4 -244656973#3 -244656973#2 -1460913162#1 -669189552 -289213552#2 -289213552#0 -244923333 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 -723496082 -388321481#2 -860582050 -229624959 -612914829 -229624957 -229624955 -1117590360#3 -1117590360#1 -229624958 -229624952"/>
+        <busStop id="2990854840" name="Hala Traian"/>
+        <busStop id="11360968302" name="Mecet"/>
+        <busStop id="2519529606" name="Foișorul de Foc"/>
+        <busStop id="2383419052" name="Calea Moșilor"/>
+        <busStop id="-582481154" name="Piața Gemeni"/>
+        <busStop id="-582481089" name="Piața Spaniei"/>
+        <busStop id="-2519507105" name="Colegiul Economic Virgil Madgearu"/>
+        <busStop id="2990854846" name="Piața Romană"/>
+        <busStop id="2990854837" name="Calea Victoriei"/>
+        <busStop id="2990854727" name="Bd. Dacia"/>
+        <busStop id="-2990833334" name="Teatrul Dramaturgilor Români"/>
+        <busStop id="-2517418574" name="Gara de Nord"/>
+        <busStop id="-10556623046" name="Nicolae Titulescu"/>
+        <busStop id="-12427950917" name="Stoica Ludescu"/>
+    </ptLine>
+    <ptLine id="18442260" name="Bus 409 B: Crizantemelor =&gt; Bucur Obor" line="409 B" type="bus" vClass="bus" completeness="0.03" missingBefore="58" missingAfter="8">
+        <route edges="23500154#0 23500154#1 1229533330#0 1343990130#0 1343990130#1 1343990130#2"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="18442569" name="Bus 468: Gagu =&gt; Bucur Obor" line="468" type="bus" vClass="bus" completeness="0.03" missingBefore="51" missingAfter="10">
+        <route edges="23500154#0 23500154#1 1229533330#0 1343990130#0 1343990130#1 1343990130#2"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="18451850" name="Bus 411: Gagu =&gt; Bucur Obor" line="411" type="bus" vClass="bus" color="102,36,131" completeness="0.02" missingBefore="77" missingAfter="2">
+        <route edges="23500154#0 23500154#1 1229533330#0 1343990130#0 1343990130#1 1343990130#2"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="18471516" name="Bus 412: Măineasca =&gt; Bucur Obor" line="412" type="bus" vClass="bus" color="102,36,131" completeness="0.03" missingAfter="72">
+        <route edges="1343977762 1344002089 1343990125#1"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+    </ptLine>
+    <ptLine id="18471517" name="Bus 413: Șindrilița =&gt; Bucur Obor" line="413" type="bus" vClass="bus" color="102,36,131" completeness="0.03" missingAfter="64">
+        <route edges="1343977762 1344002089 1343990125#1"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+    </ptLine>
+    <ptLine id="18608898" name="Bus 417: Piteasca =&gt; Bucur Obor" line="417" type="bus" vClass="bus" color="102,36,131" completeness="0.03" missingBefore="62" missingAfter="2">
+        <route edges="23500154#0 23500154#1 1229533330#0 1343990130#0 1343990130#1 1343990130#2"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="18662018" name="Bus 468 B: Sitaru =&gt; Bucur Obor" line="468 B" type="bus" vClass="bus" completeness="0.03" missingAfter="76">
+        <route edges="1343977762 1344002089 1343990125#1"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+    </ptLine>
+    <ptLine id="18662021" name="Bus 409: Merii Petchii =&gt; Bucur Obor" line="409" type="bus" vClass="bus" completeness="0.02" missingAfter="103">
+        <route edges="1343977762 1344002089 1343990125#1"/>
+        <busStop id="12435500354" name="Bucur Obor"/>
+        <busStop id="12435185099" name="Ziduri Moși"/>
+    </ptLine>
+    <ptLine id="18800585" name="IR 1582 Constanța =&gt; București Nord" line="IR 1582" type="train" vClass="rail" completeness="0.14" missingBefore="6">
+        <route edges="621469234 1221367947 398140720#0 398140720#1 398140720#2 620369383 912404243 620591205#0 620591205#1"/>
+        <busStop id="5861246147" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="1881323" name="Bus 178: Sala Palatului → Complex Comercial Apusului" line="178" type="bus" vClass="bus" color="29,113,184" completeness="0.18" missingAfter="25">
+        <route edges="139756125#1 23633347#0 23633347#1 50586394 23633340#0 23633340#2 -668290740 -1206817639#2 -1206817639#0 -14261705#1 543988953 23599424#1 23599424#2 23599424#3 23599424#4 23599424#5 38918038 23633028#0 23633028#1 23633028#2 272520014 -295377944 -30777953 723800304#0 23123521#0 23123521#1 23123521#2 23123521#3 23123521#4 301860564 448266591#0 241217409#0 241217409#1 237797917#0 237797917#1 237797917#3 84489420#0 450735438 668922201#0 244423459#2 205969670 205969669#0 205969669#1 205969671 139788054#0 139788054#1 139788054#2 139788054#3 139788054#4 139788054#5 139788054#6 139756123"/>
+        <busStop id="9463537197" name="Sala Palatului"/>
+        <busStop id="3059964038" name="Calea Griviței"/>
+        <busStop id="2990887289" name="Popa Tatu"/>
+        <busStop id="2990887287" name="Bd. Dinicu Golescu"/>
+        <busStop id="2388033146" name="Gara de Nord"/>
+        <busStop id="2517418576" name="Gara Basarab"/>
+        <busStop id="2990819617" name="Calea Giulești"/>
+    </ptLine>
+    <ptLine id="2076437" name="Bus 104: Cora Pantelimon =&gt; Pod Eroilor" line="104" type="bus" vClass="bus" color="29,113,184" completeness="0.12" missingBefore="40">
+        <route edges="227053928#0 227053928#1 227053928#2 227053928#3 227053928#4 665696010#1 227053922#0 227053922#1 227053922#2 665696009 665696186#0 665696186#3 665696186#4 160469881#0 160469881#1 229820743#0 229820743#1 28991774#0 28991719 -242408358#1 -242408358#0 -454285293#0 -1367423377 1367423376#0 895746209#1"/>
+        <busStop id="2517228817" name="Elie Radu"/>
+        <busStop id="2517228830" name="Teatrul Bulandra"/>
+        <busStop id="2517228826" name="Pod Hașdeu"/>
+        <busStop id="2517228818" name="Opera Națională"/>
+        <busStop id="-2517228824" name="Piața Operei"/>
+        <busStop id="2250275679" name="Pod Eroilor"/>
+    </ptLine>
+    <ptLine id="21261344" name="Bus: N121: Valea Argesului → Piata Unirii 2" line="N121" type="bus" vClass="bus" color="49,47,129" completeness="0.05" missingBefore="14" missingAfter="2">
+        <busStop id="-3059964037" name="Luterană"/>
+    </ptLine>
+    <ptLine id="21655207" line="642" type="bus" vClass="bus" completeness="1.00">
+        <busStop id="8382055481" name="Cișmigiu Vest"/>
+    </ptLine>
+    <ptLine id="2202704" name="Tram 16: Platforma Industrială Pipera =&gt; Piața Sfânta Vineri" line="16" type="tram" vClass="tram" color="190,22,34" completeness="0.14" missingBefore="11" missingAfter="1">
+        <route edges="301564753#7 1224993966#1 1224993968#1 1224993970#1 1224993970#2 1507490088 1225324655#5 1225324647#2 1225324647#3 1225324647#4 1225324647#5 1225324647#6 1225181465#1 1225181464#1"/>
+        <busStop id="6264771190" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="11363169188" name="Hristo Botev"/>
+        <busStop id="11361730520" name="Piața Sfântul Gheorghe"/>
+    </ptLine>
+    <ptLine id="2203625" name="Tram 5: Piața Sf. Gheorghe =&gt; Aeroport Băneasa" line="5" type="tram" vClass="tram" color="190,22,34" completeness="0.33" missingAfter="8">
+        <route edges="1225181459 1225324646 1225324648#1 1225324649#1 1225324649#2 1225324649#3 1225324649#4"/>
+        <busStop id="419535273" name="Piața Sf. Gheorghe"/>
+        <busStop id="11363161634" name="Hristo Botev"/>
+        <busStop id="11363169112" name="Bd. Carol I"/>
+        <busStop id="599983933" name="Bulevardul Lacul Tei"/>
+        <busStop id="599983936" name="Rossini"/>
+        <busStop id="599983945" name="Ceaikovski"/>
+        <busStop id="9083668719" name="Giuseppe Verdi"/>
+    </ptLine>
+    <ptLine id="2205365" name="Tram 46: Republica =&gt; Gara de Nord" line="46" type="tram" vClass="tram" color="190,22,34" completeness="0.46" missingBefore="12">
+        <route edges="897293743 894254311#4 894254311#5 205040187#1 205040187#2 205040187#3 205040187#4 205040187#5 205040187#6 205040187#7 205040187#8 45668230#0 45668230#1 45668230#2 45668230#3 45668230#5 45668230#6 45668230#7 45668230#8 45668229#1 45668229#3 45668229#4 45668229#5 45668229#6 45668229#7 45668229#8 45668229#9 45668229#10 45668229#11 45764482#0 45764482#2 45764482#4 45764482#5 45764482#7 45764482#8 45764482#9 920117610#1 920117610#2 920117610#3 920117610#4 243476552"/>
+        <busStop id="1456569557" name="Bd. Ferdinand"/>
+        <busStop id="8311499848" name="Bucur Obor"/>
+        <busStop id="599983943" name="Lizeanu"/>
+        <busStop id="599983938" name="Doctor Grozovici"/>
+        <busStop id="419268470" name="Vasile Lascăr"/>
+        <busStop id="419268471" name="Stadion Dinamo"/>
+        <busStop id="841973777" name="Calea Dorobanților"/>
+        <busStop id="419268473" name="Roma"/>
+        <busStop id="491073949" name="Spitalul Grigore Alexandrescu"/>
+        <busStop id="8544117695" name="Piața Victoriei"/>
+        <busStop id="2927667937" name="Piața Victoriei"/>
+        <busStop id="2927667933" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="2207120" name="Tram 21: Pasaj Colentina =&gt; Piața Sf. Gheorghe" line="21" type="tram" vClass="tram" color="190,22,34" completeness="0.41" missingBefore="7" missingAfter="1">
+        <route edges="85728019#0 85728019#4 85728019#5 85728019#6 764577779 45665939#1 172801105#0 172801105#1 172801105#2 172801105#3 172801105#4 172801105#5 205037366#1 205037366#2 205037366#3 205037366#5 205037366#6 205037366#8 205037366#9 205037366#10 1225324643#2 1225439113 1225324660#1 1225324662 1225324655#1 1225324655#5 1225324647#2 1225324647#3 1225324647#4 1225324647#5 1225324647#6 1225181465#1 1225181464#1"/>
+        <busStop id="296044762" name="Teiul Doamnei"/>
+        <busStop id="8378477789" name="Ziduri Moși"/>
+        <busStop id="582524617" name="Bucur Obor"/>
+        <busStop id="2385931574" name="Mihai Eminescu"/>
+        <busStop id="2385931560" name="Bulevardul Carol I"/>
+        <busStop id="11363169188" name="Hristo Botev"/>
+        <busStop id="11361730517" name="Piața Sf. Gheorghe"/>
+    </ptLine>
+    <ptLine id="2212351" name="Tram 10: Romprim=&gt; Banu Manta =&gt; Mihai Bravu =&gt; Romprim" line="10" type="tram" vClass="tram" color="190,22,34" completeness="0.27" missingBefore="12" missingAfter="26">
+        <route edges="118416425#0 118416425#1 118583391#2 118583391#3 85511448 920117625#2 920117625#3 920117625#4 920117620#1 920117620#2 920117620#3 920127991#1 920127991#2 920127991#3 920127991#4 920127991#5 920127991#7 920127991#8 27011698#0 27011698#2 27011698#3 27011698#4 27011698#5 27011698#6 27011698#7 27011698#8 27011698#9 27011698#10 27011698#11 27011698#12 27011698#13 27011698#14 27011698#16 27011698#17 920127990#1 920127990#2 668693648#1 668693648#2 668693648#3 668693648#4 668693648#5 668693648#6 668693648#7 898553672#0 898553672#4 898553672#5"/>
+        <busStop id="5865238769" name="Pasajul Basarab"/>
+        <busStop id="1768612657" name="Bd. Banu Manta"/>
+        <busStop id="8544126321" name="Dr. Felix"/>
+        <busStop id="8544117694" name="Piața Victoriei"/>
+        <busStop id="8544117710" name="Spitalul Grigore Alexandrescu"/>
+        <busStop id="8544188928" name="Roma"/>
+        <busStop id="1770588416" name="Calea Dorobanților"/>
+        <busStop id="1770588420" name="Stadion Dinamo"/>
+        <busStop id="599983930" name="Vasile Lascăr"/>
+        <busStop id="296077860" name="Doctor Grozovici"/>
+        <busStop id="305354258" name="Lizeanu"/>
+        <busStop id="1456569558" name="Bucur Obor"/>
+        <busStop id="419265619" name="Bd. Ferdinand"/>
+        <busStop id="1770588418" name="Piața Iancului"/>
+    </ptLine>
+    <ptLine id="2377240" name="Bus 100: Piața Unirii 2 → Aeroport Henri Coandă" line="100" type="bus" vClass="bus" color="29,113,184" completeness="0.18" missingBefore="2" missingAfter="9">
+        <route edges="241211914#0 241211914#2 1459912404 232078365 218268092#0 218268113#0 668309192 14140940 229477788#0 229477788#1 229477788#2 229477788#3 231769534#0 231769534#3 231769534#4 231769534#5 139713882 443138260#0 119241030#1 119241030#2 669726791#1 448266581#1 448266581#2 668307642#1 130848152#2 778823271 23781801 241212606 668307633#0 668307633#2 668307633#3 668307630 4045775#0 4045775#1 667696381#0 668307628#0 668307628#1 668307627 244656971#1 244656971#2 542791322#0 232080905 139713886 217750198#0 -125898148#1 -1117596105 -1117596107 -1046584037 44479844#0"/>
+        <busStop id="2389982923" name="Universitate"/>
+        <busStop id="2522849389" name="Piața Romană"/>
+        <busStop id="2522849393" name="Piața Victoriei"/>
+    </ptLine>
+    <ptLine id="2565649" name="Magistrala 4 (Străulești → Gara de Nord)" line="M4" type="subway" vClass="subway" color="52,124,17" completeness="0.25" missingBefore="6">
+        <route edges="280341566 -1359037584#1 -1359037584#0"/>
+        <busStop id="8426597560" name="Basarab 2 - M4"/>
+        <busStop id="2844885590" name="Gara de Nord 2"/>
+    </ptLine>
+    <ptLine id="2642216" name="Bus 101: Bucur Obor =&gt; Faur" line="101" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingAfter="31">
+        <route edges="453964388#0 453964388#1 453964388#2 1228402886#0 1228402886#1 1228394819#0 1228394819#1 1228394821#0 1228394821#1 1228394821#2"/>
+        <busStop id="2360447857" name="Bucur Obor"/>
+        <busStop id="7623728716" name="Piața Obor"/>
+    </ptLine>
+    <ptLine id="2643292" name="Bus 69: Valea Argeșului =&gt; Baicului" line="69" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.17" missingBefore="26" missingAfter="8">
+        <route edges="16277426#0 241077488 1492098647 854160103 241077288 229237069#0 229237069#1 1367423377 454285293#0 454285293#1 242408358#1 666701066 154325236 666184644 229236876#1 1462022294 -180685585#9 -180685585#7 -180685585#6 -180685585#5 -180685585#4 -180685585#3 -180685585#2 -180685585#1 -196639093#1 4274826#1 4274826#2 -1282766740 -39725274#11 -39725274#7 -39725274#6 -39725274#5 -39725274#4 -39725274#3 -39725274#1 -39725274#0 -230170457#2 -230170457#1 -1206972198 -4089366#0 12503324#0 28430422#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561 668312640 131407439 895759912#1 125102032 -229483262 -229483261 -229481944#2 -229481944#1 -229481913#0 -241081586 -229481912 -668293550 -28898205#1 -28898205#0 -668291228 -229481808 -83493158 543891696#1 668291230 891109344#0 891109344#1 670542571 -1495252187 -85587072#2 -85587072#1 -1225436852 -240807884#0 -1325259403 1552353948 668738653 -23125404#3 -23125404#2 -23125404#1 -23125404#0 23125233#0 23125233#1 23125233#2 23050185 452067678 23125202 -452067678 -23050185 -23125233#2 -23125233#1 -23125233#0 23125404#0 23125404#1 23125404#2 23125404#3"/>
+        <busStop id="2517228824" name="Piața Operei"/>
+        <busStop id="-2519567779" name="Facultatea de Drept"/>
+        <busStop id="2387001479" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="-2387001476" name="Grădina Cișmigiu"/>
+        <busStop id="-2387001494" name="Universitate"/>
+        <busStop id="2387001484" name="Piața Rosetti"/>
+        <busStop id="-2387001459" name="Armenească"/>
+        <busStop id="-6258682618" name="Calea Moșilor"/>
+        <busStop id="2389982929" name="Șoseaua Mihai Bravu"/>
+    </ptLine>
+    <ptLine id="2666110" name="Bus 122: Piața 21 Decembrie 1989 =&gt; Complex Cartier Latin" line="122" type="bus" vClass="bus" color="29,113,184" completeness="0.11" missingAfter="43">
+        <route edges="891089879#0 891089879#1 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 170778293 196639093#1 180685585#1 180685585#2 180685585#3 180685585#4 180685585#5 180685585#6 180685585#7 180685585#9 160469881#0 160469881#1 229820743#0 229820743#1 666701065 -227497585 -1367423376#0 -229237069#1 -229237069#0 -241077288 -854160103 -1492098647 -241077488 -16277426#1"/>
+        <busStop id="2519567784" name="Piața 21 Decembrie 1989"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="2387001480" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2519567779" name="Facultatea de Drept"/>
+        <busStop id="-2519567790" name="Spitalul Universitar"/>
+        <busStop id="-2519567763" name="Carol Davila"/>
+    </ptLine>
+    <ptLine id="2678869" name="Bus 66: Spitalul Fundeni → Vasile Pârvan" line="66" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.31" missingBefore="16">
+        <route edges="1344785775#1 1344785775#3 1332010726 1229533330#0 1343990130#0 1343990130#1 1343990130#2 131483758#0 131483758#1 23811638#2 229234699#0 229234699#2 229234699#3 229234699#5 229234699#6 229234699#7 229234699#8 205039202#1 205039202#2 205039202#3 205039202#4 1318111813#1 1318111813#2 1318111813#3 1318111813#4 670574720#0 670574720#1 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 8138326 23489740#1 23489740#2 23489740#3 23489740#4 23489740#5 23489740#6 23489740#7 39340441#0 39340441#1"/>
+        <busStop id="2385931559" name="Bucur Obor"/>
+        <busStop id="2387001473" name="Făinari"/>
+        <busStop id="2387001478" name="Mihai Eminescu"/>
+        <busStop id="2150151448" name="Bulevardul Carol I"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="2387001494" name="Universitate"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="4789653802" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2387001496" name="Vasile Pârvan"/>
+        <busStop id="2360448328" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="2767255" name="Bus 780: Aeroport Henri Coandă → Gara Basarab" line="780" type="bus" vClass="bus" color="29,113,184" completeness="0.11" missingBefore="15">
+        <route edges="229624952 229624958 1117590360#0 1117590360#2 229624955 229624957 612914829 229624959 860582050 388321481#0 723496082 227397419#1 723496081 328681900 328681899 1460913158 612919125 328681897 292245518 1460913160 1460913161#0 1460913161#2 895504659#1 4902766#0 4902766#1 4902766#2 450735439 451333767#0 451333767#1 668922201#0"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2517418575" name="Gara Basarab"/>
+    </ptLine>
+    <ptLine id="2890182" name="Bus 780: Gara Basarab → Aeroport Henri Coandă" line="780" type="bus" vClass="bus" color="29,113,184" completeness="0.10" missingAfter="16">
+        <route edges="668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222 -450735438 668979223#0 229952086#1 229952086#2 295382937#0 295382937#1 669144908 668532083#0 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 -723496082 -388321481#2 -860582050 -229624959 -612914829 -229624957 -229624955 -1117590360#3 -1117590360#1 -229624958 -229624952"/>
+        <busStop id="8282092707" name="Gara Basarab"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="2890393" name="Bus 100: Aeroport Henri Coandă → Piața Unirii 2" line="100" type="bus" vClass="bus" color="29,113,184" completeness="0.16" missingBefore="9" missingAfter="4">
+        <route edges="1372391887#0 1372391887#4 1372391887#5 1372391887#6 1372391887#7 1372391887#8 1372391887#9 723764940 178060182 14254203 178061488 542810837 668712604 309265222#0 309265222#1 668307634 668307635#0 668307635#1 244658427#0 244658427#1 668307639 1320256482 452252352#0 452252352#1 23781788 241212475 44499684#0 44499684#2 44499684#3 231769532#0 35097268#1 1561134315 1561134314#0 69344025#1 226281310#1 241212350#0 241212350#1 196636258#0 196636258#1 891089879#0 891089879#1 218268112 23782053#0 23782053#1 229477787#0 229477787#1 23782231 339705211#0 339705211#2"/>
+        <busStop id="2522849392" name="Piața Victoriei"/>
+        <busStop id="2522857239" name="Piața Romană"/>
+        <busStop id="2519567784" name="Piața 21 Decembrie 1989"/>
+    </ptLine>
+    <ptLine id="2947020" name="Magistrala 2 (Tudor Arghezi → Pipera)" line="M2" type="subway" vClass="subway" color="0,51,153" completeness="0.47" missingBefore="8">
+        <busStop id="8455390584" name="Piața Unirii 2"/>
+        <busStop id="8455390583" name="Universitate"/>
+        <busStop id="8455390582" name="Piața Romană"/>
+        <busStop id="582553758" name="Piața Victoriei 2"/>
+        <busStop id="8455390579" name="Aviatorilor"/>
+        <busStop id="8455390577" name="Aurel Vlaicu"/>
+        <busStop id="8455390576" name="Pipera"/>
+    </ptLine>
+    <ptLine id="2947113" name="Magistrala 2 (Pipera → Tudor Arghezi)" line="M2" type="subway" vClass="subway" color="0,51,153" completeness="0.47" missingAfter="8">
+        <busStop id="-5916880995" name="Pipera"/>
+        <busStop id="-5916881009" name="Aurel Vlaicu"/>
+        <busStop id="-8455390578" name="Aviatorilor"/>
+        <busStop id="-5916881036" name="Piața Victoriei 2"/>
+        <busStop id="5916881047" name="Piața Romană"/>
+        <busStop id="5916881049" name="Universitate"/>
+        <busStop id="8455390586" name="Piața Unirii 2"/>
+    </ptLine>
+    <ptLine id="3088675" name="Bus 66: Vasile Pârvan → Spitalul Fundeni" line="66" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.31" missingAfter="14">
+        <route edges="39340441#1 -1545408176 -1545408177 -668297468 -1545408178 -12472487#1 -196639093#1 4274826#1 4274826#2 -1282766740 -39725274#11 -39725274#7 -39725274#6 -39725274#5 -39725274#4 -39725274#3 -39725274#1 -39725274#0 -230170457#2 -230170457#1 -1206972198 -4089366#0 12503324#0 28430422#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561 668312640 131407439 895759912#1 125102032 -229483262 -229483261 -229481944#2 -229481944#1 -229481913#0 -241081586 -229481912 -668293550 -28898205#1 -28898205#0 -668291228 311994811#0 311994811#1 311994811#2 1318111814#0 1318111814#1 1318111814#2 229234698#1 229234698#2 229234698#3 229234698#4 229234698#6 229234698#7 670518544 670518554#0 209766462#2 229804193#0 229804193#1 453964388#0 453964388#1 453964388#2 1241674273 1332010731 1306881994 301655820#0 301655820#1 301655820#2"/>
+        <busStop id="2387001496" name="Vasile Pârvan"/>
+        <busStop id="2387001479" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="-2387001476" name="Grădina Cișmigiu"/>
+        <busStop id="-2387001494" name="Universitate"/>
+        <busStop id="2387001484" name="Piața Rosetti"/>
+        <busStop id="-2387001459" name="Armenească"/>
+        <busStop id="2387001465" name="Calea Moșilor"/>
+        <busStop id="2387001477" name="Mihai Eminescu"/>
+        <busStop id="2387001474" name="Făinari"/>
+        <busStop id="2360447857" name="Bucur Obor"/>
+        <busStop id="2383484963" name="Ziduri Moși"/>
+    </ptLine>
+    <ptLine id="3090696" name="Bus 282: Șoseaua Fundeni =&gt; Gara Basarab" line="282" type="bus" vClass="bus" color="29,113,184" completeness="0.12" missingBefore="48">
+        <route edges="44479844#0 668712613 118899146 330843373#0 330843373#1 330843373#2 1535669334 1535669333#0 1535669333#1 1132179482#0 882652327 132515651#0 132515651#1 125909046#0 125909046#1 125909046#2 125909046#3 723496082 227397419#1 723496081 328681900 328681899 1460913158 612919125 328681897 292245518 1460913160 1460913161#0 1460913161#2 895504659#1 4902766#0 4902766#1 4902766#2 450735439 451333767#0 451333767#1 668922201#0"/>
+        <busStop id="2388401681" name="Bd. Banu Manta"/>
+        <busStop id="1143755096" name="Primăria Sectorului 1"/>
+        <busStop id="2388401705" name="Primăria Sector 1"/>
+        <busStop id="2389847197" name="Nicolae Titulescu"/>
+        <busStop id="2384913752" name="Gara de Nord"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2517418575" name="Gara Basarab"/>
+    </ptLine>
+    <ptLine id="3090938" name="Bus N108: Pasaj Colentina =&gt; Piața Unirii 2" line="N108" type="bus" vClass="bus" color="45,46,131" completeness="0.18" missingBefore="16" missingAfter="12">
+        <route edges="1344785775#1 1344785775#3 1332010726 1229533330#0 1343990130#0 1343990130#1 1343990130#2 131483758#0 131483758#1 23811638#2 229234699#0 229234699#2 229234699#3 229234699#5 229234699#6 229234699#7 229234699#8 205039202#1 205039202#2 205039202#3 205039202#4 1318111813#1 1318111813#2 1318111813#3 1318111813#4 670574720#0 670574720#1 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 218268112 23782053#0 23782053#1 229477787#0 229477787#1 23782231 339705211#0 339705211#2"/>
+        <busStop id="2385931559" name="Bucur Obor"/>
+        <busStop id="2387001473" name="Făinari"/>
+        <busStop id="2387001478" name="Mihai Eminescu"/>
+        <busStop id="2150151448" name="Bulevardul Carol I"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+    </ptLine>
+    <ptLine id="3090939" name="Bus N108: Piața Unirii 2 =&gt; Pasaj Colentina" line="N108" type="bus" vClass="bus" color="45,46,131" completeness="0.21" missingBefore="4" missingAfter="18">
+        <route edges="241211914#0 241211914#2 1459912404 232078365 218268092#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561 668312640 131407439 895759912#1 125102032 -229483262 -229483261 -229481944#2 -229481944#1 -229481913#0 -241081586 -229481912 -668293550 -28898205#1 -28898205#0 -668291228 311994811#0 311994811#1 311994811#2 1318111814#0 1318111814#1 1318111814#2 229234698#1 229234698#2 229234698#3 229234698#4 229234698#6 229234698#7 670518544 670518554#0 209766462#2 229804193#0 229804193#1 453964388#0 453964388#1 453964388#2 1241674273 1332010731 1306881994 301655820#0 301655820#1 301655820#2"/>
+        <busStop id="2389982923" name="Universitate"/>
+        <busStop id="2387001484" name="Piața Rosetti"/>
+        <busStop id="-2387001459" name="Armenească"/>
+        <busStop id="2387001465" name="Calea Moșilor"/>
+        <busStop id="2387001477" name="Mihai Eminescu"/>
+        <busStop id="2387001474" name="Făinari"/>
+        <busStop id="2360447857" name="Bucur Obor"/>
+        <busStop id="2383484963" name="Ziduri Moși"/>
+    </ptLine>
+    <ptLine id="3304391" name="Bus 104: Pod Eroilor =&gt; Cora Pantelimon" line="104" type="bus" vClass="bus" color="29,113,184" completeness="0.08" missingAfter="43">
+        <route edges="895746209#1 154325238#1 665627973#0 665627973#1 160469880 1452916275 160469879#0 160469879#1 160469879#2 160469879#3 665627971#0 196673062#1 196673062#2 665627968#0 4865822 894655781#1 665627965 665627961"/>
+        <busStop id="2250275679" name="Pod Eroilor"/>
+        <busStop id="302468096" name="Facultatea de Medicină Veterinară"/>
+        <busStop id="2517228825" name="Pod Hașdeu"/>
+        <busStop id="2517228829" name="Pod Izvor"/>
+    </ptLine>
+    <ptLine id="3304855" name="Bus 105: Șoseaua Nicolae Titulescu → Valea Oltului" line="105" type="bus" vClass="bus" color="29,113,184" completeness="0.12" missingAfter="25">
+        <route edges="1307769366#1 23554631#1 23554631#2 23554631#3 23554631#4 125909047 131484722#0 131484722#1 -131484730#9 -131484730#7 -131484730#6 -131484730#5 -131484730#4 -131484730#3 -131484730#2 -131484730#1 -131484730#0 371204697 289213549#0 289213549#1 289213549#2 227617356#0 227617356#2 895504659#1 4902766#0 4902766#1 4902766#2 450735439 451333767#0 451333767#1 668922201#0 244423459#2 227394180#0 227394180#1 139788052 139788054#0 139788054#1 139788054#2 139788054#3 139788054#4 139788054#5 139788054#6 106797418#2"/>
+        <busStop id="1344579108" name="Șoseaua Nicolae Titulescu"/>
+        <busStop id="2384913752" name="Gara de Nord"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2517418576" name="Gara Basarab"/>
+    </ptLine>
+    <ptLine id="3307518" name="Bus 123: C.E.T. Sud Vitan =&gt; Gara de Nord" line="123" type="bus" vClass="bus" color="29,113,184" completeness="0.22" missingBefore="28">
+        <route edges="227053928#0 227053928#1 227053928#2 227053928#3 227053928#4 665696010#1 227053922#0 227053922#1 227053922#2 665696009 665696186#0 665696186#3 665696186#4 160469881#0 160469881#1 229820743#0 229820743#1 666701065 187899505#1 668719237#1 153967347#0 153967347#1 -668175351#3 -668175351#0 -154229441#1 -154229441#0 -668176613#2 -668176612#2 -668176611 -668176609#2 -668176609#1 -668176609#0 -529355534#5 -529355534#4 -529355534#3 -529355534#2 -529355534#1 -529355534#0 -668588452 -50586387 84483724#0 84483724#1 668676696 373297791 668678760#0 906667150#0 106797419#0 106797419#1 106797419#2 139788055#1 139788055#2 668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222"/>
+        <busStop id="2517228817" name="Elie Radu"/>
+        <busStop id="2517228830" name="Teatrul Bulandra"/>
+        <busStop id="2517228826" name="Pod Hașdeu"/>
+        <busStop id="2519078579" name="Opera Națională"/>
+        <busStop id="2519078604" name="Știrbei Vodă"/>
+        <busStop id="2519078585" name="Pod Cotroceni"/>
+        <busStop id="-2519078577" name="Mircea Vulcănescu"/>
+        <busStop id="-2519078588" name="Primăria Sector 6"/>
+        <busStop id="2517400439" name="Calea Plevnei"/>
+        <busStop id="8282092707" name="Gara Basarab"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="3308195" name="Bus 86: Dridu → Arena Națională" line="86" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.23" missingBefore="22" missingAfter="27">
+        <route edges="229624952 229624958 1117590360#0 1117590360#2 229624955 229624957 612914829 229624959 860582050 388321481#0 723496082 227397419#1 723496081 328681900 328681899 1460913158 612919125 328681897 292245518 1460913160 1460913161#0 1460913161#2 244923333 289213552#0 289213552#1 669189552 1460913162#0 -23123516#1 -452252354 -23554698#1 -660110981#2 -660110981#0 -23632420#1 -23632420#0 446842115 23632425#0 23632425#1 23632425#4 668307636#0 668307636#2 244658427#0 244658427#1 668307639 1320256482 452252352#0 452252352#1 448266587 778823269 778823265 448792279#0 448266583 448266586 1214130905 119238380#0 119238380#1 723802758 669156737#0 669156737#2 669156737#3 232079825#1 232079825#2 232079825#3 373482266#0 373482266#2 373482266#4 373482266#5 229673024#0 1304913938#0 227364752#0 229673022 227364750#0 671635092#0 671635092#2 894634967#0 894634967#1 894634967#2 229673021#0 229673021#1 229673021#2 229673021#3 1393194546#0 19997543#1 19997543#2 -37190330#2 -37190330#1 -15488620#1 -15488620#0 -206009885#1 -206009885#0 206009884#0 898560097 898560098#0 -1325259403 1552353948 668738653 -8119904#9 -8119904#8 -8119904#7 -8119904#6 -8119904#5 -8119904#4 -8119904#3 -8119904#2 -8119904#1"/>
+        <busStop id="2517435657" name="Stoica Ludescu"/>
+        <busStop id="2389847197" name="Nicolae Titulescu"/>
+        <busStop id="12300335993" name="Gara de Nord"/>
+        <busStop id="-2519529609" name="Polizu"/>
+        <busStop id="-2519507116" name="Piața Buzești"/>
+        <busStop id="2519507109" name="Calea Victoriei"/>
+        <busStop id="2519529608" name="Piața Romană"/>
+        <busStop id="2519507105" name="Colegiul Economic Virgil Madgearu"/>
+        <busStop id="582481089" name="Piața Spaniei"/>
+        <busStop id="582481154" name="Piața Gemeni"/>
+        <busStop id="2383419052" name="Calea Moșilor"/>
+        <busStop id="-2519529606" name="Foișorul de Foc"/>
+        <busStop id="-3053340252" name="Școala Iancului"/>
+        <busStop id="-2519507114" name="Mecet"/>
+        <busStop id="-2519507101" name="Agricultorilor"/>
+    </ptLine>
+    <ptLine id="3308315" name="Bus 122: Pasaj Domnești =&gt; Piața 21 Decembrie 1989" line="122" type="bus" vClass="bus" color="29,113,184" completeness="0.11" missingBefore="43">
+        <route edges="16277426#0 241077488 1492098647 854160103 241077288 229237069#0 229237069#1 1367423376#0 27552707 23123525#1 666205900 198516661#0 198516661#1 207025496#0 246129080 206994123 314033562 314034006 314034007 231253170 23123526#0 23123526#1 265969687#0 265969687#1 265969687#2 265969687#3 265969687#4 265969687#5 1484735771 265969686#0 265969686#1 265969686#2 265969686#3 265969686#4 265969686#5 265969686#6 265969686#8 50584795 246131187#0 139713885#1 186554856 180685590#0 180685590#1 180685590#2 180685590#3 180685590#4 180685590#6 69344025#1 226281310#1 241212350#0 241212350#1 196636258#0 196636258#1"/>
+        <busStop id="2519567785" name="Pod Eroilor"/>
+        <busStop id="2519623179" name="Berzei"/>
+        <busStop id="3633229027" name="Constantin Cristescu"/>
+        <busStop id="2519623181" name="Cișmigiu"/>
+        <busStop id="2519623178" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="2519567784" name="Piața 21 Decembrie 1989"/>
+    </ptLine>
+    <ptLine id="336932" name="Bus 86: Arena Națională → Dridu" line="86" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.23" missingBefore="11" missingAfter="35">
+        <route edges="8119904#0 8119904#2 8119904#3 8119904#4 8119904#5 8119904#6 8119904#7 8119904#8 8119904#9 240629022#0 229947581 1325259403 -898560098#1 23050186#0 15488620#0 15488620#1 37190330#1 37190330#2 229238396#0 15489228#1 -15489185 -229673021#2 -229673021#1 -229673021#0 -894634967#2 -894634967#1 -894634967#0 -671635091 -671635092#1 -227364750#2 -229673022 -227364752#1 -1304913938#1 -229673024#1 -373482266#5 -373482266#4 -373482266#3 -373482266#1 -232079825#4 -232079825#2 -232079825#1 -452252360 232079775#0 232079775#1 232079775#2 232079775#4 130848151 28869538#0 28869538#1 668307633#0 668307633#2 668307633#3 668307630 4045775#0 4045775#1 667696381#0 23798261 -668307636#2 -668307636#1 -23632425#5 -23632425#2 -23632425#0 -446842115 23632420#0 23632420#1 23632420#2 660110981#1 23554698#0 452252354 23123516#0 -1460913162#1 -669189552 -289213552#2 -289213552#0 -244923333 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 -723496082 -388321481#2 -860582050 -229624959 -612914829 -229624957 -229624955 -1117590360#3 -1117590360#1 -229624958 -229624952"/>
+        <busStop id="2519507102" name="Agricultorilor"/>
+        <busStop id="2519507114" name="Mecet"/>
+        <busStop id="2519476222" name="Școala Iancului"/>
+        <busStop id="2389982905" name="Foișorul de Foc"/>
+        <busStop id="-590206839" name="Calea Moșilor"/>
+        <busStop id="-590208133" name="Piața Gemeni"/>
+        <busStop id="-2352303603" name="Piața Spaniei"/>
+        <busStop id="31402322" name="Piața Romană"/>
+        <busStop id="-2519507110" name="Calea Victoriei"/>
+        <busStop id="6180491263" name="Piața Buzești"/>
+        <busStop id="2519507108" name="Calea Griviței"/>
+        <busStop id="-12300335993" name="Gara de Nord"/>
+        <busStop id="-2517420012" name="Nicolae Titulescu"/>
+        <busStop id="-2517435660" name="Stoica Ludescu"/>
+    </ptLine>
+    <ptLine id="357022" name="Tram 21: Piața Sf. Gheorghe =&gt; Pasaj Colentina" line="21" type="tram" vClass="tram" color="190,22,34" completeness="0.56" missingAfter="7">
+        <route edges="1225181459 1225324646 1225324648#1 1225324649#1 1225324649#2 1225324649#3 1225324649#4 1225324663#1 1225324644#2 901994509#1 901994509#2 901994509#4 901994509#5 901994509#7 901994509#8 901994509#9 901994509#10 1332005573#1 1332005573#2 1332005573#3 1332005573#4 1332005573#5 1224994013#0 1224994013#1 205037359#1 205037359#2 205037359#3 205037359#5"/>
+        <busStop id="419535273" name="Piața Sf. Gheorghe"/>
+        <busStop id="5235082193" name="Hristo Botev"/>
+        <busStop id="8378477746" name="Bulevardul Carol I"/>
+        <busStop id="582522185" name="Mihai Eminescu"/>
+        <busStop id="8378477804" name="Bucur Obor"/>
+        <busStop id="2150265220" name="Ziduri Moși"/>
+        <busStop id="11363161634" name="Hristo Botev"/>
+        <busStop id="419645690" name="Teiul Doamnei"/>
+        <busStop id="445630260" name="Doamna Ghica"/>
+    </ptLine>
+    <ptLine id="358039" name="Magistrala 3 (Preciziei → Anghel Saligny)" line="M3" type="subway" vClass="subway" color="188,23,37" completeness="0.20" missingBefore="5" missingAfter="7">
+        <route edges="907839010 907839004#0 907839004#1"/>
+        <busStop id="8429757886" name="Eroilor"/>
+        <busStop id="31983306" name="Izvor"/>
+        <busStop id="8450731676" name="Piața Unirii 1"/>
+    </ptLine>
+    <ptLine id="358046" name="Magistrala 1 (Pantelimon → Dristor)" line="M1" type="subway" vClass="subway" color="yellow" completeness="0.36" missingBefore="8">
+        <route edges="-907839006 27789918#1 27789918#2 1028932234#1"/>
+        <busStop id="8426597558" name="Basarab 1 - M1"/>
+        <busStop id="9486047014" name="Gara de Nord 1"/>
+        <busStop id="9486047015" name="Piața Victoriei 1"/>
+        <busStop id="9486047010" name="Ștefan cel Mare"/>
+        <busStop id="8452436812" name="Obor"/>
+        <busStop id="9486050637" name="Piața Iancului"/>
+        <busStop id="9486050647" name="Piața Muncii"/>
+        <busStop id="9486050652" name="Dristor 2"/>
+    </ptLine>
+    <ptLine id="370849" name="Tram 5: Aeroport Băneasa =&gt; Piața Sf. Gheorghe" line="5" type="tram" vClass="tram" color="190,22,34" completeness="0.35" missingBefore="7">
+        <route edges="131484725#0 131484725#3 131484725#4 23811807#1 1225324655#5 1225324647#2 1225324647#3 1225324647#4 1225324647#5 1225324647#6 1225181465#1 1225181464#1"/>
+        <busStop id="599983946" name="Giuseppe Verdi"/>
+        <busStop id="14995001" name="Ceaikovski"/>
+        <busStop id="304914940" name="Rossini"/>
+        <busStop id="599983932" name="Bulevardul Lacul Tei"/>
+        <busStop id="14995024" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="11363169188" name="Hristo Botev"/>
+        <busStop id="11361730517" name="Piața Sf. Gheorghe"/>
+    </ptLine>
+    <ptLine id="380909" name="Magistrala 4 (Gara de Nord → Străulești)" line="M4" type="subway" vClass="subway" color="52,124,17" completeness="0.25" missingAfter="6">
+        <route edges="-280348097#1 -280348097#0 -1359037585"/>
+        <busStop id="8426597565" name="Gara de Nord 2"/>
+        <busStop id="8426597561" name="Basarab 2 - M4"/>
+    </ptLine>
+    <ptLine id="4005141" name="Bus 69: Baicului → Valea Argeșului" line="69" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.20" missingAfter="26">
+        <route edges="668291231#0 4866077#0 83493158 668342047 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 170778293 196639093#1 180685585#1 180685585#2 180685585#3 180685585#4 180685585#5 180685585#6 180685585#7 180685585#9 160469881#0 160469881#1 229820743#0 229820743#1 28991774#0 28991719 -242408358#1 -242408358#0 -454285293#0 -1367423377 -229237115#0 -16277739#4 -16277739#3 -16277739#2 -16277739#1 -16277739#0 218091723#0 218091723#1 218091723#2 -668291232 -1495252187 -85587072#2 -85587072#1 -1225436852 -240807884#0 -1325259403 -229947581 -23125404#3 -23125404#2 -23125404#1 -23125404#0 23125233#0 23125233#1 23125233#2 23050178#0 23050178#2 23050178#3 23050178#5 23125191 84212822"/>
+        <busStop id="2389982893" name="Calea Moșilor"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="2387001494" name="Universitate"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="2387001480" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2519567779" name="Facultatea de Drept"/>
+        <busStop id="-2517228824" name="Piața Operei"/>
+        <busStop id="-3053152233" name="Facultatea de Medicină"/>
+    </ptLine>
+    <ptLine id="4027083" name="Bus 63 : Master → Pod Izvor" line="63" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.04" missingBefore="42">
+        <route edges="283341240#0 196673062#1 196673062#2 665627968#0 4865822"/>
+        <busStop id="2517228825" name="Pod Hașdeu"/>
+        <busStop id="2517228829" name="Pod Izvor"/>
+    </ptLine>
+    <ptLine id="4028956" name="Bus 63 : Pod Izvor → Master" line="63" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.02" missingAfter="42">
+        <route edges="4865822 894655781#1 665627965 450554037#1"/>
+        <busStop id="2517228829" name="Pod Izvor"/>
+    </ptLine>
+    <ptLine id="411114" name="Bus 178: Complex Comercial Apusului → Sala Palatului" line="178" type="bus" vClass="bus" color="29,113,184" completeness="0.15" missingBefore="26">
+        <route edges="295382931#0 295382931#2 139758830#0 906667150#0 106797419#0 106797419#1 106797419#2 139788055#1 139788055#2 668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222 -450735438 231253160#5 543988955#2 302095207#0 302095207#1 265969687#0 265969687#1 265969687#2 265969687#3 265969687#4 265969687#5 1484735771 265969686#0 265969686#1 265969686#2 265969686#3 265969686#4 265969686#5 265969686#6 265969686#8 14261705#1 14261705#2 1206817639#2 668290740 139756125#1"/>
+        <busStop id="2517400439" name="Calea Plevnei"/>
+        <busStop id="8282092707" name="Gara Basarab"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+        <busStop id="3633229027" name="Constantin Cristescu"/>
+        <busStop id="2519623181" name="Cișmigiu"/>
+        <busStop id="9463537197" name="Sala Palatului"/>
+    </ptLine>
+    <ptLine id="422558" name="Bus 105: Valea Oltului → Piața Presei" line="105" type="bus" vClass="bus" color="29,113,184" completeness="0.14" missingBefore="27">
+        <route edges="668912170#0 139758830#0 906667150#0 106797419#0 106797419#1 106797419#2 139788055#1 139788055#2 668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222 -450735438 668979223#0 229952086#1 229952086#2 295382937#0 295382937#1 669144908 668532083#0 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 1307769366#1"/>
+        <busStop id="2517400439" name="Calea Plevnei"/>
+        <busStop id="2517408900" name="Gara Basarab"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+        <busStop id="-2517418574" name="Gara de Nord"/>
+        <busStop id="1344579108" name="Șoseaua Nicolae Titulescu"/>
+    </ptLine>
+    <ptLine id="422861" name="Bus 101: Faur =&gt; Bucur Obor" line="101" type="bus" vClass="bus" color="29,113,184" completeness="0.08" missingBefore="32">
+        <route edges="231916541#0 196657059#1 196657059#2 196657059#3 196657059#4 668930962 13605580 668930964#0 668930964#1 668930964#2 229804193#0 229804193#1"/>
+        <busStop id="2395321515" name="Șoseaua Mihai Bravu 33"/>
+        <busStop id="2483542001" name="Bucur Obor"/>
+        <busStop id="2360447857" name="Bucur Obor"/>
+    </ptLine>
+    <ptLine id="443037" name="Bus 135: C.F.R. Constanța → C.E.T. Sud Vitan" line="135" type="bus" vClass="bus" color="29,113,184" completeness="0.13" missingBefore="19" missingAfter="20">
+        <route edges="-669019902#1 -669019902#0 -1308416610#1 -1308416610#0 -1241220348#2 464722639#1 352589235#0 352589235#1 352589235#2 352589235#4 242200861#1 229481501#0 229481501#1 229481501#2 229481501#4 229481501#5 229481501#6 229481501#7 241522445#0 241522445#1 241522445#3 13837535#0 13837535#1 13837535#2 671837384 227364752#0 229673022 227364750#0 671635092#0 671635092#2 894634967#0 894634967#1 894634967#2 229673021#0 229673021#1 229673021#2 229673021#3 1393194546#0 19997543#1 19997543#2 -37190330#2 -37190330#1 28877320#0 28877320#1 28877320#2 28877320#3 45729668 206009884#0 229947582 -1225436852 -240807884#0 -1325259403 -229947581 -1541289717#12 -1541289717#10 -1541289717#9 -1541289717#8 -1541289717#7 -1541289717#5 -1541289717#3 -1541289717#1 -1541289717#0"/>
+        <busStop id="-582478465" name="Șoseaua Ștefan cel Mare"/>
+        <busStop id="3583477526" name="Stadionul Dinamo"/>
+        <busStop id="3583477529" name="Teatrul Metropolis"/>
+        <busStop id="582481154" name="Piața Gemeni"/>
+        <busStop id="2383419052" name="Calea Moșilor"/>
+        <busStop id="2389982902" name="Foișorul de Foc"/>
+        <busStop id="-2519476224" name="Școala Iancului"/>
+    </ptLine>
+    <ptLine id="445083" name="Bus 311: Sala Palatului =&gt; Faur" line="311" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingAfter="45">
+        <route edges="-1359704788 -996909637#1 -1026443222 -668290740 -1206817639#2 -1206817639#0 -14261705#1 50584795 246131187#0 139713885#1 186554856 180685590#0 180685590#1 180685590#2 180685590#3 180685590#4 180685590#6 186554853#1 186554853#2 186554853#3 186554853#4 186554853#5 1249888977#0 22878047#0 22878047#1 22878047#2 8063798#0 8063798#2 8063798#3 8063798#4 23774293#0 23774293#3 23774293#4 23774293#6 23774235#0 23774235#2 1282766742#0 1282766742#1 1282766741 1318111813#1 1318111813#2 1318111813#3 1318111813#4 670574720#0 670574720#1 -229481808 -83493158 543891696#1 668291230 891109344#0 891109344#1 -1495252187 -85587072#2 -85587072#1 -1225436852 -240807884#0 -1325259403 -229947581 -1541289717#12 -1541289717#10 -1541289717#9 -1541289717#8 -1541289717#7 -1541289717#5 -1541289717#3 -1541289717#1 -1541289717#0"/>
+        <busStop id="-2389982893" name="Calea Moșilor"/>
+        <busStop id="-3053357434" name="Traian"/>
+        <busStop id="-2519476224" name="Școala Iancului"/>
+    </ptLine>
+    <ptLine id="48263" name="Bus 135: C.E.T. Sud Vitan → C.F.R. Constanța" line="135" type="bus" vClass="bus" color="29,113,184" completeness="0.13" missingBefore="19" missingAfter="20">
+        <route edges="1541289717#0 1541289717#1 1541289717#2 1541289717#4 1541289717#6 1541289717#8 1541289717#9 1541289717#10 1541289717#11 229947581 1325259403 240807884#0 1225436852 229781423 1495715446 15488620#0 15488620#1 37190330#1 37190330#2 229238396#0 15489228#1 -15489185 -229673021#2 -229673021#1 -229673021#0 -894634967#2 -894634967#1 -894634967#0 -671635091 -671635092#1 -227364750#2 -229673022 -227364752#1 -1304913938#1 -229673024#1 -373482266#5 -373482266#4 -373482266#3 -373482266#1 229796731#0 229796731#2 302994038#0 302994038#2 302994038#4 302994038#5 302994038#6 302994038#7 302994038#8 302994038#9 302994038#10 302994038#11 302994038#12 302994038#13 302994038#14 302994038#15 464722640#0 1241220348#0 1308416610#0 1308416610#1 1308416610#2 669019902#1"/>
+        <busStop id="2519476219" name="Piața Iancului"/>
+        <busStop id="2519476224" name="Școala Iancului"/>
+        <busStop id="-590206839" name="Calea Moșilor"/>
+        <busStop id="-590208133" name="Piața Gemeni"/>
+        <busStop id="-2352303603" name="Piața Spaniei"/>
+        <busStop id="678894005" name="Mihai Eminescu"/>
+        <busStop id="1052362435" name="Șoseaua Ștefan cel Mare"/>
+    </ptLine>
+    <ptLine id="6638733" name="Bus 61: Complex Comercial Apusului → Piața Rosetti" line="61" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.21" missingBefore="22">
+        <route edges="8217902#0 201180135#1 301223654#0 301223654#1 301223654#2 666139698 448266578#0 448266578#1 667029296 16277739#0 16277739#1 16277739#2 16277739#3 16277739#4 229237115#0 1367423377 454285293#0 454285293#1 242408358#1 666701066 154325236 666184644 229236876#1 1462022294 -180685585#9 -180685585#7 -180685585#6 -180685585#5 -180685585#4 -180685585#3 -180685585#2 -180685585#1 -196639093#1 4274826#1 4274826#2 -1282766740 -39725274#11 -39725274#7 -39725274#6 -39725274#5 -39725274#4 -39725274#3 -39725274#1 -39725274#0 -230170457#2 -230170457#1 -1206972198 -4089366#0 12503324#0 28430422#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561"/>
+        <busStop id="3053138333" name="Bd. Dr. Marinescu"/>
+        <busStop id="3053147733" name="Facultatea de Medicină"/>
+        <busStop id="2517228824" name="Piața Operei"/>
+        <busStop id="-2519567779" name="Facultatea de Drept"/>
+        <busStop id="2387001479" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="-2387001476" name="Grădina Cișmigiu"/>
+        <busStop id="-2387001494" name="Universitate"/>
+        <busStop id="-2387001484" name="Piața Rosetti"/>
+    </ptLine>
+    <ptLine id="6638734" name="Bus 61: Piața Rosetti → Complex Comercial Apusului" line="61" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.23" missingAfter="22">
+        <route edges="-451327561 668312640 131407439 895759912#1 28898452 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 170778293 196639093#1 180685585#1 180685585#2 180685585#3 180685585#4 180685585#5 180685585#6 180685585#7 180685585#9 160469881#0 160469881#1 229820743#0 229820743#1 28991774#0 28991719 -242408358#1 -242408358#0 -454285293#0 -1367423377 -229237115#0 -16277739#4 -16277739#3 -16277739#2 -16277739#1 -16277739#0 -667029296 -448266578#1 -448266578#0 -666139698 160469882#0 160469882#1 160469882#2 1529006660"/>
+        <busStop id="2387001484" name="Piața Rosetti"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="2387001494" name="Universitate"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="2387001480" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2519567779" name="Facultatea de Drept"/>
+        <busStop id="-2517228824" name="Piața Operei"/>
+        <busStop id="-3053152233" name="Facultatea de Medicină"/>
+        <busStop id="620099542" name="Grădina Botanică"/>
+    </ptLine>
+    <ptLine id="6638735" name="Bus 62: Grup Școlar Auto → Gara de Nord" line="62" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.13" missingBefore="34">
+        <route edges="8217902#0 301223786#0 1529006658#1 1529011461#1 1529011461#2 84490601#0 178161828 227497626 668719237#1 153967347#0 153967347#1 12471840#0 12471840#2 12471840#3 12471840#4 12471840#5 12471840#6 84489109#0 84489248#2 23555683#1 23555683#2 668510236 227617363#0 227617363#1 227617363#2 227617363#3 668510237#0 668510237#1 668510237#2 668510234 227617359#0 227617359#1 450735439"/>
+        <busStop id="4481532887" name="Carol Davila"/>
+        <busStop id="2519078585" name="Pod Cotroceni"/>
+        <busStop id="4481626506" name="Calea Plevnei"/>
+        <busStop id="2990819616" name="Bd. Dinicu Golescu"/>
+        <busStop id="2990827632" name="Ministerul Transporturilor"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="6638736" name="Bus 62: Gara de Nord → Grup Școlar Auto" line="62" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.10" missingAfter="34">
+        <route edges="451333767#0 451333767#1 23555559#2 1305940790#0 1305940790#1 1305940790#2 1305940790#3 1305940790#4 668176613#0 154229441#0 154229441#1 668175351#0 668175351#1 65750938#0 65750938#1 65750938#2 87716921 227497624 84490743#1 301226655#0 667017562#1 612898782#0 1529006660"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2519055695" name="Witing"/>
+        <busStop id="4481601503" name="Pod Cotroceni"/>
+        <busStop id="620099542" name="Grădina Botanică"/>
+    </ptLine>
+    <ptLine id="6638739" name="Bus 70: Bd. Basarabia =&gt; Vasile Pârvan" line="70" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.26" missingBefore="21">
+        <route edges="23050178#0 23050178#2 23050178#3 23050178#5 23125191 -23050185 -23125233#2 -23125233#1 -23125233#0 23125404#0 23125404#1 23125404#2 23125404#3 240629022#0 229947581 1325259403 240807884#0 1225436852 85587072#0 85587072#2 1495252187 670542570 668291232 668291231#0 4866077#0 83493158 668342047 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 8138326 23489740#1 23489740#2 23489740#3 23489740#4 23489740#5 23489740#6 23489740#7 39340441#0 39340441#1"/>
+        <busStop id="4488741065" name="Biserica Delea Veche"/>
+        <busStop id="5927318604" name="Țepeș Vodă"/>
+        <busStop id="990269977" name="Matei Voievod"/>
+        <busStop id="3053357434" name="Traian"/>
+        <busStop id="2389982893" name="Calea Moșilor"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="2387001494" name="Universitate"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="4789653802" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2387001496" name="Vasile Pârvan"/>
+    </ptLine>
+    <ptLine id="6638743" name="Bus 70: Vasile Pârvan =&gt; Bd. Basarabia" line="70" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.31" missingAfter="17">
+        <route edges="39340441#1 -1545408176 -1545408177 -668297468 -1545408178 -12472487#1 -196639093#1 4274826#1 4274826#2 -1282766740 -39725274#11 -39725274#7 -39725274#6 -39725274#5 -39725274#4 -39725274#3 -39725274#1 -39725274#0 -230170457#2 -230170457#1 -1206972198 -4089366#0 12503324#0 28430422#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561 668312640 131407439 895759912#1 125102032 -229483262 -229483261 -229481944#2 -229481944#1 -229481913#0 -241081586 -229481912 -668293550 -28898205#1 -28898205#0 -668291228 -229481808 -83493158 543891696#1 668291230 670542571 -1495252187 -85587072#2 -85587072#1 -1225436852 -240807884#0 -1325259403 -229947581 -23125404#3 -23125404#2 -23125404#1 -23125404#0 23125233#0 23125233#1 23125233#2 23050185 452067678 23125202 -23050178#5 -23050178#3 -23050178#2 -23050178#1"/>
+        <busStop id="2387001496" name="Vasile Pârvan"/>
+        <busStop id="2387001479" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="-2387001476" name="Grădina Cișmigiu"/>
+        <busStop id="-2387001494" name="Universitate"/>
+        <busStop id="-2387001484" name="Piața Rosetti"/>
+        <busStop id="-2387001459" name="Armenească"/>
+        <busStop id="-6258682618" name="Calea Moșilor"/>
+        <busStop id="-3053357434" name="Traian"/>
+        <busStop id="-4488678849" name="Matei Voievod"/>
+        <busStop id="4488678847" name="Țepeș Vodă"/>
+        <busStop id="-4488678846" name="Biserica Delea Veche"/>
+        <busStop id="-493732512" name="Calea Călărașilor"/>
+    </ptLine>
+    <ptLine id="6639829" name="Bus 79: Bd. Basarabia → Gara de Nord" line="79" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.28" missingBefore="21">
+        <route edges="23050178#0 23050178#2 23050178#3 23050178#5 23125191 -23050185 -23125233#2 -23125233#1 -23125233#0 23125404#0 23125404#1 23125404#2 23125404#3 240629022#0 229947581 1325259403 -898560098#1 23050186#0 15488620#0 15488620#1 37190330#1 37190330#2 229238396#0 15489228#1 -15489185 -229673021#2 -229673021#1 -229673021#0 -894634967#2 -894634967#1 -894634967#0 -671635091 -671635092#1 -227364750#2 -229673022 -227364752#1 -1304913938#1 -229673024#1 -373482266#5 -373482266#4 -373482266#3 -373482266#1 -232079825#4 -232079825#2 -232079825#1 -452252360 232079775#0 232079775#1 232079775#2 232079775#4 130848151 28869538#0 28869538#1 668307633#0 668307633#2 668307633#3 668307630 4045775#0 4045775#1 667696381#0 23798261 -668307636#2 -668307636#1 -23632425#5 -23632425#2 -23632425#0 -446842115 23632420#0 23632420#1 23632420#2 660110981#1 23554698#0 452252354 23123516#0 -1460913162#1 -669189552 -289213552#2 -289213552#0 -244923333 227617362#0 227617362#2"/>
+        <busStop id="4488741065" name="Biserica Delea Veche"/>
+        <busStop id="5927318604" name="Țepeș Vodă"/>
+        <busStop id="990269977" name="Matei Voievod"/>
+        <busStop id="2389982905" name="Foișorul de Foc"/>
+        <busStop id="-590206839" name="Calea Moșilor"/>
+        <busStop id="-590208133" name="Piața Gemeni"/>
+        <busStop id="-2352303603" name="Piața Spaniei"/>
+        <busStop id="31402322" name="Piața Romană"/>
+        <busStop id="-2519507110" name="Calea Victoriei"/>
+        <busStop id="6180491263" name="Piața Buzești"/>
+        <busStop id="2519507108" name="Calea Griviței"/>
+        <busStop id="3326835001" name="Gara de Nord"/>
+        <busStop id="-12427766016" name="Calea Dorobanților"/>
+    </ptLine>
+    <ptLine id="6639830" name="Bus 79: Gara de Nord → Bd. Basarabia" line="79" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.31" missingAfter="19">
+        <route edges="227617362#2 -289213549#2 -289213549#1 -289213549#0 -23123512 -289213547 -446959288#0 23556377#0 -452252354 -23554698#1 -660110981#2 -660110981#0 -23632420#1 -23632420#0 446842115 23632425#0 23632425#1 23632425#4 668307636#0 668307636#2 244658427#0 244658427#1 668307639 1320256482 452252352#0 452252352#1 448266587 778823269 778823265 448792279#0 448266583 448266586 1214130905 119238380#0 119238380#1 723802758 669156737#0 669156737#2 669156737#3 232079825#1 232079825#2 232079825#3 373482266#0 373482266#2 373482266#4 373482266#5 229673024#0 1304913938#0 227364752#0 229673022 227364750#0 671635092#0 671635092#2 894634967#0 894634967#1 894634967#2 229673021#0 229673021#1 229673021#2 229673021#3 1393194546#0 19997543#1 19997543#2 -37190330#2 -37190330#1 -15488620#1 -15488620#0 -206009885#1 -206009885#0 206009884#0 898560097 898560098#0 -1325259403 1552353948 668738653 -23125404#3 -23125404#2 -23125404#1 -23125404#0 23125233#0 23125233#1 23125233#2 23050185 452067678 23125202 -23050178#5 -23050178#3 -23050178#2 -23050178#1"/>
+        <busStop id="3326835001" name="Gara de Nord"/>
+        <busStop id="-3747921221" name="Bd. Alexandru Ioan Cuza"/>
+        <busStop id="-2519507116" name="Piața Buzești"/>
+        <busStop id="2519507109" name="Calea Victoriei"/>
+        <busStop id="2519529608" name="Piața Romană"/>
+        <busStop id="2519507105" name="Colegiul Economic Virgil Madgearu"/>
+        <busStop id="582481089" name="Piața Spaniei"/>
+        <busStop id="582481154" name="Piața Gemeni"/>
+        <busStop id="2383419052" name="Calea Moșilor"/>
+        <busStop id="2389982902" name="Foișorul de Foc"/>
+        <busStop id="-4488678849" name="Matei Voievod"/>
+        <busStop id="4488678847" name="Țepeș Vodă"/>
+        <busStop id="-4488678846" name="Biserica Delea Veche"/>
+        <busStop id="-493732512" name="Calea Călărașilor"/>
+    </ptLine>
+    <ptLine id="6639881" name="Bus 85: Gara de Nord =&gt; Baicului" line="85" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.50">
+        <route edges="451333767#0 451333767#1 23555559#2 1305940790#0 1305940790#1 1305940790#2 1305940790#3 1305940790#4 668176613#0 154229441#0 154229441#1 668175351#0 668175351#1 666958778#0 882648295 666958787#0 666958787#1 666958791 666789045 198518786 246129077#0 246129077#1 207025494#0 246129078#0 246129079 860591790 860591792 1553027401 891542354 -180685591#1 -180685591#0 -1545408176 -1545408177 -668297468 -1545408178 -12472487#1 -196639093#1 4274826#1 4274826#2 -1282766740 -39725274#11 -39725274#7 -39725274#6 -39725274#5 -39725274#4 -39725274#3 -39725274#1 -39725274#0 -230170457#2 -230170457#1 -1206972198 -4089366#0 12503324#0 28430422#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561 668312640 131407439 895759912#1 125102032 -229483262 -229483261 -229481944#2 -229481944#1 -229481913#0 -241081586 -229481912 -668293550 -28898205#1 -28898205#0 -668291228 -229481808 -83493158 543891696#1 668291230 670542571 -1495252187 -85587072#2 -85587072#1 1495715448#0 1126350849#1 -1225436852 -240807884#0 -1325259403 1552353948 668738653 -8119904#9 -8119904#8 -8119904#7 -8119904#6 -8119904#5 -8119904#4 -8119904#3 -8119904#2 -8119904#1"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2519055695" name="Witing"/>
+        <busStop id="4481532888" name="Mircea Vulcănescu"/>
+        <busStop id="4481532886" name="Casa Studenților"/>
+        <busStop id="6470893774" name="Vasile Pârvan"/>
+        <busStop id="2387001479" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="-2387001476" name="Grădina Cișmigiu"/>
+        <busStop id="-2387001494" name="Universitate"/>
+        <busStop id="-2387001484" name="Piața Rosetti"/>
+        <busStop id="-2387001459" name="Armenească"/>
+        <busStop id="-6258682618" name="Calea Moșilor"/>
+    </ptLine>
+    <ptLine id="6639882" name="Bus 85: Baicului =&gt; Gara de Nord" line="85" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.52">
+        <route edges="84489109#0 84489248#2 23555683#1 23555683#2 668510236 227617363#0 227617363#1 227617363#2 227617363#3 668510237#0 668510237#1 668510237#2 668510234 227617359#0 227617359#1 450735439 -668291231#0 -668291232 4866077#0 83493158 668342047 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 8138326 23489740#1 23489740#2 23489740#3 23489740#4 23489740#5 23489740#6 23489740#7 39250655#1 689747130 860591793 891542355#1 -1553027401 -860591792 -860591790 -246129079 -246129078#0 -207025494#1 -246129077#1 -246129077#0 -198518786 -666789045 -666958791 -666958787#1 -666958787#0 -882648295 -667047003 12471840#0 12471840#2 12471840#3 12471840#4 12471840#5 12471840#6 8119904#0 8119904#2 8119904#3 8119904#4 8119904#5 8119904#6 8119904#7 8119904#8 8119904#9 240629022#0 229947581 1325259403 240807884#0 1225436852 85587072#0 85587072#2 1495252187 670542570"/>
+        <busStop id="2389982893" name="Calea Moșilor"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="2387001494" name="Universitate"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="4789653802" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="4481532885" name="Calea Plevnei"/>
+        <busStop id="-2295201768" name="Casa Studenților"/>
+        <busStop id="-2295201780" name="Mircea Vulcănescu"/>
+        <busStop id="2990819616" name="Bd. Dinicu Golescu"/>
+        <busStop id="2990827632" name="Ministerul Transporturilor"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="5602667179" name=""/>
+    </ptLine>
+    <ptLine id="6640043" name="Bus 93: Piața Presei =&gt; Cartier Constantin Brâncuși" line="93" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.06" missingAfter="63">
+        <route edges="-328681900 -723496081 -227397419#2 -723496082 -388321481#2 -860582050 -229624959 -612914829 -229624957 -229624955 -1117590360#3 -1117590360#1 -229624958 -229624952 328681899 1460913158 612919125 328681897 292245518 1460913160 1460913161#0 1460913161#2 895504659#1 4902766#0 4902766#1 4902766#2 450735439 451333767#0 451333767#1 23555559#2 1305940790#0 1305940790#1 1305940790#2 1305940790#3 1305940790#4 668176613#0 154229441#0 154229441#1 668175351#0 668175351#1 65750938#0 65750938#1 65750938#2 87716921 227497624 84490743#1 301226655#0 667017562#1 612898782#0 1529006660"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2519055695" name="Witing"/>
+        <busStop id="4481601503" name="Pod Cotroceni"/>
+        <busStop id="620099542" name="Grădina Botanică"/>
+    </ptLine>
+    <ptLine id="6640044" name="Bus 93:  Cartier Constantin Brâncuși =&gt; Piața Presei" line="93" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.08" missingBefore="22" missingAfter="46">
+        <route edges="8217902#0 301223786#0 1529006658#1 1529011461#1 1529011461#2 84490601#0 178161828 227497626 668719237#1 153967347#0 153967347#1 12471840#0 12471840#2 12471840#3 12471840#4 12471840#5 12471840#6 84489109#0 84489248#2 23555683#1 23555683#2 668510236 227617363#0 227617363#1 227617363#2 227617363#3 668510237#0 668510237#1 668510237#2 668510234 450735440 295382937#0 295382937#1 669144908 668532083#0 -1460913161#2 -1460913161#1 -1460913160 -292245518 -328681897 -612919124 -1460913158 -328681899 -328681900 -723496081 -227397419#2 -723496082 -388321481#2 -860582050 -229624959 -612914829 -229624957 -229624955 -1117590360#3 -1117590360#1 -229624958 -229624952"/>
+        <busStop id="4481532887" name="Carol Davila"/>
+        <busStop id="2519078585" name="Pod Cotroceni"/>
+        <busStop id="4481626506" name="Calea Plevnei"/>
+        <busStop id="2990819616" name="Bd. Dinicu Golescu"/>
+        <busStop id="2990827632" name="Ministerul Transporturilor"/>
+        <busStop id="1143755097" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="6640045" name="Bus 96: Depoul Alexandria =&gt; Gara de Nord" line="96" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.18" missingBefore="22">
+        <route edges="8217902#0 301223786#0 1529006658#1 1529011461#1 1529011461#2 84490601#0 178161828 227497626 668719237#1 153967347#0 153967347#1 12471840#0 12471840#2 12471840#3 12471840#4 12471840#5 12471840#6 84489109#0 84489248#2 23555683#1 23555683#2 668510236 227617363#0 227617363#1 227617363#2 227617363#3 668510237#0 668510237#1 668510237#2 668510234 227617359#0 227617359#1 450735439"/>
+        <busStop id="4481532887" name="Carol Davila"/>
+        <busStop id="2519078585" name="Pod Cotroceni"/>
+        <busStop id="4481626506" name="Calea Plevnei"/>
+        <busStop id="2990819616" name="Bd. Dinicu Golescu"/>
+        <busStop id="2990827632" name="Ministerul Transporturilor"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="6640046" name="Bus 96: Gara de Nord =&gt; Depoul Alexandria" line="96" type="trolleybus" vClass="bus" color="0,141,54" completeness="0.12" missingAfter="24">
+        <route edges="451333767#0 451333767#1 23555559#2 1305940790#0 1305940790#1 1305940790#2 1305940790#3 1305940790#4 668176613#0 154229441#0 154229441#1 668175351#0 668175351#1 65750938#0 65750938#1 65750938#2 87716921 227497624 84490743#1 301226655#0 667017562#1 612898782#0 1529006660"/>
+        <busStop id="2389847196" name="Gara de Nord"/>
+        <busStop id="2519055695" name="Witing"/>
+        <busStop id="4481601503" name="Pod Cotroceni"/>
+        <busStop id="620099542" name="Grădina Botanică"/>
+    </ptLine>
+    <ptLine id="6644260" name="Bus 162: Gara de Nord =&gt; Giulești Sârbi" line="162" type="bus" vClass="bus" color="29,113,184" completeness="0.06" missingAfter="32">
+        <route edges="668979222 23555559#2 1305940790#0 1305940790#1 1305940790#2 1305940790#3 1305940790#4 -668176612#2 -668176611 -668176609#2 -668176609#1 -668176609#0 -529355534#5 -529355534#4 -529355534#3 -529355534#2 -529355534#1 -529355534#0 -668588452 -50586387 84483724#0 84483724#1 668676696 373297791 668678760#0 106797418#2"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+        <busStop id="-2519078588" name="Primăria Sector 6"/>
+    </ptLine>
+    <ptLine id="6644261" name="Bus 162: Giulești Sârbi =&gt; Gara de Nord" line="162" type="bus" vClass="bus" color="29,113,184" completeness="0.05" missingBefore="36">
+        <route edges="295382931#0 295382931#2 139758830#0 906667150#0 106797419#0 106797419#1 106797419#2 139788055#1 139788055#2 668922198#0 668883523#0 668883523#1 668883523#2 668883523#3 244433542#0 244433542#1 668979222"/>
+        <busStop id="8282092707" name="Gara Basarab"/>
+        <busStop id="2388033145" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="6644401" name="Bus 163: Giulești Sârbi =&gt; Vasile Pârvan" line="163" type="bus" vClass="bus" color="29,113,184" completeness="0.12" missingBefore="40">
+        <route edges="295382931#0 295382931#2 139758829#0 139758829#2 139758829#3 139758829#4 139758829#6 668679789 668676693 668679784#0 668679784#1 50586387 668588452 529355534#0 529355534#1 529355534#2 529355534#3 529355534#4 529355534#5 529355534#6 668176609#1 668176609#2 668176608 668176610 668176613#0 154229441#0 154229441#1 668175351#0 668175351#1 666958778#0 882648295 666958787#0 666958787#1 666958791 666789045 198518786 246129077#0 246129077#1 207025494#0 246129078#0 246129079 860591790 860591792 1553027401 891542354"/>
+        <busStop id="2990819619" name="Primăria Sector 6"/>
+        <busStop id="2519055695" name="Witing"/>
+        <busStop id="4481532888" name="Mircea Vulcănescu"/>
+        <busStop id="4481532886" name="Casa Studenților"/>
+        <busStop id="6470893774" name="Vasile Pârvan"/>
+        <busStop id="14178189703" name="Primăria Sector 6"/>
+    </ptLine>
+    <ptLine id="6644402" name="Bus 163: Vasile Pârvan =&gt; Giulești Sârbi" line="163" type="bus" vClass="bus" color="29,113,184" completeness="0.09" missingAfter="36">
+        <route edges="891542354 -180685591#1 -180685591#0 -1545408176 -1545408177 -668297468 -1545408178 -12472487#1 180685585#1 180685585#2 180685585#3 180685585#4 180685585#5 180685585#6 180685585#7 180685585#9 160469881#0 160469881#1 229820743#0 229820743#1 666701065 23123525#1 666205900 198516661#0 198516661#1 -246129077#1 -246129077#0 -198518786 -666789045 -666958791 -666958787#1 -666958787#0 -882648295 -667047003 -668175351#3 -668175351#0 -154229441#1 -154229441#0 -668176613#2 -668176612#2 -668176611 -668176609#2 -668176609#1 -668176609#0 -529355534#5 -529355534#4 -529355534#3 -529355534#2 -529355534#1 -529355534#0 -668588452 -50586387 84483724#0 84483724#1 668676696 373297791 668678760#0 106797418#2"/>
+        <busStop id="6470893774" name="Vasile Pârvan"/>
+        <busStop id="2519567779" name="Facultatea de Drept"/>
+        <busStop id="-2295201780" name="Mircea Vulcănescu"/>
+        <busStop id="-2519078588" name="Primăria Sector 6"/>
+    </ptLine>
+    <ptLine id="6653592" name="Bus 168: Valea Ialomiței → Piața Romană" line="168" type="bus" vClass="bus" color="29,113,184" completeness="0.19" missingBefore="24">
+        <route edges="16277426#0 241077488 1492098647 854160103 241077288 229237069#0 229237069#1 1367423376#0 27552707 23123525#1 666205900 198516661#0 198516661#1 207025496#0 246129080 206994123 314033562 314034006 314034007 231253170 23123526#0 23123526#1 265969687#0 265969687#1 265969687#2 265969687#3 265969687#4 265969687#5 1484735771 265969686#0 265969686#1 265969686#2 265969686#3 265969686#4 265969686#5 265969686#6 265969686#8 50584795 246131187#0 139713885#1 186554856 244668685 668989983#0 125413587#1 125413587#2 125413587#3 125413589#0 125413589#1 139713882 443138260#0 119241030#1 119241030#2 669726791#1 448266581#1 448266581#2"/>
+        <busStop id="2519567785" name="Pod Eroilor"/>
+        <busStop id="2519623179" name="Berzei"/>
+        <busStop id="3633229027" name="Constantin Cristescu"/>
+        <busStop id="2519623181" name="Cișmigiu"/>
+        <busStop id="571384856" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="6258392493" name="Piața Romană"/>
+        <busStop id="13475891043" name="Arthur Verona"/>
+    </ptLine>
+    <ptLine id="6653593" name="Bus 168: Piața Romană → Valea Ialomiței" line="168" type="bus" vClass="bus" color="29,113,184" completeness="0.21" missingAfter="23">
+        <route edges="448266581#2 668307642#1 130848152#2 778823271 448266586 448266584 130848151 448266588#0 448266585 448266587 778823267 778823268#1 231435896 125496883#0 125496883#1 125496888#0 125496888#1 1486385191#0 313014417#0 313014417#2 295377943 723800304#0 23123521#0 23123521#1 23123521#2 23123521#3 23123521#4 301860564 448266591#0 241217409#0 241217409#1 668513542#0 231253160#0 231253160#1 231253160#2 231253160#3 231253160#5 543988955#2 231253157 669032715#0 669032715#1 -231253170 -314034007 -314034006 -314033562 -206994123 -246129080 -207025496#1 -198516661#2 -198516661#0 -666205900 -23123525#1 -227497585 -1367423376#0 -229237069#1 -229237069#0 -241077288 -854160103 -1492098647 -241077488 -16277426#1"/>
+        <busStop id="6258392493" name="Piața Romană"/>
+        <busStop id="2990854835" name="Calea Victoriei"/>
+        <busStop id="2990854732" name="Biblioteca Academiei Române"/>
+        <busStop id="2990887289" name="Popa Tatu"/>
+        <busStop id="3059983043" name="Mircea Vulcănescu"/>
+        <busStop id="-3060008133" name="Berzei"/>
+        <busStop id="-2519567790" name="Spitalul Universitar"/>
+        <busStop id="-2519567763" name="Carol Davila"/>
+    </ptLine>
+    <ptLine id="6653708" name="Bus 205: Gara de Nord =&gt; Depou Străulești" line="205" type="bus" vClass="bus" color="29,113,184" completeness="0.07" missingAfter="52">
+        <route edges="668532083#0 244923333 289213552#0 289213552#1 669189552 1460913162#0 -23123516#1 -452252354 -23554698#1 231769644#1 231769644#2 668559793#0 668559793#1 668559793#2 256336897#0 231253539 1132173508#1 1132173511#1 1132173511#2 1132173511#3 227396567"/>
+        <busStop id="2362383216" name="Gara de Nord"/>
+        <busStop id="-2519529609" name="Polizu"/>
+        <busStop id="-2519507116" name="Piața Buzești"/>
+        <busStop id="5243010651" name="Muzeul Țăranului Român"/>
+    </ptLine>
+    <ptLine id="6653709" name="Bus 205: Depou Străulești =&gt; Gara de Nord" line="205" type="bus" vClass="bus" color="29,113,184" completeness="0.10" missingBefore="41">
+        <route edges="668712613 1071220626#0 1071220626#5 231253164#0 231253164#1 231253164#2 231253164#3 231253164#4 1132173512 231253542#0 231253542#1 231253542#2 231253542#3 256336901#0 256336901#1 231253156#0 452252354 23123516#0 -1460913162#1 -669189552 -289213552#2 -289213552#0 -244923333 895504659#1"/>
+        <busStop id="5243010652" name="Spitalul Clinic Filantropia"/>
+        <busStop id="8324090348" name="Piața Victoriei"/>
+        <busStop id="2519507108" name="Calea Griviței"/>
+        <busStop id="2384913752" name="Gara de Nord"/>
+        <busStop id="13138024839" name="Bd. Banu Manta"/>
+    </ptLine>
+    <ptLine id="6654330" name="Bus 226: Depoul Alexandria → Piața Romană" line="226" type="bus" vClass="bus" color="29,113,184" completeness="0.17" missingBefore="28">
+        <route edges="16277426#0 241077488 1492098647 854160103 241077288 229237069#0 229237069#1 1367423376#0 27552707 23123525#1 666205900 198516661#0 198516661#1 207025496#0 246129080 206994123 314033562 314034006 314034007 231253170 23123526#0 23123526#1 265969687#0 265969687#1 265969687#2 265969687#3 265969687#4 265969687#5 1484735771 265969686#0 265969686#1 265969686#2 265969686#3 265969686#4 265969686#5 265969686#6 265969686#8 50584795 246131187#0 139713885#1 186554856 244668685 668989983#0 125413587#1 125413587#2 125413587#3 125413589#0 125413589#1 139713882 443138260#0 119241030#1 119241030#2 669726791#1 448266581#1 448266581#2"/>
+        <busStop id="2519567785" name="Pod Eroilor"/>
+        <busStop id="2519623179" name="Berzei"/>
+        <busStop id="3633229027" name="Constantin Cristescu"/>
+        <busStop id="2519623181" name="Cișmigiu"/>
+        <busStop id="3061303235" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="6258392493" name="Piața Romană"/>
+        <busStop id="13475891043" name="Arthur Verona"/>
+    </ptLine>
+    <ptLine id="6654331" name="Bus 226: Piața Romană =&gt; Depoul Alexandria" line="226" type="bus" vClass="bus" color="29,113,184" completeness="0.18" missingAfter="28">
+        <route edges="448266581#2 668307642#1 130848152#2 778823271 448266586 448266584 130848151 448266588#0 448266585 448266587 778823267 778823268#1 231435896 125496883#0 125496883#1 125496888#0 125496888#1 1486385191#0 313014417#0 313014417#2 295377943 723800304#0 23123521#0 23123521#1 23123521#2 23123521#3 23123521#4 301860564 448266591#0 256343306 231253160#0 231253160#1 231253160#2 231253160#3 231253160#5 543988955#2 231253157 669032715#0 669032715#1 -231253170 -314034007 -314034006 -314033562 -206994123 -246129080 -207025496#1 -198516661#2 -198516661#0 -666205900 -23123525#1 -227497585 -1367423376#0 -229237069#1 -229237069#0 -241077288 -854160103 -1492098647 -241077488 -16277426#1"/>
+        <busStop id="6258392493" name="Piața Romană"/>
+        <busStop id="2990854837" name="Calea Victoriei"/>
+        <busStop id="2990854732" name="Biblioteca Academiei Române"/>
+        <busStop id="2990887289" name="Popa Tatu"/>
+        <busStop id="3059983043" name="Mircea Vulcănescu"/>
+        <busStop id="-3060008133" name="Berzei"/>
+        <busStop id="-2519567790" name="Spitalul Universitar"/>
+        <busStop id="-2519567763" name="Carol Davila"/>
+    </ptLine>
+    <ptLine id="6657910" name="Bus 311: Faur =&gt; Sala Palatului" line="311" type="bus" vClass="bus" color="29,113,184" completeness="0.20" missingBefore="28" missingAfter="1">
+        <route edges="1541289717#0 1541289717#1 1541289717#2 1541289717#4 1541289717#6 1541289717#8 1541289717#9 1541289717#10 1541289717#11 229947581 1325259403 240807884#0 1225436852 85587072#0 85587072#2 1495252187 670542570 668291232 668291231#0 4866077#0 83493158 668342047 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 14140940 229477788#0 229477788#1 229477788#2 229477788#3 231769534#0 231769534#3 231769534#4 231769534#5 -448621095#0 -125413589#0 23556874#0 23556874#1 23556874#2 668989981#0 668989981#1 668989981#2 -50584793#2 -50584793#1 -1359704788"/>
+        <busStop id="2519476219" name="Piața Iancului"/>
+        <busStop id="2519476224" name="Școala Iancului"/>
+        <busStop id="3053357434" name="Traian"/>
+        <busStop id="2389982893" name="Calea Moșilor"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="-3061303235" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="6318936107" name="Piața Revoluției"/>
+        <busStop id="-12586083402" name="Sala Palatului"/>
+    </ptLine>
+    <ptLine id="6659490" line="" type="bus" vClass="bus" completeness="0.50">
+        <route edges="-451327561 668312640 131407439 895759912#1 28898452 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1"/>
+        <busStop id="2387001484" name="Piața Rosetti"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+    </ptLine>
+    <ptLine id="6659530" name="Bus 368: Piața Romană =&gt; Valea Oltului" line="368" type="bus" vClass="bus" color="29,113,184" completeness="0.21" missingAfter="24">
+        <route edges="448266581#2 668307642#1 130848152#2 778823271 448266586 448266584 130848151 448266588#0 448266585 448266587 778823269 778823265 119238384#0 119238384#1 44499684#0 44499684#2 44499684#3 231769532#0 139713891#0 139713891#2 139713891#3 125420129#0 125420129#1 23556816 1192148708#0 1192148708#1 1192148708#2 -246131187#0 -50584795 543988953 23599424#1 23599424#2 23599424#3 23599424#4 23599424#5 38918038 23633028#0 23633028#1 23633028#2 272520014 -295377944 -30777953 723800304#0 23123521#0 23123521#1 23123521#2 23123521#3 23123521#4 301860564 448266591#0 256343306 231253160#0 231253160#1 231253160#2 231253160#3 231253160#5 543988955#2 231253157 669032715#0 669032715#1 -231253170 -314034007 -314034006 -314033562 -206994123 -246129080 -207025496#1 -198516661#2 -198516661#0 -666205900 -23123525#1 -227497585 -1367423376#0 -229237069#1 -229237069#0 -241077288 -854160103 -1492098647 -241077488 -16277426#1"/>
+        <busStop id="6258392493" name="Piața Romană"/>
+        <busStop id="3059962833" name="Nicolae Golescu"/>
+        <busStop id="-3059964037" name="Luterană"/>
+        <busStop id="3059964038" name="Calea Griviței"/>
+        <busStop id="2990887289" name="Popa Tatu"/>
+        <busStop id="3059983043" name="Mircea Vulcănescu"/>
+        <busStop id="-3060008133" name="Berzei"/>
+        <busStop id="-2519567790" name="Spitalul Universitar"/>
+        <busStop id="-2519567763" name="Carol Davila"/>
+    </ptLine>
+    <ptLine id="6659562" name="Bus 368: Valea Oltului =&gt; Piața Romană" line="368" type="bus" vClass="bus" color="29,113,184" completeness="0.17" missingBefore="28">
+        <route edges="16277426#0 241077488 1492098647 854160103 241077288 229237069#0 229237069#1 1367423376#0 27552707 23123525#1 666205900 198516661#0 198516661#1 207025496#0 246129080 206994123 314033562 314034006 314034007 231253170 23123526#0 23123526#1 265969687#0 265969687#1 265969687#2 265969687#3 265969687#4 265969687#5 1484735771 265969686#0 265969686#1 265969686#2 265969686#3 265969686#4 265969686#5 265969686#6 265969686#8 50584795 246131187#0 139713885#1 186554856 244668685 668989983#0 125413587#1 125413587#2 125413587#3 125413589#0 125413589#1 139713882 443138260#0 119241030#1 119241030#2 669726791#1 448266581#1 448266581#2"/>
+        <busStop id="2519567785" name="Pod Eroilor"/>
+        <busStop id="2519623179" name="Berzei"/>
+        <busStop id="3633229027" name="Constantin Cristescu"/>
+        <busStop id="2519623181" name="Cișmigiu"/>
+        <busStop id="3061303235" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="6258392493" name="Piața Romană"/>
+        <busStop id="13475891043" name="Arthur Verona"/>
+    </ptLine>
+    <ptLine id="6659851" name="Bus 381: Piața Reșița =&gt; Clăbucet" line="381" type="bus" vClass="bus" color="29,113,184" completeness="0.12" missingBefore="22" missingAfter="27">
+        <route edges="229234956 229235604#0 229235604#1 229234732#0 229234732#1 229234731 218268092#0 218268113#0 668309192 14140940 229477788#0 229477788#1 229477788#2 229477788#3 231769534#0 231769534#3 231769534#4 231769534#5 139713882 443138260#0 119241030#1 119241030#2 669726791#1 448266581#1 448266581#2 668307642#1 130848152#2 778823271 23781801 241212606 668307633#0 668307633#2 668307633#3 668307630 4045775#0 4045775#1 667696381#0 668307628#0 668307628#1 668307627 244656971#1 244656971#2 542791322#0 232080905 139713890 139713888#1 139713888#3 139713888#4 139713888#5 139713888#6 1132173508#1 1132173511#1 1132173511#2 1132173511#3"/>
+        <busStop id="3096591829" name="Piața Sfântul Gheorghe"/>
+        <busStop id="2389982923" name="Universitate"/>
+        <busStop id="3070604833" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="2522849389" name="Piața Romană"/>
+        <busStop id="2519507119" name="Povernei"/>
+        <busStop id="2522849393" name="Piața Victoriei"/>
+        <busStop id="5243010651" name="Muzeul Țăranului Român"/>
+    </ptLine>
+    <ptLine id="6659852" name="Bus 381: Clăbucet =&gt; Piața Reșița" line="381" type="bus" vClass="bus" color="29,113,184" completeness="0.14" missingBefore="13" missingAfter="31">
+        <route edges="668712613 1071220626#0 1071220626#5 231253164#0 231253164#1 231253164#2 231253164#3 231253164#4 1132173512 372148954#0 372148954#1 372148954#2 372148954#3 668720367#0 668720367#1 668720367#2 668720367#3 668720367#4 178061488 542810837 668712604 309265222#0 309265222#1 668307634 668307635#0 668307635#1 244658427#0 244658427#1 668307639 1320256482 452252352#0 452252352#1 23781788 241212475 44499684#0 44499684#2 44499684#3 231769532#0 35097268#1 1561134315 1561134314#0 69344025#1 226281310#1 241212350#0 241212350#1 196636258#0 196636258#1 891089879#0 891089879#1 218268112 23782053#0 23782053#1 229477787#0 229477787#1 218268093 1459912403#0 1459912403#1 1459912403#2"/>
+        <busStop id="5243010652" name="Spitalul Clinic Filantropia"/>
+        <busStop id="2522849392" name="Piața Victoriei"/>
+        <busStop id="5243010650" name="Orlando"/>
+        <busStop id="2522857239" name="Piața Romană"/>
+        <busStop id="3115619049" name="Bd. Nicolae Bălcescu"/>
+        <busStop id="2519567784" name="Piața 21 Decembrie 1989"/>
+        <busStop id="3672093625" name="Piața Sfântul Gheorghe"/>
+    </ptLine>
+    <ptLine id="6683559" name="Bus 385: Piața Sfânta Vineri=&gt; Valea Oltului" line="385" type="bus" vClass="bus" color="29,113,184" completeness="0.05" missingBefore="10" missingAfter="27">
+        <route edges="227053928#0 227053928#1 227053928#2 227053928#3 227053928#4 665696010#1 14135159 4865822 894655781#1 665627965 450554037#1"/>
+        <busStop id="2517228817" name="Elie Radu"/>
+        <busStop id="2517228829" name="Pod Izvor"/>
+    </ptLine>
+    <ptLine id="6683560" name="Bus 385: Valea Oltului =&gt; Piața Sfânta Vineri" line="385" type="bus" vClass="bus" color="29,113,184" completeness="0.03" missingBefore="27" missingAfter="6">
+        <route edges="665636578#0 665627961"/>
+        <busStop id="2517228828" name="Pod Izvor"/>
+    </ptLine>
+    <ptLine id="6683577" name="Bus 90: Semănătoarea =&gt; Arena Națională" line="90" type="trolleybus" vClass="bus" color="29,113,184" completeness="0.33" missingBefore="5" missingAfter="13">
+        <route edges="27758242#0 27758242#2 27758242#3 27758242#4 665933040#0 665933040#1 665933040#2 665933021#1 667035478#1 667035478#2 667035477#1 667035477#3 667035475 665627974#0 895746209#1 154325238#1 665627973#0 665627973#1 160469880 229236876#1 1462022294 -180685585#9 -180685585#7 -180685585#6 -180685585#5 -180685585#4 -180685585#3 -180685585#2 -180685585#1 -196639093#1 4274826#1 4274826#2 -1282766740 -39725274#11 -39725274#7 -39725274#6 -39725274#5 -39725274#4 -39725274#3 -39725274#1 -39725274#0 -230170457#2 -230170457#1 -1206972198 -4089366#0 12503324#0 28430422#0 8134468 -229236317#1 -229236317#0 -229825430#1 -229825430#0 -229235713 -451327561 668312640 131407439 895759912#1 125102032 -229483262 -229483261 -229481944#2 -229481944#1 -229481913#0 -241081586 -229481912 -668293550 -28898205#1 -28898205#0 -668291228 -229481808 -83493158 543891696#1 668291230 670542571 -1495252187 -85587072#2 -85587072#1 -1225436852 -240807884#0 -1325259403 1552353948 668738653 -8119904#9 -8119904#8 -8119904#7 -8119904#6 -8119904#5 -8119904#4 -8119904#3 -8119904#2 -8119904#1"/>
+        <busStop id="31403489" name="Pod Grozăvești"/>
+        <busStop id="3260928666" name="E.L.C.E.N."/>
+        <busStop id="2519055686" name="Pod Cotroceni"/>
+        <busStop id="5258245718" name="Spitalul Universitar"/>
+        <busStop id="2250275679" name="Pod Eroilor"/>
+        <busStop id="-2519567779" name="Facultatea de Drept"/>
+        <busStop id="2387001479" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="-2387001476" name="Grădina Cișmigiu"/>
+        <busStop id="-2387001494" name="Universitate"/>
+        <busStop id="-2387001484" name="Piața Rosetti"/>
+        <busStop id="-2387001459" name="Armenească"/>
+        <busStop id="-6258682618" name="Calea Moșilor"/>
+        <busStop id="-3053357434" name="Traian"/>
+        <busStop id="-3053340252" name="Școala Iancului"/>
+        <busStop id="-2519507114" name="Mecet"/>
+        <busStop id="-2519507101" name="Agricultorilor"/>
+    </ptLine>
+    <ptLine id="6683605" name="Bus 90: Arena Națională =&gt; Semănătoarea" line="90" type="trolleybus" vClass="bus" color="29,113,184" completeness="0.29" missingBefore="10" missingAfter="12">
+        <route edges="8119904#0 8119904#2 8119904#3 8119904#4 8119904#5 8119904#6 8119904#7 8119904#8 8119904#9 240629022#0 229947581 1325259403 240807884#0 1225436852 85587072#0 85587072#2 1495252187 670542570 668291232 668291231#0 4866077#0 83493158 668342047 668291228 28898205#0 28898205#1 241081684#0 229481912 241081586 229481913#0 229481913#1 229481944#2 668294768 229483262 448789651 131407442#0 668312641 28898244 229235713 229825430#0 229825430#1 229236317#0 229236317#1 12503470#0 668309192 218268116#0 69344024#0 4089366#0 4089366#1 1206972199 230170457#2 39725274#0 39725274#1 39725274#2 39725274#4 39725274#5 39725274#6 39725274#7 39725274#11 1282766740 170778293 196639093#1 180685585#1 180685585#2 180685585#3 180685585#4 180685585#5 180685585#6 180685585#7 180685585#9 160469881#0 160469881#1 229820743#0 229820743#1 666701065 187899505#1 668888066#1 668888066#3 668888066#4 668888066#5 668888066#6 668888066#7 665700251"/>
+        <busStop id="2519507102" name="Agricultorilor"/>
+        <busStop id="2519507114" name="Mecet"/>
+        <busStop id="2519476222" name="Școala Iancului"/>
+        <busStop id="3053357434" name="Traian"/>
+        <busStop id="2389982893" name="Calea Moșilor"/>
+        <busStop id="2387001460" name="Armenească"/>
+        <busStop id="2387001482" name="Teatrul Național"/>
+        <busStop id="2387001494" name="Universitate"/>
+        <busStop id="2387001475" name="Grădina Cișmigiu"/>
+        <busStop id="2387001480" name="Piața Mihail Kogălniceanu"/>
+        <busStop id="2519567779" name="Facultatea de Drept"/>
+        <busStop id="2519078604" name="Știrbei Vodă"/>
+        <busStop id="8326609526" name="A.N.E.F.S."/>
+        <busStop id="3260929561" name="Facultatea de Filosofie"/>
+    </ptLine>
+    <ptLine id="6685692" name="Bus 382: Escalei =&gt; Baicului" line="382" type="bus" vClass="bus" color="29,113,184" completeness="0.03" missingBefore="22" missingAfter="11">
+        <route edges="1343990126#0 1343990126#1 1332010728 1332010732#0 1332010732#1 1228394819#0 1228394819#1 1228394821#0 1228394821#1 1228394821#2 1344002089 1343990125#1"/>
+        <busStop id="7623728716" name="Piața Obor"/>
+    </ptLine>
+    <ptLine id="7087293" name="Tren Prietenia: București - Chișinău" line="IRN 402/106" type="train" vClass="rail" completeness="0.11" missingAfter="8">
+        <route edges="620591212 909651156 -916738171 -620369385 238559599#0 238559599#1 238559599#2 -398140720#2 -398140720#1 -398140720#0 -620369381 -180565677 -1221367949 -621468244"/>
+        <busStop id="5861246139" name="Gara de Nord"/>
+    </ptLine>
+    <ptLine id="7772817" name="Magistrala 1 (Dristor → Pantelimon)" line="M1" type="subway" vClass="subway" color="yellow" completeness="0.36" missingAfter="14">
+        <route edges="45736838#0 1028932231#1 907839008 1359026785 907839004#0 907839004#1"/>
+        <busStop id="9486050653" name="Dristor 2"/>
+        <busStop id="9486050648" name="Piața Muncii"/>
+        <busStop id="3336953198" name="Piața Iancului"/>
+        <busStop id="8452436794" name="Obor"/>
+        <busStop id="9486050631" name="Ștefan cel Mare"/>
+        <busStop id="9486050636" name="Piața Victoriei 1"/>
+        <busStop id="9486050625" name="Gara de Nord 1"/>
+        <busStop id="8426597559" name="Basarab 1 - M1"/>
+    </ptLine>
+    <ptLine id="7772843" name="Magistrala 3 (Anghel Saligny → Preciziei)" line="M3" type="subway" vClass="subway" color="188,23,37" completeness="0.00" missingBefore="7" missingAfter="5"/>
+</ptLines>

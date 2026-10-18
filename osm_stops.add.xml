@@ -1,0 +1,1591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-10-18T19:28:44.136414+02:00 by Eclipse SUMO netconvert 1.28.0
+<netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <input>
+        <type-files value="${SUMO_HOME}\data\typemap\osmNetconvert.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertUrbanDe.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertPedestrians.typ.xml,${SUMO_HOME}\data\typemap\osmNetconvertAerialway.typ.xml"/>
+        <osm-files value="osm_bbox.osm.xml.gz"/>
+    </input>
+
+    <output>
+        <output-file value="osm.net.xml.gz"/>
+        <output.street-names value="true"/>
+        <output.original-names value="true"/>
+        <ptstop-output value="osm_stops.add.xml"/>
+        <ptline-output value="osm_ptlines.xml"/>
+        <ptline-clean-up value="true"/>
+    </output>
+
+    <projection>
+        <proj.utm value="true"/>
+    </projection>
+
+    <processing>
+        <geometry.remove value="true"/>
+    </processing>
+
+    <tls_building>
+        <tls.discard-simple value="true"/>
+        <tls.join value="true"/>
+        <tls.guess-signals value="true"/>
+        <tls.default-type value="actuated"/>
+    </tls_building>
+
+    <ramp_guessing>
+        <ramps.guess value="true"/>
+    </ramp_guessing>
+
+    <junctions>
+        <junctions.join value="true"/>
+    </junctions>
+
+    <pedestrian>
+        <crossings.guess value="true"/>
+    </pedestrian>
+
+    <railway>
+        <railway.topology.repair value="true"/>
+    </railway>
+
+    <formats>
+        <osm.sidewalks value="true"/>
+    </formats>
+
+</netconvertConfiguration>
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <busStop id="-10556623046" name="Nicolae Titulescu" lane="-723496082_0" startPos="0.16" endPos="15.16" friendlyPos="true" lines="97">
+        <access lane="669189554_0" pos="7.59" length="20.01" friendlyPos="1"/>
+        <access lane="737638645_0" pos="7.10" length="44.39" friendlyPos="1"/>
+        <access lane="737638646_0" pos="8.31" length="44.03" friendlyPos="1"/>
+        <access lane="737638650#0_0" pos="9.76" length="36.50" friendlyPos="1"/>
+        <access lane="737639103_0" pos="12.36" length="43.29" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-12110547464" name="Piața Victoriei" lane="-125898148#1_0" startPos="10.79" endPos="25.79" friendlyPos="true" lines="203">
+        <access lane="-1354278669#0_0" pos="47.90" length="28.35" friendlyPos="1"/>
+        <access lane="525582171#0_0" pos="21.81" length="23.87" friendlyPos="1"/>
+        <access lane="525582171#1_0" pos="0.00" length="25.40" friendlyPos="1"/>
+        <access lane="58265798#0_0" pos="0.00" length="28.57" friendlyPos="1"/>
+        <access lane="739795070_0" pos="0.00" length="29.49" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-12300335993" name="Gara de Nord" lane="-328681897_0" startPos="0.66" endPos="15.66" friendlyPos="true" lines="282 86">
+        <access lane="-239221042#1_0" pos="13.19" length="33.37" friendlyPos="1"/>
+        <access lane="1074235096#0_0" pos="0.00" length="42.92" friendlyPos="1"/>
+        <access lane="239221042#1_0" pos="0.00" length="30.11" friendlyPos="1"/>
+        <access lane="621438844_0" pos="0.21" length="49.43" friendlyPos="1"/>
+        <access lane="737638650#2_0" pos="128.33" length="20.81" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-12427766016" name="Calea Dorobanților" lane="-232079825#1_0" startPos="0.00" endPos="0.20" friendlyPos="true" lines="97 79">
+        <access lane="-1393194547#32_0" pos="10.40" length="18.57" friendlyPos="1"/>
+        <access lane="-1393194547#33_0" pos="0.20" length="30.00" friendlyPos="1"/>
+        <access lane="-229478144_0" pos="0.00" length="25.56" friendlyPos="1"/>
+        <access lane="229478144_0" pos="0.28" length="29.91" friendlyPos="1"/>
+        <access lane="669156735_0" pos="0.00" length="28.39" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-12427950917" name="Stoica Ludescu" lane="-229624955_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="97">
+        <access lane="625515025#2_0" pos="0.52" length="52.29" friendlyPos="1"/>
+        <access lane="625515026#1_0" pos="0.00" length="39.62" friendlyPos="1"/>
+        <access lane="625515026#2_0" pos="103.48" length="43.20" friendlyPos="1"/>
+        <access lane="737645574#2_0" pos="30.08" length="19.59" friendlyPos="1"/>
+        <access lane="737645574#3_0" pos="0.00" length="40.63" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-12586083402" name="Sala Palatului" lane="-1359704788_1" startPos="11.27" endPos="26.27" friendlyPos="true" lines="311"/>
+    <busStop id="-2295201768" name="Casa Studenților" lane="-246129079_0" startPos="22.42" endPos="37.42" friendlyPos="true" lines="85">
+        <access lane="-329699690_0" pos="0.00" length="76.86" friendlyPos="1"/>
+        <access lane="-329699691_0" pos="59.47" length="56.70" friendlyPos="1"/>
+        <access lane="329699690_0" pos="57.69" length="81.39" friendlyPos="1"/>
+        <access lane="329699691_0" pos="0.00" length="52.33" friendlyPos="1"/>
+        <access lane="39294840#0_0" pos="27.23" length="101.98" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2295201780" name="Mircea Vulcănescu" lane="-667047003_0" startPos="50.32" endPos="65.32" friendlyPos="true" lines="85 163">
+        <access lane="-666958780_0" pos="24.78" length="31.09" friendlyPos="1"/>
+        <access lane="-827237635#0_0" pos="29.99" length="25.94" friendlyPos="1"/>
+        <access lane="666958780_0" pos="0.00" length="27.65" friendlyPos="1"/>
+        <access lane="666958781_0" pos="57.48" length="21.36" friendlyPos="1"/>
+        <access lane="827237635#0_0" pos="0.00" length="29.56" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2352303603" name="Piața Spaniei" lane="-229673024#1_1" startPos="56.30" endPos="71.30" friendlyPos="true" lines="97 86 135 79"/>
+    <busStop id="-2387001459" name="Armenească" lane="-229483261_0" startPos="58.95" endPos="73.95" friendlyPos="true" lines="69 66 N108 70 85 90">
+        <access lane="-8212542_0" pos="0.00" length="33.20" friendlyPos="1"/>
+        <access lane="740898421#2_0" pos="66.32" length="10.47" friendlyPos="1"/>
+        <access lane="740898423#0_0" pos="16.54" length="46.50" friendlyPos="1"/>
+        <access lane="740898423#1_0" pos="15.16" length="14.21" friendlyPos="1"/>
+        <access lane="8212542_0" pos="98.98" length="44.05" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2387001476" name="Grădina Cișmigiu" lane="-39725274#3_0" startPos="35.72" endPos="50.72" friendlyPos="true" lines="69 66 61 70 85 90">
+        <access lane="-231242710#0_0" pos="0.00" length="26.05" friendlyPos="1"/>
+        <access lane="231242710#0_0" pos="70.05" length="37.08" friendlyPos="1"/>
+        <access lane="812566691#3_0" pos="9.16" length="9.02" friendlyPos="1"/>
+        <access lane="895736934#3_0" pos="43.21" length="7.67" friendlyPos="1"/>
+        <access lane="895736934#4_0" pos="0.00" length="42.04" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2387001484" name="Piața Rosetti" lane="-451327561_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="69 66 N108 61 70 85 90">
+        <access lane="-389247621_0" pos="10.10" length="72.39" friendlyPos="1"/>
+        <access lane="1192937914#1_0" pos="45.77" length="12.19" friendlyPos="1"/>
+        <access lane="1192937929#1_0" pos="0.00" length="72.06" friendlyPos="1"/>
+        <access lane="740898422#1_0" pos="45.10" length="14.89" friendlyPos="1"/>
+        <access lane="740898422#2_0" pos="0.00" length="29.88" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2387001494" name="Universitate" lane="-4089366#0_1" startPos="41.53" endPos="56.53" friendlyPos="true" lines="69 66 61 70 85 90"/>
+    <busStop id="-2389847203" name="Șoseaua Ștefan cel Mare" lane="-30357216#1_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="331B 301 331 335">
+        <access lane="-229829898#0_0" pos="10.38" length="103.14" friendlyPos="1"/>
+        <access lane="-300588080_0" pos="0.00" length="115.40" friendlyPos="1"/>
+        <access lane="229829897_0" pos="0.00" length="72.53" friendlyPos="1"/>
+        <access lane="229829898#0_0" pos="0.00" length="105.66" friendlyPos="1"/>
+        <access lane="300588080_0" pos="17.64" length="111.18" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2389982893" name="Calea Moșilor" lane="-229481808_1" startPos="10.13" endPos="25.13" friendlyPos="true" lines="69 311"/>
+    <busStop id="-2517228824" name="Piața Operei" lane="-242408358#0_0" startPos="12.83" endPos="27.83" friendlyPos="true" lines="104 69 61">
+        <access lane="1184444994#4_0" pos="0.00" length="9.61" friendlyPos="1"/>
+        <access lane="1184447982#2_0" pos="34.81" length="10.89" friendlyPos="1"/>
+        <access lane="1184449596#10_0" pos="0.00" length="9.45" friendlyPos="1"/>
+        <access lane="1184449596#12_0" pos="0.00" length="10.83" friendlyPos="1"/>
+        <access lane="1184449596#8_0" pos="34.92" length="9.81" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2517418574" name="Gara de Nord" lane="-328681897_0" startPos="10.41" endPos="25.41" friendlyPos="true" lines="97 105">
+        <access lane="-239221042#1_0" pos="13.19" length="44.36" friendlyPos="1"/>
+        <access lane="1074235096#0_0" pos="0.00" length="56.47" friendlyPos="1"/>
+        <access lane="239221042#1_0" pos="0.00" length="40.26" friendlyPos="1"/>
+        <access lane="621438844_0" pos="0.21" length="54.30" friendlyPos="1"/>
+        <access lane="737638650#2_0" pos="118.55" length="20.73" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2517420012" name="Nicolae Titulescu" lane="-388321481#2_0" startPos="11.34" endPos="26.34" friendlyPos="true" lines="97 86">
+        <access lane="621181460_0" pos="19.27" length="34.49" friendlyPos="1"/>
+        <access lane="621211532#0_0" pos="19.67" length="15.48" friendlyPos="1"/>
+        <access lane="737631809#2_0" pos="6.69" length="39.23" friendlyPos="1"/>
+        <access lane="737645568#0_0" pos="8.42" length="39.49" friendlyPos="1"/>
+        <access lane="737645574#0_0" pos="22.43" length="31.90" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2517435660" name="Stoica Ludescu" lane="-229624958_0" startPos="11.18" endPos="26.18" friendlyPos="true" lines="86">
+        <access lane="625515026#2_0" pos="13.04" length="75.56" friendlyPos="1"/>
+        <access lane="625515027#0_0" pos="137.95" length="58.68" friendlyPos="1"/>
+        <access lane="625515027#1_0" pos="0.00" length="60.71" friendlyPos="1"/>
+        <access lane="625515028#0_0" pos="0.20" length="81.22" friendlyPos="1"/>
+        <access lane="625515028#1_0" pos="0.00" length="75.59" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2519078577" name="Mircea Vulcănescu" lane="-668175351#0_0" startPos="14.40" endPos="29.40" friendlyPos="true" lines="123">
+        <access lane="-220393012#0_0" pos="0.00" length="47.86" friendlyPos="1"/>
+        <access lane="-220393012#1_0" pos="0.00" length="43.97" friendlyPos="1"/>
+        <access lane="220393012#0_0" pos="51.25" length="43.57" friendlyPos="1"/>
+        <access lane="220393012#1_0" pos="1.99" length="39.37" friendlyPos="1"/>
+        <access lane="737847799#16_0" pos="71.52" length="19.06" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2519078588" name="Primăria Sector 6" lane="-50586387_0" startPos="13.46" endPos="28.46" friendlyPos="true" lines="123 162 163">
+        <access lane="-206654839#3_0" pos="0.00" length="53.48" friendlyPos="1"/>
+        <access lane="-23556037#1_0" pos="80.13" length="47.42" friendlyPos="1"/>
+        <access lane="23556037#1_0" pos="0.00" length="55.15" friendlyPos="1"/>
+        <access lane="737847799#6_0" pos="83.64" length="17.74" friendlyPos="1"/>
+        <access lane="848571105#6_0" pos="58.95" length="18.99" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2519476224" name="Școala Iancului" lane="-1541289717#12_1" startPos="74.44" endPos="99.44" friendlyPos="true" lines="135 311"/>
+    <busStop id="-2519507101" name="Agricultorilor" lane="-8119904#2_1" startPos="192.36" endPos="207.36" friendlyPos="true" lines="86 90"/>
+    <busStop id="-2519507105" name="Colegiul Economic Virgil Madgearu" lane="-232079825#2_0" startPos="43.80" endPos="68.80" friendlyPos="true" lines="97">
+        <access lane="-1311938046_0" pos="41.18" length="107.05" friendlyPos="1"/>
+        <access lane="-1393194547#32_0" pos="74.41" length="57.14" friendlyPos="1"/>
+        <access lane="1311938046_0" pos="0.00" length="104.66" friendlyPos="1"/>
+        <access lane="1393194547#31_0" pos="160.10" length="71.24" friendlyPos="1"/>
+        <access lane="1449312976_0" pos="32.80" length="107.83" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2519507110" name="Calea Victoriei" lane="-23632425#5_1" startPos="151.19" endPos="166.19" friendlyPos="true" lines="86 79"/>
+    <busStop id="-2519507114" name="Mecet" lane="-8119904#4_0" startPos="0.00" endPos="18.56" friendlyPos="true" lines="86 90"/>
+    <busStop id="-2519507116" name="Piața Buzești" lane="-452252354_1" startPos="31.79" endPos="46.79" friendlyPos="true" lines="86 79 205"/>
+    <busStop id="-2519529606" name="Foișorul de Foc" lane="-15488620#0_1" startPos="51.42" endPos="66.42" friendlyPos="true" lines="97 86"/>
+    <busStop id="-2519529609" name="Polizu" lane="-23123516#1_1" startPos="57.30" endPos="72.30" friendlyPos="true" lines="86 205"/>
+    <busStop id="-2519567763" name="Carol Davila" lane="-241077488_0" startPos="26.21" endPos="41.21" friendlyPos="true" lines="137 122 168 226 368">
+        <access lane="-372164529#1_0" pos="0.00" length="62.87" friendlyPos="1"/>
+        <access lane="1458688213#0_0" pos="0.00" length="53.07" friendlyPos="1"/>
+        <access lane="1477005143#0_0" pos="13.60" length="63.15" friendlyPos="1"/>
+        <access lane="1477005143#1_0" pos="5.21" length="47.40" friendlyPos="1"/>
+        <access lane="372164529#1_0" pos="54.30" length="58.35" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2519567779" name="Facultatea de Drept" lane="-180685585#7_0" startPos="32.26" endPos="47.26" friendlyPos="true" lines="137 69 61 90">
+        <access lane="-246129490#1_0" pos="10.34" length="61.80" friendlyPos="1"/>
+        <access lane="-665696186#3_0" pos="37.01" length="55.39" friendlyPos="1"/>
+        <access lane="665696186#3_0" pos="65.36" length="41.29" friendlyPos="1"/>
+        <access lane="812579312#1_0" pos="39.61" length="13.86" friendlyPos="1"/>
+        <access lane="999284240#6_0" pos="36.70" length="12.08" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2519567790" name="Spitalul Universitar" lane="-1367423376#0_0" startPos="107.30" endPos="122.30" friendlyPos="true" lines="137 122 168 226 368">
+        <access lane="1184444994#28_0" pos="39.81" length="21.96" friendlyPos="1"/>
+        <access lane="1184444994#75_0" pos="126.97" length="12.96" friendlyPos="1"/>
+        <access lane="1184670613_0" pos="55.89" length="19.21" friendlyPos="1"/>
+        <access lane="812582220#2_0" pos="31.43" length="15.42" friendlyPos="1"/>
+        <access lane="907822111_0" pos="21.11" length="31.89" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-2990833334" name="Teatrul Dramaturgilor Români" lane="-191987908#2_1" startPos="76.90" endPos="91.90" friendlyPos="true" lines="97"/>
+    <busStop id="-3053152233" name="Facultatea de Medicină" lane="-16277739#4_0" startPos="33.56" endPos="48.56" friendlyPos="true" lines="69 61">
+        <access lane="812582213#0_0" pos="0.00" length="47.06" friendlyPos="1"/>
+        <access lane="812582214#0_0" pos="39.12" length="47.23" friendlyPos="1"/>
+        <access lane="812582214#1_0" pos="24.42" length="12.87" friendlyPos="1"/>
+        <access lane="859998222#2_0" pos="31.16" length="48.39" friendlyPos="1"/>
+        <access lane="859998222#3_0" pos="0.00" length="52.14" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-3053340252" name="Școala Iancului" lane="-8119904#8_1" startPos="59.60" endPos="74.60" friendlyPos="true" lines="86 90"/>
+    <busStop id="-3053357434" name="Traian" lane="-85587072#1_1" startPos="0.00" endPos="15.00" friendlyPos="true" lines="311 70 90"/>
+    <busStop id="-3059964037" name="Luterană" lane="-50584795_1" startPos="54.17" endPos="69.17" friendlyPos="true" lines="368"/>
+    <busStop id="-3060008133" name="Berzei" lane="-231253170_0" startPos="24.64" endPos="39.64" friendlyPos="true" lines="168 226 368">
+        <access lane="-205985817#0_0" pos="53.31" length="58.76" friendlyPos="1"/>
+        <access lane="-39313112_0" pos="63.15" length="54.21" friendlyPos="1"/>
+        <access lane="-750611385#2_0" pos="0.00" length="46.65" friendlyPos="1"/>
+        <access lane="39313112_0" pos="32.94" length="59.22" friendlyPos="1"/>
+        <access lane="750611385#2_0" pos="64.05" length="42.18" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-3061303235" name="Bd. Nicolae Bălcescu" lane="-448621095#0_1" startPos="14.52" endPos="29.52" friendlyPos="true" lines="226 311"/>
+    <busStop id="-3211285361" name="A.S.E." lane="-407982022#8_1" startPos="28.33" endPos="43.33" friendlyPos="true" lines="301 331B 331"/>
+    <busStop id="-3747921221" name="Bd. Alexandru Ioan Cuza" lane="-289213549#0_1" startPos="9.67" endPos="24.67" friendlyPos="true" lines="79"/>
+    <busStop id="-4488678846" name="Biserica Delea Veche" lane="-23050178#5_0" startPos="32.24" endPos="47.24" friendlyPos="true" lines="70 79">
+        <access lane="-204158631#0_0" pos="30.48" length="41.37" friendlyPos="1"/>
+        <access lane="-252582421#2_0" pos="0.00" length="39.11" friendlyPos="1"/>
+        <access lane="204158626_0" pos="2.39" length="36.59" friendlyPos="1"/>
+        <access lane="252582421#1_0" pos="14.78" length="43.95" friendlyPos="1"/>
+        <access lane="252582421#2_0" pos="1.22" length="34.59" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-4488678849" name="Matei Voievod" lane="-23125404#2_0" startPos="8.30" endPos="23.30" friendlyPos="true" lines="70 79">
+        <access lane="-668755074_0" pos="10.51" length="33.92" friendlyPos="1"/>
+        <access lane="-8119904#8_0" pos="0.00" length="48.70" friendlyPos="1"/>
+        <access lane="-8119904#9_0" pos="15.30" length="44.41" friendlyPos="1"/>
+        <access lane="668755074_0" pos="0.00" length="29.14" friendlyPos="1"/>
+        <access lane="8119904#9_0" pos="0.00" length="58.51" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-493732512" name="Calea Călărașilor" lane="-23050178#1_0" startPos="117.95" endPos="132.95" friendlyPos="true" lines="70 79">
+        <access lane="-252580358_0" pos="0.00" length="279.06" friendlyPos="1"/>
+        <access lane="252580358_0" pos="40.68" length="274.47" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-582478465" name="Șoseaua Ștefan cel Mare" lane="-669019902#0_1" startPos="13.77" endPos="28.77" friendlyPos="true" lines="461 135"/>
+    <busStop id="-582481089" name="Piața Spaniei" lane="-229673024#1_1" startPos="40.30" endPos="55.30" friendlyPos="true" lines="97"/>
+    <busStop id="-582481154" name="Piața Gemeni" lane="-671635092#1_1" startPos="5.65" endPos="20.65" friendlyPos="true" lines="97"/>
+    <busStop id="-590206839" name="Calea Moșilor" lane="-229673021#2_1" startPos="9.23" endPos="24.23" friendlyPos="true" lines="97 86 135 79"/>
+    <busStop id="-590208133" name="Piața Gemeni" lane="-671635091_1" startPos="32.80" endPos="47.80" friendlyPos="true" lines="97 86 135 79"/>
+    <trainStop id="-5916880995" name="Pipera" lane="-626748679#3_0" startPos="4.43" endPos="204.43" friendlyPos="true"/>
+    <trainStop id="-5916881009" name="Aurel Vlaicu" lane="-626748679#3_0" startPos="1375.79" endPos="1575.79" friendlyPos="true"/>
+    <trainStop id="-5916881036" name="Piața Victoriei 2" lane="-626748679#3_0" startPos="4855.53" endPos="5055.53" friendlyPos="true">
+        <access lane="-125898149_0" pos="41.66" length="43.37" friendlyPos="1"/>
+        <access lane="125898149_0" pos="0.00" length="40.77" friendlyPos="1"/>
+        <access lane="139713886_0" pos="37.55" length="17.27" friendlyPos="1"/>
+        <access lane="739795069_0" pos="24.91" length="17.79" friendlyPos="1"/>
+        <access lane="739795071_0" pos="0.00" length="46.21" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="-6180590317" name="Stoica Ludescu" lane="-229624958_0" startPos="7.99" endPos="22.99" friendlyPos="true" lines="97">
+        <access lane="625515026#2_0" pos="13.04" length="60.46" friendlyPos="1"/>
+        <access lane="625515027#0_0" pos="130.97" length="52.32" friendlyPos="1"/>
+        <access lane="625515027#1_0" pos="0.00" length="59.66" friendlyPos="1"/>
+        <access lane="625515028#0_0" pos="0.20" length="69.97" friendlyPos="1"/>
+        <access lane="625515028#1_0" pos="0.00" length="71.13" friendlyPos="1"/>
+    </busStop>
+    <busStop id="-6258682618" name="Calea Moșilor" lane="-229481808_1" startPos="26.20" endPos="41.20" friendlyPos="true" lines="69 70 85 90"/>
+    <trainStop id="-8429628102" name="Eroilor 2" lane="-907822092_0" startPos="0.00" endPos="192.95" friendlyPos="true" lines="M5">
+        <access lane="1184444996#2_0" pos="15.04" length="6.08" friendlyPos="1"/>
+        <access lane="1184444996#48_0" pos="6.35" length="2.05" friendlyPos="1"/>
+        <access lane="859998229#0_0" pos="2.15" length="1.32" friendlyPos="1"/>
+        <access lane="907822108_0" pos="0.00" length="6.35" friendlyPos="1"/>
+        <access lane="907822124#1_0" pos="20.87" length="2.28" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="-8455390578" name="Aviatorilor" lane="-626748679#3_0" startPos="3390.44" endPos="3590.44" friendlyPos="true">
+        <access lane="525582171#3_0" pos="1090.99" length="136.46" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="-9492184764" name="Academia Militară" lane="-849446529_0" startPos="944.79" endPos="1144.79" friendlyPos="true" lines="M5"/>
+    <trainStop id="-9497950456" name="Orizont" lane="-849446529_0" startPos="280.85" endPos="480.85" friendlyPos="true" lines="M5"/>
+    <busStop id="10155046381" name="Piața Victoriei" lane="4865914#2_1" startPos="24.75" endPos="39.75" friendlyPos="true" lines="361"/>
+    <busStop id="1052362435" name="Șoseaua Ștefan cel Mare" lane="302994038#15_1" startPos="50.19" endPos="65.19" friendlyPos="true" lines="135"/>
+    <trainStop id="11360085899" name="Reînvierii" lane="1224993953#1_0" startPos="19.66" endPos="44.66" friendlyPos="true" lines="16">
+        <access lane="-1309153463#1_0" pos="0.00" length="67.72" friendlyPos="1"/>
+        <access lane="-28529335#1_0" pos="92.14" length="36.02" friendlyPos="1"/>
+        <access lane="-306529151_0" pos="24.09" length="97.64" friendlyPos="1"/>
+        <access lane="1309153463#1_0" pos="72.70" length="72.45" friendlyPos="1"/>
+        <access lane="306529151_0" pos="0.00" length="96.78" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="11360968302" name="Mecet" lane="1495252176#0_1" startPos="21.56" endPos="36.56" friendlyPos="true" lines="97"/>
+    <busStop id="11360968308" name="Mecet" lane="1495252178_1" startPos="34.76" endPos="49.76" friendlyPos="true" lines="97"/>
+    <trainStop id="11361730517" name="Piața Sf. Gheorghe" lane="1228945385_0" startPos="0.00" endPos="23.17" friendlyPos="true">
+        <access lane="-1102792456#0_0" pos="0.20" length="47.80" friendlyPos="1"/>
+        <access lane="-1102792456#1_0" pos="0.20" length="43.17" friendlyPos="1"/>
+        <access lane="1102792456#0_0" pos="0.00" length="50.10" friendlyPos="1"/>
+        <access lane="239152751#0_0" pos="3.43" length="50.76" friendlyPos="1"/>
+        <access lane="263482856_0" pos="39.25" length="31.06" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="11361730520" name="Piața Sfântul Gheorghe" lane="1225181464#1_0" startPos="0.00" endPos="24.93" friendlyPos="true" lines="16">
+        <access lane="-1078908517_0" pos="20.05" length="16.75" friendlyPos="1"/>
+        <access lane="1078908517_0" pos="44.27" length="11.95" friendlyPos="1"/>
+        <access lane="53083599#1_0" pos="3.20" length="41.63" friendlyPos="1"/>
+        <access lane="53083599#2_0" pos="0.20" length="35.58" friendlyPos="1"/>
+        <access lane="958549658#0_0" pos="0.00" length="46.45" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="11363161634" name="Hristo Botev" lane="1225324646_0" startPos="73.91" endPos="98.91" friendlyPos="true" lines="5 21">
+        <access lane="-1409238664#1_0" pos="0.00" length="6.55" friendlyPos="1"/>
+        <access lane="-23115954#2_0" pos="45.42" length="45.91" friendlyPos="1"/>
+        <access lane="1409238664#0_0" pos="12.71" length="13.25" friendlyPos="1"/>
+        <access lane="23115954#1_0" pos="0.00" length="55.25" friendlyPos="1"/>
+        <access lane="85796434#0_0" pos="0.00" length="56.53" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="11363169112" name="Bd. Carol I" lane="1225324649#4_0" startPos="26.21" endPos="51.21" friendlyPos="true" lines="5">
+        <access lane="-389243381#0_0" pos="57.42" length="31.98" friendlyPos="1"/>
+        <access lane="1192944480_0" pos="12.14" length="11.30" friendlyPos="1"/>
+        <access lane="1192944483#0_0" pos="5.16" length="21.66" friendlyPos="1"/>
+        <access lane="389243380#0_0" pos="2.09" length="36.78" friendlyPos="1"/>
+        <access lane="740898427_0" pos="8.69" length="27.80" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="11363169188" name="Hristo Botev" lane="1225324647#3_0" startPos="16.68" endPos="41.68" friendlyPos="true" lines="16 21 5">
+        <access lane="-85796434#1_0" pos="0.00" length="19.94" friendlyPos="1"/>
+        <access lane="-85796434#2_0" pos="7.99" length="5.16" friendlyPos="1"/>
+        <access lane="76259318#0_0" pos="0.20" length="15.68" friendlyPos="1"/>
+        <access lane="76259318#1_0" pos="0.00" length="15.70" friendlyPos="1"/>
+        <access lane="85796434#2_0" pos="6.76" length="8.94" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="1143755096" name="Primăria Sectorului 1" lane="1535669333#1_1" startPos="16.49" endPos="31.49" friendlyPos="true" lines="282"/>
+    <busStop id="1143755097" name="Gara de Nord" lane="450735440_0" startPos="0.00" endPos="7.74" friendlyPos="true" lines="93">
+        <access lane="1074235093_0" pos="0.00" length="31.64" friendlyPos="1"/>
+        <access lane="1074235094_0" pos="0.00" length="23.56" friendlyPos="1"/>
+        <access lane="633028826_0" pos="29.59" length="18.00" friendlyPos="1"/>
+        <access lane="668510231#1_0" pos="50.20" length="7.17" friendlyPos="1"/>
+        <access lane="668516719#1_0" pos="0.00" length="23.55" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12110547464" name="Piața Victoriei" lane="1307769364_0" startPos="40.25" endPos="55.25" friendlyPos="true" lines="203">
+        <access lane="-1354278669#0_0" pos="47.90" length="28.35" friendlyPos="1"/>
+        <access lane="525582171#0_0" pos="21.81" length="23.87" friendlyPos="1"/>
+        <access lane="525582171#1_0" pos="0.00" length="25.40" friendlyPos="1"/>
+        <access lane="58265798#0_0" pos="0.00" length="28.57" friendlyPos="1"/>
+        <access lane="739795070_0" pos="0.00" length="29.49" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12300335993" name="Gara de Nord" lane="328681897_0" startPos="17.74" endPos="32.74" friendlyPos="true" lines="282 86">
+        <access lane="-239221042#1_0" pos="13.19" length="33.37" friendlyPos="1"/>
+        <access lane="1074235096#0_0" pos="0.00" length="42.92" friendlyPos="1"/>
+        <access lane="239221042#1_0" pos="0.00" length="30.11" friendlyPos="1"/>
+        <access lane="621438844_0" pos="0.21" length="49.43" friendlyPos="1"/>
+        <access lane="737638650#2_0" pos="128.33" length="20.81" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12435185099" name="Ziduri Moși" lane="1343990125#1_0" startPos="10.61" endPos="25.61" friendlyPos="true" lines="412 413 468 B 409">
+        <access lane="1230916220#2_0" pos="17.99" length="26.42" friendlyPos="1"/>
+        <access lane="895683089#1_0" pos="0.20" length="31.51" friendlyPos="1"/>
+        <access lane="895683089#3_0" pos="0.20" length="31.14" friendlyPos="1"/>
+        <access lane="895683089#4_0" pos="0.00" length="31.37" friendlyPos="1"/>
+        <access lane="895683089#5_0" pos="0.00" length="31.49" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12435500354" name="Bucur Obor" lane="1343990130#2_0" startPos="8.07" endPos="23.07" friendlyPos="true" lines="467 409 B 468 411 417">
+        <access lane="131483758#0_0" pos="0.00" length="9.72" friendlyPos="1"/>
+        <access lane="205056106#0_0" pos="0.00" length="32.69" friendlyPos="1"/>
+        <access lane="205056110_0" pos="0.00" length="17.51" friendlyPos="1"/>
+        <access lane="205057531#2_0" pos="18.82" length="15.17" friendlyPos="1"/>
+        <access lane="205057531#3_0" pos="0.38" length="12.22" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12571526320" name="Calea Dorobanților" lane="1358411316#0_0" startPos="107.16" endPos="122.16" friendlyPos="true" lines="182">
+        <access lane="23811791#1_0" pos="12.46" length="23.22" friendlyPos="1"/>
+        <access lane="669158567#1_0" pos="0.20" length="23.08" friendlyPos="1"/>
+        <access lane="669158567#2_0" pos="0.20" length="22.35" friendlyPos="1"/>
+        <access lane="669158567#3_0" pos="0.00" length="22.46" friendlyPos="1"/>
+        <access lane="669158567#4_0" pos="0.00" length="34.71" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12572079171" name="Roma" lane="1358411314#5_0" startPos="36.63" endPos="51.63" friendlyPos="true" lines="182">
+        <access lane="1435080782_0" pos="64.27" length="31.63" friendlyPos="1"/>
+        <access lane="235436166#0_0" pos="8.49" length="22.12" friendlyPos="1"/>
+        <access lane="281298411_0" pos="0.00" length="29.68" friendlyPos="1"/>
+        <access lane="668566859#1_0" pos="47.63" length="21.97" friendlyPos="1"/>
+        <access lane="668566859#2_0" pos="0.00" length="26.72" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12572079172" name="Pasaj Victoria" lane="1358411314#5_0" startPos="250.43" endPos="265.43" friendlyPos="true" lines="182">
+        <access lane="668566857#1_0" pos="0.20" length="30.42" friendlyPos="1"/>
+        <access lane="668566857#3_0" pos="0.20" length="23.45" friendlyPos="1"/>
+        <access lane="668566857#4_0" pos="0.20" length="21.84" friendlyPos="1"/>
+        <access lane="668566857#5_0" pos="0.00" length="27.30" friendlyPos="1"/>
+        <access lane="668566857#7_0" pos="0.00" length="30.61" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12572079173" name="Spitalul Grigore Alexandrescu" lane="1358411314#5_0" startPos="250.26" endPos="265.26" friendlyPos="true" lines="182">
+        <access lane="668566857#1_0" pos="0.20" length="28.43" friendlyPos="1"/>
+        <access lane="668566857#3_0" pos="0.20" length="21.97" friendlyPos="1"/>
+        <access lane="668566857#4_0" pos="0.00" length="22.46" friendlyPos="1"/>
+        <access lane="668566857#5_0" pos="0.00" length="28.31" friendlyPos="1"/>
+        <access lane="668566857#7_0" pos="0.00" length="34.30" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12572079199" name="Piața Victoriei" lane="1358411332#2_0" startPos="270.33" endPos="285.33" friendlyPos="true" lines="182">
+        <access lane="-4865914#0_0" pos="5.18" length="50.15" friendlyPos="1"/>
+        <access lane="1553819416_0" pos="0.00" length="45.40" friendlyPos="1"/>
+        <access lane="303358003#3_0" pos="0.00" length="58.43" friendlyPos="1"/>
+        <access lane="739795071_0" pos="46.98" length="50.00" friendlyPos="1"/>
+        <access lane="920117612#2_0" pos="42.07" length="47.88" friendlyPos="1"/>
+    </busStop>
+    <busStop id="12572087506" name="Dr. Felix" lane="1358411334#2_0" startPos="28.10" endPos="43.10" friendlyPos="true" lines="182">
+        <access lane="-1548334239_0" pos="17.50" length="31.97" friendlyPos="1"/>
+        <access lane="1305563864#1_0" pos="35.54" length="18.49" friendlyPos="1"/>
+        <access lane="1548334239_0" pos="0.00" length="36.44" friendlyPos="1"/>
+        <access lane="378639154#1_0" pos="99.24" length="20.01" friendlyPos="1"/>
+        <access lane="378639154#2_0" pos="0.00" length="22.26" friendlyPos="1"/>
+    </busStop>
+    <busStop id="13138024839" name="Bd. Banu Manta" lane="1071220626#0_1" startPos="90.11" endPos="105.11" friendlyPos="true" lines="205"/>
+    <busStop id="1344579108" name="Șoseaua Nicolae Titulescu" lane="1307769366#1_0" startPos="31.00" endPos="46.00" friendlyPos="true" lines="282 105">
+        <access lane="119762466#1_0" pos="108.27" length="46.73" friendlyPos="1"/>
+        <access lane="1295846860_0" pos="22.75" length="20.02" friendlyPos="1"/>
+        <access lane="621211532#1_0" pos="26.34" length="64.56" friendlyPos="1"/>
+        <access lane="621211532#2_0" pos="1.28" length="58.91" friendlyPos="1"/>
+        <access lane="737647372_0" pos="2.23" length="65.70" friendlyPos="1"/>
+    </busStop>
+    <busStop id="13475891043" name="Arthur Verona" lane="119241030#1_1" startPos="189.43" endPos="204.43" friendlyPos="true" lines="168 226 368"/>
+    <busStop id="14178189703" name="Primăria Sector 6" lane="668588452_0" startPos="9.21" endPos="24.21" friendlyPos="true" lines="163">
+        <access lane="-206654839#2_0" pos="0.00" length="40.15" friendlyPos="1"/>
+        <access lane="-206654839#3_0" pos="0.00" length="36.06" friendlyPos="1"/>
+        <access lane="206654839#2_0" pos="47.27" length="36.00" friendlyPos="1"/>
+        <access lane="206654839#3_0" pos="0.20" length="31.30" friendlyPos="1"/>
+        <access lane="737847799#7_0" pos="16.08" length="18.92" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="1456569557" name="Bd. Ferdinand" lane="894254311#4_0" startPos="17.31" endPos="42.31" friendlyPos="true" lines="1 46">
+        <access lane="196657059#1_0" pos="23.87" length="27.70" friendlyPos="1"/>
+        <access lane="196657059#2_0" pos="3.96" length="22.97" friendlyPos="1"/>
+        <access lane="231916546#2_0" pos="161.79" length="29.06" friendlyPos="1"/>
+        <access lane="668283830#1_0" pos="0.19" length="54.60" friendlyPos="1"/>
+        <access lane="668778035_0" pos="35.51" length="29.73" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="1456569558" name="Bucur Obor" lane="898553672#0_0" startPos="16.29" endPos="41.29" friendlyPos="true" lines="46 10">
+        <access lane="1238684668#1_0" pos="7.67" length="47.00" friendlyPos="1"/>
+        <access lane="1238684668#3_0" pos="0.00" length="47.04" friendlyPos="1"/>
+        <access lane="1238684668#4_0" pos="0.00" length="48.21" friendlyPos="1"/>
+        <access lane="13604358#1_0" pos="29.71" length="43.78" friendlyPos="1"/>
+        <access lane="910390984_0" pos="1.86" length="51.80" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="14995001" name="Ceaikovski" lane="131484725#0_0" startPos="919.88" endPos="944.88" friendlyPos="true" lines="5"/>
+    <trainStop id="14995024" name="Șoseaua Ștefan cel Mare" lane="131484725#4_0" startPos="35.45" endPos="60.45" friendlyPos="true" lines="5">
+        <access lane="1134920110_0" pos="0.00" length="71.82" friendlyPos="1"/>
+        <access lane="227385581#2_0" pos="48.00" length="14.93" friendlyPos="1"/>
+        <access lane="28246318#0_0" pos="0.00" length="73.74" friendlyPos="1"/>
+        <access lane="669011086#3_0" pos="60.33" length="21.11" friendlyPos="1"/>
+        <access lane="737951864#1_0" pos="40.40" length="25.23" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="1768612657" name="Bd. Banu Manta" lane="85511448_0" startPos="20.16" endPos="45.16" friendlyPos="true" lines="10">
+        <access lane="-237830949_0" pos="0.00" length="21.41" friendlyPos="1"/>
+        <access lane="1305563864#10_0" pos="23.01" length="24.63" friendlyPos="1"/>
+        <access lane="237830949_0" pos="88.05" length="24.97" friendlyPos="1"/>
+        <access lane="671874182#3_0" pos="0.00" length="61.46" friendlyPos="1"/>
+        <access lane="671874182#4_0" pos="0.19" length="61.41" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="1770588416" name="Calea Dorobanților" lane="920127991#2_0" startPos="237.59" endPos="262.59" friendlyPos="true" lines="46 10">
+        <access lane="669158566#0_0" pos="6.31" length="23.46" friendlyPos="1"/>
+        <access lane="669158566#2_0" pos="0.20" length="8.67" friendlyPos="1"/>
+        <access lane="669158566#3_0" pos="0.00" length="8.58" friendlyPos="1"/>
+        <access lane="669158566#4_0" pos="0.00" length="9.01" friendlyPos="1"/>
+        <access lane="669158566#6_0" pos="0.00" length="31.33" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="1770588418" name="Piața Iancului" lane="898553672#4_0" startPos="313.14" endPos="338.14" friendlyPos="true" lines="46 10">
+        <access lane="-1541289717#0_0" pos="205.93" length="95.07" friendlyPos="1"/>
+        <access lane="1541289717#0_0" pos="0.00" length="83.00" friendlyPos="1"/>
+        <access lane="196657054_0" pos="205.70" length="181.11" friendlyPos="1"/>
+        <access lane="231916547#0_0" pos="54.00" length="23.19" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="1770588420" name="Stadion Dinamo" lane="920127991#7_0" startPos="256.50" endPos="281.50" friendlyPos="true" lines="46 10">
+        <access lane="668563213#1_0" pos="0.20" length="22.83" friendlyPos="1"/>
+        <access lane="668563213#2_0" pos="0.20" length="22.71" friendlyPos="1"/>
+        <access lane="668563213#3_0" pos="0.00" length="22.51" friendlyPos="1"/>
+        <access lane="668563213#4_0" pos="0.00" length="13.58" friendlyPos="1"/>
+        <access lane="910363909_0" pos="85.49" length="18.52" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="1775175278" name="Pasajul Basarab" lane="660931074#4_0" startPos="454.60" endPos="479.60" friendlyPos="true" lines="1">
+        <access lane="737631809#1_0" pos="41.85" length="4.67" friendlyPos="1"/>
+        <access lane="738281336_0" pos="14.60" length="0.99" friendlyPos="1"/>
+        <access lane="738281339#0_0" pos="13.24" length="6.76" friendlyPos="1"/>
+        <access lane="738281339#1_0" pos="0.00" length="6.80" friendlyPos="1"/>
+        <access lane="738281343_0" pos="0.00" length="7.66" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="2128212807" name="Barbu Văcărescu" lane="669011086#3_1" startPos="42.93" endPos="57.93" friendlyPos="true" lines="330"/>
+    <busStop id="2150151448" name="Bulevardul Carol I" lane="1318111813#4_1" startPos="30.52" endPos="45.52" friendlyPos="true" lines="66 N108"/>
+    <trainStop id="2150265220" name="Ziduri Moși" lane="205037359#3_0" startPos="35.83" endPos="60.83" friendlyPos="true" lines="21">
+        <access lane="1228596471#2_0" pos="31.67" length="31.54" friendlyPos="1"/>
+        <access lane="1228596471#3_0" pos="0.09" length="30.45" friendlyPos="1"/>
+        <access lane="1230916220#3_0" pos="17.63" length="30.17" friendlyPos="1"/>
+        <access lane="1237721418_0" pos="0.00" length="35.14" friendlyPos="1"/>
+        <access lane="170864517#0_0" pos="0.00" length="33.87" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="2250275679" name="Pod Eroilor" lane="895746209#1_0" startPos="14.93" endPos="29.93" friendlyPos="true" lines="123 104 90">
+        <access lane="1184444994#43_0" pos="7.01" length="17.18" friendlyPos="1"/>
+        <access lane="1184444994#69_0" pos="71.45" length="8.86" friendlyPos="1"/>
+        <access lane="1184444994#73_0" pos="160.63" length="3.43" friendlyPos="1"/>
+        <access lane="1184670615_0" pos="18.97" length="5.63" friendlyPos="1"/>
+        <access lane="907822094_0" pos="4.70" length="27.68" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2333696428" name="Piața Alexandru Lahovari" lane="27009359_0" startPos="12.53" endPos="27.53" friendlyPos="true" lines="331B 301 331">
+        <access lane="-1187814135_0" pos="0.00" length="65.83" friendlyPos="1"/>
+        <access lane="1187814135_0" pos="11.34" length="66.49" friendlyPos="1"/>
+        <access lane="255865983_0" pos="0.00" length="31.23" friendlyPos="1"/>
+        <access lane="672096999_0" pos="0.00" length="95.41" friendlyPos="1"/>
+        <access lane="69546524_0" pos="11.35" length="62.59" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2360447857" name="Bucur Obor" lane="453964388#0_1" startPos="0.00" endPos="15.00" friendlyPos="true" lines="101 66 N108"/>
+    <busStop id="2360448328" name="Bucur Obor" lane="131483758#0_1" startPos="80.06" endPos="95.06" friendlyPos="true" lines="66"/>
+    <busStop id="2362383216" name="Gara de Nord" lane="668532083#0_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="182 205">
+        <access lane="-669144908_0" pos="0.00" length="12.06" friendlyPos="1"/>
+        <access lane="1074235075#1_0" pos="0.20" length="47.23" friendlyPos="1"/>
+        <access lane="1074235090#1_0" pos="58.63" length="43.05" friendlyPos="1"/>
+        <access lane="1074235090#2_0" pos="0.00" length="44.85" friendlyPos="1"/>
+        <access lane="669144908_0" pos="34.90" length="12.06" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2383419052" name="Calea Moșilor" lane="1393194546#0_1" startPos="7.88" endPos="22.88" friendlyPos="true" lines="86 135 79"/>
+    <busStop id="2383484963" name="Ziduri Moși" lane="301655820#2_0" startPos="30.55" endPos="45.55" friendlyPos="true" lines="66 N108">
+        <access lane="-264430820#0_0" pos="72.71" length="37.26" friendlyPos="1"/>
+        <access lane="1228596471#1_0" pos="44.12" length="17.88" friendlyPos="1"/>
+        <access lane="1228596471#2_0" pos="0.00" length="33.40" friendlyPos="1"/>
+        <access lane="170864517#0_0" pos="22.50" length="28.93" friendlyPos="1"/>
+        <access lane="170864517#1_0" pos="0.00" length="30.32" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2384913752" name="Gara de Nord" lane="895504659#1_0" startPos="17.91" endPos="32.91" friendlyPos="true" lines="182 282 105 205">
+        <access lane="-669144908_0" pos="1.84" length="20.30" friendlyPos="1"/>
+        <access lane="1074235074_0" pos="0.20" length="24.94" friendlyPos="1"/>
+        <access lane="1074235075#1_0" pos="0.20" length="20.71" friendlyPos="1"/>
+        <access lane="1074235090#1_0" pos="55.13" length="10.95" friendlyPos="1"/>
+        <access lane="1074235090#2_0" pos="0.00" length="20.96" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2385931559" name="Bucur Obor" lane="131483758#0_1" startPos="81.31" endPos="96.31" friendlyPos="true" lines="66 N108"/>
+    <trainStop id="2385931560" name="Bulevardul Carol I" lane="205037366#9_0" startPos="93.07" endPos="118.07" friendlyPos="true" lines="21">
+        <access lane="1318111813#4_0" pos="94.17" length="19.99" friendlyPos="1"/>
+        <access lane="207008916#2_0" pos="16.95" length="58.63" friendlyPos="1"/>
+        <access lane="311994811#0_0" pos="21.47" length="22.10" friendlyPos="1"/>
+        <access lane="668342047_0" pos="47.20" length="57.62" friendlyPos="1"/>
+        <access lane="670574720#0_0" pos="0.00" length="47.33" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="2385931574" name="Mihai Eminescu" lane="205037366#2_0" startPos="205.90" endPos="230.90" friendlyPos="true" lines="21">
+        <access lane="229234698#1_0" pos="13.25" length="16.21" friendlyPos="1"/>
+        <access lane="229234699#8_0" pos="29.25" length="19.90" friendlyPos="1"/>
+        <access lane="765252248#0_0" pos="0.20" length="23.72" friendlyPos="1"/>
+        <access lane="765252248#1_0" pos="0.00" length="23.64" friendlyPos="1"/>
+        <access lane="765252248#2_0" pos="0.00" length="23.85" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="2387001460" name="Armenească" lane="229481913#0_0" startPos="20.12" endPos="35.12" friendlyPos="true" lines="66 N108 69 70 85 311 90">
+        <access lane="1192944480_0" pos="0.00" length="56.97" friendlyPos="1"/>
+        <access lane="1192944483#0_0" pos="16.67" length="30.62" friendlyPos="1"/>
+        <access lane="1192944485#1_0" pos="0.00" length="36.32" friendlyPos="1"/>
+        <access lane="241081586_0" pos="23.53" length="62.26" friendlyPos="1"/>
+        <access lane="740898427_0" pos="8.69" length="56.95" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001465" name="Calea Moșilor" lane="311994811#1_1" startPos="8.97" endPos="23.97" friendlyPos="true" lines="66 N108"/>
+    <busStop id="2387001473" name="Făinari" lane="229234699#2_1" startPos="11.62" endPos="26.62" friendlyPos="true" lines="66 N108"/>
+    <busStop id="2387001474" name="Făinari" lane="229234698#6_1" startPos="20.08" endPos="35.08" friendlyPos="true" lines="66 N108"/>
+    <busStop id="2387001475" name="Grădina Cișmigiu" lane="39725274#4_0" startPos="0.00" endPos="12.98" friendlyPos="true" lines="137 122 66 69 61 70 85 90">
+        <access lane="-23486178#1_0" pos="61.06" length="23.31" friendlyPos="1"/>
+        <access lane="23486178#1_0" pos="0.00" length="14.39" friendlyPos="1"/>
+        <access lane="812566691#3_0" pos="68.40" length="9.31" friendlyPos="1"/>
+        <access lane="895736934#2_0" pos="97.06" length="7.46" friendlyPos="1"/>
+        <access lane="895736934#3_0" pos="0.00" length="25.22" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001477" name="Mihai Eminescu" lane="229234698#1_1" startPos="15.10" endPos="30.10" friendlyPos="true" lines="66 N108"/>
+    <busStop id="2387001478" name="Mihai Eminescu" lane="229234699#7_1" startPos="32.17" endPos="47.17" friendlyPos="true" lines="66 N108"/>
+    <busStop id="2387001479" name="Piața Mihail Kogălniceanu" lane="4274826#2_0" startPos="0.95" endPos="15.95" friendlyPos="true" lines="69 66 61 70 85 90">
+        <access lane="-16290964#1_0" pos="109.08" length="18.59" friendlyPos="1"/>
+        <access lane="16290964#1_0" pos="0.00" length="14.53" friendlyPos="1"/>
+        <access lane="812572513#1_0" pos="16.66" length="6.86" friendlyPos="1"/>
+        <access lane="812572515#1_0" pos="30.61" length="40.39" friendlyPos="1"/>
+        <access lane="812572518#1_0" pos="0.00" length="19.39" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001480" name="Piața Mihail Kogălniceanu" lane="196639093#1_0" startPos="13.15" endPos="28.15" friendlyPos="true" lines="137 122 69 61 90">
+        <access lane="242373542_0" pos="0.00" length="26.38" friendlyPos="1"/>
+        <access lane="812572516#0_0" pos="197.69" length="13.51" friendlyPos="1"/>
+        <access lane="812572517#1_0" pos="0.00" length="35.84" friendlyPos="1"/>
+        <access lane="812572521#3_0" pos="20.85" length="7.69" friendlyPos="1"/>
+        <access lane="812572521#4_0" pos="0.00" length="28.78" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001482" name="Teatrul Național" lane="229825430#0_0" startPos="32.62" endPos="47.62" friendlyPos="true" lines="66 N108 69 61 70 85 311  90">
+        <access lane="1192937914#2_0" pos="39.96" length="13.17" friendlyPos="1"/>
+        <access lane="1243277217#1_0" pos="0.00" length="34.71" friendlyPos="1"/>
+        <access lane="389247624_0" pos="68.11" length="27.11" friendlyPos="1"/>
+        <access lane="740898422#2_0" pos="82.83" length="14.35" friendlyPos="1"/>
+        <access lane="740898422#3_0" pos="0.00" length="28.14" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001484" name="Piața Rosetti" lane="28898244_0" startPos="34.91" endPos="49.91" friendlyPos="true" lines="69 66 N108 61 ">
+        <access lane="-389247621_0" pos="10.10" length="72.39" friendlyPos="1"/>
+        <access lane="1192937914#1_0" pos="45.77" length="12.19" friendlyPos="1"/>
+        <access lane="1192937929#1_0" pos="0.00" length="72.06" friendlyPos="1"/>
+        <access lane="740898422#1_0" pos="45.10" length="14.89" friendlyPos="1"/>
+        <access lane="740898422#2_0" pos="0.00" length="29.88" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001494" name="Universitate" lane="4089366#0_0" startPos="47.14" endPos="62.14" friendlyPos="true" lines="69 66 61 70 85 90">
+        <access lane="-23049948#1_0" pos="38.44" length="45.74" friendlyPos="1"/>
+        <access lane="-4089366#0_0" pos="49.03" length="16.65" friendlyPos="1"/>
+        <access lane="23049948#1_0" pos="12.41" length="50.54" friendlyPos="1"/>
+        <access lane="237750835#1_0" pos="126.49" length="16.13" friendlyPos="1"/>
+        <access lane="740898552#2_0" pos="49.12" length="18.54" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2387001496" name="Vasile Pârvan" lane="39340441#1_1" startPos="0.00" endPos="15.00" friendlyPos="true" lines="66 70"/>
+    <busStop id="2388033145" name="Gara de Nord" lane="668979222_0" startPos="42.07" endPos="57.07" friendlyPos="true" lines="123 282 780 178 105 162">
+        <access lane="1074235084_0" pos="8.48" length="17.07" friendlyPos="1"/>
+        <access lane="633028824#0_0" pos="6.66" length="26.53" friendlyPos="1"/>
+        <access lane="633562892_0" pos="0.00" length="26.54" friendlyPos="1"/>
+        <access lane="737844105#0_0" pos="50.16" length="16.44" friendlyPos="1"/>
+        <access lane="737844106#0_0" pos="0.00" length="28.05" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2388033146" name="Gara de Nord" lane="244433542#0_0" startPos="106.55" endPos="121.55" friendlyPos="true">
+        <access lane="598079737#1_0" pos="33.41" length="18.33" friendlyPos="1"/>
+        <access lane="620638539_0" pos="17.17" length="29.43" friendlyPos="1"/>
+        <access lane="620638540_0" pos="465.53" length="25.27" friendlyPos="1"/>
+        <access lane="621156612#29_0" pos="133.46" length="14.49" friendlyPos="1"/>
+        <access lane="737844104#0_0" pos="0.23" length="50.31" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2388401681" name="Bd. Banu Manta" lane="330843373#0_1" startPos="5.90" endPos="20.90" friendlyPos="true" lines="282"/>
+    <busStop id="2388401686" name="Bd. Ion Mihalache" lane="1535669336#2_1" startPos="50.19" endPos="65.19" friendlyPos="true" lines="282"/>
+    <busStop id="2388401689" name="G-ral Alexandru Cernat" lane="131484730#1_0" startPos="15.34" endPos="30.34" friendlyPos="true" lines="182">
+        <access lane="-186665789#3_0" pos="60.02" length="151.49" friendlyPos="1"/>
+        <access lane="-371204697_0" pos="18.05" length="143.86" friendlyPos="1"/>
+        <access lane="186665789#1_0" pos="62.13" length="163.29" friendlyPos="1"/>
+        <access lane="186665789#2_0" pos="52.61" length="137.39" friendlyPos="1"/>
+        <access lane="371204697_0" pos="0.00" length="137.98" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2388401697" name="Petru Rareș" lane="131484730#9_0" startPos="2.04" endPos="17.04" friendlyPos="true" lines="182">
+        <access lane="-1097527682_0" pos="17.68" length="77.20" friendlyPos="1"/>
+        <access lane="-273876182_0" pos="164.00" length="21.22" friendlyPos="1"/>
+        <access lane="119762467#0_0" pos="38.39" length="73.51" friendlyPos="1"/>
+        <access lane="237830688_0" pos="63.04" length="80.71" friendlyPos="1"/>
+        <access lane="273876182_0" pos="0.00" length="25.40" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2388401705" name="Primăria Sector 1" lane="1535669333#1_1" startPos="16.69" endPos="31.69" friendlyPos="true" lines="282"/>
+    <busStop id="2389847192" name="Bd. Banu Manta" lane="668700421#2_0" startPos="8.44" endPos="23.44" friendlyPos="true" lines="182">
+        <access lane="-237830949_0" pos="0.00" length="35.94" friendlyPos="1"/>
+        <access lane="-273876182_0" pos="40.01" length="65.64" friendlyPos="1"/>
+        <access lane="1305563864#10_0" pos="0.00" length="37.53" friendlyPos="1"/>
+        <access lane="1305563864#8_0" pos="59.17" length="60.28" friendlyPos="1"/>
+        <access lane="237830949_0" pos="88.05" length="32.09" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2389847196" name="Gara de Nord" lane="451333767#0_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="182 780 282 105 62 85 93 96">
+        <access lane="1074235094_0" pos="0.00" length="30.62" friendlyPos="1"/>
+        <access lane="633028826_0" pos="34.69" length="29.00" friendlyPos="1"/>
+        <access lane="668510231#1_0" pos="39.18" length="17.07" friendlyPos="1"/>
+        <access lane="668516719#1_0" pos="0.92" length="27.57" friendlyPos="1"/>
+        <access lane="668516719#2_0" pos="0.00" length="29.83" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2389847197" name="Nicolae Titulescu" lane="227397419#1_0" startPos="41.85" endPos="56.85" friendlyPos="true" lines="282 86">
+        <access lane="-337892537_0" pos="18.05" length="41.77" friendlyPos="1"/>
+        <access lane="337892537_0" pos="74.95" length="46.57" friendlyPos="1"/>
+        <access lane="737638650#1_0" pos="53.48" length="37.33" friendlyPos="1"/>
+        <access lane="737639103_0" pos="12.36" length="79.71" friendlyPos="1"/>
+        <access lane="909625920#0_0" pos="0.00" length="84.27" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2389847202" name="Perla" lane="30357216#0_0" startPos="60.83" endPos="75.83" friendlyPos="true" lines="301 331B 461 331 335">
+        <access lane="-229829898#0_0" pos="10.38" length="83.38" friendlyPos="1"/>
+        <access lane="229829897_0" pos="0.00" length="47.33" friendlyPos="1"/>
+        <access lane="229829898#0_0" pos="0.00" length="84.99" friendlyPos="1"/>
+        <access lane="469917252_0" pos="2.75" length="89.81" friendlyPos="1"/>
+        <access lane="669158566#0_0" pos="0.00" length="94.55" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2389982893" name="Calea Moșilor" lane="668342047_1" startPos="21.98" endPos="36.98" friendlyPos="true" lines="69 70 85 311 90"/>
+    <busStop id="2389982902" name="Foișorul de Foc" lane="206009884#0_1" startPos="10.86" endPos="25.86" friendlyPos="true" lines="135 79"/>
+    <busStop id="2389982905" name="Foișorul de Foc" lane="15488620#0_1" startPos="0.00" endPos="15.00" friendlyPos="true" lines="97 86 79"/>
+    <busStop id="2389982923" name="Universitate" lane="218268092#0_0" startPos="31.84" endPos="46.84" friendlyPos="true" lines="361 100 N108 381">
+        <access lane="1180646338#1_0" pos="3.09" length="33.01" friendlyPos="1"/>
+        <access lane="1180646340_0" pos="0.90" length="39.26" friendlyPos="1"/>
+        <access lane="1180647979_0" pos="16.91" length="26.59" friendlyPos="1"/>
+        <access lane="1192906795#1_0" pos="72.29" length="37.07" friendlyPos="1"/>
+        <access lane="740898425#2_0" pos="30.73" length="11.91" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2389982929" name="Șoseaua Mihai Bravu" lane="1557437354#1_1" startPos="0.31" endPos="15.31" friendlyPos="true"/>
+    <busStop id="2395321515" name="Șoseaua Mihai Bravu 33" lane="196657059#3_1" startPos="126.51" endPos="141.51" friendlyPos="true" lines="330 335 101"/>
+    <busStop id="2395321518" name="Șoseaua Mihai Bravu 88" lane="231916546#2_1" startPos="6.96" endPos="21.96" friendlyPos="true" lines="330 335"/>
+    <busStop id="2483542001" name="Bucur Obor" lane="13605580_1" startPos="111.45" endPos="126.45" friendlyPos="true" lines="330 335 101"/>
+    <busStop id="2517228817" name="Elie Radu" lane="227053928#3_1" startPos="44.43" endPos="59.43" friendlyPos="true" lines="104 123 385"/>
+    <busStop id="2517228818" name="Opera Națională" lane="665696186#3_1" startPos="36.32" endPos="51.32" friendlyPos="true" lines="104"/>
+    <busStop id="2517228824" name="Piața Operei" lane="454285293#1_0" startPos="28.91" endPos="43.91" friendlyPos="true" lines="104 69 61">
+        <access lane="1184444994#4_0" pos="0.00" length="9.61" friendlyPos="1"/>
+        <access lane="1184447982#2_0" pos="34.81" length="10.89" friendlyPos="1"/>
+        <access lane="1184449596#10_0" pos="0.00" length="9.45" friendlyPos="1"/>
+        <access lane="1184449596#12_0" pos="0.00" length="10.83" friendlyPos="1"/>
+        <access lane="1184449596#8_0" pos="34.92" length="9.81" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2517228825" name="Pod Hașdeu" lane="196673062#1_0" startPos="19.89" endPos="34.89" friendlyPos="true" lines="123 104 63">
+        <access lane="1238377569#0_0" pos="0.00" length="58.58" friendlyPos="1"/>
+        <access lane="14139689_0" pos="12.59" length="51.95" friendlyPos="1"/>
+        <access lane="812577232#1_0" pos="0.00" length="45.36" friendlyPos="1"/>
+        <access lane="812577233_0" pos="1.88" length="50.26" friendlyPos="1"/>
+        <access lane="812577234#1_0" pos="0.20" length="52.04" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2517228826" name="Pod Hașdeu" lane="665696186#0_1" startPos="15.68" endPos="30.68" friendlyPos="true" lines="104 123"/>
+    <busStop id="2517228828" name="Pod Izvor" lane="665627961_1" startPos="29.91" endPos="44.91" friendlyPos="true" lines="385"/>
+    <busStop id="2517228829" name="Pod Izvor" lane="4865822_1" startPos="18.63" endPos="33.63" friendlyPos="true" lines="123 104 63 385"/>
+    <busStop id="2517228830" name="Teatrul Bulandra" lane="227053922#2_0" startPos="32.14" endPos="47.14" friendlyPos="true" lines="104 123">
+        <access lane="-16290964#1_0" pos="20.99" length="67.59" friendlyPos="1"/>
+        <access lane="-227053922#2_0" pos="151.83" length="4.80" friendlyPos="1"/>
+        <access lane="1454520418#1_0" pos="6.14" length="73.32" friendlyPos="1"/>
+        <access lane="1454520418#2_0" pos="42.15" length="10.57" friendlyPos="1"/>
+        <access lane="16290964#1_0" pos="88.08" length="59.79" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2517400439" name="Calea Plevnei" lane="106797419#0_0" startPos="39.11" endPos="54.11" friendlyPos="true" lines="123 178 105">
+        <access lane="139788054#6_0" pos="110.87" length="55.14" friendlyPos="1"/>
+        <access lane="620862308#1_0" pos="0.00" length="182.26" friendlyPos="1"/>
+        <access lane="737847799#4_0" pos="117.61" length="10.02" friendlyPos="1"/>
+        <access lane="737847799#5_0" pos="0.00" length="153.58" friendlyPos="1"/>
+        <access lane="84788106#0_0" pos="0.00" length="181.36" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2517408900" name="Gara Basarab" lane="668922198#0_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="105">
+        <access lane="572006569#0_0" pos="15.38" length="16.94" friendlyPos="1"/>
+        <access lane="572006569#1_0" pos="3.42" length="7.58" friendlyPos="1"/>
+        <access lane="668922199_0" pos="2.83" length="17.75" friendlyPos="1"/>
+        <access lane="668922201#0_0" pos="23.48" length="21.43" friendlyPos="1"/>
+        <access lane="737844102#3_0" pos="112.91" length="5.90" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2517418575" name="Gara Basarab" lane="668922201#0_0" startPos="25.85" endPos="40.85" friendlyPos="true" lines="182 780 282"/>
+    <busStop id="2517418576" name="Gara Basarab" lane="668922201#0_0" startPos="39.89" endPos="54.89" friendlyPos="true" lines="178 105"/>
+    <busStop id="2517435657" name="Stoica Ludescu" lane="229624955_0" startPos="12.76" endPos="27.76" friendlyPos="true" lines="86">
+        <access lane="625515025#2_0" pos="0.52" length="43.51" friendlyPos="1"/>
+        <access lane="625515026#1_0" pos="0.00" length="39.89" friendlyPos="1"/>
+        <access lane="625515026#2_0" pos="103.48" length="40.74" friendlyPos="1"/>
+        <access lane="737645574#2_0" pos="27.17" length="6.86" friendlyPos="1"/>
+        <access lane="737645574#3_0" pos="0.00" length="40.60" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519055686" name="Pod Cotroceni" lane="667035478#2_0" startPos="12.94" endPos="27.94" friendlyPos="true" lines="123 90">
+        <access lane="205986739#2_0" pos="5.08" length="51.15" friendlyPos="1"/>
+        <access lane="205986739#3_0" pos="0.20" length="39.90" friendlyPos="1"/>
+        <access lane="665933020#1_0" pos="0.20" length="52.53" friendlyPos="1"/>
+        <access lane="665933020#2_0" pos="22.02" length="8.61" friendlyPos="1"/>
+        <access lane="856843870#2_0" pos="0.00" length="59.58" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519055695" name="Witing" lane="154229441#0_0" startPos="11.35" endPos="26.35" friendlyPos="true" lines="123 62 85 93 96 163">
+        <access lane="-23610077#0_0" pos="1.15" length="21.87" friendlyPos="1"/>
+        <access lane="-23610077#1_0" pos="4.46" length="28.14" friendlyPos="1"/>
+        <access lane="23610077#0_0" pos="0.00" length="26.40" friendlyPos="1"/>
+        <access lane="23610077#1_0" pos="0.00" length="31.85" friendlyPos="1"/>
+        <access lane="737847799#15_0" pos="58.42" length="19.23" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519078579" name="Opera Națională" lane="666701065_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="137 123">
+        <access lane="178164386#1_0" pos="0.00" length="28.55" friendlyPos="1"/>
+        <access lane="665696788#0_0" pos="0.20" length="23.75" friendlyPos="1"/>
+        <access lane="665696788#1_0" pos="0.00" length="21.81" friendlyPos="1"/>
+        <access lane="667254504#1_0" pos="39.03" length="21.74" friendlyPos="1"/>
+        <access lane="999282335#5_0" pos="11.45" length="13.16" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519078585" name="Pod Cotroceni" lane="153967347#0_1" startPos="0.00" endPos="0.16" friendlyPos="true" lines="123 62 93 96"/>
+    <busStop id="2519078604" name="Știrbei Vodă" lane="187899505#1_0" startPos="50.63" endPos="65.63" friendlyPos="true" lines="123 90">
+        <access lane="-667035476_0" pos="0.00" length="82.75" friendlyPos="1"/>
+        <access lane="23608627#1_0" pos="72.33" length="81.80" friendlyPos="1"/>
+        <access lane="665933019#1_0" pos="82.60" length="92.05" friendlyPos="1"/>
+        <access lane="812582211#1_0" pos="74.75" length="94.93" friendlyPos="1"/>
+        <access lane="813947734#2_0" pos="0.00" length="95.66" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519476219" name="Piața Iancului" lane="1541289717#0_1" startPos="11.55" endPos="26.55" friendlyPos="true" lines="135 311"/>
+    <busStop id="2519476222" name="Școala Iancului" lane="8119904#9_0" startPos="0.00" endPos="15.34" friendlyPos="true" lines="86 90"/>
+    <busStop id="2519476224" name="Școala Iancului" lane="1541289717#11_1" startPos="23.68" endPos="48.68" friendlyPos="true" lines="135 311"/>
+    <busStop id="2519507102" name="Agricultorilor" lane="8119904#0_0" startPos="153.90" endPos="178.90" friendlyPos="true" lines="86 90"/>
+    <busStop id="2519507105" name="Colegiul Economic Virgil Madgearu" lane="232079825#2_0" startPos="41.50" endPos="66.50" friendlyPos="true" lines="97 86 79">
+        <access lane="-1311938046_0" pos="41.18" length="107.05" friendlyPos="1"/>
+        <access lane="-1393194547#32_0" pos="74.41" length="57.14" friendlyPos="1"/>
+        <access lane="1311938046_0" pos="0.00" length="104.66" friendlyPos="1"/>
+        <access lane="1393194547#31_0" pos="160.10" length="71.24" friendlyPos="1"/>
+        <access lane="1449312976_0" pos="32.80" length="107.83" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519507108" name="Calea Griviței" lane="23123516#0_1" startPos="186.61" endPos="201.61" friendlyPos="true" lines="86 79 205"/>
+    <busStop id="2519507109" name="Calea Victoriei" lane="23632425#1_1" startPos="28.42" endPos="43.42" friendlyPos="true" lines="86 79"/>
+    <busStop id="2519507114" name="Mecet" lane="8119904#4_0" startPos="0.00" endPos="16.33" friendlyPos="true" lines="86 90"/>
+    <busStop id="2519507119" name="Povernei" lane="4045775#0_1" startPos="3.43" endPos="18.43" friendlyPos="true" lines="381"/>
+    <busStop id="2519529606" name="Foișorul de Foc" lane="15488620#0_1" startPos="36.02" endPos="51.02" friendlyPos="true" lines="97"/>
+    <busStop id="2519529608" name="Piața Romană" lane="778823265_0" startPos="0.00" endPos="3.47" friendlyPos="true" lines="86 79">
+        <access lane="-778823268#2_0" pos="89.91" length="36.81" friendlyPos="1"/>
+        <access lane="1104820825#1_0" pos="2.80" length="24.56" friendlyPos="1"/>
+        <access lane="125445934#0_0" pos="0.00" length="38.13" friendlyPos="1"/>
+        <access lane="778823266_0" pos="0.20" length="17.01" friendlyPos="1"/>
+        <access lane="778823267_0" pos="0.00" length="32.82" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519567779" name="Facultatea de Drept" lane="180685585#7_0" startPos="29.16" endPos="44.16" friendlyPos="true" lines="137 122 69 61 163 90">
+        <access lane="-246129490#1_0" pos="10.34" length="61.80" friendlyPos="1"/>
+        <access lane="-665696186#3_0" pos="37.01" length="55.39" friendlyPos="1"/>
+        <access lane="665696186#3_0" pos="65.36" length="41.29" friendlyPos="1"/>
+        <access lane="812579312#1_0" pos="39.61" length="13.86" friendlyPos="1"/>
+        <access lane="999284240#6_0" pos="36.70" length="12.08" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519567784" name="Piața 21 Decembrie 1989" lane="891089879#0_1" startPos="0.00" endPos="15.00" friendlyPos="true" lines="137 122 100 381"/>
+    <busStop id="2519567785" name="Pod Eroilor" lane="1367423376#0_0" startPos="120.31" endPos="135.31" friendlyPos="true" lines="137 122 168 226 368">
+        <access lane="1184444994#75_0" pos="49.59" length="15.08" friendlyPos="1"/>
+        <access lane="812582220#2_0" pos="102.15" length="15.61" friendlyPos="1"/>
+        <access lane="812582220#3_0" pos="0.00" length="17.19" friendlyPos="1"/>
+        <access lane="859998229#2_0" pos="15.29" length="19.30" friendlyPos="1"/>
+        <access lane="903219140_0" pos="0.00" length="20.12" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519623178" name="Bd. Nicolae Bălcescu" lane="180685590#6_0" startPos="15.32" endPos="30.32" friendlyPos="true" lines="137 122">
+        <access lane="-308396833#2_0" pos="0.00" length="63.93" friendlyPos="1"/>
+        <access lane="1192787721_0" pos="0.00" length="68.46" friendlyPos="1"/>
+        <access lane="442917203#0_0" pos="0.00" length="21.76" friendlyPos="1"/>
+        <access lane="442917203#1_0" pos="21.05" length="12.73" friendlyPos="1"/>
+        <access lane="814919394#1_0" pos="8.19" length="68.58" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519623179" name="Berzei" lane="314034007_0" startPos="15.98" endPos="30.98" friendlyPos="true" lines="137 122 168 226 368">
+        <access lane="-205985817#1_0" pos="46.12" length="61.58" friendlyPos="1"/>
+        <access lane="-28775306_0" pos="0.00" length="47.69" friendlyPos="1"/>
+        <access lane="-750611385#2_0" pos="0.00" length="50.39" friendlyPos="1"/>
+        <access lane="28775306_0" pos="148.17" length="43.23" friendlyPos="1"/>
+        <access lane="750611385#2_0" pos="64.05" length="54.90" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2519623181" name="Cișmigiu" lane="265969686#3_1" startPos="15.57" endPos="30.57" friendlyPos="true" lines="137 122 178 168 226 368"/>
+    <busStop id="2522849389" name="Piața Romană" lane="448266581#2_1" startPos="1.15" endPos="16.15" friendlyPos="true" lines="100 381"/>
+    <busStop id="2522849391" name="Piața Romană" lane="668307642#1_1" startPos="35.35" endPos="50.35" friendlyPos="true" lines="301 331B 331"/>
+    <busStop id="2522849392" name="Piața Victoriei" lane="542810837_1" startPos="53.89" endPos="68.89" friendlyPos="true" lines="100 381"/>
+    <busStop id="2522849393" name="Piața Victoriei" lane="244656971#2_1" startPos="70.92" endPos="85.92" friendlyPos="true" lines="361 100 381"/>
+    <busStop id="2522857239" name="Piața Romană" lane="44499684#2_1" startPos="39.86" endPos="54.86" friendlyPos="true" lines="100 381"/>
+    <trainStop id="2844885590" name="Gara de Nord 2" lane="1359037584#0_0" startPos="68.30" endPos="268.30" friendlyPos="true">
+        <access lane="1542876735#0_0" pos="1.54" length="107.57" friendlyPos="1"/>
+        <access lane="1542876735#1_0" pos="0.00" length="105.25" friendlyPos="1"/>
+        <access lane="1542876736_0" pos="71.22" length="20.29" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="114.87" length="2.03" friendlyPos="1"/>
+        <access lane="621438872_0" pos="0.00" length="107.33" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="2927667933" name="Gara de Nord" lane="289213552#0_1" startPos="0.00" endPos="2.80" friendlyPos="true" lines="46"/>
+    <trainStop id="2927667936" name="Piața Victoriei" lane="920117625#4_0" startPos="249.87" endPos="274.87" friendlyPos="true" lines="46">
+        <access lane="1331108698#1_0" pos="0.00" length="35.75" friendlyPos="1"/>
+        <access lane="1530973523#1_0" pos="0.00" length="35.96" friendlyPos="1"/>
+        <access lane="231253542#0_0" pos="20.41" length="16.41" friendlyPos="1"/>
+        <access lane="256336897#0_0" pos="0.00" length="26.53" friendlyPos="1"/>
+        <access lane="668559793#2_0" pos="48.96" length="19.60" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="2927667937" name="Piața Victoriei" lane="243476552_0" startPos="443.74" endPos="468.74" friendlyPos="true" lines="46">
+        <access lane="1132173508#1_0" pos="11.36" length="21.43" friendlyPos="1"/>
+        <access lane="1523633967#0_0" pos="0.10" length="23.04" friendlyPos="1"/>
+        <access lane="1523633967#1_0" pos="5.11" length="20.01" friendlyPos="1"/>
+        <access lane="231253164#4_0" pos="61.76" length="19.84" friendlyPos="1"/>
+        <access lane="672964177#1_0" pos="0.20" length="20.14" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="296044762" name="Teiul Doamnei" lane="85728019#0_0" startPos="503.58" endPos="528.58" friendlyPos="true" lines="21"/>
+    <trainStop id="296077860" name="Doctor Grozovici" lane="27011698#8_0" startPos="193.03" endPos="218.03" friendlyPos="true" lines="46 10">
+        <access lane="1217253602#0_0" pos="42.45" length="25.50" friendlyPos="1"/>
+        <access lane="229239044#1_0" pos="14.96" length="25.12" friendlyPos="1"/>
+        <access lane="229481371#12_0" pos="42.61" length="21.58" friendlyPos="1"/>
+        <access lane="669011092#3_0" pos="0.00" length="26.17" friendlyPos="1"/>
+        <access lane="669011092#4_0" pos="0.00" length="26.17" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="2990819616" name="Bd. Dinicu Golescu" lane="12471840#5_1" startPos="73.01" endPos="88.01" friendlyPos="true" lines="62 85 93 96"/>
+    <busStop id="2990819617" name="Calea Giulești" lane="139788054#6_1" startPos="160.80" endPos="175.80" friendlyPos="true" lines="178"/>
+    <busStop id="2990819619" name="Primăria Sector 6" lane="668588452_0" startPos="14.44" endPos="29.44" friendlyPos="true" lines="163">
+        <access lane="-206654839#2_0" pos="0.00" length="40.78" friendlyPos="1"/>
+        <access lane="-206654839#3_0" pos="0.20" length="42.86" friendlyPos="1"/>
+        <access lane="206654839#2_0" pos="47.27" length="35.98" friendlyPos="1"/>
+        <access lane="206654839#3_0" pos="0.00" length="38.33" friendlyPos="1"/>
+        <access lane="737847799#7_0" pos="20.66" length="36.69" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2990827632" name="Ministerul Transporturilor" lane="227617363#3_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="97 62 85 93 96">
+        <access lane="-239235212#0_0" pos="2.39" length="21.96" friendlyPos="1"/>
+        <access lane="-239236112#0_0" pos="29.02" length="20.38" friendlyPos="1"/>
+        <access lane="239235212#0_0" pos="0.00" length="17.58" friendlyPos="1"/>
+        <access lane="239235212#1_0" pos="0.00" length="30.04" friendlyPos="1"/>
+        <access lane="239236112#0_0" pos="7.79" length="15.58" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2990854727" name="Bd. Dacia" lane="313014417#2_1" startPos="143.11" endPos="158.11" friendlyPos="true" lines="97"/>
+    <busStop id="2990854732" name="Biblioteca Academiei Române" lane="313014417#2_1" startPos="158.20" endPos="173.20" friendlyPos="true" lines="97 168 226"/>
+    <busStop id="2990854835" name="Calea Victoriei" lane="1486385191#0_1" startPos="31.49" endPos="46.49" friendlyPos="true" lines="168"/>
+    <busStop id="2990854837" name="Calea Victoriei" lane="1486385191#0_1" startPos="32.69" endPos="47.69" friendlyPos="true" lines="97 226"/>
+    <busStop id="2990854840" name="Hala Traian" lane="1494488814_1" startPos="0.00" endPos="15.00" friendlyPos="true" lines="97"/>
+    <busStop id="2990854843" name="Matei Basarab" lane="1117820481_0" startPos="72.94" endPos="87.94" friendlyPos="true" lines="97">
+        <access lane="-252430460_0" pos="48.44" length="240.19" friendlyPos="1"/>
+        <access lane="230288820_0" pos="0.00" length="231.61" friendlyPos="1"/>
+        <access lane="230288821_0" pos="17.86" length="216.24" friendlyPos="1"/>
+        <access lane="252430460_0" pos="0.00" length="241.76" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2990854846" name="Piața Romană" lane="778823268#1_1" startPos="71.71" endPos="86.71" friendlyPos="true" lines="97"/>
+    <busStop id="2990887287" name="Bd. Dinicu Golescu" lane="237797917#1_0" startPos="85.29" endPos="100.29" friendlyPos="true" lines="178">
+        <access lane="-632884489#1_0" pos="3.63" length="19.23" friendlyPos="1"/>
+        <access lane="632884489#1_0" pos="3.51" length="14.43" friendlyPos="1"/>
+        <access lane="632884491_0" pos="0.20" length="14.60" friendlyPos="1"/>
+        <access lane="632884496_0" pos="0.00" length="11.00" friendlyPos="1"/>
+        <access lane="632884501_0" pos="0.00" length="11.74" friendlyPos="1"/>
+    </busStop>
+    <busStop id="2990887289" name="Popa Tatu" lane="23123521#3_1" startPos="6.43" endPos="21.43" friendlyPos="true" lines="97 178 168 226 368"/>
+    <busStop id="302468096" name="Facultatea de Medicină Veterinară" lane="160469879#1_0" startPos="20.71" endPos="35.71" friendlyPos="true" lines="123 104">
+        <access lane="-170778289#0_0" pos="50.09" length="59.63" friendlyPos="1"/>
+        <access lane="-171256304_0" pos="69.84" length="48.33" friendlyPos="1"/>
+        <access lane="170778289#0_0" pos="0.00" length="54.87" friendlyPos="1"/>
+        <access lane="171256304_0" pos="0.00" length="52.85" friendlyPos="1"/>
+        <access lane="812577227#1_0" pos="161.60" length="9.16" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="304914940" name="Rossini" lane="131484725#0_0" startPos="1457.91" endPos="1482.91" friendlyPos="true" lines="5"/>
+    <busStop id="3053138333" name="Bd. Dr. Marinescu" lane="301223654#0_0" startPos="0.00" endPos="25.00" friendlyPos="true" lines="61">
+        <access lane="1182028834#2_0" pos="61.23" length="32.67" friendlyPos="1"/>
+        <access lane="1182028834#3_0" pos="0.00" length="80.80" friendlyPos="1"/>
+        <access lane="1182028834#4_0" pos="40.16" length="25.38" friendlyPos="1"/>
+        <access lane="1182028835#1_0" pos="0.20" length="77.91" friendlyPos="1"/>
+        <access lane="201180135#1_0" pos="18.36" length="52.44" friendlyPos="1"/>
+    </busStop>
+    <busStop id="3053147733" name="Facultatea de Medicină" lane="16277739#0_0" startPos="9.59" endPos="34.59" friendlyPos="true" lines="61">
+        <access lane="-301210185_0" pos="55.02" length="14.35" friendlyPos="1"/>
+        <access lane="-460707275_0" pos="13.98" length="106.25" friendlyPos="1"/>
+        <access lane="170954008#3_0" pos="31.96" length="127.54" friendlyPos="1"/>
+        <access lane="301210185_0" pos="0.00" length="17.38" friendlyPos="1"/>
+        <access lane="460707275_0" pos="0.00" length="110.41" friendlyPos="1"/>
+    </busStop>
+    <busStop id="3053357434" name="Traian" lane="85587072#0_1" startPos="23.59" endPos="38.59" friendlyPos="true" lines="311 70 90"/>
+    <trainStop id="305354258" name="Lizeanu" lane="27011698#11_0" startPos="268.61" endPos="293.61" friendlyPos="true" lines="46 10">
+        <access lane="1177670282#2_0" pos="3.84" length="25.05" friendlyPos="1"/>
+        <access lane="320015691#1_0" pos="3.87" length="11.62" friendlyPos="1"/>
+        <access lane="320015691#3_0" pos="0.20" length="9.77" friendlyPos="1"/>
+        <access lane="320015691#4_0" pos="0.00" length="10.98" friendlyPos="1"/>
+        <access lane="320015691#5_0" pos="0.00" length="12.04" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="3059962833" name="Nicolae Golescu" lane="139713891#3_0" startPos="6.92" endPos="21.92" friendlyPos="true" lines="368">
+        <access lane="-125445934#5_0" pos="33.16" length="82.06" friendlyPos="1"/>
+        <access lane="-27013390#0_0" pos="45.96" length="26.66" friendlyPos="1"/>
+        <access lane="23556846#0_0" pos="31.50" length="83.58" friendlyPos="1"/>
+        <access lane="27013390#0_0" pos="0.00" length="24.80" friendlyPos="1"/>
+        <access lane="292459870_0" pos="4.89" length="23.89" friendlyPos="1"/>
+    </busStop>
+    <busStop id="3059964038" name="Calea Griviței" lane="23633028#2_1" startPos="41.61" endPos="56.61" friendlyPos="true" lines="178 368"/>
+    <busStop id="3059983043" name="Mircea Vulcănescu" lane="231253160#2_1" startPos="10.74" endPos="25.74" friendlyPos="true" lines="168 226 368"/>
+    <busStop id="3061303235" name="Bd. Nicolae Bălcescu" lane="125413589#1_1" startPos="17.69" endPos="32.69" friendlyPos="true" lines="226 368"/>
+    <busStop id="3063897934" name="A.S.E." lane="407982022#6_1" startPos="13.80" endPos="28.80" friendlyPos="true" lines="331B 331"/>
+    <busStop id="3070604833" name="Bd. Nicolae Bălcescu" lane="139713882_1" startPos="0.00" endPos="6.53" friendlyPos="true" lines="381"/>
+    <busStop id="3096591829" name="Piața Sfântul Gheorghe" lane="229234956_1" startPos="65.06" endPos="80.06" friendlyPos="true" lines="381"/>
+    <busStop id="3115619049" name="Bd. Nicolae Bălcescu" lane="69344025#1_1" startPos="116.02" endPos="131.02" friendlyPos="true" lines="381"/>
+    <busStop id="31402322" name="Piața Romană" lane="130848151_1" startPos="0.00" endPos="12.43" friendlyPos="true" lines="361 97 86 79"/>
+    <busStop id="31403489" name="Pod Grozăvești" lane="27758242#0_0" startPos="94.68" endPos="109.68" friendlyPos="true" lines="90">
+        <access lane="-665700251_0" pos="0.00" length="121.39" friendlyPos="1"/>
+        <access lane="-668888066#7_0" pos="0.00" length="182.52" friendlyPos="1"/>
+        <access lane="-812586933_0" pos="44.30" length="184.34" friendlyPos="1"/>
+        <access lane="418109146_0" pos="0.00" length="133.21" friendlyPos="1"/>
+        <access lane="665700251_0" pos="41.42" length="132.00" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="31983306" name="Izvor" lane="907839004#1_0" startPos="801.60" endPos="1001.60" friendlyPos="true" lines="M3">
+        <access lane="-894655781#0_0" pos="6.92" length="8.99" friendlyPos="1"/>
+        <access lane="1415417153_0" pos="76.24" length="16.24" friendlyPos="1"/>
+        <access lane="1495063821#1_0" pos="17.80" length="11.40" friendlyPos="1"/>
+        <access lane="23491068#1_0" pos="0.00" length="15.71" friendlyPos="1"/>
+        <access lane="4865822_0" pos="30.38" length="14.71" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="3260928666" name="E.L.C.E.N." lane="27758242#3_0" startPos="47.27" endPos="62.27" friendlyPos="true" lines="90">
+        <access lane="1305907984_0" pos="202.20" length="55.93" friendlyPos="1"/>
+        <access lane="1305907988#0_0" pos="3.97" length="53.22" friendlyPos="1"/>
+        <access lane="1305907988#1_0" pos="6.06" length="48.26" friendlyPos="1"/>
+        <access lane="188259412#4_0" pos="51.12" length="60.59" friendlyPos="1"/>
+        <access lane="188259412#5_0" pos="14.16" length="46.56" friendlyPos="1"/>
+    </busStop>
+    <busStop id="3260929561" name="Facultatea de Filosofie" lane="668888066#5_1" startPos="48.90" endPos="63.90" friendlyPos="true" lines="90"/>
+    <busStop id="3326835001" name="Gara de Nord" lane="227617362#2_0" startPos="31.57" endPos="56.57" friendlyPos="true" lines="79"/>
+    <trainStop id="3336953198" name="Piața Iancului" lane="45736838#0_0" startPos="2505.10" endPos="2705.10" friendlyPos="true" lines="M1">
+        <access lane="-1541289717#0_0" pos="188.38" length="155.48" friendlyPos="1"/>
+        <access lane="1541289717#0_0" pos="17.73" length="141.38" friendlyPos="1"/>
+        <access lane="196657054_0" pos="205.70" length="77.01" friendlyPos="1"/>
+        <access lane="231916547#0_0" pos="123.27" length="38.75" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="3488744495" name="Bucur Obor" lane="13604358#1_1" startPos="17.11" endPos="32.11" friendlyPos="true" lines="330 335"/>
+    <busStop id="3583477526" name="Stadionul Dinamo" lane="352589235#2_0" startPos="23.45" endPos="38.45" friendlyPos="true" lines="135">
+        <access lane="-23647436#1_0" pos="19.31" length="55.56" friendlyPos="1"/>
+        <access lane="229481340#0_0" pos="41.07" length="36.24" friendlyPos="1"/>
+        <access lane="514697162_0" pos="9.43" length="60.54" friendlyPos="1"/>
+        <access lane="737951866#1_0" pos="48.85" length="11.94" friendlyPos="1"/>
+        <access lane="910363909_0" pos="42.75" length="9.62" friendlyPos="1"/>
+    </busStop>
+    <busStop id="3583477529" name="Teatrul Metropolis" lane="229481501#6_1" startPos="154.74" endPos="169.74" friendlyPos="true" lines="135"/>
+    <busStop id="3633229027" name="Constantin Cristescu" lane="265969687#5_0" startPos="15.45" endPos="30.45" friendlyPos="true" lines="137 122 178 168 226 368">
+        <access lane="-851998184#0_0" pos="27.61" length="89.97" friendlyPos="1"/>
+        <access lane="-851998185_0" pos="0.00" length="96.31" friendlyPos="1"/>
+        <access lane="-851998307_0" pos="76.50" length="124.68" friendlyPos="1"/>
+        <access lane="851998184#0_0" pos="0.00" length="86.03" friendlyPos="1"/>
+        <access lane="851998185_0" pos="71.67" length="91.51" friendlyPos="1"/>
+    </busStop>
+    <busStop id="3672093625" name="Piața Sfântul Gheorghe" lane="1459912403#2_0" startPos="9.37" endPos="24.37" friendlyPos="true" lines="381">
+        <access lane="-23049945#1_0" pos="244.87" length="30.77" friendlyPos="1"/>
+        <access lane="1192906794#0_0" pos="180.71" length="6.82" friendlyPos="1"/>
+        <access lane="1192906794#1_0" pos="0.00" length="42.59" friendlyPos="1"/>
+        <access lane="23049945#1_0" pos="0.00" length="38.38" friendlyPos="1"/>
+        <access lane="339705211#2_0" pos="123.44" length="4.79" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4191634964" name="Piața Iancului" lane="231916547#0_1" startPos="47.17" endPos="62.17" friendlyPos="true" lines="330 335"/>
+    <busStop id="4191634966" name="Stadionul Dinamo" lane="229481340#0_1" startPos="32.13" endPos="47.13" friendlyPos="true" lines="182"/>
+    <trainStop id="419265619" name="Bd. Ferdinand" lane="898553672#4_0" startPos="0.00" endPos="25.00" friendlyPos="true" lines="46 10">
+        <access lane="1126350851_0" pos="0.00" length="51.29" friendlyPos="1"/>
+        <access lane="196657054_0" pos="6.79" length="21.50" friendlyPos="1"/>
+        <access lane="207008182_0" pos="17.72" length="46.41" friendlyPos="1"/>
+        <access lane="231916547#0_0" pos="372.31" length="28.46" friendlyPos="1"/>
+        <access lane="668283832#4_0" pos="0.00" length="54.56" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="419268470" name="Vasile Lascăr" lane="45668229#3_0" startPos="196.70" endPos="221.70" friendlyPos="true" lines="1 46">
+        <access lane="229239044#2_0" pos="152.37" length="21.41" friendlyPos="1"/>
+        <access lane="669011091#1_0" pos="0.20" length="11.87" friendlyPos="1"/>
+        <access lane="669011091#2_0" pos="0.20" length="11.36" friendlyPos="1"/>
+        <access lane="669011091#3_0" pos="0.00" length="9.91" friendlyPos="1"/>
+        <access lane="669011091#4_0" pos="0.00" length="12.67" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="419268471" name="Stadion Dinamo" lane="45668229#7_0" startPos="220.84" endPos="245.84" friendlyPos="true" lines="1 46">
+        <access lane="669011085#1_0" pos="0.20" length="16.68" friendlyPos="1"/>
+        <access lane="669011085#2_0" pos="0.20" length="15.76" friendlyPos="1"/>
+        <access lane="669011085#3_0" pos="0.00" length="14.98" friendlyPos="1"/>
+        <access lane="669011085#4_0" pos="0.00" length="15.01" friendlyPos="1"/>
+        <access lane="840515204#2_0" pos="56.39" length="19.92" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="419268473" name="Roma" lane="45764482#9_0" startPos="19.17" endPos="44.17" friendlyPos="true" lines="1 46">
+        <access lane="235436166#0_0" pos="18.63" length="24.57" friendlyPos="1"/>
+        <access lane="235436166#1_0" pos="0.00" length="29.43" friendlyPos="1"/>
+        <access lane="281298411_0" pos="0.00" length="37.25" friendlyPos="1"/>
+        <access lane="668566859#1_0" pos="38.70" length="19.26" friendlyPos="1"/>
+        <access lane="668566859#2_0" pos="0.00" length="36.27" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="419535273" name="Piața Sf. Gheorghe" lane="541390374_0" startPos="25.64" endPos="50.64" friendlyPos="true">
+        <access lane="239152751#1_0" pos="113.31" length="19.17" friendlyPos="1"/>
+        <access lane="239152751#2_0" pos="0.00" length="21.36" friendlyPos="1"/>
+        <access lane="339037687#0_0" pos="0.00" length="17.83" friendlyPos="1"/>
+        <access lane="339037687#1_0" pos="17.50" length="13.53" friendlyPos="1"/>
+        <access lane="414104926#1_0" pos="12.88" length="14.69" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="419645690" name="Teiul Doamnei" lane="205037359#5_0" startPos="142.44" endPos="167.44" friendlyPos="true" lines="21">
+        <access lane="1228596472#0_0" pos="0.00" length="233.78" friendlyPos="1"/>
+        <access lane="1230916220#4_0" pos="48.13" length="272.41" friendlyPos="1"/>
+        <access lane="1230916220#5_0" pos="7.37" length="254.01" friendlyPos="1"/>
+        <access lane="229101680#0_0" pos="0.80" length="268.27" friendlyPos="1"/>
+        <access lane="435220060_0" pos="99.47" length="319.04" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="445630260" name="Doamna Ghica" lane="205037359#5_0" startPos="749.99" endPos="774.99" friendlyPos="true" lines="21"/>
+    <busStop id="4481532885" name="Calea Plevnei" lane="860591793_0" startPos="33.26" endPos="48.26" friendlyPos="true" lines="85">
+        <access lane="-285133223_0" pos="0.00" length="23.00" friendlyPos="1"/>
+        <access lane="180685604#0_0" pos="0.00" length="118.74" friendlyPos="1"/>
+        <access lane="285133223_0" pos="97.58" length="27.28" friendlyPos="1"/>
+        <access lane="750611386#3_0" pos="228.14" length="91.61" friendlyPos="1"/>
+        <access lane="750611386#4_0" pos="0.00" length="92.28" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4481532886" name="Casa Studenților" lane="246129079_0" startPos="2.51" endPos="17.51" friendlyPos="true" lines="85 163">
+        <access lane="-666958783_0" pos="28.29" length="137.75" friendlyPos="1"/>
+        <access lane="1435515109#0_0" pos="0.00" length="129.25" friendlyPos="1"/>
+        <access lane="329699691_0" pos="0.00" length="136.28" friendlyPos="1"/>
+        <access lane="39294840#0_0" pos="0.46" length="27.49" friendlyPos="1"/>
+        <access lane="666958783_0" pos="41.42" length="132.75" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4481532887" name="Carol Davila" lane="1529011461#1_0" startPos="39.07" endPos="54.07" friendlyPos="true" lines="62 93 96">
+        <access lane="812585876#0_0" pos="0.00" length="74.91" friendlyPos="1"/>
+        <access lane="812585877#0_0" pos="0.20" length="80.56" friendlyPos="1"/>
+        <access lane="812585877#2_0" pos="0.00" length="78.85" friendlyPos="1"/>
+        <access lane="812585878#1_0" pos="0.20" length="76.33" friendlyPos="1"/>
+        <access lane="84490743#1_0" pos="24.58" length="92.69" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4481532888" name="Mircea Vulcănescu" lane="666958778#0_0" startPos="9.88" endPos="24.88" friendlyPos="true" lines="85 163">
+        <access lane="-827237635#0_0" pos="15.94" length="19.74" friendlyPos="1"/>
+        <access lane="-827237635#1_0" pos="13.66" length="38.18" friendlyPos="1"/>
+        <access lane="666958771#1_0" pos="0.00" length="32.97" friendlyPos="1"/>
+        <access lane="827237635#0_0" pos="14.05" length="24.54" friendlyPos="1"/>
+        <access lane="827237635#1_0" pos="0.00" length="39.05" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4481601503" name="Pod Cotroceni" lane="65750938#1_1" startPos="34.75" endPos="49.75" friendlyPos="true" lines="62 93 96"/>
+    <busStop id="4481626506" name="Calea Plevnei" lane="153967347#1_1" startPos="170.10" endPos="185.10" friendlyPos="true" lines="62 93 96"/>
+    <busStop id="4488678847" name="Țepeș Vodă" lane="23125233#2_0" startPos="22.46" endPos="37.46" friendlyPos="true" lines="70 79">
+        <access lane="1221596847#1_0" pos="3.40" length="50.26" friendlyPos="1"/>
+        <access lane="1221596847#2_0" pos="0.51" length="45.12" friendlyPos="1"/>
+        <access lane="1221596848_0" pos="0.00" length="42.80" friendlyPos="1"/>
+        <access lane="1221596849#3_0" pos="24.63" length="43.38" friendlyPos="1"/>
+        <access lane="1221596849#4_0" pos="5.15" length="32.08" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4488741065" name="Biserica Delea Veche" lane="23050178#5_0" startPos="43.21" endPos="58.21" friendlyPos="true" lines="70 79">
+        <access lane="-204158628_0" pos="0.00" length="70.07" friendlyPos="1"/>
+        <access lane="-252582421#2_0" pos="0.00" length="92.51" friendlyPos="1"/>
+        <access lane="204158626_0" pos="12.28" length="88.45" friendlyPos="1"/>
+        <access lane="204158628_0" pos="40.74" length="65.77" friendlyPos="1"/>
+        <access lane="252582421#2_0" pos="1.22" length="87.80" friendlyPos="1"/>
+    </busStop>
+    <busStop id="4789653802" name="Piața Mihail Kogălniceanu" lane="8138326_0" startPos="23.93" endPos="48.93" friendlyPos="true" lines="66 70 85">
+        <access lane="229236557_0" pos="0.10" length="31.15" friendlyPos="1"/>
+        <access lane="812572517#1_0" pos="0.20" length="63.96" friendlyPos="1"/>
+        <access lane="812572521#0_0" pos="123.70" length="31.28" friendlyPos="1"/>
+        <access lane="812572521#1_0" pos="16.23" length="9.16" friendlyPos="1"/>
+        <access lane="812572521#2_0" pos="0.00" length="26.27" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="491073949" name="Spitalul Grigore Alexandrescu" lane="45764482#9_0" startPos="239.56" endPos="264.56" friendlyPos="true" lines="1 46">
+        <access lane="668566857#1_0" pos="0.20" length="16.45" friendlyPos="1"/>
+        <access lane="668566857#3_0" pos="0.20" length="9.38" friendlyPos="1"/>
+        <access lane="668566857#4_0" pos="0.00" length="8.58" friendlyPos="1"/>
+        <access lane="668566857#5_0" pos="0.00" length="14.47" friendlyPos="1"/>
+        <access lane="668566857#7_0" pos="0.00" length="22.82" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="491073994" name="Dr. Felix" lane="85841976#1_0" startPos="31.48" endPos="56.48" friendlyPos="true" lines="1">
+        <access lane="-1548334239_0" pos="17.50" length="39.25" friendlyPos="1"/>
+        <access lane="1305563864#1_0" pos="43.96" length="15.34" friendlyPos="1"/>
+        <access lane="1548334239_0" pos="0.00" length="42.83" friendlyPos="1"/>
+        <access lane="378639154#1_0" pos="92.60" length="22.89" friendlyPos="1"/>
+        <access lane="378639154#2_0" pos="0.00" length="32.30" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="5235082193" name="Hristo Botev" lane="1225324646_0" startPos="45.13" endPos="70.13" friendlyPos="true" lines="21">
+        <access lane="-1409238664#1_0" pos="0.00" length="46.43" friendlyPos="1"/>
+        <access lane="-23115954#2_0" pos="45.42" length="85.61" friendlyPos="1"/>
+        <access lane="-85796434#1_0" pos="126.89" length="99.50" friendlyPos="1"/>
+        <access lane="1409238664#0_0" pos="12.71" length="47.56" friendlyPos="1"/>
+        <access lane="23115954#1_0" pos="0.00" length="96.97" friendlyPos="1"/>
+    </busStop>
+    <busStop id="5243010650" name="Orlando" lane="668307634_1" startPos="0.60" endPos="15.60" friendlyPos="true" lines="381"/>
+    <busStop id="5243010651" name="Muzeul Țăranului Român" lane="1132173508#1_1" startPos="97.66" endPos="112.66" friendlyPos="true" lines="205 381"/>
+    <busStop id="5243010652" name="Spitalul Clinic Filantropia" lane="231253164#3_1" startPos="23.55" endPos="38.55" friendlyPos="true" lines="205 381"/>
+    <busStop id="5258245718" name="Spitalul Universitar" lane="667035477#1_0" startPos="68.97" endPos="83.97" friendlyPos="true" lines="123 90">
+        <access lane="-245153562#2_0" pos="91.18" length="24.71" friendlyPos="1"/>
+        <access lane="-245153562#4_0" pos="0.00" length="28.21" friendlyPos="1"/>
+        <access lane="245153562#2_0" pos="0.00" length="21.43" friendlyPos="1"/>
+        <access lane="665933020#3_0" pos="78.41" length="9.11" friendlyPos="1"/>
+        <access lane="667237210_0" pos="0.00" length="26.72" friendlyPos="1"/>
+    </busStop>
+    <busStop id="5602667179" lane="670542570_0" startPos="0.20" endPos="0.20" friendlyPos="true" lines="85"/>
+    <busStop id="571384856" name="Bd. Nicolae Bălcescu" lane="125413589#1_1" startPos="17.62" endPos="32.62" friendlyPos="true" lines="168"/>
+    <busStop id="582481089" name="Piața Spaniei" lane="229673024#0_1" startPos="37.31" endPos="52.31" friendlyPos="true" lines="97 86 79"/>
+    <busStop id="582481154" name="Piața Gemeni" lane="671635092#0_1" startPos="0.63" endPos="15.63" friendlyPos="true" lines="97 86 135 79"/>
+    <trainStop id="582522185" name="Mihai Eminescu" lane="901994509#4_0" startPos="310.56" endPos="335.56" friendlyPos="true" lines="21">
+        <access lane="1318111814#2_0" pos="108.89" length="13.20" friendlyPos="1"/>
+        <access lane="205039202#1_0" pos="25.00" length="22.40" friendlyPos="1"/>
+        <access lane="765252247#0_0" pos="0.00" length="41.31" friendlyPos="1"/>
+        <access lane="765252247#2_0" pos="0.00" length="41.33" friendlyPos="1"/>
+        <access lane="765252247#3_0" pos="0.00" length="41.85" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="582524617" name="Bucur Obor" lane="45665939#1_0" startPos="167.98" endPos="192.98" friendlyPos="true" lines="21">
+        <access lane="131483758#0_0" pos="152.97" length="25.84" friendlyPos="1"/>
+        <access lane="205056100#4_0" pos="0.00" length="59.91" friendlyPos="1"/>
+        <access lane="205057531#7_0" pos="37.86" length="31.15" friendlyPos="1"/>
+        <access lane="226313477#0_0" pos="0.00" length="32.35" friendlyPos="1"/>
+        <access lane="226335903#1_0" pos="10.36" length="53.39" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="582553758" name="Piața Victoriei 2" lane="694140531#1_0" startPos="2276.19" endPos="2476.19" friendlyPos="true">
+        <access lane="-125898149_0" pos="41.66" length="35.50" friendlyPos="1"/>
+        <access lane="125898149_0" pos="0.00" length="32.07" friendlyPos="1"/>
+        <access lane="139713886_0" pos="37.92" length="5.41" friendlyPos="1"/>
+        <access lane="739795069_0" pos="25.52" length="5.96" friendlyPos="1"/>
+        <access lane="739795071_0" pos="0.00" length="43.70" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="583423" name="Șoseaua Ștefan cel Mare" lane="1224993981#5_0" startPos="0.00" endPos="0.20" friendlyPos="true" lines="16">
+        <access lane="229239078#0_0" pos="0.00" length="27.13" friendlyPos="1"/>
+        <access lane="229239444#0_0" pos="0.00" length="26.18" friendlyPos="1"/>
+        <access lane="669006796#1_0" pos="3.85" length="24.64" friendlyPos="1"/>
+        <access lane="669006796#2_0" pos="0.00" length="14.67" friendlyPos="1"/>
+        <access lane="669006796#4_0" pos="0.00" length="15.75" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5861246139" name="Gara de Nord" lane="620591212_0" startPos="0.00" endPos="200.00" friendlyPos="true" lines="IRN 402/106">
+        <access lane="1542876734#1_0" pos="16.29" length="49.47" friendlyPos="1"/>
+        <access lane="1542876736_0" pos="156.34" length="12.80" friendlyPos="1"/>
+        <access lane="1542876737_0" pos="0.00" length="46.56" friendlyPos="1"/>
+        <access lane="1542876740_0" pos="1.96" length="46.20" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="29.79" length="10.37" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5861246141" name="Gara de Nord" lane="620591210#1_0" startPos="188.99" endPos="388.99" friendlyPos="true">
+        <access lane="1542876734#1_0" pos="16.29" length="49.73" friendlyPos="1"/>
+        <access lane="1542876736_0" pos="156.26" length="34.60" friendlyPos="1"/>
+        <access lane="1542876737_0" pos="0.00" length="56.66" friendlyPos="1"/>
+        <access lane="1542876740_0" pos="1.96" length="46.42" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="29.77" length="11.43" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5861246143" name="Gara de Nord" lane="398140724#1_0" startPos="215.72" endPos="415.72" friendlyPos="true" lines="R 8091">
+        <access lane="1542876734#1_0" pos="16.29" length="58.31" friendlyPos="1"/>
+        <access lane="1542876736_0" pos="156.20" length="55.68" friendlyPos="1"/>
+        <access lane="1542876737_0" pos="0.00" length="71.57" friendlyPos="1"/>
+        <access lane="1542876740_0" pos="1.96" length="55.47" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="29.73" length="32.51" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5861246145" name="Gara de Nord" lane="35872855#0_0" startPos="0.00" endPos="200.00" friendlyPos="true" lines="R-E 10701">
+        <access lane="1542876734#1_0" pos="16.29" length="73.18" friendlyPos="1"/>
+        <access lane="1542876736_0" pos="156.13" length="78.03" friendlyPos="1"/>
+        <access lane="1542876740_0" pos="1.96" length="70.90" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="29.71" length="54.86" friendlyPos="1"/>
+        <access lane="620638539_0" pos="25.51" length="80.66" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5861246147" name="Gara de Nord" lane="620591205#1_0" startPos="215.30" endPos="415.30" friendlyPos="true" lines="IR 1582">
+        <access lane="1542876740_0" pos="1.96" length="88.49" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="29.57" length="76.36" friendlyPos="1"/>
+        <access lane="620638539_0" pos="25.29" length="59.16" friendlyPos="1"/>
+        <access lane="620638540_0" pos="457.43" length="63.32" friendlyPos="1"/>
+        <access lane="621156612#29_0" pos="124.87" length="74.00" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5861246152" name="Gara de Nord" lane="620591200#1_0" startPos="229.52" endPos="429.52" friendlyPos="true" lines="R 9000">
+        <access lane="598079737#1_0" pos="41.81" length="55.33" friendlyPos="1"/>
+        <access lane="620638539_0" pos="25.24" length="7.73" friendlyPos="1"/>
+        <access lane="620638540_0" pos="457.47" length="11.90" friendlyPos="1"/>
+        <access lane="621156612#29_0" pos="125.20" length="22.57" friendlyPos="1"/>
+        <access lane="737844104#0_0" pos="0.00" length="67.10" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5865238769" name="Pasajul Basarab" lane="118416425#0_0" startPos="844.81" endPos="869.81" friendlyPos="true" lines="10">
+        <access lane="737631809#1_0" pos="41.49" length="9.97" friendlyPos="1"/>
+        <access lane="738281336_0" pos="14.59" length="6.31" friendlyPos="1"/>
+        <access lane="738281339#0_0" pos="13.24" length="2.46" friendlyPos="1"/>
+        <access lane="738281339#1_0" pos="0.00" length="2.52" friendlyPos="1"/>
+        <access lane="738281343_0" pos="0.00" length="2.33" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5907694981" name="București Barasab" lane="1221367951_0" startPos="126.92" endPos="326.92" friendlyPos="true" lines="R 9000">
+        <access lane="1132162747_0" pos="50.35" length="89.13" friendlyPos="1"/>
+        <access lane="205969871#1_0" pos="23.07" length="94.57" friendlyPos="1"/>
+        <access lane="625568494#31_0" pos="7.35" length="94.06" friendlyPos="1"/>
+        <access lane="625568494#32_0" pos="13.80" length="75.53" friendlyPos="1"/>
+        <access lane="737645574#0_0" pos="117.91" length="91.91" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5916881047" name="Piața Romană" lane="626748679#1_0" startPos="1011.06" endPos="1211.06" friendlyPos="true">
+        <access lane="255865930_0" pos="92.26" length="29.07" friendlyPos="1"/>
+        <access lane="44499684#3_0" pos="55.99" length="33.64" friendlyPos="1"/>
+        <access lane="448266581#1_0" pos="61.25" length="43.58" friendlyPos="1"/>
+        <access lane="448266581#2_0" pos="17.13" length="10.13" friendlyPos="1"/>
+        <access lane="668307642#1_0" pos="0.00" length="69.80" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="5916881049" name="Universitate" lane="626748679#1_0" startPos="0.00" endPos="200.00" friendlyPos="true">
+        <access lane="1021654114_0" pos="17.16" length="33.81" friendlyPos="1"/>
+        <access lane="1541291082#5_0" pos="68.68" length="6.15" friendlyPos="1"/>
+        <access lane="237909162#0_0" pos="59.35" length="27.64" friendlyPos="1"/>
+        <access lane="740898552#6_0" pos="17.21" length="15.34" friendlyPos="1"/>
+        <access lane="891089879#0_0" pos="18.19" length="14.58" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="5927318604" name="Țepeș Vodă" lane="242073658_0" startPos="0.81" endPos="15.81" friendlyPos="true">
+        <access lane="1221596847#1_0" pos="3.40" length="17.21" friendlyPos="1"/>
+        <access lane="1221596847#2_0" pos="0.00" length="21.07" friendlyPos="1"/>
+        <access lane="1221596848_0" pos="0.00" length="15.18" friendlyPos="1"/>
+        <access lane="1221596849#3_0" pos="20.69" length="4.99" friendlyPos="1"/>
+        <access lane="1221596849#4_0" pos="0.00" length="18.41" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="599983930" name="Vasile Lascăr" lane="27011698#5_0" startPos="151.40" endPos="176.40" friendlyPos="true" lines="46 10">
+        <access lane="229239044#7_0" pos="12.27" length="25.17" friendlyPos="1"/>
+        <access lane="229481371#6_0" pos="28.45" length="19.26" friendlyPos="1"/>
+        <access lane="669011090#3_0" pos="0.20" length="25.19" friendlyPos="1"/>
+        <access lane="669011090#4_0" pos="7.24" length="13.41" friendlyPos="1"/>
+        <access lane="669011090#6_0" pos="0.00" length="27.03" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="599983932" name="Bulevardul Lacul Tei" lane="131484725#0_0" startPos="1821.19" endPos="1846.19" friendlyPos="true" lines="5">
+        <access lane="-229481339#6_0" pos="0.00" length="108.92" friendlyPos="1"/>
+        <access lane="-232833632#1_0" pos="27.67" length="189.75" friendlyPos="1"/>
+        <access lane="227385581#0_0" pos="0.00" length="91.80" friendlyPos="1"/>
+        <access lane="229481339#6_0" pos="130.27" length="120.34" friendlyPos="1"/>
+        <access lane="525997205#2_0" pos="292.47" length="81.18" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="599983933" name="Bulevardul Lacul Tei" lane="619112524#2_0" startPos="261.48" endPos="286.48" friendlyPos="true" lines="5">
+        <access lane="-229481339#6_0" pos="95.35" length="109.34" friendlyPos="1"/>
+        <access lane="-232833632#1_0" pos="28.14" length="85.76" friendlyPos="1"/>
+        <access lane="227385581#0_0" pos="19.21" length="18.86" friendlyPos="1"/>
+        <access lane="232833632#1_0" pos="127.92" length="91.12" friendlyPos="1"/>
+        <access lane="525997205#2_0" pos="265.24" length="15.69" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="599983936" name="Rossini" lane="619112524#4_0" startPos="343.52" endPos="368.52" friendlyPos="true" lines="5"/>
+    <trainStop id="599983938" name="Doctor Grozovici" lane="45668230#8_0" startPos="254.43" endPos="279.43" friendlyPos="true" lines="1 46">
+        <access lane="1154626506#3_0" pos="5.85" length="20.87" friendlyPos="1"/>
+        <access lane="1217253606#1_0" pos="0.20" length="2.14" friendlyPos="1"/>
+        <access lane="1217253606#2_0" pos="0.00" length="6.94" friendlyPos="1"/>
+        <access lane="1217253606#3_0" pos="0.00" length="8.00" friendlyPos="1"/>
+        <access lane="1512992857#1_0" pos="0.20" length="4.17" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="599983943" name="Lizeanu" lane="205040187#7_0" startPos="353.12" endPos="378.12" friendlyPos="true" lines="1 46">
+        <access lane="1214969975#1_0" pos="0.20" length="20.21" friendlyPos="1"/>
+        <access lane="1214969975#2_0" pos="0.00" length="20.11" friendlyPos="1"/>
+        <access lane="1214969975#3_0" pos="0.00" length="20.82" friendlyPos="1"/>
+        <access lane="170336748#2_0" pos="4.70" length="22.05" friendlyPos="1"/>
+        <access lane="229239078#2_0" pos="2.22" length="26.17" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="599983945" name="Ceaikovski" lane="619112524#4_0" startPos="829.36" endPos="854.36" friendlyPos="true" lines="5"/>
+    <trainStop id="599983946" name="Giuseppe Verdi" lane="131484725#0_0" startPos="508.14" endPos="533.14" friendlyPos="true" lines="5"/>
+    <busStop id="60291019" name="Piata Victoriei" lane="1372391887#7_0" startPos="37.06" endPos="52.06" friendlyPos="true" lines="203 361">
+        <access lane="122157282#0_0" pos="0.20" length="69.47" friendlyPos="1"/>
+        <access lane="122157282#1_0" pos="0.00" length="68.89" friendlyPos="1"/>
+        <access lane="122157284#0_0" pos="42.71" length="16.47" friendlyPos="1"/>
+        <access lane="58265798#0_0" pos="54.26" length="55.04" friendlyPos="1"/>
+        <access lane="809865458#2_0" pos="44.55" length="14.51" friendlyPos="1"/>
+    </busStop>
+    <busStop id="6180491263" name="Piața Buzești" lane="23632420#2_0" startPos="66.31" endPos="91.31" friendlyPos="true" lines="86 79">
+        <access lane="-256449890_0" pos="0.00" length="21.82" friendlyPos="1"/>
+        <access lane="231253165#3_0" pos="60.37" length="81.06" friendlyPos="1"/>
+        <access lane="231769644#1_0" pos="0.00" length="78.33" friendlyPos="1"/>
+        <access lane="256449890_0" pos="25.68" length="17.22" friendlyPos="1"/>
+        <access lane="667772013#0_0" pos="0.00" length="84.91" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="6187848834" name="Calea Giulești" lane="982234618_0" startPos="58.56" endPos="83.56" friendlyPos="true" lines="44">
+        <access lane="-205969965_0" pos="0.00" length="150.34" friendlyPos="1"/>
+        <access lane="139788054#6_0" pos="138.67" length="41.83" friendlyPos="1"/>
+        <access lane="205969965_0" pos="169.73" length="154.95" friendlyPos="1"/>
+        <access lane="737847799#4_0" pos="144.96" length="25.23" friendlyPos="1"/>
+        <access lane="737847799#5_0" pos="0.00" length="150.00" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="6187848865" name="Calea Giulești" lane="660927514#1_0" startPos="234.16" endPos="259.16" friendlyPos="true" lines="44">
+        <access lane="-205969965_0" pos="0.00" length="146.41" friendlyPos="1"/>
+        <access lane="139756123_0" pos="0.00" length="155.99" friendlyPos="1"/>
+        <access lane="139788054#6_0" pos="137.96" length="28.14" friendlyPos="1"/>
+        <access lane="205969965_0" pos="169.73" length="151.11" friendlyPos="1"/>
+        <access lane="737847799#4_0" pos="143.82" length="38.86" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="6187848881" name="Gara Basarab" lane="660927514#1_0" startPos="11.02" endPos="36.02" friendlyPos="true" lines="44">
+        <access lane="139788054#2_0" pos="22.55" length="33.57" friendlyPos="1"/>
+        <access lane="496398420#0_0" pos="0.00" length="46.61" friendlyPos="1"/>
+        <access lane="737847799#2_0" pos="27.97" length="38.98" friendlyPos="1"/>
+        <access lane="982234611#0_0" pos="11.18" length="38.98" friendlyPos="1"/>
+        <access lane="982234611#2_0" pos="0.00" length="41.37" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="6187888840" name="Bd. Banu Manta" lane="660931074#0_0" startPos="69.29" endPos="94.29" friendlyPos="true" lines="1">
+        <access lane="1305563864#10_0" pos="57.29" length="19.87" friendlyPos="1"/>
+        <access lane="379391760#2_0" pos="0.00" length="38.95" friendlyPos="1"/>
+        <access lane="671874182#0_0" pos="0.20" length="13.88" friendlyPos="1"/>
+        <access lane="671874182#3_0" pos="0.20" length="10.42" friendlyPos="1"/>
+        <access lane="671874182#4_0" pos="0.20" length="11.23" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="620099542" name="Grădina Botanică" lane="1529006660_0" startPos="56.63" endPos="71.63" friendlyPos="true" lines="61 62 93 96">
+        <access lane="1182028834#4_0" pos="119.49" length="45.59" friendlyPos="1"/>
+        <access lane="234974597#4_0" pos="25.62" length="29.98" friendlyPos="1"/>
+        <access lane="812585879#0_0" pos="435.89" length="8.59" friendlyPos="1"/>
+        <access lane="8217902#0_0" pos="545.93" length="25.83" friendlyPos="1"/>
+        <access lane="856834515#1_0" pos="25.05" length="30.75" friendlyPos="1"/>
+    </busStop>
+    <busStop id="6258392493" name="Piața Romană" lane="448266581#2_1" startPos="28.73" endPos="43.73" friendlyPos="true" lines="168 226 368"/>
+    <trainStop id="6264771190" name="Șoseaua Ștefan cel Mare" lane="1507490088_0" startPos="0.00" endPos="0.20" friendlyPos="true" lines="16">
+        <access lane="229239444#0_0" pos="0.00" length="40.69" friendlyPos="1"/>
+        <access lane="319620894_0" pos="33.25" length="24.10" friendlyPos="1"/>
+        <access lane="669006796#2_0" pos="2.89" length="35.53" friendlyPos="1"/>
+        <access lane="669006796#4_0" pos="0.20" length="35.53" friendlyPos="1"/>
+        <access lane="669006796#5_0" pos="0.00" length="39.05" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="6318936107" name="Piața Revoluției" lane="668989981#1_1" startPos="18.15" endPos="33.15" friendlyPos="true" lines="361 311"/>
+    <busStop id="6470893774" name="Vasile Pârvan" lane="891542354_0" startPos="109.77" endPos="124.77" friendlyPos="true" lines="85 163">
+        <access lane="-180685591#1_0" pos="0.00" length="74.92" friendlyPos="1"/>
+        <access lane="1138461588#0_0" pos="0.00" length="66.62" friendlyPos="1"/>
+        <access lane="692629007_0" pos="43.05" length="71.85" friendlyPos="1"/>
+        <access lane="750611386#3_0" pos="228.14" length="57.23" friendlyPos="1"/>
+        <access lane="750611386#4_0" pos="12.35" length="38.73" friendlyPos="1"/>
+    </busStop>
+    <busStop id="678894005" name="Mihai Eminescu" lane="302994038#0_1" startPos="75.86" endPos="90.86" friendlyPos="true" lines="135"/>
+    <busStop id="7623728716" name="Piața Obor" lane="1228394821#2_1" startPos="137.70" endPos="152.70" friendlyPos="true" lines="101 382"/>
+    <trainStop id="7925084881" name="Parc Drumul Taberei" lane="1030359616#0_0" startPos="3491.18" endPos="3691.18" friendlyPos="true" lines="M5"/>
+    <trainStop id="7925090290" name="Romancierilor" lane="1030359616#0_0" startPos="4113.11" endPos="4313.11" friendlyPos="true" lines="M5"/>
+    <busStop id="8282092707" name="Gara Basarab" lane="668922198#0_0" startPos="0.00" endPos="15.00" friendlyPos="true" lines="282 780 123 178 162">
+        <access lane="572006569#1_0" pos="4.16" length="10.88" friendlyPos="1"/>
+        <access lane="621156612#28_0" pos="42.07" length="19.49" friendlyPos="1"/>
+        <access lane="668922199_0" pos="2.83" length="25.22" friendlyPos="1"/>
+        <access lane="668922201#0_0" pos="23.03" length="11.04" friendlyPos="1"/>
+        <access lane="737844102#3_0" pos="110.96" length="15.88" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="8311499848" name="Bucur Obor" lane="894254311#4_0" startPos="575.01" endPos="600.01" friendlyPos="true" lines="1 46">
+        <access lane="1238684668#1_0" pos="7.67" length="47.84" friendlyPos="1"/>
+        <access lane="1238684668#3_0" pos="0.20" length="46.98" friendlyPos="1"/>
+        <access lane="1238684668#4_0" pos="0.00" length="47.24" friendlyPos="1"/>
+        <access lane="13605580_0" pos="150.04" length="46.46" friendlyPos="1"/>
+        <access lane="737939973#0_0" pos="22.89" length="48.38" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="8324090348" name="Piața Victoriei" lane="231253542#0_1" startPos="11.71" endPos="26.71" friendlyPos="true" lines="205"/>
+    <busStop id="8326609526" name="A.N.E.F.S." lane="668888066#1_1" startPos="35.02" endPos="50.02" friendlyPos="true" lines="90"/>
+    <trainStop id="8378477746" name="Bulevardul Carol I" lane="901994509#1_0" startPos="25.78" endPos="50.78" friendlyPos="true" lines="21">
+        <access lane="1318111813#4_0" pos="93.88" length="23.59" friendlyPos="1"/>
+        <access lane="207008916#2_0" pos="16.95" length="55.23" friendlyPos="1"/>
+        <access lane="311994811#0_0" pos="21.71" length="18.49" friendlyPos="1"/>
+        <access lane="668342047_0" pos="45.20" length="55.59" friendlyPos="1"/>
+        <access lane="670574720#0_0" pos="0.00" length="49.51" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8378477789" name="Ziduri Moși" lane="85728019#4_0" startPos="124.14" endPos="149.14" friendlyPos="true" lines="21">
+        <access lane="1230916220#2_0" pos="7.04" length="24.00" friendlyPos="1"/>
+        <access lane="895683089#1_0" pos="0.20" length="16.49" friendlyPos="1"/>
+        <access lane="895683089#3_0" pos="0.20" length="15.43" friendlyPos="1"/>
+        <access lane="895683089#4_0" pos="0.00" length="14.77" friendlyPos="1"/>
+        <access lane="895683089#5_0" pos="0.00" length="14.90" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8378477804" name="Bucur Obor" lane="1224994013#0_0" startPos="49.57" endPos="74.57" friendlyPos="true" lines="21">
+        <access lane="131483758#0_0" pos="152.86" length="30.15" friendlyPos="1"/>
+        <access lane="205057531#7_0" pos="37.90" length="35.46" friendlyPos="1"/>
+        <access lane="226313477#0_0" pos="0.00" length="28.06" friendlyPos="1"/>
+        <access lane="226335903#1_0" pos="11.26" length="49.29" friendlyPos="1"/>
+        <access lane="229030709_0" pos="0.00" length="62.90" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="8378931526" name="Primăria Sector 1" lane="379391760#2_1" startPos="7.26" endPos="22.26" friendlyPos="true" lines="282"/>
+    <trainStop id="8382055480" name="Ostașilor" lane="256343304#0_0" startPos="24.05" endPos="49.05" friendlyPos="true" lines="24 44">
+        <access lane="-39258605_0" pos="28.85" length="117.69" friendlyPos="1"/>
+        <access lane="-851998184#1_0" pos="8.57" length="161.84" friendlyPos="1"/>
+        <access lane="-851998307_0" pos="20.09" length="141.27" friendlyPos="1"/>
+        <access lane="39258605_0" pos="0.00" length="113.90" friendlyPos="1"/>
+        <access lane="851998307_0" pos="51.07" length="146.07" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="8382055481" name="Cișmigiu Vest" lane="267004741#1_0" startPos="11.25" endPos="36.25" friendlyPos="true" lines="24 44">
+        <access lane="-39255037_0" pos="0.00" length="46.65" friendlyPos="1"/>
+        <access lane="1302801933#0_0" pos="0.00" length="93.59" friendlyPos="1"/>
+        <access lane="1302801938#1_0" pos="61.01" length="86.18" friendlyPos="1"/>
+        <access lane="39255037_0" pos="38.80" length="43.14" friendlyPos="1"/>
+        <access lane="39305748#0_0" pos="0.00" length="90.01" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="8382055513" name="Vasile Pârvan" lane="1262110923_0" startPos="0.00" endPos="20.88" friendlyPos="true" lines="24 44">
+        <access lane="180685591#1_0" pos="15.97" length="38.60" friendlyPos="1"/>
+        <access lane="180685600_0" pos="7.13" length="18.59" friendlyPos="1"/>
+        <access lane="180685602#0_0" pos="9.13" length="26.07" friendlyPos="1"/>
+        <access lane="180685602#1_0" pos="0.00" length="37.39" friendlyPos="1"/>
+        <access lane="902455848#0_0" pos="0.20" length="11.30" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="8403206542" name="Șoseaua Ștefan cel Mare" lane="227385581#2_1" startPos="60.07" endPos="75.07" friendlyPos="true" lines="330"/>
+    <busStop id="8403206545" name="Bd. Lacul Tei" lane="227385581#0_1" startPos="65.71" endPos="80.71" friendlyPos="true" lines="182 330"/>
+    <busStop id="8419250537" name="Calea Griviței" lane="313014418#6_1" startPos="7.37" endPos="22.37" friendlyPos="true" lines="361"/>
+    <busStop id="8419250539" name="Gheorghe Manu" lane="4865914#8_1" startPos="28.47" endPos="43.47" friendlyPos="true" lines="361"/>
+    <trainStop id="841973777" name="Calea Dorobanților" lane="45764482#4_0" startPos="98.81" endPos="123.81" friendlyPos="true" lines="1 46">
+        <access lane="23811791#1_0" pos="4.81" length="25.98" friendlyPos="1"/>
+        <access lane="669158567#1_0" pos="0.20" length="13.76" friendlyPos="1"/>
+        <access lane="669158567#2_0" pos="0.20" length="11.85" friendlyPos="1"/>
+        <access lane="669158567#3_0" pos="0.00" length="10.67" friendlyPos="1"/>
+        <access lane="669158567#4_0" pos="0.00" length="23.03" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8426597558" name="Basarab 1 - M1" lane="-907839006_0" startPos="5637.61" endPos="5837.61" friendlyPos="true" lines="M1">
+        <access lane="621195500_0" pos="0.00" length="43.60" friendlyPos="1"/>
+        <access lane="737631809#2_0" pos="6.69" length="39.95" friendlyPos="1"/>
+        <access lane="737645569_0" pos="0.00" length="43.54" friendlyPos="1"/>
+        <access lane="737645570_0" pos="0.00" length="43.62" friendlyPos="1"/>
+        <access lane="737645574#0_0" pos="35.77" length="4.79" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8426597559" name="Basarab 1 - M1" lane="1028932231#1_0" startPos="1123.73" endPos="1323.73" friendlyPos="true" lines="M1">
+        <access lane="1132162747_0" pos="50.35" length="51.54" friendlyPos="1"/>
+        <access lane="621211532#0_0" pos="0.00" length="83.30" friendlyPos="1"/>
+        <access lane="737645574#0_0" pos="87.87" length="1.64" friendlyPos="1"/>
+        <access lane="737654715#0_0" pos="35.82" length="54.49" friendlyPos="1"/>
+        <access lane="737856089_0" pos="0.00" length="78.75" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8426597560" name="Basarab 2 - M4" lane="280341566_0" startPos="474.17" endPos="674.17" friendlyPos="true">
+        <access lane="621195500_0" pos="0.00" length="43.07" friendlyPos="1"/>
+        <access lane="737631809#2_0" pos="9.34" length="41.89" friendlyPos="1"/>
+        <access lane="737645570_0" pos="0.00" length="41.65" friendlyPos="1"/>
+        <access lane="737645571_0" pos="0.00" length="42.10" friendlyPos="1"/>
+        <access lane="737645574#0_0" pos="34.11" length="23.67" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8426597561" name="Basarab 2 - M4" lane="-1359037585_0" startPos="325.10" endPos="525.10" friendlyPos="true">
+        <access lane="1132162747_0" pos="50.35" length="59.16" friendlyPos="1"/>
+        <access lane="313824868#1_0" pos="0.00" length="70.79" friendlyPos="1"/>
+        <access lane="737645574#0_0" pos="85.74" length="19.67" friendlyPos="1"/>
+        <access lane="737654715#0_0" pos="33.64" length="36.48" friendlyPos="1"/>
+        <access lane="737856089_0" pos="0.00" length="65.27" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8426597565" name="Gara de Nord 2" lane="280348097#1_0" startPos="0.00" endPos="200.00" friendlyPos="true">
+        <access lane="1542876735#1_0" pos="0.00" length="99.67" friendlyPos="1"/>
+        <access lane="1542876736_0" pos="72.05" length="0.82" friendlyPos="1"/>
+        <access lane="1542876741_0" pos="114.13" length="21.51" friendlyPos="1"/>
+        <access lane="621438872_0" pos="0.00" length="101.38" friendlyPos="1"/>
+        <access lane="737638650#2_0" pos="72.24" length="94.68" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8429628095" name="Eroilor 2" lane="907822104_0" startPos="0.00" endPos="186.52" friendlyPos="true" lines="M5">
+        <access lane="1184444996#2_0" pos="6.74" length="6.71" friendlyPos="1"/>
+        <access lane="1184444996#48_0" pos="14.46" length="0.17" friendlyPos="1"/>
+        <access lane="859998229#0_0" pos="10.77" length="2.51" friendlyPos="1"/>
+        <access lane="907822108_0" pos="0.00" length="6.94" friendlyPos="1"/>
+        <access lane="907822115_0" pos="18.58" length="5.61" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8429757886" name="Eroilor" lane="907839010_0" startPos="1316.13" endPos="1516.13" friendlyPos="true" lines="M3">
+        <access lane="1184444994#52_0" pos="43.72" length="2.79" friendlyPos="1"/>
+        <access lane="1184444994#54_0" pos="0.00" length="7.24" friendlyPos="1"/>
+        <access lane="1184449596#36_0" pos="0.00" length="3.98" friendlyPos="1"/>
+        <access lane="761737422#1_0" pos="1.42" length="7.34" friendlyPos="1"/>
+        <access lane="859998231#1_0" pos="0.00" length="6.69" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8450731676" name="Piața Unirii 1" lane="907839004#1_0" startPos="1902.34" endPos="2102.34" friendlyPos="true" lines="M3"/>
+    <trainStop id="8452436794" name="Obor" lane="45736838#0_0" startPos="3595.84" endPos="3795.84" friendlyPos="true" lines="M1">
+        <access lane="910390975_0" pos="0.00" length="8.45" friendlyPos="1"/>
+        <access lane="910390978#0_0" pos="0.18" length="17.92" friendlyPos="1"/>
+        <access lane="910390978#1_0" pos="0.00" length="18.63" friendlyPos="1"/>
+        <access lane="910390979_0" pos="0.00" length="3.99" friendlyPos="1"/>
+        <access lane="910390981_0" pos="0.00" length="21.81" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8452436812" name="Obor" lane="1028932234#1_0" startPos="2383.18" endPos="2583.18" friendlyPos="true" lines="M1">
+        <access lane="910390974#0_0" pos="0.20" length="11.77" friendlyPos="1"/>
+        <access lane="910390974#1_0" pos="0.00" length="13.23" friendlyPos="1"/>
+        <access lane="910390977_0" pos="3.26" length="4.63" friendlyPos="1"/>
+        <access lane="910390982_0" pos="5.06" length="8.24" friendlyPos="1"/>
+        <access lane="910390983_0" pos="2.55" length="15.68" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8455390576" name="Pipera" lane="694140531#1_0" startPos="7116.88" endPos="7316.88" friendlyPos="true"/>
+    <trainStop id="8455390577" name="Aurel Vlaicu" lane="694140531#1_0" startPos="5743.75" endPos="5943.75" friendlyPos="true"/>
+    <trainStop id="8455390579" name="Aviatorilor" lane="694140531#1_0" startPos="3733.43" endPos="3933.43" friendlyPos="true">
+        <access lane="525582171#3_0" pos="1081.90" length="134.11" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8455390582" name="Piața Romană" lane="694140531#1_0" startPos="1010.34" endPos="1210.34" friendlyPos="true">
+        <access lane="255865930_0" pos="92.26" length="18.26" friendlyPos="1"/>
+        <access lane="44499684#3_0" pos="56.04" length="45.51" friendlyPos="1"/>
+        <access lane="448266581#1_0" pos="61.25" length="42.32" friendlyPos="1"/>
+        <access lane="448266581#2_0" pos="17.03" length="1.74" friendlyPos="1"/>
+        <access lane="668307642#1_0" pos="0.00" length="69.22" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8455390583" name="Universitate" lane="694140531#1_0" startPos="0.00" endPos="200.00" friendlyPos="true">
+        <access lane="1021654114_0" pos="15.61" length="3.88" friendlyPos="1"/>
+        <access lane="1541291082#2_0" pos="86.75" length="7.06" friendlyPos="1"/>
+        <access lane="427071853#0_0" pos="0.00" length="24.41" friendlyPos="1"/>
+        <access lane="427071853#1_0" pos="0.00" length="27.08" friendlyPos="1"/>
+        <access lane="740898419#3_0" pos="16.56" length="8.38" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8455390584" name="Piața Unirii 2" lane="694140531#0_0" startPos="0.00" endPos="200.00" friendlyPos="true">
+        <access lane="339705211#2_0" pos="514.69" length="227.37" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8455390586" name="Piața Unirii 2" lane="626748679#0_0" startPos="0.00" endPos="200.00" friendlyPos="true">
+        <access lane="339705211#2_0" pos="514.69" length="226.33" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="8531076543" name="Piața Victoriei" lane="1372391887#7_0" startPos="39.22" endPos="54.22" friendlyPos="true" lines="203 361">
+        <access lane="122157282#0_0" pos="0.20" length="65.34" friendlyPos="1"/>
+        <access lane="122157282#1_0" pos="0.00" length="68.00" friendlyPos="1"/>
+        <access lane="122157284#0_0" pos="40.56" length="25.83" friendlyPos="1"/>
+        <access lane="58265798#0_0" pos="55.85" length="64.66" friendlyPos="1"/>
+        <access lane="809865458#2_0" pos="46.70" length="5.14" friendlyPos="1"/>
+    </busStop>
+    <trainStop id="8544117694" name="Piața Victoriei" lane="920117625#4_0" startPos="419.44" endPos="444.44" friendlyPos="true" lines="46 10">
+        <access lane="139713887_0" pos="0.00" length="50.91" friendlyPos="1"/>
+        <access lane="1553819416_0" pos="0.00" length="30.66" friendlyPos="1"/>
+        <access lane="45778987#1_0" pos="37.72" length="48.77" friendlyPos="1"/>
+        <access lane="739795071_0" pos="54.43" length="34.84" friendlyPos="1"/>
+        <access lane="920117612#2_0" pos="41.56" length="32.94" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8544117695" name="Piața Victoriei" lane="243476552_0" startPos="251.87" endPos="276.87" friendlyPos="true" lines="1 46">
+        <access lane="-4865914#0_0" pos="5.18" length="54.77" friendlyPos="1"/>
+        <access lane="1553819416_0" pos="0.00" length="38.27" friendlyPos="1"/>
+        <access lane="45778987#1_0" pos="31.99" length="60.19" friendlyPos="1"/>
+        <access lane="739795071_0" pos="47.89" length="42.99" friendlyPos="1"/>
+        <access lane="920117612#2_0" pos="42.07" length="40.75" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8544117710" name="Spitalul Grigore Alexandrescu" lane="920117620#3_0" startPos="36.83" endPos="61.83" friendlyPos="true" lines="46 10">
+        <access lane="-281298412#1_0" pos="0.00" length="23.47" friendlyPos="1"/>
+        <access lane="-352646086#1_0" pos="156.23" length="58.43" friendlyPos="1"/>
+        <access lane="281298412#1_0" pos="31.60" length="23.87" friendlyPos="1"/>
+        <access lane="352646086#1_0" pos="37.93" length="53.35" friendlyPos="1"/>
+        <access lane="405531442_0" pos="0.00" length="75.67" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8544126321" name="Dr. Felix" lane="920117625#2_0" startPos="177.68" endPos="202.68" friendlyPos="true" lines="10">
+        <access lane="1305563864#1_0" pos="14.86" length="20.95" friendlyPos="1"/>
+        <access lane="378639154#2_0" pos="13.42" length="17.55" friendlyPos="1"/>
+        <access lane="671874186#2_0" pos="0.20" length="26.80" friendlyPos="1"/>
+        <access lane="671874186#3_0" pos="0.00" length="26.31" friendlyPos="1"/>
+        <access lane="671874186#4_0" pos="0.00" length="26.81" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="8544188928" name="Roma" lane="920117620#3_0" startPos="242.32" endPos="267.32" friendlyPos="true" lines="46 10">
+        <access lane="235436166#1_0" pos="18.89" length="19.78" friendlyPos="1"/>
+        <access lane="669158565#1_0" pos="0.20" length="11.12" friendlyPos="1"/>
+        <access lane="669158565#3_0" pos="0.20" length="9.95" friendlyPos="1"/>
+        <access lane="669158565#4_0" pos="0.00" length="12.74" friendlyPos="1"/>
+        <access lane="669158565#5_0" pos="0.00" length="15.50" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9083668719" name="Giuseppe Verdi" lane="619112524#4_0" startPos="1376.92" endPos="1401.92" friendlyPos="true" lines="5"/>
+    <trainStop id="9084090059" name="Gara Basarab" lane="982234618_0" startPos="296.60" endPos="321.60" friendlyPos="true" lines="44">
+        <access lane="737847799#1_0" pos="35.32" length="35.68" friendlyPos="1"/>
+        <access lane="737847799#2_0" pos="1.10" length="33.53" friendlyPos="1"/>
+        <access lane="982234611#0_0" pos="11.76" length="15.26" friendlyPos="1"/>
+        <access lane="982234611#2_0" pos="0.67" length="5.37" friendlyPos="1"/>
+        <access lane="982234611#3_0" pos="0.00" length="7.26" friendlyPos="1"/>
+    </trainStop>
+    <busStop id="9463537197" name="Sala Palatului" lane="139756125#1_1" startPos="10.92" endPos="25.92" friendlyPos="true" lines="178"/>
+    <trainStop id="9486047010" name="Ștefan cel Mare" lane="1028932234#1_0" startPos="596.85" endPos="796.85" friendlyPos="true" lines="M1">
+        <access lane="668563213#4_0" pos="0.20" length="20.99" friendlyPos="1"/>
+        <access lane="668563213#6_0" pos="0.00" length="23.61" friendlyPos="1"/>
+        <access lane="737951866#0_0" pos="23.85" length="29.24" friendlyPos="1"/>
+        <access lane="737951866#1_0" pos="11.36" length="15.88" friendlyPos="1"/>
+        <access lane="910363909_0" pos="80.32" length="9.13" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486047014" name="Gara de Nord 1" lane="-907839006_0" startPos="6350.63" endPos="6550.63" friendlyPos="true" lines="M1">
+        <access lane="1074235085_0" pos="0.00" length="17.90" friendlyPos="1"/>
+        <access lane="1074235086#1_0" pos="0.20" length="18.57" friendlyPos="1"/>
+        <access lane="1074235087#1_0" pos="22.32" length="13.10" friendlyPos="1"/>
+        <access lane="289213552#1_0" pos="20.74" length="2.44" friendlyPos="1"/>
+        <access lane="620586520_0" pos="6.51" length="16.86" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486047015" name="Piața Victoriei 1" lane="27789918#2_0" startPos="108.53" endPos="308.53" friendlyPos="true" lines="M1">
+        <access lane="1553819416_0" pos="41.13" length="7.74" friendlyPos="1"/>
+        <access lane="45778987#1_0" pos="61.10" length="6.14" friendlyPos="1"/>
+        <access lane="739795071_0" pos="86.37" length="8.33" friendlyPos="1"/>
+        <access lane="920117612#0_0" pos="0.00" length="17.81" friendlyPos="1"/>
+        <access lane="920117616_0" pos="8.02" length="19.04" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486050625" name="Gara de Nord 1" lane="1028932231#1_0" startPos="336.78" endPos="536.78" friendlyPos="true" lines="M1">
+        <access lane="-289213552#2_0" pos="17.56" length="14.88" friendlyPos="1"/>
+        <access lane="1074235076_0" pos="1.69" length="23.28" friendlyPos="1"/>
+        <access lane="1074235087#1_0" pos="22.50" length="19.47" friendlyPos="1"/>
+        <access lane="289213552#1_0" pos="20.72" length="8.82" friendlyPos="1"/>
+        <access lane="620586520_0" pos="6.53" length="23.24" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486050631" name="Ștefan cel Mare" lane="45736838#0_0" startPos="5265.91" endPos="5465.91" friendlyPos="true" lines="M1">
+        <access lane="229481340#0_0" pos="4.40" length="28.50" friendlyPos="1"/>
+        <access lane="668563213#4_0" pos="0.20" length="21.00" friendlyPos="1"/>
+        <access lane="668563213#6_0" pos="0.00" length="27.32" friendlyPos="1"/>
+        <access lane="737951866#1_0" pos="11.96" length="21.24" friendlyPos="1"/>
+        <access lane="910363909_0" pos="80.00" length="14.55" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486050636" name="Piața Victoriei 1" lane="45736838#0_0" startPos="6653.12" endPos="6853.12" friendlyPos="true" lines="M1">
+        <access lane="1553819416_0" pos="37.48" length="2.93" friendlyPos="1"/>
+        <access lane="45778987#1_0" pos="61.10" length="7.65" friendlyPos="1"/>
+        <access lane="739795071_0" pos="86.37" length="4.14" friendlyPos="1"/>
+        <access lane="920117612#0_0" pos="1.37" length="17.30" friendlyPos="1"/>
+        <access lane="920117616_0" pos="8.52" length="11.78" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486050637" name="Piața Iancului" lane="1028932234#1_0" startPos="3407.39" endPos="3607.39" friendlyPos="true" lines="M1">
+        <access lane="-1541289717#0_0" pos="205.93" length="83.36" friendlyPos="1"/>
+        <access lane="1541289717#0_0" pos="0.00" length="69.27" friendlyPos="1"/>
+        <access lane="196657054_0" pos="205.70" length="154.32" friendlyPos="1"/>
+        <access lane="231916547#0_0" pos="71.89" length="56.69" friendlyPos="1"/>
+    </trainStop>
+    <trainStop id="9486050647" name="Piața Muncii" lane="1028932234#1_0" startPos="4630.40" endPos="4830.40" friendlyPos="true" lines="M1"/>
+    <trainStop id="9486050648" name="Piața Muncii" lane="45736838#0_0" startPos="1254.72" endPos="1454.72" friendlyPos="true" lines="M1"/>
+    <trainStop id="9486050652" name="Dristor 2" lane="1028932234#1_0" startPos="5856.77" endPos="6056.77" friendlyPos="true" lines="M1"/>
+    <trainStop id="9486050653" name="Dristor 2" lane="45736838#0_0" startPos="0.00" endPos="200.00" friendlyPos="true" lines="M1"/>
+    <trainStop id="9491084760" name="Tudor Vladimirescu" lane="1030359616#0_0" startPos="2811.33" endPos="3011.33" friendlyPos="true" lines="M5"/>
+    <trainStop id="9497950460" name="Favorit" lane="1030359616#0_0" startPos="2247.87" endPos="2447.87" friendlyPos="true" lines="M5"/>
+    <trainStop id="9497980492" name="Orizont" lane="1030359616#0_0" startPos="1612.18" endPos="1812.18" friendlyPos="true" lines="M5"/>
+    <trainStop id="9497980500" name="Academia Militară" lane="1030359616#0_0" startPos="932.89" endPos="1132.89" friendlyPos="true" lines="M5"/>
+    <busStop id="990269977" name="Matei Voievod" lane="23125404#2_0" startPos="16.77" endPos="31.77" friendlyPos="true" lines="70 79">
+        <access lane="-668755074_0" pos="10.51" length="10.45" friendlyPos="1"/>
+        <access lane="-8119904#8_0" pos="0.00" length="43.23" friendlyPos="1"/>
+        <access lane="-8119904#9_0" pos="6.03" length="23.75" friendlyPos="1"/>
+        <access lane="668755074_0" pos="0.00" length="7.61" friendlyPos="1"/>
+        <access lane="8119904#9_0" pos="9.02" length="37.85" friendlyPos="1"/>
+    </busStop>
+</additional>
