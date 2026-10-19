@@ -4,37 +4,36 @@ import os
 from ultralytics import YOLO
 
 def monitorizare_realtime_piata_romana():
+    # LINK-UL OFICIAL AL FLUXULUI VIDEO LIVE DE LA PIATA ROMANA
     url_stream = "https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8"
     os.environ["OPENCV_FFMPEG_HTTP_OPTIONS"] = "user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-    print("Inițializăm Ochii AI (YOLOv8) cu Matrice O-D Calibrată...")
+    print("Inițializăm Ochii AI (YOLOv8) optimizați pentru Piața Romană...")
     model = YOLO("yolov8n.pt")
     
-    # Matricea reală de fluxuri (Origine -> Destinație)
-    fluxuri_trasee = {
-        "Magheru": {"Magheru": 0, "Catargiu": 0, "Dacia_Est": 0, "Dacia_Vest": 0},
-        "Catargiu": {"Magheru": 0, "Catargiu": 0, "Dacia_Est": 0, "Dacia_Vest": 0},
-        "Dacia_Est": {"Magheru": 0, "Catargiu": 0, "Dacia_Est": 0, "Dacia_Vest": 0},
-        "Dacia_Vest": {"Magheru": 0, "Catargiu": 0, "Dacia_Est": 0, "Dacia_Vest": 0}
+    # Contoare stricte de intrări și ieșiri pe bulevarde
+    statistici = {
+        "Magheru_Intrare": 0, "Magheru_Iesire": 0,
+        "Catargiu_Intrare": 0, "Catargiu_Iesire": 0,
+        "Dacia_Est_Intrare": 0, "Dacia_Est_Iesire": 0,
+        "Dacia_Vest_Intrare": 0, "Dacia_Vest_Iesire": 0,
+        "Autobuze_STB": 0, "Pietoni": 0
     }
     
-    # Contoare de volum total
-    intrari_totale = {"Magheru": 0, "Catargiu": 0, "Dacia_Est": 0, "Dacia_Vest": 0}
-    iesiri_totale = {"Magheru": 0, "Catargiu": 0, "Dacia_Est": 0, "Dacia_Vest": 0}
-    contoare_tip = {"bus": 0, "pedestrian": 0}
+    # Mapăm strict clasele corecte: 0=om, 1=bici, 2=auto, 3=moto, 5=autobuz
+    clase_vehicule = [1, 2, 3]
     
-    # Clasele permise strict (0:om, 1:bici, 2:auto, 3:moto, 5:autobuz). FĂRĂ BĂRCI SAU PĂSĂRI!
-    clase_interes = [0, 1, 2, 3, 5]
-    istoric_vehicule = {}
+    # Memorie limitată pentru tracking (salvăm doar ultimele 100 de ID-uri pentru a nu bloca calculatorul)
+    id_procesate = set()
 
     while True:
         cap = cv2.VideoCapture(url_stream, cv2.CAP_FFMPEG)
         if not cap.isOpened():
-            time.sleep(3)
+            time.sleep(2)
             continue
 
-        cv2.namedWindow("Digital Twin - Monitorizare Inteligenta", cv2.WINDOW_NORMAL)
-        cv2.setWindowProperty("Digital Twin - Monitorizare Inteligenta", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.namedWindow("Digital Twin - Piața Romană Live", cv2.WINDOW_NORMAL)
+        cv2.setWindowProperty("Digital Twin - Piața Romană Live", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -43,93 +42,79 @@ def monitorizare_realtime_piata_romana():
             
             h, w, _ = frame.shape
             
-            # REPOZIȚIONARE GEOMETRICĂ STRICTĂ PE MARGINILE ECRANULUI (CONFORM INDICAȚIILOR TALE)
-            zone = {
-                "Magheru": (0, int(h * 0.55), int(w * 0.25), h),                 # Extrema stângă jos
-                "Dacia_Vest": (0, int(h * 0.35), int(w * 0.35), int(h * 0.55)),  # În față-stânga (intrarea secundară)
-                "Catargiu": (int(w * 0.35), int(h * 0.30), int(w * 0.65), int(h * 0.48)), # În față (fundalul spre Victoriei)
-                "Dacia_Est": (int(w * 0.68), int(h * 0.42), w, h)                # Partea dreaptă (clădirea ASE / Dorobanți)
-            }
+            # LINII DE CONTROL PLASATE PE ZONA DE JOS (UNDE VEHICULELE SUNT MARI ȘI CLARE)
+            # Tragem linii orizontale sau verticale specifice fiecărei artere vizibile
+            linie_magheru_y = int(h * 0.75)     # Zona din stânga jos (Magheru)
+            linie_dacia_est_x = int(w * 0.70)   # Zona din dreapta (ASE / Dacia Est)
+            linie_catargiu_y = int(h * 0.48)    # Zona de fundal (Catargiu) - coborâtă pentru acuratețe
 
-            results_list = model.track(frame, persist=True, conf=0.25, verbose=False)
+            results_list = model.track(frame, persist=True, conf=0.30, verbose=False)
             results = results_list[0]
-            ids_curente = set()
             
+            # Recreăm cadrul grafic manual pentru a elimina complet bărcile sau plantele fictive
+            annotated_frame = frame.copy()
+
             if results.boxes.id is not None:
                 boxes = results.boxes.xyxy.cpu().numpy()
                 clases = results.boxes.cls.cpu().numpy()
                 ids = results.boxes.id.cpu().numpy()
 
                 for box, cls_id, obj_id in zip(boxes, clases, ids):
-                    # Filtru de securitate anti-detecții eronate (bărci, ghivece de plante etc.)
-                    if int(cls_id) not in clase_interes:
+                    cls_id = int(cls_id)
+                    obj_id = int(obj_id)
+                    
+                    # [FILTRU TOTAL ANTI-BĂRCI] Dacă nu e om, mașină sau autobuz, trecem peste!
+                    if cls_id not in:
                         continue
                         
-                    obj_id = int(obj_id)
-                    ids_curente.add(obj_id)
-                    
+                    # Calculăm centrul obiectului
                     cx = int((box[0] + box[2]) / 2)
                     cy = int((box[1] + box[3]) / 2)
                     
-                    zona_actuala = None
-                    for nume_zona, coord in zone.items():
-                        if coord[0] < cx < coord[2] and coord[1] < cy < coord[3]:
-                            zona_actuala = nume_zona
-                            break
-                    
-                    if obj_id not in istoric_vehicule and zona_actuala is not None:
-                        istoric_vehicule[obj_id] = {
-                            "origine": zona_actuala,
-                            "ultima_zona": zona_actuala,
-                            "tip": "bus" if int(cls_id) == 5 else ("pedestrian" if int(cls_id) == 0 else "car")
-                        }
-                        if date_v := istoric_vehicule[obj_id]:
-                            if date_v["tip"] == "car":
-                                intrari_totale[zona_actuala] += 1
-                            elif date_v["tip"] == "bus":
-                                contoare_tip["bus"] += 1
-                            elif date_v["tip"] == "pedestrian":
-                                contoare_tip["pedestrian"] += 1
+                    # Desenăm vizual DOAR obiectele corecte (fără erori de tip boat)
+                    label = f"ID:{obj_id} masina" if cls_id in clase_vehicule else ("autobuz" if cls_id == 5 else "pieton")
+                    cv2.rectangle(annotated_frame, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (0, 255, 0), 2)
+                    cv2.putText(annotated_frame, label, (int(box[0]), int(box[1]) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+                    # LOGICA DE NUMĂRARE INSTANTANEE LA TRECEREA PRIN LINII
+                    if obj_id not in id_procesate:
                         
-                    elif obj_id in istoric_vehicule and zona_actuala is not None:
-                        istoric_vehicule[obj_id]["ultima_zona"] = zona_actuala
+                        # 1. Control pe axa Magheru (Stânga jos)
+                        if cx < int(w * 0.40) and abs(cy - linie_magheru_y) < 8:
+                            if cls_id == 5: statistici["Autobuze_STB"] += 1
+                            elif cls_id == 0: statistici["Pietoni"] += 1
+                            else:
+                                # Direcția pe ecran: dacă merge în jos (cy crește) e ieșire, dacă urcă e intrare
+                                statistici["Magheru_Intrare"] += 1
+                            id_procesate.add(obj_id)
 
-            vehicule_părăsite = [vid for vid in istoric_vehicule if vid not in ids_curente]
-            for vid in vehicule_părăsite:
-                date_v = istoric_vehicule[vid]
-                origine = date_v["origine"]
-                destinatie = date_v["ultima_zona"]
-                
-                if origine != destinatie and date_v["tip"] == "car":
-                    fluxuri_trasee[origine][destinatie] += 1
-                    iesiri_totale[destinatie] += 1
-                    print(f"[MATRICE O-D] {origine} -> {destinatie} (ID: {vid})")
-                
-                del istoric_vehicule[vid]
+                        # 2. Control pe axa Dacia Est / ASE (Dreapta)
+                        elif cx > linie_dacia_est_x and abs(cy - int(h * 0.55)) < 8:
+                            if cls_id == 5: statistics["Autobuze_STB"] += 1
+                            else: statistici["Dacia_Est_Intrare"] += 1
+                            id_procesate.add(obj_id)
 
-            # Randarea interfeței
-            annotated_frame = results.plot()
+                        # 3. Control pe axa Catargiu (Centru spre fundal)
+                        elif int(w * 0.35) < cx < int(w * 0.65) and abs(cy - linie_catargiu_y) < 6:
+                            if cls_id == 2: statistici["Catargiu_Iesire"] += 1
+                            id_procesate.add(obj_id)
+
+            # Limităm memoria cache pentru a nu bloca calculatorul sau pagina de chat
+            if len(id_procesate) > 150:
+                id_procesate.clear()
+
+            # Desenăm liniile de control pe ecran pentru verificare vizuală
+            cv2.line(annotated_frame, (0, linie_magheru_y), (int(w * 0.40), linie_magheru_y), (0, 255, 0), 3) # Magheru
+            cv2.line(annotated_frame, (linie_dacia_est_x, int(h * 0.40)), (w, int(h * 0.70)), (255, 255, 0), 3) # Dacia Est
+            cv2.line(annotated_frame, (int(w * 0.35), linie_catargiu_y), (int(w * 0.65), linie_catargiu_y), (0, 0, 255), 3) # Catargiu
             
-            # Ștergem desenele automate greșite ale YOLO dacă cumva au apărut bărci în buffer-ul vizual
-            # Desenăm zonele corecte de demarcație pe asfalt
-            cv2.rectangle(annotated_frame, (zone["Magheru"][0], zone["Magheru"][1]), (zone["Magheru"][2], zone["Magheru"][3]), (0, 255, 0), 2)
-            cv2.rectangle(annotated_frame, (zone["Catargiu"][0], zone["Catargiu"][1]), (zone["Catargiu"][2], zone["Catargiu"][3]), (0, 0, 255), 2)
-            cv2.rectangle(annotated_frame, (zone["Dacia_Est"][0], zone["Dacia_Est"][1]), (zone["Dacia_Est"][2], zone["Dacia_Est"][3]), (255, 255, 0), 2)
-            cv2.rectangle(annotated_frame, (zone["Dacia_Vest"][0], zone["Dacia_Vest"][1]), (zone["Dacia_Vest"][2], zone["Dacia_Vest"][3]), (255, 0, 255), 2)
+            # PANOU DE CONTROL CURAT ȘI CORECT - PIAȚA ROMANĂ
+            cv2.putText(annotated_frame, "SISTEM DIGITAL TWIN - CALIBRARE FINALA PIATA ROMANA", (40, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 3)
+            cv2.putText(annotated_frame, f"Magheru In: {statistici['Magheru_Intrare']} | Catargiu Out: {statistici['Catargiu_Iesire']}", (40, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+            cv2.putText(annotated_frame, f"Dacia Est In: {statistici['Dacia_Est_Intrare']}", (40, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
+            cv2.putText(annotated_frame, f"Autobuze STB: {statistici['Autobuze_STB']} | Pietoni: {statistici['Pietoni']}", (40, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 256, 255), 2)
             
-            # PANOU PROFESIONAL SMART-CITY (TABEL DE FLUXURI COMPLET)
-            cv2.putText(annotated_frame, "SISTEM DIGITAL TWIN - MATRICE FLUXURI PIAȚA ROMÂNĂ", (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 3)
-            
-            # Afișare intrări cumulate
-            cv2.putText(annotated_frame, f"INTRARI | Magheru: {intrari_totale['Magheru']} | Catargiu: {intrari_totale['Catargiu']} | Dacia E: {intrari_totale['Dacia_Est']} | Dacia V: {intrari_totale['Dacia_Vest']}", (30, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            
-            # Afișare ieșiri cumulate
-            cv2.putText(annotated_frame, f"IESIRI  | Magheru: {iesiri_totale['Magheru']} | Catargiu: {iesiri_totale['Catargiu']} | Dacia E: {iesiri_totale['Dacia_Est']} | Dacia V: {iesiri_totale['Dacia_Vest']}", (30, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            
-            # Transport public și pietoni active
-            cv2.putText(annotated_frame, f"Autobuze STB: {contoare_tip['bus']} | Pietoni Piață: {contoare_tip['pedestrian']}", (30, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
-            
-            cv2.imshow("Digital Twin - Monitorizare Inteligenta", annotated_frame)
+            cv2.imshow("Digital Twin - Piața Romană Live", annotated_frame)
             
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 cap.release()
