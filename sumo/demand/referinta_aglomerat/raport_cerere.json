@@ -1,0 +1,52 @@
+{
+  "tipuri": {
+    "bus": {
+      "viraje_tinta": 156,
+      "GEH<5_%": 100.0
+    },
+    "motorcycle": {
+      "viraje_tinta": 114,
+      "GEH<5_%": 100.0
+    },
+    "passenger": {
+      "viraje_tinta": 3404,
+      "GEH<5_%": 83.33
+    },
+    "truck": {
+      "viraje_tinta": 115,
+      "GEH<5_%": 100.0
+    }
+  },
+  "vehicule_fond": 567,
+  "sumocfg": "sumo/scenarios/referinta_aglomerat.sumocfg",
+  "rezumat_od": {
+    "vehicule_total": 3780,
+    "durata_s": 3600,
+    "od_vehicule": {
+      "catargiu>caderea_bastiliei": 137,
+      "catargiu>catargiu": 34,
+      "catargiu>dacia_est": 171,
+      "catargiu>dacia_vest": 171,
+      "catargiu>magheru": 513,
+      "catargiu>mendeleev": 114,
+      "dacia_est>caderea_bastiliei": 65,
+      "dacia_est>catargiu": 144,
+      "dacia_est>dacia_est": 22,
+      "dacia_est>dacia_vest": 288,
+      "dacia_est>magheru": 144,
+      "dacia_est>mendeleev": 58,
+      "dacia_vest>caderea_bastiliei": 72,
+      "dacia_vest>catargiu": 120,
+      "dacia_vest>dacia_est": 240,
+      "dacia_vest>dacia_vest": 18,
+      "dacia_vest>magheru": 120,
+      "dacia_vest>mendeleev": 30,
+      "magheru>caderea_bastiliei": 198,
+      "magheru>catargiu": 528,
+      "magheru>dacia_est": 264,
+      "magheru>dacia_vest": 264,
+      "magheru>magheru": 40,
+      "magheru>mendeleev": 26
+    }
+  }
+}
