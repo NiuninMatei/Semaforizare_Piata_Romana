@@ -132,10 +132,13 @@ def report(df: pd.DataFrame) -> None:
                "pierdere_timp_pietoni_s", "pietoni_asteapta_medie", "pierdere_totala_h"]
     metrics = [m for m in metrics if m in df.columns]
     g = df.groupby(["scenariu", "strategie"])[metrics].agg(["mean", "std"])
+    med = df.groupby(["scenariu", "strategie"])["asteptare_medie_s"].median()
     order = [s for s in NAMES_RO if s in df["strategie"].unique()]
     lines = ["# Rezultate – evaluare comparativă\n",
              f"Medii ± abatere standard pe {df['seed'].nunique()} seed-uri SUMO. Procentele sunt față de "
-             f"{NAMES_RO[BASELINE].lower()}. Generat automat de `python -m romana.control.evaluate`.\n"]
+             f"{NAMES_RO[BASELINE].lower()}. Mediana pe seed-uri este dată separat pentru așteptarea vehiculelor: "
+             "aproape de saturație, rețeaua poate intra sau nu în blocaj în funcție de seed, iar câteva rulări "
+             "blocate trag media în sus. Generat automat de `python -m romana.control.evaluate`.\n"]
 
     def delta(r, base, m):
         if base is None or not np.isfinite(base) or base == 0:
@@ -148,14 +151,17 @@ def report(df: pd.DataFrame) -> None:
         base = (lambda m: b[(m, "mean")]) if b is not None else (lambda m: None)  # noqa: E731
         lines.append(f"\n## Scenariul `{sc}`\n")
         lines.append("**Vehicule motorizate**\n")
-        lines.append("| Strategie | Așteptare medie (s) | Pierdere de timp (s) | Durată călătorie (s) | "
-                     "Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |")
-        lines.append("|---|---|---|---|---|---|---|---|")
+        lines.append("| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | "
+                     "Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |")
+        lines.append("|---|---|---|---|---|---|---|---|---|")
         for st in sts:
             r = g.loc[(sc, st)]
             cell = lambda m, d=1: f"{r[(m, 'mean')]:.{d}f} ± {r[(m, 'std')]:.{d}f}"  # noqa: E731
             dl = "" if st == BASELINE else delta(r, base("asteptare_medie_s"), "asteptare_medie_s")
-            lines.append(f"| {NAMES_RO.get(st, st)} | {cell('asteptare_medie_s')}{dl} | {cell('pierdere_timp_medie_s')} | "
+            mb = med.get((sc, BASELINE))
+            dm = "" if st == BASELINE or not mb else f" ({100 * (med[(sc, st)] - mb) / mb:+.0f}%)"
+            lines.append(f"| {NAMES_RO.get(st, st)} | {cell('asteptare_medie_s')}{dl} | {med[(sc, st)]:.1f}{dm} | "
+                         f"{cell('pierdere_timp_medie_s')} | "
                          f"{cell('durata_medie_s')} | {cell('coada_medie_romana')} | {cell('vehicule_sosite', 0)} | "
                          f"{cell('nefinalizate', 0)} | {cell('co2_kg', 0)} |")
         if "pierdere_timp_pietoni_s" in metrics:
@@ -220,7 +226,15 @@ def main(argv=None) -> None:
     ap.add_argument("--strategii", nargs="*", default=None,
                     help="filtru: fix_referinta fix_webster actuated max_pressure rl_ppo rl_ppo_coridor")
     ap.add_argument("--procese", type=int, default=1, help="simulări în paralel (procese separate)")
+    ap.add_argument("--adauga", action="store_true",
+                    help="păstrează rezultatele existente din outputs/eval/rezultate.csv (înlocuiește doar rulările refăcute)")
+    ap.add_argument("--doar-raport", action="store_true",
+                    help="regenerează doar raportul și graficul din outputs/eval/rezultate.csv, fără simulări")
     args = ap.parse_args(argv)
+    if args.doar_raport:
+        report(pd.read_csv(EVAL_DIR / "rezultate.csv"))
+        print(f"[OK] {DOCS_RES / 'rezultate.md'}")
+        return
     scen = [Path(s) for s in (args.scenarii or sorted(glob.glob(str(ROOT / "sumo/scenarios/*.sumocfg"))))]
     models = [Path(m) for m in (args.model if args.model is not None else sorted(glob.glob(str(ROOT / "models/ppo_*.zip"))))]
     tasks = [(sc, c.name, seed) for sc in scen for c in make_controllers(sc, models)
@@ -243,7 +257,13 @@ def main(argv=None) -> None:
         for sc, name, seed in tasks:
             rows.append(run_task(sc, models, name, seed))
             show(rows[-1])
-    df = pd.DataFrame(rows).sort_values(["scenariu", "strategie", "seed"])
+    df = pd.DataFrame(rows)
+    key = ["scenariu", "strategie", "seed"]
+    if args.adauga and (EVAL_DIR / "rezultate.csv").exists():
+        old = pd.read_csv(EVAL_DIR / "rezultate.csv")
+        old = old[~old.set_index(key).index.isin(df.set_index(key).index)]
+        df = pd.concat([old, df], ignore_index=True)
+    df = df.sort_values(key)
     EVAL_DIR.mkdir(parents=True, exist_ok=True)
     df.to_csv(EVAL_DIR / "rezultate.csv", index=False)
     DOCS_RES.mkdir(parents=True, exist_ok=True)
