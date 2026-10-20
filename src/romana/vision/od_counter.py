@@ -4,9 +4,13 @@ Fiecare vehicul urmărit (ID ByteTrack) trece prin zonele poligonale definite î
 `config/camera.json`. Zonele sunt de două tipuri:
   * `intrare` – banda pe care vehiculele se apropie de piață pe un braț;
   * `iesire`  – banda pe care vehiculele părăsesc piața pe un braț.
+  * `trecere` – suprafața unei treceri de pietoni vizibile (doar pentru pietoni).
 Prima zonă de intrare vizitată = brațul de origine; ultima zonă de ieșire = destinația.
 O traiectorie completă produce o mișcare de viraj (origine → destinație); traiectoriile
 fragmentate (ocluzii, vehicule pierdute) contribuie doar la numărătorile pe braț.
+Un pieton este numărat o singură dată pe fiecare trecere pe care a fost văzut în cel puțin
+`min_crossing_frames` cadre (persoanele de pe biciclete/motociclete sunt excluse înainte,
+în `run_vision`, ca să nu fie numărate de două ori).
 
 Nu se păstrează imagini sau identificatori persistenți: ID-urile de urmărire sunt
 temporare și sunt uitate după închiderea traiectoriei (GDPR – minimizarea datelor).
@@ -25,13 +29,15 @@ import numpy as np
 # Clase COCO → categorii SUMO
 COCO_TO_VTYPE = {2: "passenger", 3: "motorcycle", 5: "bus", 7: "truck", 1: "bicycle"}
 VEHICLE_CLASSES = list(COCO_TO_VTYPE)
+PERSON = 0
+PEDESTRIAN = "pieton"
 
 
 @dataclass
 class Zone:
     id: str
     arm: str
-    role: str                    # "intrare" | "iesire"
+    role: str                    # "intrare" | "iesire" | "trecere"
     poly_norm: np.ndarray        # Nx2, coordonate normalizate [0..1]
     color: tuple = (0, 255, 0)
     _poly_px: np.ndarray | None = None
@@ -45,6 +51,17 @@ class Zone:
 
     def contains(self, x: float, y: float, w: int, h: int) -> bool:
         return cv2.pointPolygonTest(self.poly_px(w, h), (float(x), float(y)), False) >= 0
+
+
+def is_rider(person_box, vehicle_boxes, margin: float = 0.25) -> bool:
+    """Persoană pe bicicletă/motocicletă (sau în dreptul unui vehicul): punctul ei de contact
+    cu solul cade în caseta vehiculului, lărgită cu `margin` din dimensiunile acesteia."""
+    px, py = (person_box[0] + person_box[2]) / 2, person_box[3]
+    for x1, y1, x2, y2 in vehicle_boxes:
+        mw, mh = (x2 - x1) * margin, (y2 - y1) * margin
+        if x1 - mw <= px <= x2 + mw and y1 <= py <= y2 + mh:
+            return True
+    return False
 
 
 def load_zones(cam_cfg: dict) -> list[Zone]:
@@ -66,14 +83,19 @@ class TrackState:
     zones_seen: list = field(default_factory=list)
     cls_votes: Counter = field(default_factory=Counter)
     last_point: tuple | None = None
+    crossing_frames: Counter = field(default_factory=Counter)   # trecere -> cadre (pietoni)
 
 
 class ODCounter:
     """Agregă mișcările pe intervale fixe (implicit 15 minute)."""
 
     def __init__(self, zones: list[Zone], interval_s: int = 900, lost_after_frames: int = 30,
-                 min_track_frames: int = 3, out_dir: Path | None = None, clock=time.time):
+                 min_track_frames: int = 3, out_dir: Path | None = None, clock=time.time,
+                 min_crossing_frames: int = 2):
         self.zones = zones
+        self.vehicle_zones = [z for z in zones if z.role != "trecere"]
+        self.crossing_zones = [z for z in zones if z.role == "trecere"]
+        self.min_crossing = min_crossing_frames
         self.interval_s = interval_s
         self.lost_after = lost_after_frames
         self.min_frames = min_track_frames
@@ -91,10 +113,12 @@ class ODCounter:
         self.od = Counter()          # (origine, destinatie, vtype) -> n
         self.arm_in = Counter()      # (brat, vtype) -> n   (inclusiv traiectorii incomplete)
         self.arm_out = Counter()
+        self.peds = Counter()        # (brat, trecere) -> pietoni
 
     def _close_interval(self, now: float) -> dict:
         rec = {"start": self.interval_start, "end": min(self.interval_start + self.interval_s, now),
-               "od": dict(self.od), "in": dict(self.arm_in), "out": dict(self.arm_out)}
+               "od": dict(self.od), "in": dict(self.arm_in), "out": dict(self.arm_out),
+               "pietoni": dict(self.peds)}
         self.history.append(rec)
         self.history = self.history[-96:]
         if self.out_dir is not None:
@@ -119,15 +143,19 @@ class ODCounter:
                 w.writerow([s, e, "intrare", a, "", v, n])
             for (a, v), n in sorted(rec["out"].items()):
                 w.writerow([s, e, "iesire", "", a, v, n])
+            for (a, zid), n in sorted(rec.get("pietoni", {}).items()):
+                w.writerow([s, e, "pietoni", a, zid, PEDESTRIAN, n])
 
     # ------------------------------------------------------------ actualizare
     def update(self, detections, w: int, h: int, now: float | None = None) -> list[dict]:
-        """detections: iterabil de (track_id, coco_cls, x_center, y_bottom). Returnează evenimente închise."""
+        """detections: iterabil de (track_id, coco_cls, x_center, y_bottom). Returnează evenimente închise.
+
+        Persoanele (clasa COCO 0) trebuie să fie deja filtrate de călători/bicicliști/motocicliști."""
         now = self.clock() if now is None else now
         self.frame_idx += 1
         events = []
         for tid, cls, x, y in detections:
-            vt = COCO_TO_VTYPE.get(int(cls))
+            vt = PEDESTRIAN if int(cls) == PERSON else COCO_TO_VTYPE.get(int(cls))
             if vt is None:
                 continue
             st = self.tracks.get(tid)
@@ -136,7 +164,12 @@ class ODCounter:
             st.last_seen, st.last_frame = now, self.frame_idx
             st.cls_votes[vt] += 1
             st.last_point = (x, y)
-            for z in self.zones:
+            if vt == PEDESTRIAN:
+                for z in self.crossing_zones:
+                    if z.contains(x, y, w, h):
+                        st.crossing_frames[(z.arm, z.id)] += 1
+                continue
+            for z in self.vehicle_zones:
                 if z.contains(x, y, w, h):
                     if not st.zones_seen or st.zones_seen[-1] != z.id:
                         st.zones_seen.append(z.id)
@@ -157,6 +190,12 @@ class ODCounter:
         if sum(st.cls_votes.values()) < self.min_frames:
             return None
         vt = st.cls_votes.most_common(1)[0][0]
+        if vt == PEDESTRIAN:
+            for key, n in st.crossing_frames.items():
+                if n >= self.min_crossing:
+                    self.peds[key] += 1
+                    self.totals[("pietoni", key[0])] += 1
+            return None
         if st.origin:
             self.arm_in[(st.origin, vt)] += 1
             self.totals[("in", st.origin)] += 1
@@ -183,6 +222,10 @@ class ODCounter:
             ins[a] += n
         for (a, _), n in self.arm_out.items():
             outs[a] += n
+        peds = defaultdict(int)
+        for (a, _), n in self.peds.items():
+            peds[a] += n
         return {"intrari_veh_h": {a: round(n * 3600 / el) for a, n in ins.items()},
                 "iesiri_veh_h": {a: round(n * 3600 / el) for a, n in outs.items()},
+                "pietoni_h": {a: round(n * 3600 / el) for a, n in peds.items()},
                 "secunde_interval": round(el)}

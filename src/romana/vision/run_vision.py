@@ -26,11 +26,11 @@ import cv2
 import numpy as np
 
 from romana.common import COUNTS_DIR, OUTPUT_DIR, load_json
-from romana.vision.od_counter import VEHICLE_CLASSES, ODCounter, load_zones
+from romana.vision.od_counter import PERSON, VEHICLE_CLASSES, ODCounter, is_rider, load_zones
 from romana.vision.stream import FrameSource
 
 LIVE_DIR = OUTPUT_DIR / "live"
-PERSON = 0
+RIDDEN = (1, 3)  # bicicletă, motocicletă – persoanele de pe ele nu sunt pietoni
 
 
 def draw_overlay(frame, zones, dets, counter: ODCounter, fps: float) -> np.ndarray:
@@ -54,12 +54,16 @@ def draw_overlay(frame, zones, dets, counter: ODCounter, fps: float) -> np.ndarr
         cv2.putText(frame, lbl, (x1, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 255), 2)
     rates = counter.current_rates()
     y = 60
-    cv2.rectangle(frame, (20, 20), (900, 90 + 40 * len(rates["intrari_veh_h"])), (0, 0, 0), -1)
+    n_lines = len(rates["intrari_veh_h"]) + len(rates["pietoni_h"])
+    cv2.rectangle(frame, (20, 20), (900, 90 + 40 * n_lines), (0, 0, 0), -1)
     cv2.putText(frame, f"Piata Romana - debite intrare (veh/h)  {fps:.1f} fps", (35, y),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
     for a, v in sorted(rates["intrari_veh_h"].items()):
         y += 40
         cv2.putText(frame, f"{a:<18} {v:>5}", (35, y), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
+    for a, v in sorted(rates["pietoni_h"].items()):
+        y += 40
+        cv2.putText(frame, f"pietoni {a:<10} {v:>5}/h", (35, y), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (90, 90, 255), 2)
     return frame
 
 
@@ -136,12 +140,17 @@ def main(argv=None) -> None:
                 xyxy[:, [1, 3]] += y0
                 cls = res.boxes.cls.cpu().numpy().astype(int)
                 ids = res.boxes.id.cpu().numpy().astype(int) if res.boxes.id is not None else [None] * len(cls)
+                ridden = [b for b, c in zip(xyxy, cls) if c in RIDDEN]
                 for b, c, i in zip(xyxy, cls, ids):
                     if c == PERSON:
                         persons.append(b)
-                    elif i is not None:
+                        if i is None or is_rider(b, ridden):
+                            continue
+                    elif i is None:
+                        continue
+                    else:
                         dets.append((int(i), int(c), b))
-                        feed.append((int(i), int(c), (b[0] + b[2]) / 2, b[3]))  # punctul de contact cu solul
+                    feed.append((int(i), int(c), (b[0] + b[2]) / 2, b[3]))  # punctul de contact cu solul
             events = counter.update(feed, w, h)
             now = time.time()
             fps_est = 0.9 * fps_est + 0.1 / max(1e-3, now - t_prev)
@@ -153,7 +162,8 @@ def main(argv=None) -> None:
                 n_closed = len(counter.history)
                 rec = counter.history[-1]
                 print(f"[interval închis] {time.strftime('%H:%M', time.localtime(rec['start']))}: "
-                      f"{sum(rec['od'].values())} viraje complete, {sum(rec['in'].values())} intrări")
+                      f"{sum(rec['od'].values())} viraje complete, {sum(rec['in'].values())} intrări, "
+                      f"{sum(rec['pietoni'].values())} pietoni pe treceri")
                 if mqtt:
                     mqtt.publish("numaratori/interval", {k: {str(kk): vv for kk, vv in v.items()}
                                                          if isinstance(v, dict) else v for k, v in rec.items()},
@@ -185,8 +195,8 @@ def main(argv=None) -> None:
         pass
     finally:
         rec = counter.flush()
-        print(f"[final] ultimul interval: {sum(rec['od'].values())} viraje, {sum(rec['in'].values())} intrări; "
-              f"CSV în {args.out}")
+        print(f"[final] ultimul interval: {sum(rec['od'].values())} viraje, {sum(rec['in'].values())} intrări, "
+              f"{sum(rec['pietoni'].values())} pietoni; CSV în {args.out}")
         src.close()
         if args.show:
             cv2.destroyAllWindows()

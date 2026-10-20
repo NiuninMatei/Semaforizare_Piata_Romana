@@ -22,7 +22,7 @@
     0.38,
     1.0
   ],
-  "calibrare": "preliminară, pe imagini de noapte (20.10.2026, 23:08) și traiectorii YOLO+ByteTrack; de verificat pe lumină de zi",
+  "calibrare": "preliminară, pe imagini de noapte (20–21.10.2026) și traiectorii YOLO+ByteTrack; trecerile de pietoni desenate pe cadrul din 21.10.2026 01:30; de verificat pe lumină de zi",
   "brate": {
     "magheru": "Bd. Gh. Magheru (sud) – dublu sens",
     "mendeleev": "Str. D. I. Mendeleev – sens unic, doar ieșire din piață",
@@ -309,6 +309,94 @@
       "culoare": [
         0,
         140,
+        255
+      ]
+    },
+    {
+      "id": "trecere_magheru",
+      "arm": "magheru",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.145,
+          0.645
+        ],
+        [
+          0.26,
+          0.66
+        ],
+        [
+          0.54,
+          0.877
+        ],
+        [
+          0.4,
+          0.9
+        ],
+        [
+          0.287,
+          0.84
+        ],
+        [
+          0.149,
+          0.725
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
+        255
+      ]
+    },
+    {
+      "id": "trecere_dacia_est",
+      "arm": "dacia_est",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.611,
+          0.944
+        ],
+        [
+          0.929,
+          0.668
+        ],
+        [
+          0.987,
+          0.709
+        ],
+        [
+          0.985,
+          0.755
+        ],
+        [
+          0.917,
+          0.796
+        ],
+        [
+          0.906,
+          0.842
+        ],
+        [
+          0.937,
+          0.883
+        ],
+        [
+          0.889,
+          0.995
+        ],
+        [
+          0.685,
+          1.0
+        ],
+        [
+          0.611,
+          0.964
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
         255
       ]
     }
