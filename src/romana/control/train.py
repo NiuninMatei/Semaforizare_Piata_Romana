@@ -54,6 +54,9 @@ def main(argv=None) -> None:
                 callback=CheckpointCallback(save_freq=25_000, save_path=str(out / "checkpoints"), name_prefix=name))
     path = MODELS_DIR / f"ppo_{name}.zip"
     model.save(str(path))
+    from romana.control.policy_numpy import export
+
+    export(path)                      # copie NumPy a politicii, rulabilă fără PyTorch
     meta = {"model": path.name, "controlate": controlled, "scenarii": [Path(s).name for s in scen],
             "pasi": args.pasi, "durata_min": round((time.time() - t0) / 60, 1),
             "hiperparametri": {"lr": 3e-4, "n_steps": 1024, "batch": 128, "gamma": 0.98, "ent_coef": 0.01,
