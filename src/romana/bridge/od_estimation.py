@@ -76,13 +76,15 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     od = furness(seed, rows, use_cols)
     # ponderi pe tipuri de vehicule (din intrări)
     by_cls = sub[sub["tip"] == "intrare"].groupby("vehicul")["numar"].sum()
+    by_cls = by_cls[by_cls.index != "pieton"]
     shares = (by_cls / by_cls.sum()).to_dict() if by_cls.sum() > 0 else {"passenger": 1.0}
     complete = obs.sum() * hours
+    ped = float(sub.loc[sub["tip"] == "pietoni", "numar"].sum()) * cfg.get("factor_extrapolare_pietoni", 1.0) / hours
     return {"origini": origins, "destinatii": arms, "od_veh_h": od.round(1).tolist(),
             "intrari_veh_h": dict(zip(origins, rows.round(1).tolist())),
             "iesiri_veh_h": dict(zip(arms, cols.round(1).tolist())),
             "pondere_clase": {k: round(v, 3) for k, v in shares.items()},
-            "viraje_complete": int(complete),
+            "viraje_complete": int(complete), "pietoni_h": round(ped, 1),
             "intrari_numarate": int(rows.sum() * hours / corr)}
 
 
@@ -111,6 +113,7 @@ def reference_profile(cfg: dict, n_intervals: int = 4, interval_s: int = 900) ->
         recs.append({"origini": origins, "destinatii": arms, "od_veh_h": (od * f).round(1).tolist(),
                      "intrari_veh_h": dict(zip(origins, (rows * f).round(1).tolist())),
                      "pondere_clase": ref["pondere_clase"], "viraje_complete": 0,
+                     "pietoni_h": ref.get("pietoni_h", 0) * f,
                      "inceput": f"ref+{i * interval_s}s", "sfarsit": f"ref+{(i + 1) * interval_s}s",
                      "durata_s": interval_s})
     return recs
