@@ -1,0 +1,99 @@
+{
+  "n_links": 50,
+  "green_states": [
+    "rrrGGGrrGGGGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGG",
+    "GGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "rrrGGGrrGGGGGGGGGGGGGrrrrrrrrGGGGrrGGGGGGGGGGGGGGG",
+    "GGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGrrrrrrr"
+  ],
+  "groups": {
+    "axa_ns_centru": [
+      3,
+      4,
+      5,
+      8,
+      9,
+      10
+    ],
+    "inel_dacia": [
+      0,
+      1,
+      2,
+      6,
+      7,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "intrare_magheru": [
+      43,
+      44,
+      45,
+      46
+    ],
+    "intrare_catargiu": [
+      47,
+      48,
+      49
+    ],
+    "intrare_dacia_est": [
+      21,
+      22
+    ],
+    "intrare_dacia_vest": [
+      33,
+      34
+    ]
+  },
+  "id_original_netconvert": {
+    "romana": "joinedS_2404247020_2404247023_3262378104_3262378132_#11more",
+    "dacia_eminescu": "joinedS_1340385612_2404249181_2404249532_3262378123_#2more",
+    "magheru_enescu": "joinedS_6260364342_cluster_1340445074_1340445076_134970602_4407713791_#6more_cluster_1340445097_257550569_4048777916_4048777917_#1more",
+    "catargiu_manu": "cluster_1365573748_257678860_257678862_33390176_#7more",
+    "dacia_victoriei": "cluster_33389991_3670672579_3670672580_3670672581_#2more",
+    "dacia_polona": "joinedS_cluster_245958116_6262827298_6262827299_6264830617_#1more_cluster_256194225_6262144620_6262144621_7255592005_#1more"
+  },
+  "rezumat": {
+    "romana": {
+      "legaturi": 50,
+      "faze": 4,
+      "benzi_intrare": 50
+    },
+    "dacia_eminescu": {
+      "legaturi": 45,
+      "faze": 12,
+      "benzi_intrare": 29
+    },
+    "magheru_enescu": {
+      "legaturi": 34,
+      "faze": 12,
+      "benzi_intrare": 22
+    },
+    "catargiu_manu": {
+      "legaturi": 14,
+      "faze": 8,
+      "benzi_intrare": 10
+    },
+    "dacia_victoriei": {
+      "legaturi": 12,
+      "faze": 4,
+      "benzi_intrare": 6
+    },
+    "dacia_polona": {
+      "legaturi": 28,
+      "faze": 8,
+      "benzi_intrare": 10
+    },
+    "_retea": {
+      "muchii": 719,
+      "noduri": 439,
+      "dimensiune_m": [
+        2168,
+        1620
+      ]
+    }
+  }
+}

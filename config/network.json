@@ -1,0 +1,122 @@
+{
+  "_descriere": "Parametrii rețelei SUMO: zona decupată din OSM, semafoarele controlate și structura de faze a Pieței Romane.",
+  "osm_file": "data/osm/romana_bbox.osm.xml.gz",
+  "bbox_lon_lat": [
+    26.085,
+    44.4395,
+    26.109,
+    44.4525
+  ],
+  "yellow_time": 3,
+  "default_cycle": 90,
+  "tls": {
+    "_descriere": "Semafoarele controlate, identificate după centroidul geografic al nodurilor (robust la regenerarea rețelei).",
+    "romana": {
+      "lat": 44.44688,
+      "lon": 26.09674,
+      "nume": "Piața Romană (Magheru – Lascăr Catargiu – Dacia)",
+      "camera": true
+    },
+    "dacia_eminescu": {
+      "lat": 44.44688,
+      "lon": 26.09944,
+      "nume": "Bd. Dacia × Str. M. Eminescu × Calea Dorobanților",
+      "camera": false
+    },
+    "magheru_enescu": {
+      "lat": 44.44408,
+      "lon": 26.09812,
+      "nume": "Bd. Magheru × Str. G. Enescu / Tache Ionescu",
+      "camera": false
+    },
+    "catargiu_manu": {
+      "lat": 44.44943,
+      "lon": 26.09169,
+      "nume": "Bd. Lascăr Catargiu × Str. Gh. Manu",
+      "camera": false
+    },
+    "dacia_victoriei": {
+      "lat": 44.4455,
+      "lon": 26.09102,
+      "nume": "Bd. Dacia × Calea Victoriei",
+      "camera": false
+    },
+    "dacia_polona": {
+      "lat": 44.44708,
+      "lon": 26.10321,
+      "nume": "Bd. Dacia × Str. Polonă",
+      "camera": false
+    }
+  },
+  "romana_groups": {
+    "_descriere": "Grupuri de legături ale semaforului Piața Romană, identificate după muchia de proveniență (ID-uri de way OSM).",
+    "axa_ns_centru": [
+      "23781788",
+      "23781801"
+    ],
+    "inel_dacia": [
+      "448792279#0",
+      "448792279#1",
+      "448266588#0",
+      "448266588#1"
+    ],
+    "intrare_magheru": [
+      "448266581#1"
+    ],
+    "intrare_catargiu": [
+      "1320256482"
+    ],
+    "intrare_dacia_est": [
+      "232079775#2"
+    ],
+    "intrare_dacia_vest": [
+      "778823268#0"
+    ]
+  },
+  "romana_phases": [
+    {
+      "nume": "N–S: Magheru ↔ Catargiu prin centru",
+      "verde": [
+        "axa_ns_centru"
+      ],
+      "rosu": [
+        "inel_dacia"
+      ],
+      "durata_fixa": 42
+    },
+    {
+      "nume": "E–V: Dacia în jurul insulei",
+      "verde": [
+        "inel_dacia"
+      ],
+      "rosu": [
+        "axa_ns_centru"
+      ],
+      "durata_fixa": 42
+    },
+    {
+      "nume": "N–S prioritar, intrările Dacia oprite",
+      "verde": [
+        "axa_ns_centru"
+      ],
+      "rosu": [
+        "inel_dacia",
+        "intrare_dacia_est",
+        "intrare_dacia_vest"
+      ],
+      "durata_fixa": 0
+    },
+    {
+      "nume": "E–V prioritar, intrările Magheru/Catargiu oprite",
+      "verde": [
+        "inel_dacia"
+      ],
+      "rosu": [
+        "axa_ns_centru",
+        "intrare_magheru",
+        "intrare_catargiu"
+      ],
+      "durata_fixa": 0
+    }
+  ]
+}
