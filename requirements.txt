@@ -1,0 +1,16 @@
+# Mediu testat: Python 3.11–3.13, Windows 10/11 și Linux
+eclipse-sumo==1.28.0        # simulatorul SUMO (EPL-2.0); alternativ instalarea oficială + SUMO_HOME
+sumolib>=1.28.0
+traci>=1.28.0
+sumo-rl==1.4.5              # medii Gymnasium/PettingZoo pentru semafoare (MIT)
+stable-baselines3>=2.3      # PPO / DQN (MIT)
+gymnasium>=1.0
+torch>=2.2
+ultralytics>=8.3            # YOLO11 + ByteTrack (AGPL-3.0)
+opencv-python>=4.9          # citire stream HLS prin FFmpeg (Apache-2.0)
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8
+pyproj>=3.6
+paho-mqtt>=2.0              # publicare IoT (EPL-2.0/EDL-1.0)
+flask>=3.0                  # dashboard operator

@@ -179,3 +179,16 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# --- Semaforizare Piața Romană ---
+# greutăți modele YOLO (se descarcă automat de Ultralytics)
+*.pt
+# ieșiri temporare ale simulării
+outputs/
+runs/
+sumo/output/
+# capturi video brute — NU se păstrează (GDPR); doar numărători agregate
+data/raw/
+*.ts
+*.mp4
+.venv/
+venv/
