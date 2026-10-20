@@ -110,10 +110,14 @@ class MaxPressure:
     def reset(self, traci):
         greens, names = romana_green_phases()
         self.ctrl = SignalController(traci, "romana", greens, names)
+        # doar fazele planului real: fazele „fără dozare” au cele mai multe legături verzi, deci
+        # presiunea cea mai mare, dar umplu inelul și blochează piața (verificat: blocaj total)
+        self.allowed = fixed_phase_indices()
 
     def act(self, traci, t):
         if self.ctrl.can_switch():
-            self.ctrl.request(int(np.argmax(self.ctrl.phase_pressure())))
+            p = self.ctrl.phase_pressure()
+            self.ctrl.request(max(self.allowed, key=lambda i: p[i]))
 
     def tick(self):
         self.ctrl.tick()
@@ -136,9 +140,12 @@ class RLPolicy:
 
             self.np_policy, self.model = None, PPO.load(str(model_path), device="cpu")
         self.controlled = list(controlled)
+        meta = model_path.with_suffix(".json")
+        meta = json.loads(meta.read_text(encoding="utf-8")) if meta.exists() else {}
+        self.romana_phases = meta.get("faze_actiuni_romana")   # None = toate fazele (modele vechi)
 
     def reset(self, traci):
-        from romana.control.signals import green_phases_from_program
+        from romana.control.signals import action_maps, green_phases_from_program
 
         self.ctrls = []
         for tid in self.controlled:
@@ -148,6 +155,7 @@ class RLPolicy:
                 traci.trafficlight.setProgram(tid, "0")
                 g, n = green_phases_from_program(traci, tid), None
             self.ctrls.append(SignalController(traci, tid, g, n))
+        self.maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
         self.traci = traci
 
@@ -161,8 +169,8 @@ class RLPolicy:
             a = self.np_policy.predict(self.observe())
         else:
             a, _ = self.model.predict(self.observe(), deterministic=True)
-        for c, ai in zip(self.ctrls, np.atleast_1d(a)):
-            c.request(int(ai))
+        for c, m, ai in zip(self.ctrls, self.maps, np.atleast_1d(a)):
+            c.request(m[int(ai)])
 
     def tick(self):
         for c in self.ctrls:
