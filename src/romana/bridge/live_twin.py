@@ -31,6 +31,10 @@ LIVE = OUTPUT_DIR / "live"
 
 def load_route_pool(cfg: dict) -> dict[tuple[str, str], list[list[str]]]:
     arms = cfg["brate"]
+    if not (DEMAND_DIR / "candidate.rou.xml").exists():   # fișier regenerabil, nu e în Git
+        from romana.bridge.build_demand import build_candidates
+
+        build_candidates(cfg)
     pool = defaultdict(list)
     for _, el in ET.iterparse(DEMAND_DIR / "candidate.rou.xml"):
         if el.tag != "route":
