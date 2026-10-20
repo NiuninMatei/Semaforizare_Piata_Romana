@@ -206,27 +206,20 @@ def design_romana_program(net_path, cfg: dict) -> dict:
             "treceri_pietoni": len(ped)}
 
 
-def green_phases_of(tl: ET.Element) -> list[str]:
-    out = []
-    for p in tl.iter("phase"):
-        s = p.get("state")
-        if "y" not in s and any(ch in "Gg" for ch in s) and s not in out:
-            out.append(s)
-    return out
+def write_actuated(cfg: dict, info: dict) -> None:
+    """Variantă 'actuated' a controlerului Piața Romană (linie de bază SUMO), pe fazele planului fix.
 
-
-def write_actuated(net_path, cfg: dict) -> None:
-    """Variantă 'actuated' a controlerului Piața Romană (linie de bază SUMO), pe fazele planului fix."""
-    root = ET.parse(net_path).getroot()
+    Fazele verzi se iau din programul proiectat (nu din tlLogic-ul rețelei, unde stările de roșu
+    general păstrează verdele ieșirilor și ar fi confundate cu faze verzi)."""
     add = ET.Element("additional")
-    tl = next(t for t in root.iter("tlLogic") if t.get("id") == "romana")
-    greens = green_phases_of(tl)
+    greens = [g for g, ph in zip(info["green_states"], cfg["romana_faze"]) if ph["durata_fixa"] > 0]
+    durs = [ph["durata_fixa"] for ph in cfg["romana_faze"] if ph["durata_fixa"] > 0]
     logic = ET.SubElement(add, "tlLogic", id="romana", type="actuated", programID="actuated", offset="0")
     ET.SubElement(logic, "param", key="max-gap", value="3.0")
     ET.SubElement(logic, "param", key="detector-gap", value="2.0")
-    for i, g in enumerate(greens):
+    for i, (g, d) in enumerate(zip(greens, durs)):
         nx = greens[(i + 1) % len(greens)]
-        ET.SubElement(logic, "phase", duration="30", minDur="10", maxDur="60", state=g)
+        ET.SubElement(logic, "phase", duration=str(d), minDur=str(min(10, d)), maxDur=str(max(d, 60)), state=g)
         ET.SubElement(logic, "phase", duration=str(cfg["yellow_time"]), state=yellow_between(g, nx))
         ET.SubElement(logic, "phase", duration="2", state=all_red_between(g, nx))
     tree = ET.ElementTree(add)
@@ -265,7 +258,7 @@ def main() -> None:
     tls_ids = [k for k in cfg["tls"] if not k.startswith("_")]
     info["semafoare_fizice_piata"] = n_members
     info["id_original_netconvert"] = mapping
-    write_actuated(NET_FILE, cfg)
+    write_actuated(cfg, info)
     info["rezumat"] = summary(NET_FILE, tls_ids)
     save_json(info, NET_DIR / "network_info.json")
     print(f"[OK] Rețea fidelă scrisă în {NET_FILE}")
