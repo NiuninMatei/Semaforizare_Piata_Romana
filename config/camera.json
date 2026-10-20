@@ -1,0 +1,316 @@
+{
+  "_descriere": "Configurația camerei Webcam România – Piața Romană. Poligoanele sunt în coordonate normalizate (0..1) față de cadru, deci nu depind de rezoluție. Recalibrare: python -m romana.vision.calibrate_zones",
+  "stream_url": "https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8",
+  "sursa_pagina": "https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/",
+  "pozitie_camera": {
+    "lat": 44.446773,
+    "lon": 26.097428,
+    "descriere": "pe clădirea dintre Bd. Magheru (stânga cadrului) și Bd. Dacia est (dreapta cadrului), orientată spre piață"
+  },
+  "referinta_cadru": [
+    3288,
+    1850
+  ],
+  "model": "yolo11s.pt",
+  "imgsz": 1600,
+  "conf": 0.25,
+  "fps": 6.0,
+  "tracker": "bytetrack.yaml",
+  "interval_s": 900,
+  "lost_after_s": 5,
+  "roi_y": [
+    0.38,
+    1.0
+  ],
+  "calibrare": "preliminară, pe imagini de noapte (20.10.2026, 23:08) și traiectorii YOLO+ByteTrack; de verificat pe lumină de zi",
+  "brate": {
+    "magheru": "Bd. Gh. Magheru (sud) – dublu sens",
+    "mendeleev": "Str. D. I. Mendeleev – sens unic, doar ieșire din piață",
+    "dacia_vest": "Bd. Dacia, axa vestică – dublu sens",
+    "catargiu": "Bd. Lascăr Catargiu (nord-vest) – dublu sens",
+    "caderea_bastiliei": "Str. Căderea Bastiliei – sens unic, doar ieșire din piață",
+    "dacia_est": "Bd. Dacia, axa estică – dublu sens"
+  },
+  "zones": [
+    {
+      "id": "magheru_in",
+      "arm": "magheru",
+      "rol": "intrare",
+      "poligon": [
+        [
+          0.0208,
+          0.5509
+        ],
+        [
+          0.1719,
+          0.5556
+        ],
+        [
+          0.1719,
+          0.6435
+        ],
+        [
+          0.0312,
+          0.6528
+        ]
+      ],
+      "culoare": [
+        0,
+        255,
+        0
+      ]
+    },
+    {
+      "id": "magheru_out",
+      "arm": "magheru",
+      "rol": "iesire",
+      "poligon": [
+        [
+          0.0,
+          0.4676
+        ],
+        [
+          0.1406,
+          0.463
+        ],
+        [
+          0.1406,
+          0.5444
+        ],
+        [
+          0.0,
+          0.5481
+        ]
+      ],
+      "culoare": [
+        0,
+        140,
+        255
+      ]
+    },
+    {
+      "id": "mendeleev_out",
+      "arm": "mendeleev",
+      "rol": "iesire",
+      "poligon": [
+        [
+          0.1562,
+          0.4352
+        ],
+        [
+          0.2448,
+          0.4278
+        ],
+        [
+          0.25,
+          0.4583
+        ],
+        [
+          0.1562,
+          0.4676
+        ]
+      ],
+      "culoare": [
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "dacia_vest_in",
+      "arm": "dacia_vest",
+      "rol": "intrare",
+      "poligon": [
+        [
+          0.3125,
+          0.4306
+        ],
+        [
+          0.4167,
+          0.4241
+        ],
+        [
+          0.4167,
+          0.4444
+        ],
+        [
+          0.3125,
+          0.4537
+        ]
+      ],
+      "culoare": [
+        0,
+        255,
+        0
+      ]
+    },
+    {
+      "id": "dacia_vest_out",
+      "arm": "dacia_vest",
+      "rol": "iesire",
+      "poligon": [
+        [
+          0.2917,
+          0.4074
+        ],
+        [
+          0.4167,
+          0.4028
+        ],
+        [
+          0.4167,
+          0.4231
+        ],
+        [
+          0.3021,
+          0.4287
+        ]
+      ],
+      "culoare": [
+        0,
+        140,
+        255
+      ]
+    },
+    {
+      "id": "catargiu_in",
+      "arm": "catargiu",
+      "rol": "intrare",
+      "poligon": [
+        [
+          0.5521,
+          0.412
+        ],
+        [
+          0.599,
+          0.412
+        ],
+        [
+          0.599,
+          0.4426
+        ],
+        [
+          0.5521,
+          0.4463
+        ]
+      ],
+      "culoare": [
+        0,
+        255,
+        0
+      ]
+    },
+    {
+      "id": "catargiu_out",
+      "arm": "catargiu",
+      "rol": "iesire",
+      "poligon": [
+        [
+          0.6016,
+          0.412
+        ],
+        [
+          0.638,
+          0.412
+        ],
+        [
+          0.6432,
+          0.4463
+        ],
+        [
+          0.6016,
+          0.4463
+        ]
+      ],
+      "culoare": [
+        0,
+        140,
+        255
+      ]
+    },
+    {
+      "id": "caderea_bastiliei_out",
+      "arm": "caderea_bastiliei",
+      "rol": "iesire",
+      "poligon": [
+        [
+          0.8125,
+          0.4426
+        ],
+        [
+          0.8854,
+          0.4426
+        ],
+        [
+          0.8854,
+          0.4676
+        ],
+        [
+          0.8125,
+          0.4676
+        ]
+      ],
+      "culoare": [
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "dacia_est_in",
+      "arm": "dacia_est",
+      "rol": "intrare",
+      "poligon": [
+        [
+          0.8854,
+          0.5926
+        ],
+        [
+          1.0,
+          0.6389
+        ],
+        [
+          1.0,
+          0.787
+        ],
+        [
+          0.9062,
+          0.713
+        ]
+      ],
+      "culoare": [
+        0,
+        255,
+        0
+      ]
+    },
+    {
+      "id": "dacia_est_out",
+      "arm": "dacia_est",
+      "rol": "iesire",
+      "poligon": [
+        [
+          0.7552,
+          0.9167
+        ],
+        [
+          1.0,
+          0.8704
+        ],
+        [
+          1.0,
+          1.0
+        ],
+        [
+          0.7552,
+          1.0
+        ]
+      ],
+      "culoare": [
+        0,
+        140,
+        255
+      ]
+    }
+  ]
+}
