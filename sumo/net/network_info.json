@@ -1,56 +1,87 @@
 {
-  "n_links": 50,
+  "n_links": 54,
   "green_states": [
-    "rrrGGGrrGGGGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGG",
-    "GGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
-    "rrrGGGrrGGGGGGGGGGGGGrrrrrrrrGGGGrrGGGGGGGGGGGGGGG",
-    "GGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGrrrrrrr"
+    "rrrrrrrrrrrrrrGGGGGgggggggGGrrrrrrrrrrrrGGGGGgggggggGG",
+    "GGGGGGGgggggggrrrrrrrrrrrrrrGGGGGGGgggggrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrGGGGGGGGGGGGGGrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGGGGGGGrrrrrrrrrrrrrr"
   ],
-  "groups": {
-    "axa_ns_centru": [
-      3,
-      4,
-      5,
-      8,
-      9,
-      10
-    ],
-    "inel_dacia": [
-      0,
-      1,
-      2,
-      6,
-      7,
-      23,
-      24,
-      25,
-      26,
-      27,
-      28
-    ],
-    "intrare_magheru": [
-      43,
-      44,
-      45,
-      46
-    ],
-    "intrare_catargiu": [
-      47,
-      48,
-      49
-    ],
-    "intrare_dacia_est": [
-      21,
-      22
-    ],
-    "intrare_dacia_vest": [
-      33,
-      34
-    ]
+  "phase_names": [
+    "N–S: Magheru + Catargiu (viraje la stânga permisive)",
+    "E–V: Dacia est + Dacia vest (viraje la stânga permisive)",
+    "Magheru exclusiv (toate mișcările protejate)",
+    "Lascăr Catargiu exclusiv",
+    "Dacia est exclusiv",
+    "Dacia vest exclusiv"
+  ],
+  "link_arm": [
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "dacia_est",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "magheru",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "dacia_vest",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu",
+    "catargiu"
+  ],
+  "noduri_unite": {
+    "romana": 29,
+    "dacia_eminescu": 10,
+    "magheru_enescu": 1,
+    "catargiu_manu": 1,
+    "dacia_polona": 1
   },
   "id_original_netconvert": {
-    "romana": "joinedS_2404247020_2404247023_3262378104_3262378132_#11more",
-    "dacia_eminescu": "joinedS_1340385612_2404249181_2404249532_3262378123_#2more",
+    "romana": "cluster_125431052_1340385601_134971067_1393299292_#25more",
+    "dacia_eminescu": "cluster_1340385612_2380721932_2404249181_2404249532_#6more",
     "magheru_enescu": "joinedS_6260364342_cluster_1340445074_1340445076_134970602_4407713791_#6more_cluster_1340445097_257550569_4048777916_4048777917_#1more",
     "catargiu_manu": "cluster_1365573748_257678860_257678862_33390176_#7more",
     "dacia_victoriei": "cluster_33389991_3670672579_3670672580_3670672581_#2more",
@@ -58,14 +89,14 @@
   },
   "rezumat": {
     "romana": {
-      "legaturi": 50,
-      "faze": 4,
-      "benzi_intrare": 50
+      "legaturi": 54,
+      "faze": 6,
+      "benzi_intrare": 11
     },
     "dacia_eminescu": {
-      "legaturi": 45,
+      "legaturi": 48,
       "faze": 12,
-      "benzi_intrare": 29
+      "benzi_intrare": 11
     },
     "magheru_enescu": {
       "legaturi": 34,
@@ -88,8 +119,9 @@
       "benzi_intrare": 10
     },
     "_retea": {
-      "muchii": 719,
-      "noduri": 439,
+      "muchii": 670,
+      "noduri": 402,
+      "semafoare": 26,
       "dimensiune_m": [
         2168,
         1620

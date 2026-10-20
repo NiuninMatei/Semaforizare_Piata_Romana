@@ -15,108 +15,103 @@
       "lat": 44.44688,
       "lon": 26.09674,
       "nume": "Piața Romană (Magheru – Lascăr Catargiu – Dacia)",
-      "camera": true
+      "camera": true,
+      "raza_unire_m": 62
     },
     "dacia_eminescu": {
       "lat": 44.44688,
       "lon": 26.09944,
       "nume": "Bd. Dacia × Str. M. Eminescu × Calea Dorobanților",
-      "camera": false
+      "camera": false,
+      "raza_unire_m": 40
     },
     "magheru_enescu": {
       "lat": 44.44408,
       "lon": 26.09812,
       "nume": "Bd. Magheru × Str. G. Enescu / Tache Ionescu",
-      "camera": false
+      "camera": false,
+      "raza_unire_m": 35
     },
     "catargiu_manu": {
       "lat": 44.44943,
       "lon": 26.09169,
       "nume": "Bd. Lascăr Catargiu × Str. Gh. Manu",
-      "camera": false
+      "camera": false,
+      "raza_unire_m": 25
     },
     "dacia_victoriei": {
       "lat": 44.4455,
       "lon": 26.09102,
       "nume": "Bd. Dacia × Calea Victoriei",
-      "camera": false
+      "camera": false,
+      "raza_unire_m": 0
     },
     "dacia_polona": {
       "lat": 44.44708,
       "lon": 26.10321,
       "nume": "Bd. Dacia × Str. Polonă",
-      "camera": false
+      "camera": false,
+      "raza_unire_m": 35
     }
-  },
-  "romana_groups": {
-    "_descriere": "Grupuri de legături ale semaforului Piața Romană, identificate după muchia de proveniență (ID-uri de way OSM).",
-    "axa_ns_centru": [
-      "23781788",
-      "23781801"
-    ],
-    "inel_dacia": [
-      "448792279#0",
-      "448792279#1",
-      "448266588#0",
-      "448266588#1"
-    ],
-    "intrare_magheru": [
-      "448266581#1"
-    ],
-    "intrare_catargiu": [
-      "1320256482"
-    ],
-    "intrare_dacia_est": [
-      "232079775#2"
-    ],
-    "intrare_dacia_vest": [
-      "778823268#0"
-    ]
   },
   "romana_phases": [
     {
-      "nume": "N–S: Magheru ↔ Catargiu prin centru",
-      "verde": [
-        "axa_ns_centru"
+      "nume": "N–S: Magheru + Catargiu (viraje la stânga permisive)",
+      "brate": [
+        "magheru",
+        "catargiu"
       ],
-      "rosu": [
-        "inel_dacia"
-      ],
-      "durata_fixa": 42
+      "tip": "permisiv",
+      "durata_fixa": 40
     },
     {
-      "nume": "E–V: Dacia în jurul insulei",
-      "verde": [
-        "inel_dacia"
+      "nume": "E–V: Dacia est + Dacia vest (viraje la stânga permisive)",
+      "brate": [
+        "dacia_est",
+        "dacia_vest"
       ],
-      "rosu": [
-        "axa_ns_centru"
-      ],
-      "durata_fixa": 42
+      "tip": "permisiv",
+      "durata_fixa": 30
     },
     {
-      "nume": "N–S prioritar, intrările Dacia oprite",
-      "verde": [
-        "axa_ns_centru"
+      "nume": "Magheru exclusiv (toate mișcările protejate)",
+      "brate": [
+        "magheru"
       ],
-      "rosu": [
-        "inel_dacia",
-        "intrare_dacia_est",
-        "intrare_dacia_vest"
-      ],
+      "tip": "exclusiv",
       "durata_fixa": 0
     },
     {
-      "nume": "E–V prioritar, intrările Magheru/Catargiu oprite",
-      "verde": [
-        "inel_dacia"
+      "nume": "Lascăr Catargiu exclusiv",
+      "brate": [
+        "catargiu"
       ],
-      "rosu": [
-        "axa_ns_centru",
-        "intrare_magheru",
-        "intrare_catargiu"
+      "tip": "exclusiv",
+      "durata_fixa": 0
+    },
+    {
+      "nume": "Dacia est exclusiv",
+      "brate": [
+        "dacia_est"
       ],
+      "tip": "exclusiv",
+      "durata_fixa": 0
+    },
+    {
+      "nume": "Dacia vest exclusiv",
+      "brate": [
+        "dacia_vest"
+      ],
+      "tip": "exclusiv",
       "durata_fixa": 0
     }
-  ]
+  ],
+  "_romana_join": "Pentru fiecare semafor controlat, nodurile OSM aflate la mai puțin de 'raza_unire_m' de centrul intersecției sunt unite într-un singur nod semaforizat (nod agregat). Astfel se elimină blocajele artificiale de pe segmentele interne foarte scurte (0,2–17 m) importate din OSM și programele netconvert cu 8–12 faze nerealiste.",
+  "romana_approaches": {
+    "_descriere": "Muchia de intrare (linia de oprire) a fiecărui braț al pieței.",
+    "magheru": "448266581#1",
+    "catargiu": "1320256482",
+    "dacia_est": "232079775#2",
+    "dacia_vest": "-778823268#2"
+  }
 }
