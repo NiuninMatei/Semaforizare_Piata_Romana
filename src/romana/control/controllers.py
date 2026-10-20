@@ -126,15 +126,9 @@ class RLPolicy:
         self.traci = traci
 
     def observe(self):
-        t = self.traci
-        parts = []
-        for c in self.ctrls:
-            oh = np.zeros(c.n)
-            oh[c.current] = 1.0
-            parts += [oh, [1.0 if c.can_switch() else 0.0],
-                      [min(1.0, t.lane.getLastStepHaltingNumber(ln) / self.cap[ln]) for ln in c.in_lanes],
-                      [min(1.0, t.lane.getLastStepVehicleNumber(ln) / self.cap[ln]) for ln in c.in_lanes]]
-        return np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
+        from romana.control.signals import observation
+
+        return observation(self.traci, self.ctrls, self.cap)
 
     def act(self, traci, t):
         if self.np_policy is not None:

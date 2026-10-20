@@ -165,8 +165,11 @@ def main(argv=None) -> None:
             if True:
                 arms_q = defaultdict(int)
                 for i, ln in enumerate(traci.trafficlight.getControlledLanes("romana")):
-                    arms_q[info["link_arm"][i]] = max(arms_q[info["link_arm"][i]],
-                                                      traci.lane.getLastStepHaltingNumber(ln))
+                    g = info["link_group"][i] or ""
+                    if g.startswith("intrare_"):
+                        arm = g[len("intrare_"):].replace("dacia_est", "dacia_est")
+                        arms_q[arm] += traci.lane.getLastStepHaltingNumber(ln)
+                arms_q["pietoni"] = sum(ctrl.ped_waiting())
                 q_tot = sum(traci.lane.getLastStepHaltingNumber(ln) for ln in ctrl.in_lanes)
                 hist.append([t, q_tot])
                 hist = hist[-600:]

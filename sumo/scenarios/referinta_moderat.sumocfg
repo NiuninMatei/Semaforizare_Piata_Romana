@@ -2,7 +2,7 @@
 <configuration>
   <input>
     <net-file value="../net/romana.net.xml" />
-    <route-files value="../demand/referinta_moderat/bus.rou.xml,../demand/referinta_moderat/motorcycle.rou.xml,../demand/referinta_moderat/passenger.rou.xml,../demand/referinta_moderat/truck.rou.xml,../demand/referinta_moderat/fond.rou.xml" />
+    <route-files value="../demand/referinta_moderat/bicycle.rou.xml,../demand/referinta_moderat/bus.rou.xml,../demand/referinta_moderat/motorcycle.rou.xml,../demand/referinta_moderat/passenger.rou.xml,../demand/referinta_moderat/truck.rou.xml,../demand/referinta_moderat/fond.rou.xml,../demand/referinta_moderat/pietoni.rou.xml" />
     <additional-files value="../demand/vtypes.add.xml" />
   </input>
   <time>

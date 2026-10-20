@@ -3,11 +3,12 @@
 Stare (pentru fiecare semafor controlat):
   * faza verde curentă (one-hot) + indicator „verde minim îndeplinit”;
   * pentru fiecare bandă de intrare: coada (vehicule oprite) și densitatea, normalizate
-    la capacitatea de stocare a benzii (lungime / 7,5 m).
+    la capacitatea de stocare a benzii (lungime / 7,5 m);
+  * pentru fiecare trecere de pietoni controlată: pietonii care așteaptă (normalizat la 15).
 Acțiune: indicele fazei verzi dorite pentru fiecare semafor (MultiDiscrete).
   Tranzițiile sigure (galben, roșu general, verde minim 10 s, maxim 90 s) sunt impuse de
   SignalController – agentul nu poate genera stări periculoase.
-Recompensă: −(vehicule oprite pe benzile de intrare ale semafoarelor controlate)/100,
+Recompensă: −(vehicule oprite pe benzile de intrare + pietoni care așteaptă la treceri)/100,
   calculată la fiecare pas de decizie (5 s) – echivalentă cu minimizarea întârzierii totale.
   Se adaugă o penalizare mică pentru vehiculele care nu pot intra în rețea (blocaj la margine).
 
@@ -24,7 +25,8 @@ import gymnasium as gym
 import numpy as np
 
 from romana.common import NET_DIR, sumo_home
-from romana.control.signals import SignalController, green_phases_from_program, romana_green_phases
+from romana.control.signals import (SignalController, green_phases_from_program, observation,
+                                    romana_green_phases, waiting_total)
 
 sumo_home()
 try:
@@ -96,20 +98,10 @@ class RomanaEnv(gym.Env):
         self.t = 0
 
     def _obs(self) -> np.ndarray:
-        parts = []
-        for c in self.ctrls:
-            oh = np.zeros(c.n)
-            oh[c.current] = 1.0
-            parts.append(oh)
-            parts.append([1.0 if c.can_switch() else 0.0])
-            q = [min(1.0, traci.lane.getLastStepHaltingNumber(ln) / self.cap[ln]) for ln in c.in_lanes]
-            d = [min(1.0, traci.lane.getLastStepVehicleNumber(ln) / self.cap[ln]) for ln in c.in_lanes]
-            parts.append(q)
-            parts.append(d)
-        return np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
+        return observation(traci, self.ctrls, self.cap)
 
     def _halting(self) -> float:
-        return float(sum(traci.lane.getLastStepHaltingNumber(ln) for c in self.ctrls for ln in c.in_lanes))
+        return waiting_total(traci, self.ctrls)
 
     def _sim(self, seconds: int) -> None:
         for _ in range(seconds):

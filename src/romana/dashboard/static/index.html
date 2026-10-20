@@ -115,7 +115,7 @@ const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",
 const MOD={ai:"Agent AI (PPO)",fix:"Plan fix",max_pressure:"Max-Pressure",manual:"Manual"};
 // geometrie aproximativă: unghiuri reale ale brațelor (nord sus)
 const BRATE={catargiu:[-130,"in"],caderea_bastiliei:[-80,"out"],dacia_est:[0,"in"],magheru:[100,"in"],mendeleev:[140,"out"],dacia_vest:[180,"in"]};
-const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],["magheru"],["catargiu"],["dacia_est"],["dacia_vest"]];
+const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],[],["magheru","catargiu","dacia_est","dacia_vest"],["magheru","catargiu","dacia_est","dacia_vest"]];
 let sim=null, modCerut=null, fazaCeruta=null;
 const $=id=>document.getElementById(id);
 setInterval(()=>{$("ceas").textContent=new Date().toLocaleTimeString("ro-RO")},1000);
