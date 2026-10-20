@@ -206,26 +206,44 @@ def report(df: pd.DataFrame) -> None:
         print("grafic omis:", e)
 
 
+def run_task(sc: Path, models: list[Path], name: str, seed: int) -> dict:
+    """O rulare, construind controlerul în procesul curent (libsumo: o simulare per proces)."""
+    ctrl = next(c for c in make_controllers(sc, models) if c.name == name)
+    return run_one(sc, ctrl, seed)
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--scenarii", nargs="*", default=None)
     ap.add_argument("--model", nargs="*", default=None, help="modele PPO (.zip) de evaluat")
     ap.add_argument("--seeds", type=int, default=5)
-    ap.add_argument("--strategii", nargs="*", default=None, help="filtru: fix_webster actuated max_pressure rl_ppo ...")
+    ap.add_argument("--strategii", nargs="*", default=None,
+                    help="filtru: fix_referinta fix_webster actuated max_pressure rl_ppo rl_ppo_coridor")
+    ap.add_argument("--procese", type=int, default=1, help="simulări în paralel (procese separate)")
     args = ap.parse_args(argv)
     scen = [Path(s) for s in (args.scenarii or sorted(glob.glob(str(ROOT / "sumo/scenarios/*.sumocfg"))))]
     models = [Path(m) for m in (args.model if args.model is not None else sorted(glob.glob(str(ROOT / "models/ppo_*.zip"))))]
+    tasks = [(sc, c.name, seed) for sc in scen for c in make_controllers(sc, models)
+             if not args.strategii or c.name in args.strategii for seed in range(1, args.seeds + 1)]
+
+    def show(r):
+        print(f"{r['scenariu']:22s} {r['strategie']:15s} seed={r['seed']}  așteptare={r['asteptare_medie_s']:.1f}s  "
+              f"pietoni={r['pierdere_timp_pietoni_s']:.1f}s  coadă={r['coada_medie_romana']:.1f}  "
+              f"rămase={r['nefinalizate']}", flush=True)
+
     rows = []
-    for sc in scen:
-        for ctrl in make_controllers(sc, models):
-            if args.strategii and ctrl.name not in args.strategii:
-                continue
-            for seed in range(1, args.seeds + 1):
-                r = run_one(sc, ctrl, seed)
-                rows.append(r)
-                print(f"{sc.stem:22s} {ctrl.name:15s} seed={seed}  așteptare={r['asteptare_medie_s']:.1f}s  "
-                      f"coadă={r['coada_medie_romana']:.1f}  rămase={r['nefinalizate']}")
-    df = pd.DataFrame(rows)
+    if args.procese > 1:
+        from concurrent.futures import ProcessPoolExecutor, as_completed
+
+        with ProcessPoolExecutor(max_workers=args.procese) as ex:
+            for f in as_completed([ex.submit(run_task, sc, models, name, seed) for sc, name, seed in tasks]):
+                rows.append(f.result())
+                show(rows[-1])
+    else:
+        for sc, name, seed in tasks:
+            rows.append(run_task(sc, models, name, seed))
+            show(rows[-1])
+    df = pd.DataFrame(rows).sort_values(["scenariu", "strategie", "seed"])
     EVAL_DIR.mkdir(parents=True, exist_ok=True)
     df.to_csv(EVAL_DIR / "rezultate.csv", index=False)
     DOCS_RES.mkdir(parents=True, exist_ok=True)
