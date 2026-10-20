@@ -108,8 +108,10 @@ def build_candidates(cfg: dict, force: bool = False) -> None:
 
     def realistic(edges: list[str], via: bool) -> bool:
         """Rute plauzibile: pornesc/se termină pe artere și nu circulă mult pe străzi rezidențiale."""
+        if via:   # rutele garantate intrare→ieșire sunt scurte prin construcție
+            return True
         objs = [net.getEdge(e) for e in edges]
-        if not via and not (objs[0].getType().startswith(major) and objs[-1].getType().startswith(major)):
+        if not (objs[0].getType().startswith(major) and objs[-1].getType().startswith(major)):
             return False
         tot = sum(o.getLength() for o in objs)
         minor = sum(o.getLength() for o in objs if not o.getType().startswith(major))
