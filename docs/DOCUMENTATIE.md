@@ -56,10 +56,10 @@ date de trafic → model digital al intersecției → decizie automată → supr
 | # | Cerință (din tema proiectului) | Cum este îndeplinită |
 |---|---|---|
 | R1 | Preluarea în timp real a datelor de pe camera publică | `vision/stream.py` citește fluxul HLS cu reconectare automată; `run_vision.py` analizează 4–6 cadre/s |
-| R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min |
-| R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje; trafic de fond doar ca fracțiune declarată |
-| R4 | Model AI care recunoaște semafoarele intersecției și le controlează | semafoarele sunt identificate automat în rețea după coordonate; agent PPO cu 6 faze cu semnificație de trafic |
-| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, evaluare față de 3 linii de bază pe 5 seed-uri |
+| R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 2 zone pe trecerile de pietoni vizibile |
+| R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje, pe tipuri de vehicule (inclusiv biciclete); pietoni din numărătorile de pe treceri; trafic de fond doar ca fracțiune declarată |
+| R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale |
+| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe 5 seed-uri, pentru toți participanții (vehicule, bicicliști, pietoni) |
 | R6 | Extindere la intersecțiile principale conexe | varianta „coridor”: Piața Romană + 5 intersecții vecine controlate simultan |
 | R7 | Documentație în limba română, cu surse și licențe | acest document; note de subsol; § 14 |
 | R8 | Evoluție vizibilă pe GitHub, pe borne | commit + push la fiecare bornă (§ 12) |
@@ -120,7 +120,8 @@ păstrează doar ultimul cadru; la căderea fluxului se reconectează cu întâr
 ### 4.2 Detecție și urmărire
 
 * **Detecție:** Ultralytics YOLO11[^yolo11], preantrenat pe COCO[^coco]; clasele folosite: car (2) → `passenger`,
-  motorcycle (3), bus (5, include troleibuzele STB), truck (7), bicycle (1); person (0) doar pentru estompare.
+  motorcycle (3), bus (5, include troleibuzele STB), truck (7), bicycle (1) și person (0) – pentru numărarea
+  pietonilor pe treceri (§ 4.4) și pentru estomparea în previzualizare.
   Implicit `yolo11s` la 1600 px pe regiunea de interes (partea de jos a cadrului, fără cer), configurabil în
   `config/camera.json`; pe GPU NVIDIA se poate folosi `--device 0`.
 * **Urmărire:** ByteTrack[^bytetrack] (asociază și detecțiile cu scor mic, util la ocluziile din piață);
@@ -151,7 +152,24 @@ Regula de numărare (`vision/od_counter.py`): **prima** zonă de intrare vizitat
 fragmentată (vehicul pierdut la o ocluzie) contribuie doar la numărătoarea pe braț. Se agregă pe intervale de
 15 minute, separat pe tipuri de vehicule, în `data/counts/numaratori_AAAA-LL-ZZ.csv`.
 
-### 4.4 Confidențialitate
+### 4.4 Pietoni și bicicliști
+
+În simulare intră toți participanții observabili pe cameră. Camera vede două dintre cele 7 treceri semaforizate
+ale pieței: trecerea de pe Bd. Magheru (prim-plan, stânga) și trecerea dublă de pe Bd. Dacia est (prim-plan,
+dreapta). Pentru fiecare s-a desenat o zonă cu rolul `trecere` (`config/camera.json`), peste marcajul zebră
+de pe cadrul din 21.10.2026, 01:30 (de verificat pe lumină de zi).
+
+* **Pietoni.** Persoanele detectate sunt urmărite cu același ByteTrack. Un pieton este numărat **o singură dată
+  pe fiecare trecere** pe care a fost văzut în cel puțin 2 cadre (punctul de contact cu solul în zona trecerii);
+  în CSV apar ca rânduri `pietoni` (braț, trecere). Debitul măsurat se extrapolează la toată piața cu
+  `factor_extrapolare_pietoni` = 2,5 din `config/demand.json` (ipoteză declarată: camera vede 2 din cele ≈7
+  treceri semaforizate; factorul se va verifica printr-o numărătoare manuală).
+* **Bicicliști și motocicliști.** Bicicleta (clasa 1) este numărată ca vehicul pe zonele de intrare/ieșire, ca
+  orice alt vehicul, și primește în SUMO rute pe care bicicletele au acces. Persoana de pe bicicletă sau
+  motocicletă **nu** este numărată ca pieton: o persoană al cărei punct de contact cu solul cade în caseta unei
+  biciclete/motociclete (lărgită cu 25%) este exclusă (`is_rider` în `vision/od_counter.py`).
+
+### 4.5 Confidențialitate
 
 Imaginile pot conține persoane și numere de înmatriculare, deci prelucrarea intră sub GDPR[^gdpr] și sub ghidul
 EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate: prelucrare exclusiv în memorie; nicio
@@ -199,16 +217,24 @@ răspunde cerinței de a nu antrena agentul pe un flux necorespunzător realită
 
 În lipsa datelor oficiale publice de volum pentru Piața Romană (singura cifră publică găsită este o estimare
 neoficială de ~3.446 veh/h pe Magheru spre Romană, dintr-un singur ciclu de semafor, 2011/2012[^wizard]),
-până la colectarea datelor de zi se folosesc trei scenarii ipotetice explicite: *moderat* (0,7×), *vârf*
-(1100 / 950 / 600 / 500 veh/h pe Magheru / Catargiu / Dacia est / Dacia vest) și *aglomerat* (1,2×). Ele
-servesc la dezvoltarea și verificarea lanțului și vor fi completate cu scenarii construite din numărătorile reale.
+până la colectarea datelor de zi se folosesc trei scenarii ipotetice explicite: *moderat* (0,7× → 1.442 veh/h
+prin piață), *vârf* (720 / 620 / 390 / 330 veh/h pe Magheru / Catargiu / Dacia est / Dacia vest → 2.060 veh/h)
+și *aglomerat* (1,2× → 2.472 veh/h), fiecare cu 15% trafic de fond și 1.200 de pietoni/h prin zona pieței
+(stația de metrou M2 și ASE; valoare ipotetică). Compoziția: 88% autoturisme, 4% autobuze/troleibuze, 3%
+camioane, 3% motociclete, 2% biciclete. Volumul de vârf a fost ales astfel încât planul fix de referință să
+funcționeze aproape de saturație pe replica fidelă a rețelei: peste ≈1,0× inelul se suprasaturează, ceea ce
+corespunde congestiei cunoscute a pieței. Scenariile servesc la dezvoltarea și verificarea lanțului și vor fi
+completate cu scenarii construite din numărătorile reale.
 
 ### 5.4 Geamănul digital live
 
 `bridge/live_twin.py` rulează SUMO (opțional SUMO-GUI) continuu, în timp real: în fiecare secundă citește
 debitele curente publicate de modulul de viziune și injectează vehicule pe brațe ca proces Poisson cu acele
-debite, cu destinații după proporțiile de viraj observate. Dacă fluxul camerei lipsește mai mult de 60 s, trece
-pe profilul de referință și **afișează explicit** acest lucru în dashboard.
+debite, cu destinații după proporțiile de viraj observate și tipuri după compoziția traficului (bicicliștii pe
+rute permise bicicletelor). Pietonii sunt injectați tot Poisson, pe trasee pietonale care trec prin piață, cu
+debitul măsurat pe trecerile vizibile × factorul de extrapolare. Dacă fluxul camerei lipsește mai mult de 60 s,
+trece pe profilul de referință și **afișează explicit** acest lucru în dashboard. Modul „plan fix” rulează
+planul de referință complet (N–S / E–V / pietoni, § 6.3).
 
 ## 6. Rețeaua rutieră în SUMO
 
@@ -230,33 +256,62 @@ Semafoarele sunt găsite **după coordonatele geografice** (centroidul nodurilor
 `netconvert`, care se schimbă la fiecare regenerare. Sensurile unice Mendeleev și Căderea Bastiliei (doar ieșire
 din piață) sunt confirmate atât de etichetele OSM (`oneway=yes`), cât și de traiectoriile observate pe cameră.
 
-### 6.2 De ce piața este modelată ca nod agregat
+### 6.2 Replica fidelă a pieței (Borna 8)
 
-Importul OSM brut reprezintă piața prin ≈30 de noduri legate de segmente de 0,2–17 m. În testele din Borna 3,
-acest model a intrat în **blocaj circular** (fiecare vehicul de pe inel așteaptă după cel din față, într-un ciclu
-închis): debitul total al rețelei s-a plafonat la ≈1.200 veh/h indiferent dacă cererea era 0,4×, 0,6× sau 0,8×
-din scenariul de referință, cu vehicule oprite pe benzi interne de 0,2 m având verde. Este un artefact de import,
-nu comportamentul real al pieței. Soluția adoptată: cele 29 de noduri aflate la cel mult 62 m de centrul pieței
-sunt unite într-un singur nod semaforizat cu 4 brațe de intrare și 6 de ieșire (la fel și cele 10 noduri ale
-intersecției Dacia × Eminescu × Dorobanți). După această modificare, la 0,6× cererea se scurge integral, iar la
-1,0× apare congestia realistă de vârf pe care trebuie să o rezolve controlul. Compromisul (documentat la § 10):
-se pierde stocarea vehiculelor pe inelul interior.
+**Principiul:** infrastructura rămâne exact cea din realitate – inelul pieței, axa centrală N–S, benzile și
+virajele marcate, sensurile unice, benzile dedicate STB, trotuarele, trecerile de pietoni și pozițiile reale ale
+semafoarelor. Proiectul schimbă **doar modul în care semafoarele existente răspund traficului** (programul,
+ordinea și durata fazelor) – singurul lucru care se poate implementa pe automatul real.
 
-### 6.3 Fazele semaforului Piața Romană
+Importul `netconvert` folosește etichetele OSM pentru trotuare (`--osm.sidewalks`), accesul bicicletelor,
+benzile de viraj și restricțiile pe benzi (`--osm.turn-lanes`, `--osm.lane-access`), iar trecerile de pietoni și
+zonele de așteptare sunt reconstruite la toate intersecțiile (`--crossings.guess`, `--walkingareas`; opțiunea
+`--osm.crossings` provoacă un crash în netconvert 1.28 pe acest extras). Rezultatul: 6.943 de muchii, 924 de
+noduri, 53 de semafoare, 225 de benzi dedicate autobuzelor și trotuare pe toate arterele.
+
+În OSM, piața are **16 semafoare fizice** (pe intrări, pe inel, pe axa centrală și la treceri). Ca în realitate,
+unde toate sunt conduse de un singur automat de intersecție, ele sunt grupate într-un controler `romana`
+(cele aflate la cel mult 80 m de centrul pieței, `--tls.join` cu `--tls.join-exclude` pentru restul). Controlerul
+are 61 de legături: 54 pentru vehicule și 7 treceri de pietoni.
+
+*Istoric:* în Bornele 3–7 piața fusese modelată ca un singur nod agregat, pentru că primul import OSM intra în
+blocaj circular pe segmentele interne foarte scurte. În Borna 8, cu programul construit pe grupuri de semnal, s-a
+constatat că inelul se bloca atunci când semnalele de pe brațele de ieșire primeau roșu și opreau vehiculele
+deja intrate pe inel. Cu ieșirile pe verde în toate fazele de vehicule (§ 6.3), replica fidelă funcționează, iar
+nodul agregat (care nu respecta realitatea) a fost abandonat.
+
+### 6.3 Grupurile de semnal și fazele semaforului Piața Romană
+
+Programul nu este cel ghicit de `netconvert`, ci este construit pe **grupuri de semnal** cu semnificație de
+trafic (`config/network.json` → `romana_grupuri`), după muchia OSM pe care stau vehiculele la linia de oprire:
+
+| Grup | Legături | Rol |
+|---|---|---|
+| `intrare_magheru`, `intrare_catargiu`, `intrare_dacia_est`, `intrare_dacia_vest` | 12 / 3 / 4 / 2 | intrările în piață |
+| `axa_ns_centru` | 6 | axa centrală N–S, prin mijlocul pieței |
+| `inel_dacia` | 11 | inelul din jurul insulei, pe direcția Dacia |
+| `iesire_magheru_catargiu`, `iesire_dacia` | 12 / 4 | semnalele de pe brațele de ieșire |
+| `pietoni` | 7 | trecerile de pietoni (grup automat) |
 
 | Faza | Semnificație | În planul fix |
 |---|---|---|
-| 0 | N–S: Magheru + Lascăr Catargiu, viraje la stânga permisive | da |
-| 1 | E–V: Dacia est + Dacia vest, viraje la stânga permisive | da |
-| 2 | Magheru exclusiv (toate mișcările protejate) | nu |
-| 3 | Lascăr Catargiu exclusiv | nu |
-| 4 | Dacia est exclusiv | nu |
-| 5 | Dacia vest exclusiv | nu |
+| 0 | N–S: Magheru ↔ Lascăr Catargiu prin centru | da, 36 s |
+| 1 | E–V: Dacia în jurul insulei | da, 28 s |
+| 2 | Pietoni: toate trecerile, axa centrală se golește | da, 12 s |
+| 3 | N–S, cu intrările Dacia deschise (fără dozare) | nu |
+| 4 | E–V, cu intrările Magheru/Catargiu deschise (fără dozare) | nu |
 
-Fazele 0–1 sunt generate de `netconvert` pe baza conflictelor dintre mișcări; fazele 2–5 dau verde unui singur
-braț și permit golirea unei cozi dezechilibrate. Între orice două faze verzi se inserează automat galben 3 s și
-roșu general 2 s. Intersecțiile vecine păstrează programele `actuated` generate (realist: sistemul BTMS
-funcționează adaptiv), cu excepția variantei „coridor”, în care sunt conduse de agent.
+Planul fix de referință are un ciclu de ≈ 91 s (3 faze + galben 3 s + roșu de degajare 2 s după fiecare).
+Ieșirile au verde în toate fazele de vehicule, pentru că fiecare ieșire este alimentată în ambele faze principale;
+trecerile de pe ieșiri primesc verde în faza de pietoni. **Trecerile de pietoni primesc verde automat** în orice
+fază în care niciun flux de vehicule cu verde nu le intersectează geometric (verificare de siguranță la
+construcția programului; `build_network.py` refuză un program în care o trecere nu primește niciodată verde).
+Roșul de degajare păstrează verdele legăturilor care rămân verzi și în faza următoare. Fazele 3–4 există ca
+opțiuni, dar evaluarea a arătat că, deschizând intrările spre un inel deja ocupat, ele blochează piața (§ 7.4);
+de aceea strategiile adaptive aleg implicit doar dintre fazele 0–2.
+
+Intersecțiile vecine păstrează programele `actuated` generate (realist: sistemul BTMS funcționează adaptiv), cu
+excepția variantei „coridor”, în care sunt conduse de agent.
 
 ## 7. Controlul inteligent al semafoarelor
 
@@ -264,13 +319,18 @@ funcționează adaptiv), cu excepția variantei „coridor”, în care sunt con
 
 * **Pas de decizie:** 5 s simulate.
 * **Stare:** pentru fiecare semafor controlat – faza verde curentă (one-hot), indicatorul „verde minim
-  îndeplinit” și, pentru fiecare bandă de intrare, coada (vehicule oprite) și densitatea, normalizate la
-  capacitatea de stocare a benzii (lungime / 7,5 m). Pentru Piața Romană: 29 de valori.
-* **Acțiune:** faza verde dorită (6 opțiuni pentru Piața Romană; în varianta coridor, câte o acțiune pentru
-  fiecare din cele 6 semafoare – spațiu `MultiDiscrete`).
-* **Recompensă:** $r_t = -\frac{1}{100}\sum_{\ell} q_\ell(t) - 0{,}002 \cdot b(t)$, unde $q_\ell$ este numărul de
-  vehicule oprite pe banda de intrare $\ell$, iar $b$ numărul de vehicule care așteaptă să intre în rețea
-  (împiedică „ascunderea” cozii în afara rețelei).
+  îndeplinit”, durata verdelui curent (normalizată la verdele maxim), pentru fiecare bandă de intrare coada
+  (vehicule oprite) și densitatea, normalizate la capacitatea de stocare a benzii (lungime / 7,5 m), și, pentru
+  fiecare zonă de așteptare a unei treceri controlate, numărul de pietoni care așteaptă (normalizat la 15).
+  Aceeași funcție (`observation()` din `control/signals.py`) servește antrenarea, evaluarea și geamănul digital.
+* **Acțiune:** faza verde dorită. La Piața Romană, implicit una din cele 3 faze ale planului real (N–S, E–V,
+  pietoni): agentul decide **ordinea și durata** fazelor, adică exact ce se poate programa pe automatul existent
+  (fazele „fără dozare” se pot activa cu `--toate-fazele`). În varianta coridor, câte o acțiune pentru fiecare din
+  cele 6 semafoare – spațiu `MultiDiscrete`.
+* **Recompensă:** $r_t = -\frac{1}{100}\left(\sum_{\ell} q_\ell(t) + \sum_{c} p_c(t)\right) - 0{,}002 \cdot b(t)$,
+  unde $q_\ell$ este numărul de vehicule oprite pe banda de intrare $\ell$, $p_c$ numărul de pietoni care
+  așteaptă la trecerea $c$ (un pieton cântărește cât un vehicul), iar $b$ numărul de vehicule care așteaptă să
+  intre în rețea (împiedică „ascunderea” cozii în afara rețelei).
 
 ### 7.2 Siguranța prin construcție
 
@@ -282,30 +342,52 @@ faza avansează forțat). Ciorna inițială sărea direct între faze verzi, fă
 ### 7.3 Algoritmul de învățare
 
 PPO (Proximal Policy Optimization)[^ppo] din Stable-Baselines3[^sb3], rețea MLP 128 × 128, rată de învățare
-3·10⁻⁴, `n_steps` 1024, lot 128, 10 epoci, γ = 0,98, λ_GAE = 0,95, coeficient de entropie 0,01. Simularea rulează
-prin `libsumo` (aceeași interfață ca TraCI, fără comunicație prin socket), ≈30 de pași de decizie pe secundă pe
-un procesor de laptop. Fiecare episod = o oră de trafic, pe un scenariu ales aleator din setul de antrenare,
-cu seed SUMO aleator. PPO a fost preferat lui DQN[^dqn] pentru că suportă natural acțiunile `MultiDiscrete` ale
+3·10⁻⁴, ≈1.024 de tranziții pe actualizare, lot 128, 10 epoci, γ = 0,98, λ_GAE = 0,95, coeficient de entropie
+0,01. Simularea rulează prin `libsumo` (aceeași interfață ca TraCI, fără comunicație prin socket), în **8 procese
+paralele** (`SubprocVecEnv`, opțiunea `--medii`): ≈55–70 de pași de decizie pe secundă pe procesorul laptopului
+(i5-13420H), față de ≈18 cu un singur proces – replica fidelă, cu pietoni, este mult mai costisitoare decât
+nodul agregat. Pe Windows, PYTHONPATH-ul setat de instalatorul SUMO umbrește pachetul pip `libsumo` cu varianta
+din instalare, căreia îi lipsesc DLL-uri; `control/env.py` încarcă explicit pachetul pip. Fiecare episod = o
+oră de trafic, pe un scenariu ales aleator din setul de antrenare, cu seed SUMO aleator. PPO a fost preferat lui DQN[^dqn] pentru că suportă natural acțiunile `MultiDiscrete` ale
 variantei coridor. Literatura de referință pentru RL în semaforizare: IntelliLight[^intellilight],
 PressLight[^presslight], CoLight[^colight], MPLight[^mplight] și sintezele lui Wei et al.[^survey2019][^survey2021];
 mediul a fost scris în stilul sumo-rl[^sumorl].
 
 ### 7.4 Linii de bază
 
-1. **Plan fix Webster**[^webster]: ciclul optim $C_0 = \frac{1{,}5L + 5}{1 - Y}$ (limitat la 50–150 s), cu $L$ =
-   timpul pierdut (7 s/fază) și $Y = \sum_i y_i$, $y_i$ = cel mai mare raport debit / debit de saturație
-   (1800 veh/h/bandă) dintre brațele fazei $i$; verdele se împarte proporțional cu $y_i$.
-2. **Actuated SUMO:** prelungirea verdelui cât timp detectoarele văd vehicule la intervale sub 3 s (min 10 s, max 60 s).
-3. **Max-Pressure**[^maxpressure]: la fiecare decizie se alege faza cu presiunea maximă
-   $\sum (\text{coadă amonte} - \text{coadă aval})$ pe legăturile ei verzi – un algoritm fără învățare, cu garanții
-   teoretice de stabilitate, pe care un agent RL trebuie să-l egaleze sau să-l depășească pentru a fi convingător.
+1. **Plan fix de referință:** programul din rețea (N–S 36 s, E–V 28 s, pietoni 12 s, ciclu ≈ 91 s) – linia de
+   bază față de care se raportează procentele.
+2. **Plan fix Webster**[^webster]: ciclul optim $C_0 = \frac{1{,}5L + 5}{1 - Y}$ (limitat la 60–150 s), cu $L$ =
+   timpul pierdut (7 s/fază, plus întreaga fază de pietoni) și $Y = \sum_i y_i$, $y_i$ = cel mai mare raport
+   debit / debit de saturație (1800 veh/h/bandă, doar benzile de autoturisme, fără benzile STB) dintre intrările
+   fazei de vehicule $i$; verdele se împarte proporțional cu $y_i$, faza de pietoni își păstrează durata.
+3. **Actuated SUMO:** pe aceleași 3 faze, prelungirea verdelui cât timp detectoarele văd vehicule la intervale sub
+   3 s (min 10 s, max 60 s).
+4. **Max-Pressure**[^maxpressure]: la fiecare decizie se alege faza cu presiunea maximă
+   $\sum (\text{coadă amonte} - \text{coadă aval})$ pe legăturile ei verzi; pentru trecerile de pietoni, „coada”
+   amonte este numărul de pietoni care așteaptă (altfel faza de pietoni nu ar fi aleasă niciodată). Este un
+   algoritm fără învățare, cu garanții teoretice de stabilitate, pe care un agent RL trebuie să-l egaleze sau
+   să-l depășească pentru a fi convingător. Pe replica fidelă, Max-Pressure cu toate cele 5 faze alegea mereu
+   fazele „fără dozare” (cele mai multe legături verzi ⇒ presiunea cea mai mare) și bloca piața complet
+   (scenariul moderat: 1.226 de vehicule rămase în rețea, față de 107 la planul fix); restrâns la fazele planului
+   real, timpul mediu de așteptare a scăzut la 122 s, față de 156 s la planul fix (1 seed).
 
 ### 7.5 Metrici
 
-Din `tripinfo` SUMO, pe toată durata scenariului plus 15 minute de golire: timpul mediu de așteptare, pierderea
-de timp (*timeLoss*), durata medie a călătoriei, vehiculele sosite, vehiculele rămase în rețea la final, emisiile
-de CO₂ (modelul HBEFA din SUMO) și coada medie la Piața Romană (eșantionată la 5 s). Se raportează media ±
-abaterea standard pe 5 seed-uri.
+Din `tripinfo` SUMO, pe toată durata scenariului plus 15 minute de golire, **separat pe categorii de
+participanți**:
+
+* vehicule motorizate: timpul mediu de așteptare, pierderea de timp (*timeLoss*), durata medie a călătoriei,
+  vehiculele sosite, emisiile de CO₂ (modelul HBEFA din SUMO);
+* bicicliști (`vType` bicycle): așteptarea și pierderea de timp medii;
+* pietoni (`personinfo`/`walk`): pierderea de timp medie a deplasării;
+* pierderea de timp totală a tuturor participanților (ore), vehiculele rămase în rețea la final, coada medie de
+  vehicule și numărul mediu de pietoni care așteaptă la trecerile Pieței Romane (eșantionate la 5 s).
+
+Se raportează media ± abaterea standard pe 5 seed-uri. Observație: o parte din întârzieri se produce la
+semafoarele de la marginea zonei modelate (de ex. Str. Știrbei Vodă, Str. Ion Câmpineanu), pe rutele care pornesc
+de acolo; ele depind foarte puțin de strategia de la Piața Romană, deci nu schimbă clasamentul strategiilor, dar
+măresc valorile absolute.
 
 ## 8. Interfața om-calculator: dispeceratul
 
@@ -317,7 +399,7 @@ algoritmul și poate prelua oricând controlul.
 
 | Euristică Nielsen[^nielsen] | Aplicare în dashboard |
 |---|---|
-| Vizibilitatea stării sistemului | indicatoare pentru flux cameră / reconectare, cadre/s, vârsta datelor; faza curentă cu etapa (verde/galben/roșu de degajare) și secundele de verde; sursa cererii („camera live” sau „profil de referință”) |
+| Vizibilitatea stării sistemului | indicatoare pentru flux cameră / reconectare, cadre/s, vârsta datelor; faza curentă cu etapa (verde/galben/roșu de degajare) și secundele de verde; sursa cererii („camera live” sau „profil de referință”); vehiculele și pietonii din simulare, pietonii care așteaptă la treceri, debitul de pietoni măsurat de cameră |
 | Potrivirea cu lumea reală | schema pieței respectă orientarea reală a brațelor; denumiri de străzi, nu ID-uri de muchii; culori de semafor |
 | Controlul și libertatea utilizatorului | patru moduri de control; revenirea la AI sau la planul fix dintr-un clic; `Esc` anulează |
 | Consistență și standarde | aceleași denumiri ale modurilor în butoane, confirmări și starea afișată |
@@ -349,18 +431,21 @@ Rezultatele complete, regenerate automat de `scripts\5_evalueaza.bat`, sunt în
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine; o parte din vehicule
   sunt pierdute de detector – de aici folosirea totalurilor pe brațe și a echilibrării Furness în loc de
   virajele complete.
-* **Nodul agregat** elimină stocarea pe inelul interior al pieței și, deci, blocarea pieței de către propriile
-  cozi interne.
-* **Pietonii și benzile dedicate autobuzelor** de pe Magheru nu sunt încă modelate; fazele de pietoni
-  reale lungesc ciclul, deci câștigurile absolute sunt optimiste.
+* **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
+  reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
+  36 / 28 / 12 s sunt ipoteze declarate.
+* **Trecerile de pietoni** sunt reconstruite de `netconvert` (`--crossings.guess`), nu importate direct din OSM
+  (crash în netconvert 1.28); pozițiile lor trebuie comparate vizual cu imaginea camerei.
+* **Pietonii** sunt număraţi doar pe 2 din cele ≈7 treceri și extrapolați cu un factor declarat (2,5); traseele
+  lor în simulare sunt plauzibile (drumuri minime prin zona pieței), nu observate.
 * **Intersecțiile vecine** nu au cameră; traficul lor propriu este o fracțiune declarată (15%).
 * **Transfer în realitate.** O politică antrenată în simulare nu se aplică direct pe un automat real; ar fi
   nevoie de validare în buclă închisă cu operatorul (rolul dispeceratului) și de integrare cu sistemul BTMS.
 * **Licențe.** Ultralytics YOLO este AGPL-3.0: publicarea proiectului impune publicarea întregului cod.
 
-Lucrări viitoare: modelarea pietonilor și a benzilor bus; recompensă cu prioritate pentru transportul public
+Lucrări viitoare: recompensă cu prioritate pentru transportul public, ponderată cu numărul de călători
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
-de date.
+de date; compararea planului fix de referință cu programul real, dacă poate fi obținut de la operator.
 
 ## 11. Ghid de instalare și rulare
 
@@ -397,7 +482,9 @@ Flux tipic pentru o zi de date: rulați `2_viziune_live.bat` în intervalul dori
 | B4 | 20–21.10.2026 | mediu RL, PPO (piață și coridor), Webster / actuated / Max-Pressure, evaluare | Claude |
 | B5 | 20.10.2026 | geamăn digital live, dispecerat web, MQTT, scripturi Windows | Claude |
 | B6 | 20–21.10.2026 | documentația de față | Claude |
-| B7 | planificat | calibrare pe lumină de zi și date de vârf reale, reantrenare, verificare finală | Claude |
+| B7 | planificat | calibrare pe lumină de zi (zonele de vehicule și trecerile de pietoni) și date de vârf reale | Claude |
+| B8 | 21.10.2026 | replica fidelă a rețelei (16 semafoare fizice într-un controler, grupuri de semnal, treceri, trotuare, benzi STB); toți participanții: pietoni și bicicliști în cerere, cameră, geamăn digital, recompensă și evaluare; liniile de bază corectate pe rețeaua nouă (plan fix de referință, Webster, actuated, Max-Pressure); antrenare paralelă; reantrenare și evaluare | Claude |
+| B9 | planificat | reantrenare și evaluare pe scenariile din datele reale de zi; verificare finală | Claude |
 
 Fiecare bornă corespunde unui commit cu prefixul „Borna N” în istoricul GitHub.
 
@@ -407,7 +494,7 @@ Conform cerințelor de integritate academică, se declară folosirea asistențil
 
 * **până la 18.10.2026 inclusiv** (ciorna din `legacy/google_ai_draft/`): modulul AI Google integrat în browserul
   Chrome[^google-ai];
-* **începând cu 20.10.2026** (Bornele 0–7: audit, arhitectură, cod, experimente, documentație): Claude, asistent
+* **începând cu 20.10.2026** (Bornele 0–8: audit, arhitectură, cod, experimente, documentație): Claude, asistent
   AI dezvoltat de Anthropic, model Claude Opus 5.5[^claude], lucrând pe repository la cererea și sub
   coordonarea autorului.
 
