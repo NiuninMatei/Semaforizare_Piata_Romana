@@ -1,0 +1,35 @@
+{
+  "model": "ppo_romana.zip",
+  "controlate": [
+    "romana"
+  ],
+  "scenarii": [
+    "referinta_aglomerat.sumocfg",
+    "referinta_moderat.sumocfg",
+    "referinta_varf.sumocfg"
+  ],
+  "pasi": 120000,
+  "durata_min": 44.5,
+  "hiperparametri": {
+    "lr": 0.0003,
+    "n_steps": 1024,
+    "batch": 128,
+    "gamma": 0.98,
+    "ent_coef": 0.01,
+    "retea": [
+      128,
+      128
+    ],
+    "delta_t_s": 5,
+    "verde_min_s": 10,
+    "verde_max_s": 90
+  },
+  "faze_romana": [
+    "N–S: Magheru + Catargiu (viraje la stânga permisive)",
+    "E–V: Dacia est + Dacia vest (viraje la stânga permisive)",
+    "Magheru exclusiv (toate mișcările protejate)",
+    "Lascăr Catargiu exclusiv",
+    "Dacia est exclusiv",
+    "Dacia vest exclusiv"
+  ]
+}
