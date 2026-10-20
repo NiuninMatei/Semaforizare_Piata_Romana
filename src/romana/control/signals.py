@@ -151,6 +151,12 @@ class SignalController:
         return out
 
 
+def action_maps(controlled: list[str], ctrls: list, romana_phases: list[int] | None) -> list[list[int]]:
+    """Acțiunea agentului → indicele fazei verzi, pentru fiecare controler (None = toate fazele)."""
+    return [list(romana_phases) if (tid == "romana" and romana_phases is not None) else list(range(c.n))
+            for tid, c in zip(controlled, ctrls)]
+
+
 def observation(traci, ctrls, cap: dict) -> "np.ndarray":
     """Starea comună pentru antrenare, evaluare și geamănul digital (aceeași ordine a valorilor)."""
     import numpy as np

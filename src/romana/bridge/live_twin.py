@@ -23,8 +23,6 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
 
-import numpy as np
-
 from romana.common import DEMAND_DIR, MODELS_DIR, NET_DIR, OUTPUT_DIR, load_json
 from romana.control.signals import SignalController, romana_green_phases
 
@@ -182,7 +180,8 @@ def main(argv=None) -> None:
                 if mode == "ai" and rl is not None:
                     rl.act(traci, t)
                 elif mode == "max_pressure" and ctrl.can_switch():
-                    ctrl.request(int(np.argmax(ctrl.phase_pressure())))
+                    p = ctrl.phase_pressure()              # doar fazele planului real (vezi MaxPressure)
+                    ctrl.request(max(plan_cycle, key=lambda i: p[i]))
                 elif mode == "manual":
                     ctrl.request(int(cmd.get("faza", ctrl.current)))
                 elif mode == "fix":

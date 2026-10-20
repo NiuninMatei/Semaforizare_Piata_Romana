@@ -5,7 +5,9 @@ Stare (pentru fiecare semafor controlat):
   * pentru fiecare bandă de intrare: coada (vehicule oprite) și densitatea, normalizate
     la capacitatea de stocare a benzii (lungime / 7,5 m);
   * pentru fiecare trecere de pietoni controlată: pietonii care așteaptă (normalizat la 15).
-Acțiune: indicele fazei verzi dorite pentru fiecare semafor (MultiDiscrete).
+Acțiune: indicele fazei verzi dorite pentru fiecare semafor (MultiDiscrete). La Piața Romană,
+  implicit doar fazele planului real (N–S, E–V, pietoni): agentul schimbă ordinea și durata
+  lor, adică exact ce se poate programa pe automatul existent.
   Tranzițiile sigure (galben, roșu general, verde minim 10 s, maxim 90 s) sunt impuse de
   SignalController – agentul nu poate genera stări periculoase.
 Recompensă: −(vehicule oprite pe benzile de intrare + pietoni care așteaptă la treceri)/100,
@@ -26,7 +28,7 @@ import gymnasium as gym
 import numpy as np
 
 from romana.common import NET_DIR, sumo_home
-from romana.control.signals import (SignalController, green_phases_from_program, observation,
+from romana.control.signals import (SignalController, action_maps, green_phases_from_program, observation,
                                     romana_green_phases, waiting_total)
 
 def _import_libsumo():
@@ -86,17 +88,19 @@ class RomanaEnv(gym.Env):
     metadata = {"render_modes": []}
 
     def __init__(self, scenarios: list[Path], controlled: list[str] = ("romana",), delta_t: int = 5,
-                 episode_s: int = 3600, warmup_s: int = 60, seed: int = 0, gui: bool = False):
+                 episode_s: int = 3600, warmup_s: int = 60, seed: int = 0, gui: bool = False,
+                 romana_phases: list[int] | None = None):
         super().__init__()
         self.scenarios = [Path(s) for s in scenarios]
         self.controlled = list(controlled)
+        self.romana_phases = romana_phases   # fazele dintre care alege agentul (None = toate)
         self.delta_t, self.episode_s, self.warmup_s = delta_t, episode_s, warmup_s
         self.gui = gui
         self.rng = random.Random(seed)
         self._running = False
         # o pornire „uscată” pentru a afla dimensiunile spațiilor
         self._start(self.scenarios[0], seed)
-        self.action_space = gym.spaces.MultiDiscrete([c.n for c in self.ctrls])
+        self.action_space = gym.spaces.MultiDiscrete([len(m) for m in self.action_maps])
         n_obs = len(self._obs())
         self.observation_space = gym.spaces.Box(0.0, 1.0, shape=(n_obs,), dtype=np.float32)
 
@@ -114,6 +118,7 @@ class RomanaEnv(gym.Env):
                 traci.trafficlight.setProgram(tid, "0")
                 greens, names = green_phases_from_program(traci, tid), None
             self.ctrls.append(SignalController(traci, tid, greens, names))
+        self.action_maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
         self.t = 0
 
@@ -139,8 +144,8 @@ class RomanaEnv(gym.Env):
         return self._obs(), {"scenariu": str(cfg)}
 
     def step(self, action):
-        for c, a in zip(self.ctrls, np.atleast_1d(action)):
-            c.request(int(a))
+        for c, m, a in zip(self.ctrls, self.action_maps, np.atleast_1d(action)):
+            c.request(m[int(a)])
         self._sim(self.delta_t)
         halting = self._halting()
         backlog = traci.simulation.getMinExpectedNumber() - traci.vehicle.getIDCount()
