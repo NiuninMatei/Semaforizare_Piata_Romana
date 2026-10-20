@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+  <input>
+    <net-file value="../net/romana.net.xml" />
+    <route-files value="../demand/referinta_varf/bus.rou.xml,../demand/referinta_varf/motorcycle.rou.xml,../demand/referinta_varf/passenger.rou.xml,../demand/referinta_varf/truck.rou.xml,../demand/referinta_varf/fond.rou.xml" />
+    <additional-files value="../demand/vtypes.add.xml" />
+  </input>
+  <time>
+    <begin value="0" />
+    <end value="4500" />
+  </time>
+  <processing>
+    <time-to-teleport value="300" />
+    <ignore-route-errors value="true" />
+  </processing>
+  <report>
+    <no-step-log value="true" />
+    <duration-log.statistics value="true" />
+  </report>
+  <gui_only>
+    <gui-settings-file value="../net/view.xml" />
+  </gui_only>
+</configuration>

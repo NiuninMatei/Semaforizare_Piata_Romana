@@ -192,3 +192,5 @@ data/raw/
 *.mp4
 .venv/
 venv/
+sumo/demand/_tmp/
+sumo/demand/candidate.rou.xml

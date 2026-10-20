@@ -1,5 +1,27 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <additional>
+  <tlLogic id="romana" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrrrrrrrGGGGGgggggggGGrrrrrrrrrrrrGGGGGgggggggGG" />
+    <phase duration="3" state="rrrrrrrrrrrrrryyyyyyyyyyyyyyrrrrrrrrrrrryyyyyyyyyyyyyy" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGGGGGgggggggrrrrrrrrrrrrrrGGGGGGGgggggrrrrrrrrrrrrrr" />
+    <phase duration="3" state="yyyyyyyyyyyyyyrrrrrrrrrrrrrryyyyyyyyyyyyrrrrrrrrrrrrrr" />
+  </tlLogic>
+  <tlLogic id="dacia_eminescu" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGGGGggGGrrrrrrrr" />
+    <phase duration="3" state="rrrrrrrrrrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="gGGggggggggrrrrrrrGGGGGggggrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="gyyggggggggrrrrrrryyyyyggggrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="grrgggGGGGGrrrrrrrrrrrrGgggrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="yrryyyyyyyyrrrrrrrrrrrryyyyrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrrrrGGGGGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="rrrrrrrrrrryyyyyyyrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGGGGG" />
+    <phase duration="3" state="yrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGyyyyyyyy" />
+  </tlLogic>
   <tlLogic id="catargiu_manu" type="actuated" programID="actuated" offset="0">
     <param key="max-gap" value="3.0" />
     <param key="detector-gap" value="2.0" />
@@ -19,30 +41,6 @@
     <phase duration="3" state="yyyyyyyyrrrr" />
     <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGG" />
     <phase duration="3" state="rrrrrrrryyyy" />
-  </tlLogic>
-  <tlLogic id="dacia_eminescu" type="actuated" programID="actuated" offset="0">
-    <param key="max-gap" value="3.0" />
-    <param key="detector-gap" value="2.0" />
-    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrrrGGGrrrrrrrrGGGrGGGGrrrrrrGGGGGGrrrrrr" />
-    <phase duration="3" state="yyyrrrrryyyrrrrrrrryyyrGGGGrrrrrryyyyyyrrrrrr" />
-    <phase duration="30" minDur="10" maxDur="60" state="rrrGGGGGrrrrrrrrrrrrrrrGGGGrrrrrrrrrrrrGGGGGG" />
-    <phase duration="3" state="rrryyyyyrrrrrrrrrrrrrrrGGGGrrrrrrrrrrrrGGGGGG" />
-    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGggGGGGGgrrrrrrGGGGrrrrrrrrrrrrGGGGGG" />
-    <phase duration="3" state="rrrrrrrryyyyyyyyyrrrrrryyyyrrrrrrrrrrrryyyyyy" />
-    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrrrrrrrrrrGGrrrrrrrrrrrrrrrrrrrrrrrrrr" />
-    <phase duration="3" state="rrrrrrrrrrrrrrrrryyrrrrrrrrrrrrrrrrrrrrrrrrrr" />
-    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGrrrrrrrrrrrGGGGGGGGrrrrrrrrrrrrrrr" />
-    <phase duration="3" state="rrrrrrrrGGGrrrrrrrrrrryGGGGyyyrrrrrrrrrrrrrrr" />
-    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGrrrrrrrrrrrrGGGGrrrGGgrrrrrrGGGGgg" />
-    <phase duration="3" state="rrrrrrrrGGGrrrrrrrrrrrrGGGGrrryyyrrrrrryyyyyy" />
-  </tlLogic>
-  <tlLogic id="romana" type="actuated" programID="actuated" offset="0">
-    <param key="max-gap" value="3.0" />
-    <param key="detector-gap" value="2.0" />
-    <phase duration="30" minDur="10" maxDur="60" state="rrrGGGrrGGGGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGG" />
-    <phase duration="3" state="rrryyyrryyyGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGG" />
-    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG" />
-    <phase duration="3" state="yyyrrryyrrrGGGGGGGGGGGGyyyyyyGGGGGGGGGGGGGGGGGGGGG" />
   </tlLogic>
   <tlLogic id="magheru_enescu" type="actuated" programID="actuated" offset="0">
     <param key="max-gap" value="3.0" />
