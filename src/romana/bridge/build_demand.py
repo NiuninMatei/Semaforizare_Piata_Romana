@@ -204,6 +204,7 @@ def main(argv=None) -> None:
     ap.add_argument("--profil", choices=["camera", "referinta"], default="camera")
     ap.add_argument("--nume", required=True, help="numele scenariului (fișier .sumocfg)")
     ap.add_argument("--fond", type=float, default=None, help="suprascrie fond_fractiune")
+    ap.add_argument("--scala", type=float, default=1.0, help="multiplicator al volumelor (analize de sensibilitate)")
     ap.add_argument("--regenerare-candidate", action="store_true")
     args = ap.parse_args(argv)
     if args.fond is not None:
@@ -217,6 +218,10 @@ def main(argv=None) -> None:
     else:
         files = [Path(p) for p in args.counts] if args.counts else sorted(COUNTS_DIR.glob("numaratori_*.csv"))
         recs = estimate(load_counts(files, args.start, args.end), cfg)
+    if args.scala != 1.0:
+        for r in recs:
+            r["od_veh_h"] = [[v * args.scala for v in row] for row in r["od_veh_h"]]
+            r["intrari_veh_h"] = {k: v * args.scala for k, v in r.get("intrari_veh_h", {}).items()}
     dur = sum(r["durata_s"] for r in recs)
     out_dir = DEMAND_DIR / args.nume
     out_dir.mkdir(parents=True, exist_ok=True)

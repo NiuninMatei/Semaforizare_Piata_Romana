@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispecerat Piața Romană</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --beton:#e7e9e4; --hartie:#f6f7f4; --cerneala:#1f2a33; --gri:#5d6873; --linie:#c9cec7;
+  --albastru:#1d5fa8; --rosu:#c8322a; --galben:#e2a013; --verde:#1d9152;
+  --r-mare:10px; --r-mic:4px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--beton);color:var(--cerneala);font:15px/1.45 Barlow,system-ui,sans-serif}
+header{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;padding:14px 22px;background:var(--cerneala);color:var(--hartie)}
+header h1{margin:0;font:700 26px/1 "Barlow Semi Condensed",sans-serif;letter-spacing:.2px}
+header .loc{color:#aeb8c1}
+#ceas{margin-left:auto;font:600 20px "Barlow Semi Condensed";font-variant-numeric:tabular-nums}
+main{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(320px,1fr);gap:18px;padding:18px 22px;max-width:1500px;margin:auto}
+section{background:var(--hartie);border:1px solid var(--linie);border-radius:var(--r-mare);padding:16px 18px}
+h2{margin:0 0 10px;font:600 19px "Barlow Semi Condensed",sans-serif}
+.cam{position:relative}
+.cam img{width:100%;display:block;border-radius:var(--r-mic);background:#2b333a;aspect-ratio:16/9;object-fit:cover}
+.cam .gol{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:#e7e9e4;padding:20px;background:#2b333a;border-radius:var(--r-mic)}
+.stare{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;color:var(--gri);font-size:14px}
+.punct{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--gri)}
+.ok{background:var(--verde)} .atent{background:var(--galben)} .err{background:var(--rosu)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:6px 4px;border-bottom:1px solid var(--linie);text-align:left}
+th{font-weight:500;color:var(--gri)}
+td.n{text-align:right;font:600 17px "Barlow Semi Condensed"}
+.schema svg{width:100%;height:auto;display:block}
+.faza{font:700 30px/1.1 "Barlow Semi Condensed";margin:4px 0 2px}
+.sub{color:var(--gri)}
+.moduri{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+button{font:600 16px "Barlow Semi Condensed";padding:10px 12px;border-radius:var(--r-mic);border:1.5px solid var(--cerneala);background:var(--hartie);color:var(--cerneala);cursor:pointer}
+button[aria-pressed=true]{background:var(--cerneala);color:var(--hartie)}
+button:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
+.manual{display:none;margin-top:12px}
+.manual.vizibil{display:block}
+.manual .faze{display:grid;gap:6px}
+.manual button{text-align:left;font-weight:500;border-width:1px}
+.confirm{display:none;margin-top:12px;padding:12px;border-radius:var(--r-mic);background:#fff4d6;border:1px solid var(--galben)}
+.confirm.vizibil{display:block}
+.confirm .rand{display:flex;gap:8px;margin-top:8px}
+.confirm .da{background:var(--cerneala);color:var(--hartie)}
+canvas{width:100%;height:150px;display:block}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1500px;margin:auto}
+@media (max-width:900px){main{grid-template-columns:1fr;padding:12px 16px}header{padding:12px 16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.bara{transition:width .6s ease}
+</style>
+</head>
+<body>
+<header>
+  <h1>Dispecerat Piața Romană</h1>
+  <span class="loc">Bd. Magheru · Bd. Lascăr Catargiu · Bd. Dacia — geamăn digital SUMO</span>
+  <span id="ceas">--:--:--</span>
+</header>
+<main>
+  <div class="col">
+    <section class="cam" aria-labelledby="t-cam">
+      <h2 id="t-cam">Camera Webcam România, analizată live</h2>
+      <div style="position:relative">
+        <img id="cadru" alt="Cadrul curent al camerei din Piața Romană, cu zonele de numărare și vehiculele detectate">
+        <div class="gol" id="cadru-gol">Nu primesc imagini de la modulul de viziune.<br>Porniți-l cu <b>scripts\2_viziune_live.bat</b>; imaginea apare aici în câteva secunde.</div>
+      </div>
+      <div class="stare">
+        <span><i class="punct" id="p-cam"></i><span id="s-cam">camera: necunoscut</span></span>
+        <span id="s-fps"></span>
+        <span id="s-urm"></span>
+      </div>
+    </section>
+    <section aria-labelledby="t-ist">
+      <h2 id="t-ist">Vehicule oprite la semafoarele pieței, ultimele 10 minute</h2>
+      <canvas id="grafic" role="img" aria-label="Evoluția cozii totale în ultimele 10 minute"></canvas>
+    </section>
+  </div>
+  <div class="col">
+    <section class="schema" aria-labelledby="t-sem">
+      <h2 id="t-sem">Semafor</h2>
+      <div class="faza" id="faza">—</div>
+      <div class="sub" id="faza-det">Geamănul digital nu rulează. Porniți scripts\6_geaman_digital.bat.</div>
+      <svg viewBox="-20 0 340 270" aria-label="Schema pieței cu cozile pe brațe">
+        <g id="schema"></g>
+      </svg>
+      <div class="sub" id="sursa"></div>
+    </section>
+    <section aria-labelledby="t-ctrl">
+      <h2 id="t-ctrl">Cine conduce semaforul</h2>
+      <div class="moduri" role="group" aria-label="Mod de control">
+        <button data-mod="ai">Agent AI</button>
+        <button data-mod="fix">Plan fix</button>
+        <button data-mod="max_pressure">Max-Pressure</button>
+        <button data-mod="manual">Manual</button>
+      </div>
+      <div class="manual" id="manual"><p class="sub" style="margin:10px 0 6px">Alegeți faza verde. Galbenul și roșul de degajare se aplică automat.</p><div class="faze" id="faze"></div></div>
+      <div class="confirm" id="confirm" role="alertdialog" aria-live="assertive">
+        <div id="confirm-text"></div>
+        <div class="rand"><button class="da" id="da">Confirm</button><button id="nu">Renunț</button></div>
+      </div>
+    </section>
+    <section aria-labelledby="t-deb">
+      <h2 id="t-deb">Debite măsurate de cameră</h2>
+      <table><thead><tr><th>Braț</th><th style="text-align:right">intră (veh/h)</th><th style="text-align:right">ies (veh/h)</th></tr></thead><tbody id="debite"><tr><td colspan="3" class="sub">Așteptăm primele măsurători.</td></tr></tbody></table>
+    </section>
+  </div>
+</main>
+<footer>Imagini: © WebcamRomania.ro, prelucrate doar în memorie, persoanele estompate. Hartă și rețea: © OpenStreetMap contributors, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0).</footer>
+<script>
+const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
+const MOD={ai:"Agent AI (PPO)",fix:"Plan fix",max_pressure:"Max-Pressure",manual:"Manual"};
+// geometrie aproximativă: unghiuri reale ale brațelor (nord sus)
+const BRATE={catargiu:[-130,"in"],caderea_bastiliei:[-80,"out"],dacia_est:[0,"in"],magheru:[100,"in"],mendeleev:[140,"out"],dacia_vest:[180,"in"]};
+const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],["magheru"],["catargiu"],["dacia_est"],["dacia_vest"]];
+let sim=null, modCerut=null, fazaCeruta=null;
+const $=id=>document.getElementById(id);
+setInterval(()=>{$("ceas").textContent=new Date().toLocaleTimeString("ro-RO")},1000);
+
+function schema(s){
+  const g=$("schema"), cx=150, cy=135; let h=`<circle cx="${cx}" cy="${cy}" r="26" fill="#d9ddd6" stroke="#1f2a33" stroke-width="1.5"/>`;
+  const verzi=s?FAZA_BRATE[s.faza]||[]:[]; const etapa=s?s.etapa:"";
+  for(const [b,[ang,tip]] of Object.entries(BRATE)){
+    const a=ang*Math.PI/180, x1=cx+30*Math.cos(a), y1=cy+30*Math.sin(a), x2=cx+100*Math.cos(a), y2=cy+86*Math.sin(a), xl=cx+112*Math.cos(a), yl=cy+102*Math.sin(a);
+    h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#9aa39b" stroke-width="${tip=="in"?14:8}" stroke-linecap="round"/>`;
+    if(tip=="in"){
+      const q=s&&s.coada_brate?(s.coada_brate[b]||0):0, L=Math.min(1,q/25);
+      const xq=x1+(x2-x1)*L, yq=y1+(y2-y1)*L;
+      const col=q>18?"#c8322a":q>8?"#e2a013":"#1d5fa8";
+      h+=`<line x1="${x1}" y1="${y1}" x2="${xq}" y2="${yq}" stroke="${col}" stroke-width="9" stroke-linecap="round"/>`;
+      const verde=verzi.includes(b), lum=verde?(etapa=="yellow"?"#e2a013":(etapa=="red"?"#c8322a":"#1d9152")):"#c8322a";
+      h+=`<circle cx="${x1}" cy="${y1}" r="7" fill="${lum}" stroke="#1f2a33" stroke-width="1.5"><title>${NUME[b]}: ${verde?"verde":"roșu"}</title></circle>`;
+      h+=`<text x="${xl}" y="${yl+(Math.sin(a)>0.2?10:Math.sin(a)<-0.2?-2:-12)}" text-anchor="${Math.cos(a)>0.5?"end":Math.cos(a)<-0.5?"start":"middle"}" font-family="Barlow" font-size="12.5" fill="#1f2a33">${NUME[b]} · ${q}</text>`;
+    } else {
+      h+=`<text x="${xl}" y="${yl+(Math.sin(a)>0?10:-2)}" text-anchor="middle" font-family="Barlow" font-size="11.5" fill="#5d6873">${NUME[b]} (ieșire)</text>`;
+    }
+  }
+  g.innerHTML=h;
+}
+function grafic(ist){
+  const c=$("grafic"), r=window.devicePixelRatio||1, w=c.clientWidth, hh=150; c.width=w*r; c.height=hh*r;
+  const x=c.getContext("2d"); x.scale(r,r); x.clearRect(0,0,w,hh);
+  if(!ist||ist.length<2){x.fillStyle="#5d6873";x.font="14px Barlow";x.fillText("Graficul apare după primul minut de simulare.",8,24);return}
+  const m=Math.max(10,...ist.map(p=>p[1])); x.strokeStyle="#c9cec7"; x.fillStyle="#5d6873"; x.font="12px Barlow";
+  for(let k=0;k<=2;k++){const y=hh-18-(hh-30)*k/2; x.beginPath();x.moveTo(30,y);x.lineTo(w,y);x.stroke(); x.fillText(Math.round(m*k/2),2,y+4)}
+  x.strokeStyle="#1d5fa8"; x.lineWidth=2; x.beginPath();
+  ist.forEach((p,i)=>{const px=30+(w-34)*i/(ist.length-1), py=hh-18-(hh-30)*p[1]/m; i?x.lineTo(px,py):x.moveTo(px,py)}); x.stroke();
+}
+function butoane(s){
+  const mod=s?s.mod:null;
+  document.querySelectorAll("[data-mod]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.mod==mod);
+    if(b.dataset.mod=="ai") b.disabled=!!s&&!s.model_ai, b.title=s&&!s.model_ai?"Nu există model antrenat în models/":""});
+  $("manual").classList.toggle("vizibil",mod=="manual");
+  if(s&&s.faze&&!$("faze").children.length){
+    $("faze").innerHTML=s.faze.map((f,i)=>`<button data-faza="${i}">${f}</button>`).join("");
+    document.querySelectorAll("[data-faza]").forEach(b=>b.onclick=()=>cere("manual",+b.dataset.faza));
+  }
+  document.querySelectorAll("[data-faza]").forEach(b=>b.setAttribute("aria-pressed",s&&mod=="manual"&&+b.dataset.faza==s.faza));
+}
+function cere(mod,faza){
+  modCerut=mod; fazaCeruta=faza;
+  const t=mod=="manual"?`Treceți semaforul pe faza „${sim&&sim.faze?sim.faze[faza]:faza}”? Agentul AI nu va mai interveni până alegeți alt mod.`
+        :`Predați controlul semaforului către: ${MOD[mod]}?`;
+  $("confirm-text").textContent=t; $("confirm").classList.add("vizibil"); $("da").focus();
+}
+document.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>{ if(b.dataset.mod=="manual"){ cere("manual", sim?sim.faza:0) } else cere(b.dataset.mod)});
+$("nu").onclick=()=>$("confirm").classList.remove("vizibil");
+$("da").onclick=async()=>{
+  const r=await fetch("/api/command",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({mod:modCerut,faza:fazaCeruta})});
+  $("confirm").classList.remove("vizibil");
+  if(!r.ok) alert("Comanda nu a fost acceptată: "+(await r.json()).eroare);
+};
+document.addEventListener("keydown",e=>{if(e.key=="Escape")$("confirm").classList.remove("vizibil")});
+
+async function actualizeaza(){
+  let d; try{ d=await (await fetch("/api/state",{cache:"no-store"})).json() }catch(e){ $("s-cam").textContent="serverul dashboard nu răspunde"; $("p-cam").className="punct err"; return }
+  const c=d.camera; sim=d.simulare&&d.simulare._varsta_s<10?d.simulare:null;
+  // camera
+  if(c&&c._varsta_s<15){
+    $("p-cam").className="punct "+(c.conectat?"ok":"atent");
+    $("s-cam").textContent=c.conectat?"camera: flux live":"camera: reconectare în curs";
+    $("s-fps").textContent=`${c.fps} cadre/s analizate`; $("s-urm").textContent=`${c.vehicule_urmarite} vehicule urmărite`;
+    $("cadru").src="/api/frame.jpg?t="+Date.now(); $("cadru-gol").style.display="none";
+    const ins=c.intrari_veh_h||{}, outs=c.iesiri_veh_h||{}, k=Object.keys(NUME);
+    $("debite").innerHTML=k.map(b=>`<tr><td>${NUME[b]}</td><td class="n">${ins[b]??"–"}</td><td class="n">${outs[b]??"–"}</td></tr>`).join("")+
+      `<tr><td colspan="3" class="sub">Interval curent: ${Math.round((c.secunde_interval||0)/60)} min. Debitele se stabilizează după ~5 min.</td></tr>`;
+  } else { $("p-cam").className="punct err"; $("s-cam").textContent="camera: modulul de viziune nu rulează"; $("s-fps").textContent=""; $("s-urm").textContent=""; $("cadru-gol").style.display="grid" }
+  // simulare
+  if(sim){
+    $("faza").textContent=sim.faza_nume.split("(")[0].trim();
+    const et={green:"verde",yellow:"galben",red:"roșu de degajare"}[sim.etapa];
+    $("faza-det").textContent=`${et}, de ${sim.verde_s} s · condus de ${MOD[sim.mod]} · ${sim.vehicule_in_retea} vehicule în simulare`;
+    $("sursa").textContent="Cererea de trafic vine din: "+sim.sursa;
+    grafic(sim.istoric_coada);
+  } else { $("faza").textContent="—"; $("faza-det").textContent="Geamănul digital nu rulează. Porniți scripts\\6_geaman_digital.bat."; grafic(null) }
+  schema(sim); butoane(sim);
+}
+actualizeaza(); setInterval(actualizeaza,1000);
+</script>
+</body>
+</html>
