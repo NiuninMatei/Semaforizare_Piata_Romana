@@ -56,7 +56,9 @@ class SignalController:
         for ln in self.t.trafficlight.getControlledLanes(self.id):
             if ln not in lanes:
                 lanes.append(ln)
-        self.in_lanes = lanes
+        # benzile de vehicule vs. zonele de așteptare ale pietonilor (walkingarea ':nod_wN')
+        self.in_lanes = [ln for ln in lanes if not ln.startswith(":")]
+        self.ped_areas = sorted({ln.rsplit("_", 1)[0] for ln in lanes if ln.startswith(":")})
         out = []
         for links in self.t.trafficlight.getControlledLinks(self.id):
             for lk in links:
@@ -101,6 +103,13 @@ class SignalController:
             self.t.trafficlight.setRedYellowGreenState(self.id, self.greens[self.current])
 
     # ------------------------------------------------------------ măsurători
+    def ped_waiting(self) -> list[int]:
+        """Pietoni care așteaptă la fiecare trecere controlată (viteză < 0,1 m/s pe zona de așteptare)."""
+        out = []
+        for e in self.ped_areas:
+            out.append(sum(1 for p in self.t.edge.getLastStepPersonIDs(e) if self.t.person.getSpeed(p) < 0.1))
+        return out
+
     def lane_queues(self) -> list[int]:
         return [self.t.lane.getLastStepHaltingNumber(ln) for ln in self.in_lanes]
 
@@ -123,3 +132,25 @@ class SignalController:
                     p += queue(inc) - queue(outl)
             out.append(p)
         return out
+
+
+def observation(traci, ctrls, cap: dict) -> "np.ndarray":
+    """Starea comună pentru antrenare, evaluare și geamănul digital (aceeași ordine a valorilor)."""
+    import numpy as np
+
+    parts = []
+    for c in ctrls:
+        oh = np.zeros(c.n)
+        oh[c.current] = 1.0
+        parts.append(oh)
+        parts.append([1.0 if c.can_switch() else 0.0, min(1.0, c.green_time / c.max_green)])
+        parts.append([min(1.0, traci.lane.getLastStepHaltingNumber(ln) / cap[ln]) for ln in c.in_lanes])
+        parts.append([min(1.0, traci.lane.getLastStepVehicleNumber(ln) / cap[ln]) for ln in c.in_lanes])
+        parts.append([min(1.0, w / 15.0) for w in c.ped_waiting()])
+    return np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
+
+
+def waiting_total(traci, ctrls) -> float:
+    """Vehicule oprite pe benzile de intrare + pietoni care așteaptă la treceri (toți participanții)."""
+    return float(sum(traci.lane.getLastStepHaltingNumber(ln) for c in ctrls for ln in c.in_lanes)
+                 + sum(sum(c.ped_waiting()) for c in ctrls))

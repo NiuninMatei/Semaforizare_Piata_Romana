@@ -41,6 +41,7 @@ VTYPE_DEFS = {
     "truck": dict(vClass="truck", length="9", accel="1.3", decel="4.0", sigma="0.5", maxSpeed="14", color="160,100,40", guiShape="truck"),
     "motorcycle": dict(vClass="motorcycle", length="2.2", accel="3.5", decel="6", sigma="0.5", maxSpeed="16.7", color="255,200,0", guiShape="motorcycle"),
     "bicycle": dict(vClass="bicycle", length="1.8", accel="1.2", decel="3", sigma="0.5", maxSpeed="6", color="0,200,0", guiShape="bicycle"),
+    "pieton": dict(vClass="pedestrian", length="0.3", width="0.5", maxSpeed="1.4", speedDev="0.15", color="255,90,90", guiShape="pedestrian"),
 }
 
 
@@ -71,18 +72,23 @@ def route_edges(route_file: Path):
                 yield el, r.get("edges").split()
 
 
-def build_candidates(cfg: dict, force: bool = False) -> None:
+def candidates_file(vclass: str) -> Path:
+    return CANDIDATES if vclass == "passenger" else DEMAND_DIR / f"candidate_{vclass}.rou.xml"
+
+
+def build_candidates(cfg: dict, force: bool = False, vclass: str = "passenger") -> None:
     """Set de rute candidate: drumuri minime margine→margine + rute garantate pentru fiecare viraj."""
-    if CANDIDATES.exists() and not force:
+    target = candidates_file(vclass)
+    if target.exists() and not force:
         return
     tools = sumo_tools()
     DEMAND_DIR.mkdir(parents=True, exist_ok=True)
     tmp = DEMAND_DIR / "_tmp"
     tmp.mkdir(exist_ok=True)
-    print("[cerere] generez rutele candidate (randomTrips + duarouter)...")
+    print(f"[cerere] generez rutele candidate pentru {vclass} (randomTrips + duarouter)...")
     run([sys.executable, str(tools / "randomTrips.py"), "-n", str(NET), "--fringe-factor", "200",
-         "-p", "0.12", "-b", "0", "-e", "3600", "--min-distance", "300", "--validate", "--remove-loops",
-         "--vehicle-class", "passenger", "--seed", str(cfg["seed"]),
+         "-p", "0.12" if vclass == "passenger" else "0.4", "-b", "0", "-e", "3600", "--min-distance", "300",
+         "--validate", "--remove-loops", "--vehicle-class", vclass, "--vclass", vclass, "--seed", str(cfg["seed"]),
          "-o", str(tmp / "rt.trips.xml"), "-r", str(tmp / "rt.rou.xml")])
     # rute garantate pentru fiecare pereche intrare→ieșire (pornind de la marginea rețelei)
     arms = cfg["brate"]
@@ -93,11 +99,12 @@ def build_candidates(cfg: dict, force: bool = False) -> None:
             continue
         for d, di in arms.items():
             for rep in range(3):
-                ET.SubElement(trips, "trip", id=f"via_{o}_{d}_{rep}", depart=str(k), **{
+                ET.SubElement(trips, "trip", id=f"via_{o}_{d}_{rep}", depart=str(k), type=vclass, **{
                     "from": oi["intrare"], "to": di["iesire"], "departLane": "best"})
                 k += 1
     ET.ElementTree(trips).write(tmp / "via.trips.xml", encoding="UTF-8", xml_declaration=True)
     run([sumo_binary("duarouter"), "-n", str(NET), "--route-files", str(tmp / "via.trips.xml"),
+         "--additional-files", str(VTYPES),
          "-o", str(tmp / "via.rou.xml"), "--ignore-errors", "--no-warnings", "--repair"])
     # combinare + filtrare: fără rute care traversează piața de două ori
     entries = {a["intrare"] for a in arms.values() if a["intrare"]}
@@ -108,7 +115,7 @@ def build_candidates(cfg: dict, force: bool = False) -> None:
 
     def realistic(edges: list[str], via: bool) -> bool:
         """Rute plauzibile: pornesc/se termină pe artere și nu circulă mult pe străzi rezidențiale."""
-        if via:   # rutele garantate intrare→ieșire sunt scurte prin construcție
+        if via or vclass != "passenger":   # rute garantate / biciclete: fără filtrul de artere
             return True
         objs = [net.getEdge(e) for e in edges]
         if not (objs[0].getType().startswith(major) and objs[-1].getType().startswith(major)):
@@ -127,8 +134,8 @@ def build_candidates(cfg: dict, force: bool = False) -> None:
             ET.SubElement(v, "route", edges=" ".join(edges))
             n += 1
     ET.indent(out)
-    ET.ElementTree(out).write(CANDIDATES, encoding="UTF-8", xml_declaration=True)
-    print(f"[cerere] {n} rute candidate în {CANDIDATES.relative_to(ROOT)}")
+    ET.ElementTree(out).write(target, encoding="UTF-8", xml_declaration=True)
+    print(f"[cerere] {n} rute candidate în {target.relative_to(ROOT)}")
 
 
 def write_turn_file(recs: list[dict], cfg: dict, vtype: str, path: Path) -> int:
@@ -170,6 +177,50 @@ def background(recs: list[dict], cfg: dict, path: Path) -> int:
     ET.indent(root)
     ET.ElementTree(root).write(path, encoding="UTF-8", xml_declaration=True)
     return len(deps)
+
+
+def pedestrians(recs: list[dict], cfg: dict, path: Path) -> int:
+    """Pietonii care traversează zona pieței (trotuare + treceri), cu debitul observat pe cameră."""
+    cand = DEMAND_DIR / "candidate_pietoni.rou.xml"
+    if not cand.exists():
+        tmp = DEMAND_DIR / "_tmp"
+        tmp.mkdir(exist_ok=True)
+        print("[cerere] generez trasee candidate pentru pietoni ...")
+        run([sys.executable, str(sumo_tools() / "randomTrips.py"), "-n", str(NET), "--pedestrians",
+             "-p", "0.25", "-b", "0", "-e", "3600", "--min-distance", "150", "--max-distance", "900",
+             "--seed", str(cfg["seed"]), "-o", str(tmp / "ped.trips.xml"), "-r", str(tmp / "ped.rou.xml")])
+        import sumolib
+
+        net = sumolib.net.readNet(str(NET))
+        c = load_json("network.json")["tls"]["romana"]
+        cx, cy = net.convertLonLat2XY(c["lon"], c["lat"])
+        near = {e.getID() for e in net.getEdges()
+                if min(((x - cx) ** 2 + (y - cy) ** 2) ** 0.5 for x, y in e.getShape()) < 120}
+        out = ET.Element("routes")
+        k = 0
+        for _, el in ET.iterparse(tmp / "ped.rou.xml"):
+            if el.tag == "person":
+                w = el.find("walk")
+                if w is not None and set((w.get("edges") or "").split()) & near:
+                    p = ET.SubElement(out, "person", id=f"p{k}", depart="0")
+                    ET.SubElement(p, "walk", edges=w.get("edges"))
+                    k += 1
+        ET.indent(out)
+        ET.ElementTree(out).write(cand, encoding="UTF-8", xml_declaration=True)
+    pool = [el.find("walk").get("edges") for _, el in ET.iterparse(cand) if el.tag == "person"]
+    root = ET.Element("routes")
+    t0, n = 0.0, 0
+    for r in recs:
+        rate = r.get("pietoni_h", cfg.get("profil_referinta", {}).get("pietoni_h", 0))
+        cnt = int(round(rate * r["durata_s"] / 3600))
+        for t in sorted(random.uniform(t0, t0 + r["durata_s"]) for _ in range(cnt)):
+            p = ET.SubElement(root, "person", id=f"pieton_{n}", depart=f"{t:.1f}", type="pieton")
+            ET.SubElement(p, "walk", edges=random.choice(pool))
+            n += 1
+        t0 += r["durata_s"]
+    ET.indent(root)
+    ET.ElementTree(root).write(path, encoding="UTF-8", xml_declaration=True)
+    return n
 
 
 def write_sumocfg(name: str, route_files: list[Path], dur: int) -> Path:
@@ -237,7 +288,9 @@ def main(argv=None) -> None:
         if n == 0:
             continue
         rf = out_dir / f"{vt}.rou.xml"
-        log = run([sys.executable, str(sumo_tools() / "routeSampler.py"), "-r", str(CANDIDATES), "-t", str(tf),
+        vclass = "bicycle" if vt == "bicycle" else "passenger"
+        build_candidates(cfg, force=False, vclass=vclass)
+        log = run([sys.executable, str(sumo_tools() / "routeSampler.py"), "-r", str(candidates_file(vclass)), "-t", str(tf),
                    "--turn-max-gap", "25", "-o", str(rf), "--prefix", f"{vt}_", "-a", f'type="{vt}" departLane="best"',
                    "--seed", str(cfg["seed"]), "--optimize", "full", "--mismatch-output", str(out_dir / f"mismatch_{vt}.xml")],
                   log=out_dir / f"routeSampler_{vt}.log")
@@ -247,12 +300,16 @@ def main(argv=None) -> None:
     bg = out_dir / "fond.rou.xml"
     report["vehicule_fond"] = background(recs, cfg, bg)
     route_files.append(bg)
+    pf = out_dir / "pietoni.rou.xml"
+    report["pietoni"] = pedestrians(recs, cfg, pf)
+    if report["pietoni"]:
+        route_files.append(pf)
     sumocfg = write_sumocfg(args.nume, route_files, dur)
     report["sumocfg"] = str(sumocfg.relative_to(ROOT))
     report["rezumat_od"] = summarize(recs)
     save_json(report, out_dir / "raport_cerere.json")
     print(f"[OK] Scenariul '{args.nume}': {report['rezumat_od']['vehicule_total']} vehicule prin piață, "
-          f"{report['vehicule_fond']} de fond → {sumocfg.relative_to(ROOT)}")
+          f"{report['vehicule_fond']} de fond, {report['pietoni']} pietoni → {sumocfg.relative_to(ROOT)}")
     for vt, r in report["tipuri"].items():
         print(f"   {vt}: {r['viraje_tinta']} viraje țintă, GEH<5 pentru {r['GEH<5_%']}% din relații")
 

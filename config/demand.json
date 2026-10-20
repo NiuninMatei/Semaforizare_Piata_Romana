@@ -67,20 +67,24 @@
   "fond_fractiune": 0.15,
   "_fond_fractiune": "Traficul de pe străzile conexe care NU trece prin Piața Romană (nemonitorizat video), ca fracțiune din volumul observat. Ipoteză explicită, documentată; 0 = doar trafic observat.",
   "profil_referinta": {
-    "_descriere": "Scenariu ipotetic de vârf moderat (veh/h pe intrare), folosit doar până la acumularea datelor reale de zi. Ordin de mărime: estimarea publică neoficială Wizard Media (~3446 veh/h pe Magheru spre Romană, 2011/2012), redusă pentru benzile dedicate transportului public introduse în 2024 și pentru capacitatea mai mică a rețelei SUMO importate din OSM.",
+    "_descriere": "Scenariu ipotetic de vârf (veh/h pe intrare), folosit doar până la acumularea datelor reale de zi. Calibrat astfel încât planul fix de referință să funcționeze aproape de saturație pe replica fidelă a rețelei (la volume mai mari inelul se suprasaturează). Ordin de mărime public: estimarea neoficială Wizard Media (~3446 veh/h pe Magheru spre Romană, 2011/2012), dinaintea benzilor dedicate STB din 2024. Pietonii: debit total ipotetic prin zona pieței (stație de metrou M2, ASE).",
     "intrari_veh_h": {
-      "magheru": 1100,
-      "catargiu": 950,
-      "dacia_est": 600,
-      "dacia_vest": 500
+      "magheru": 720,
+      "catargiu": 620,
+      "dacia_est": 390,
+      "dacia_vest": 330
     },
     "pondere_clase": {
-      "passenger": 0.9,
+      "passenger": 0.88,
       "bus": 0.04,
       "truck": 0.03,
-      "motorcycle": 0.03
-    }
+      "motorcycle": 0.03,
+      "bicycle": 0.02
+    },
+    "pietoni_h": 1200
   },
   "durata_scenariu_s": 3600,
-  "seed": 42
+  "seed": 42,
+  "factor_extrapolare_pietoni": 2.5,
+  "_factor_extrapolare_pietoni": "Camera vede 2 din cele ~7 treceri semaforizate ale pieței; pietonii numărați pe trecerile vizibile se extrapolează la toată piața cu acest factor (ipoteză declarată)."
 }

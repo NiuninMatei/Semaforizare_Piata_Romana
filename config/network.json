@@ -10,108 +10,139 @@
   "yellow_time": 3,
   "default_cycle": 90,
   "tls": {
-    "_descriere": "Semafoarele controlate, identificate după centroidul geografic al nodurilor (robust la regenerarea rețelei).",
+    "_descriere": "Controlerele de semafor gestionate. 'romana' grupează toate semafoarele fizice aflate la cel mult raza_grupare_m de centrul pieței (ca automatul real al intersecției); vecinii sunt identificați după coordonate.",
     "romana": {
       "lat": 44.44688,
       "lon": 26.09674,
       "nume": "Piața Romană (Magheru – Lascăr Catargiu – Dacia)",
       "camera": true,
-      "raza_unire_m": 62
+      "raza_grupare_m": 80
     },
     "dacia_eminescu": {
-      "lat": 44.44688,
+      "lat": 44.44681,
       "lon": 26.09944,
       "nume": "Bd. Dacia × Str. M. Eminescu × Calea Dorobanților",
-      "camera": false,
-      "raza_unire_m": 40
+      "camera": false
     },
     "magheru_enescu": {
-      "lat": 44.44408,
-      "lon": 26.09812,
+      "lat": 44.44394,
+      "lon": 26.09825,
       "nume": "Bd. Magheru × Str. G. Enescu / Tache Ionescu",
-      "camera": false,
-      "raza_unire_m": 35
+      "camera": false
     },
     "catargiu_manu": {
-      "lat": 44.44943,
-      "lon": 26.09169,
+      "lat": 44.44939,
+      "lon": 26.09173,
       "nume": "Bd. Lascăr Catargiu × Str. Gh. Manu",
-      "camera": false,
-      "raza_unire_m": 25
+      "camera": false
     },
     "dacia_victoriei": {
       "lat": 44.4455,
       "lon": 26.09102,
       "nume": "Bd. Dacia × Calea Victoriei",
-      "camera": false,
-      "raza_unire_m": 0
+      "camera": false
     },
     "dacia_polona": {
-      "lat": 44.44708,
-      "lon": 26.10321,
+      "lat": 44.44652,
+      "lon": 26.10334,
       "nume": "Bd. Dacia × Str. Polonă",
-      "camera": false,
-      "raza_unire_m": 35
+      "camera": false
     }
   },
-  "romana_phases": [
+  "romana_grupuri": {
+    "_descriere": "Grupuri de semnal ale controlerului Piața Romană, după muchia OSM pe care stau vehiculele la linia de oprire. Trecerile de pietoni formează automat grupul 'pietoni'.",
+    "axa_ns_centru": [
+      "23781788",
+      "23781801"
+    ],
+    "inel_dacia": [
+      "448792279#0",
+      "448792279#1",
+      "448266588#0",
+      "448266588#1"
+    ],
+    "intrare_magheru": [
+      "668307642#1",
+      "130848152#1",
+      "130848152#2"
+    ],
+    "intrare_catargiu": [
+      "1320256482"
+    ],
+    "intrare_dacia_est": [
+      "232079775#2",
+      "232079775#3"
+    ],
+    "intrare_dacia_vest": [
+      "-778823268#2"
+    ],
+    "iesire_magheru_catargiu": [
+      "44499684#0",
+      "44499684#1",
+      "668307633#0",
+      "668307633#1"
+    ],
+    "iesire_dacia": [
+      "119238380#0",
+      "778823268#0"
+    ]
+  },
+  "romana_faze": [
     {
-      "nume": "N–S: Magheru + Catargiu (viraje la stânga permisive)",
-      "brate": [
-        "magheru",
-        "catargiu"
+      "nume": "N–S: Magheru ↔ Lascăr Catargiu prin centru",
+      "verde": [
+        "axa_ns_centru",
+        "intrare_magheru",
+        "intrare_catargiu",
+        "iesire_magheru_catargiu",
+        "iesire_dacia"
       ],
-      "tip": "permisiv",
-      "durata_fixa": 40
+      "durata_fixa": 36
     },
     {
-      "nume": "E–V: Dacia est + Dacia vest (viraje la stânga permisive)",
-      "brate": [
-        "dacia_est",
-        "dacia_vest"
+      "nume": "E–V: Dacia în jurul insulei",
+      "verde": [
+        "inel_dacia",
+        "intrare_dacia_est",
+        "intrare_dacia_vest",
+        "iesire_dacia",
+        "iesire_magheru_catargiu"
       ],
-      "tip": "permisiv",
-      "durata_fixa": 30
+      "durata_fixa": 28
     },
     {
-      "nume": "Magheru exclusiv (toate mișcările protejate)",
-      "brate": [
-        "magheru"
+      "nume": "Pietoni: toate trecerile, axa centrală se golește",
+      "verde": [
+        "axa_ns_centru"
       ],
-      "tip": "exclusiv",
+      "durata_fixa": 12
+    },
+    {
+      "nume": "N–S, cu intrările Dacia deschise (fără dozare)",
+      "verde": [
+        "axa_ns_centru",
+        "intrare_magheru",
+        "intrare_catargiu",
+        "iesire_magheru_catargiu",
+        "intrare_dacia_est",
+        "intrare_dacia_vest",
+        "iesire_dacia"
+      ],
       "durata_fixa": 0
     },
     {
-      "nume": "Lascăr Catargiu exclusiv",
-      "brate": [
-        "catargiu"
+      "nume": "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)",
+      "verde": [
+        "inel_dacia",
+        "intrare_dacia_est",
+        "intrare_dacia_vest",
+        "iesire_dacia",
+        "iesire_magheru_catargiu",
+        "intrare_magheru",
+        "intrare_catargiu"
       ],
-      "tip": "exclusiv",
-      "durata_fixa": 0
-    },
-    {
-      "nume": "Dacia est exclusiv",
-      "brate": [
-        "dacia_est"
-      ],
-      "tip": "exclusiv",
-      "durata_fixa": 0
-    },
-    {
-      "nume": "Dacia vest exclusiv",
-      "brate": [
-        "dacia_vest"
-      ],
-      "tip": "exclusiv",
       "durata_fixa": 0
     }
   ],
-  "_romana_join": "Pentru fiecare semafor controlat, nodurile OSM aflate la mai puțin de 'raza_unire_m' de centrul intersecției sunt unite într-un singur nod semaforizat (nod agregat). Astfel se elimină blocajele artificiale de pe segmentele interne foarte scurte (0,2–17 m) importate din OSM și programele netconvert cu 8–12 faze nerealiste.",
-  "romana_approaches": {
-    "_descriere": "Muchia de intrare (linia de oprire) a fiecărui braț al pieței.",
-    "magheru": "448266581#1",
-    "catargiu": "1320256482",
-    "dacia_est": "232079775#2",
-    "dacia_vest": "-778823268#2"
-  }
+  "_romana_faze": "Fazele 1–3 formează planul fix de referință (ciclu ≈ 91 s cu galben 3 s și roșu de degajare 2 s); fazele 4–5 sunt opțiuni suplimentare pentru controlul adaptiv. Semnalele de pe brațele de ieșire au verde în toate fazele de vehicule (fiecare ieșire este alimentată în ambele faze principale – oprirea lor ar bloca inelul), iar trecerile de pietoni de pe ieșiri primesc verde în faza de pietoni. Trecerile sunt adăugate automat în orice fază în care nu le traversează niciun flux de vehicule verde."
 }
