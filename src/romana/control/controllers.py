@@ -99,9 +99,16 @@ class RLPolicy:
     name = "rl_ppo"
 
     def __init__(self, model_path: Path, controlled=("romana",)):
-        from stable_baselines3 import PPO
+        model_path = Path(model_path)
+        npz = model_path.with_suffix(".npz")
+        if npz.exists():               # inferență fără PyTorch (vezi policy_numpy.py)
+            from romana.control.policy_numpy import NumpyPolicy
 
-        self.model = PPO.load(str(model_path), device="cpu")
+            self.np_policy, self.model = NumpyPolicy(npz), None
+        else:
+            from stable_baselines3 import PPO
+
+            self.np_policy, self.model = None, PPO.load(str(model_path), device="cpu")
         self.controlled = list(controlled)
 
     def reset(self, traci):
@@ -130,7 +137,10 @@ class RLPolicy:
         return np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
 
     def act(self, traci, t):
-        a, _ = self.model.predict(self.observe(), deterministic=True)
+        if self.np_policy is not None:
+            a = self.np_policy.predict(self.observe())
+        else:
+            a, _ = self.model.predict(self.observe(), deterministic=True)
         for c, ai in zip(self.ctrls, np.atleast_1d(a)):
             c.request(int(ai))
 
