@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<additional>
+  <tlLogic id="catargiu_manu" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGggrrrrGGGGG" />
+    <phase duration="3" state="GGGggrrrryyyyy" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGGGrrrrrrrrr" />
+    <phase duration="3" state="GGGGyrrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGGrrrGgGrrrr" />
+    <phase duration="3" state="GGGGrrryyGrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGGrGGrrGrrrr" />
+    <phase duration="3" state="GGGGryyrrGrrrr" />
+  </tlLogic>
+  <tlLogic id="dacia_victoriei" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGggGGGgrrrr" />
+    <phase duration="3" state="yyyyyyyyrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGG" />
+    <phase duration="3" state="rrrrrrrryyyy" />
+  </tlLogic>
+  <tlLogic id="dacia_eminescu" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrrrGGGrrrrrrrrGGGrGGGGrrrrrrGGGGGGrrrrrr" />
+    <phase duration="3" state="yyyrrrrryyyrrrrrrrryyyrGGGGrrrrrryyyyyyrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrGGGGGrrrrrrrrrrrrrrrGGGGrrrrrrrrrrrrGGGGGG" />
+    <phase duration="3" state="rrryyyyyrrrrrrrrrrrrrrrGGGGrrrrrrrrrrrrGGGGGG" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGggGGGGGgrrrrrrGGGGrrrrrrrrrrrrGGGGGG" />
+    <phase duration="3" state="rrrrrrrryyyyyyyyyrrrrrryyyyrrrrrrrrrrrryyyyyy" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrrrrrrrrrrGGrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="rrrrrrrrrrrrrrrrryyrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGrrrrrrrrrrrGGGGGGGGrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="rrrrrrrrGGGrrrrrrrrrrryGGGGyyyrrrrrrrrrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGrrrrrrrrrrrrGGGGrrrGGgrrrrrrGGGGgg" />
+    <phase duration="3" state="rrrrrrrrGGGrrrrrrrrrrrrGGGGrrryyyrrrrrryyyyyy" />
+  </tlLogic>
+  <tlLogic id="romana" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrGGGrrGGGGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGG" />
+    <phase duration="3" state="rrryyyrryyyGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGG" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG" />
+    <phase duration="3" state="yyyrrryyrrrGGGGGGGGGGGGyyyyyyGGGGGGGGGGGGGGGGGGGGG" />
+  </tlLogic>
+  <tlLogic id="magheru_enescu" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGGGGGrrrrrrrrrrrrrrrrGGGGrrrrrrr" />
+    <phase duration="3" state="GGGyyyyrrrrrrrrrrrrrrrrGGGGrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrrGGGGGrrrrrrrrrrrGGGGrrrrrrr" />
+    <phase duration="3" state="GGGrrrryyyyyrrrrrrrrrrrGGGGrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrrrrrrrGGGGGGGrrrrGGGGrrrrrrr" />
+    <phase duration="3" state="GGGrrrrrrrrryyyyyyyrrrryyyyrrrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrrrrrrrrrrrrrrGGGGrrrrGGGrrrr" />
+    <phase duration="3" state="GGGrrrrrrrrrrrrrrrrGGGGrrrryyyrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGrrrrrrrrrrrrrrrrGGGGrrrrrrrGGGG" />
+    <phase duration="3" state="GGGrrrrrrrrrrrrrrrryyyyrrrrrrryyyy" />
+  </tlLogic>
+  <tlLogic id="dacia_polona" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrrrrrGGGGGGgGrrrGGGGrrrrr" />
+    <phase duration="3" state="rrrrrrrryyyyyyyGrrryyyyrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="GrrrrrrrrrrrrrrGGGgrrrrGGGGG" />
+    <phase duration="3" state="Grrrrrrrrrrrrrryyyyrrrryyyyy" />
+    <phase duration="30" minDur="10" maxDur="60" state="GGGgGrrrrrrrrrrrrrrGGGGrrrrr" />
+    <phase duration="3" state="yyyyGrrrrrrrrrrrrrrGGGGrrrrr" />
+    <phase duration="30" minDur="10" maxDur="60" state="rrrrGGGgGrrrrrrrrrrGGGGrrrrr" />
+    <phase duration="3" state="rrrryyyyGrrrrrrrrrrGGGGrrrrr" />
+  </tlLogic>
+</additional>
