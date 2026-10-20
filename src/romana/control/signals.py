@@ -114,22 +114,39 @@ class SignalController:
         return [self.t.lane.getLastStepHaltingNumber(ln) for ln in self.in_lanes]
 
     def phase_pressure(self) -> list[float]:
-        """Presiunea fiecărei faze (Varaiya 2013): Σ (coadă amonte − coadă aval) pe legăturile verzi."""
+        """Presiunea fiecărei faze (Varaiya 2013): Σ (coadă amonte − coadă aval) pe legăturile verzi.
+
+        Pentru trecerile de pietoni (legătură zonă de așteptare → trecere), „coada” amonte este
+        numărul de pietoni care așteaptă pe zona de așteptare (aceeași pondere ca un vehicul,
+        ca în recompensa agentului RL) – altfel faza de pietoni nu ar fi aleasă niciodată."""
         links = self.t.trafficlight.getControlledLinks(self.id)
-        q = {}
+        q, wp = {}, {}
 
         def queue(ln):
             if ln not in q:
-                q[ln] = self.t.lane.getLastStepHaltingNumber(ln)
+                q[ln] = 0 if ln.startswith(":") else self.t.lane.getLastStepHaltingNumber(ln)
             return q[ln]
+
+        def ped_queue(ln):
+            e = ln.rsplit("_", 1)[0]
+            if e not in wp:
+                wp[e] = sum(1 for p in self.t.edge.getLastStepPersonIDs(e) if self.t.person.getSpeed(p) < 0.1)
+            return wp[e]
 
         out = []
         for g in self.greens:
             p = 0.0
+            seen_areas = set()
             for i, ch in enumerate(g):
                 if ch in "Gg" and links[i]:
                     inc, outl, _ = links[i][0]
-                    p += queue(inc) - queue(outl)
+                    if inc.startswith(":"):          # trecere de pietoni
+                        area = inc.rsplit("_", 1)[0]
+                        if area not in seen_areas:   # o zonă de așteptare se numără o singură dată pe fază
+                            seen_areas.add(area)
+                            p += ped_queue(inc)
+                    else:
+                        p += queue(inc) - queue(outl)
             out.append(p)
         return out
 

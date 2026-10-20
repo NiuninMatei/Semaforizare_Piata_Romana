@@ -1,5 +1,6 @@
 """Strategii de control pentru semaforul Piața Romană (folosite la evaluare și în geamănul digital).
 
+  * FixedReference – planul fix de referință al rețelei (fazele N–S / E–V / pietoni, ciclu ≈ 91 s);
   * FixedWebster  – plan fix cu ciclul optim Webster (1958) calculat din debitele observate;
   * Actuated      – programul „actuated” al SUMO (prelungirea verdelui pe goluri între vehicule);
   * MaxPressure   – controlul de presiune maximă (Varaiya, 2013), aceleași 6 faze ca agentul;
@@ -14,34 +15,61 @@ from pathlib import Path
 import numpy as np
 
 from romana.common import NET_DIR, load_json
-from romana.control.signals import SignalController, romana_green_phases, yellow_between
+from romana.control.signals import SignalController, all_red_between, romana_green_phases, yellow_between
 
 SAT_FLOW = 1800  # veh/h/bandă verde (valoare uzuală HCM)
 
 
+def fixed_phase_indices() -> list[int]:
+    """Fazele planului fix de referință (cele cu durata_fixa > 0 în config/network.json)."""
+    return [i for i, p in enumerate(load_json("network.json")["romana_faze"]) if p["durata_fixa"] > 0]
+
+
 def webster_plan(od_json: Path, net_file: Path = NET_DIR / "romana.net.xml",
                  lost_per_phase: float = 7.0) -> dict:
-    """Ciclul optim Webster: C0 = (1.5 L + 5) / (1 − Y); verdele ∝ y_i."""
+    """Ciclul optim Webster: C0 = (1.5 L + 5) / (1 − Y); verdele fazelor de vehicule ∝ y_i.
+
+    Fluxul critic al unei faze = cel mai încărcat braț de intrare cu verde în faza respectivă
+    (grupurile `intrare_<braț>`), raportat la debitul de saturație al benzilor de autoturisme
+    (benzile dedicate STB nu se numără). Faza de pietoni își păstrează durata din planul fix
+    (timp de traversare) și intră integral în timpul pierdut pentru vehicule."""
     import sumolib
 
     cfg = load_json("network.json")
-    appr = {k: v for k, v in cfg["romana_approaches"].items() if not k.startswith("_")}
+    arms = load_json("demand.json")["brate"]
     net = sumolib.net.readNet(str(net_file))
-    lanes = {a: net.getEdge(e).getLaneNumber() for a, e in appr.items()}
+    lanes = {a: sum(ln.allows("passenger") for ln in net.getEdge(v["intrare"]).getLanes())
+             for a, v in arms.items() if v["intrare"]}
     data = json.loads(Path(od_json).read_text(encoding="utf-8"))["intervale"]
-    flow = {a: 0.0 for a in appr}
+    flow = {a: 0.0 for a in lanes}
     for r in data:
         for i, o in enumerate(r["origini"]):
             flow[o] = max(flow[o], sum(r["od_veh_h"][i]))      # intervalul cel mai încărcat
-    phases = [p for p in cfg["romana_phases"] if p["durata_fixa"] > 0]
-    y = [max(flow[a] / (SAT_FLOW * lanes[a]) for a in p["brate"]) for p in phases]
-    Y = sum(y)
-    L = lost_per_phase * len(phases)
+    phases = [cfg["romana_faze"][i] for i in fixed_phase_indices()]
+    crit = [[g[len("intrare_"):] for g in p["verde"] if g.startswith("intrare_")] for p in phases]
+    veh = [k for k, c in enumerate(crit) if c]
+    y = {k: max(flow[a] / (SAT_FLOW * lanes[a]) for a in crit[k]) for k in veh}
+    Y = sum(y.values())
+    ped_time = sum(phases[k]["durata_fixa"] for k in range(len(phases)) if k not in veh)
+    L = lost_per_phase * len(phases) + ped_time
     C = (1.5 * L + 5) / max(0.05, 1 - Y) if Y < 0.95 else 150.0
-    C = float(np.clip(C, 50, 150))
-    greens = [max(10.0, (C - L) * yi / Y) for yi in y]
+    C = float(np.clip(C, 60, 150))
+    greens = [max(10.0, (C - L) * y[k] / Y) if k in y else float(phases[k]["durata_fixa"])
+              for k in range(len(phases))]
     return {"ciclu_s": round(C, 1), "Y": round(Y, 3), "verde_s": [round(g, 1) for g in greens],
             "debite_veh_h": flow, "benzi": lanes}
+
+
+class FixedReference:
+    """Planul fix de referință din rețea (programul '0': duratele `durata_fixa` din config/network.json)."""
+
+    name = "fix_referinta"
+
+    def reset(self, traci):
+        traci.trafficlight.setProgram("romana", "0")
+
+    def act(self, traci, t):
+        pass
 
 
 class FixedWebster:
@@ -52,15 +80,13 @@ class FixedWebster:
 
     def reset(self, traci):
         greens, _ = romana_green_phases()
-        cfg = load_json("network.json")
-        idx = [i for i, p in enumerate(cfg["romana_phases"]) if p["durata_fixa"] > 0]
+        idx = fixed_phase_indices()
         phases = []
-        n = len(greens[0])
         for k, i in enumerate(idx):
             g, nxt = greens[i], greens[idx[(k + 1) % len(idx)]]
             phases += [traci.trafficlight.Phase(self.plan["verde_s"][k], g),
                        traci.trafficlight.Phase(3, yellow_between(g, nxt)),
-                       traci.trafficlight.Phase(2, "r" * n)]
+                       traci.trafficlight.Phase(2, all_red_between(g, nxt))]
         traci.trafficlight.setProgramLogic("romana", traci.trafficlight.Logic("webster", 0, 0, phases))
         traci.trafficlight.setProgram("romana", "webster")
 

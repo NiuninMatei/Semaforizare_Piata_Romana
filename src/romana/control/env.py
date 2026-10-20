@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import os
 import random
+import sys
 from pathlib import Path
 
 import gymnasium as gym
@@ -28,11 +29,30 @@ from romana.common import NET_DIR, sumo_home
 from romana.control.signals import (SignalController, green_phases_from_program, observation,
                                     romana_green_phases, waiting_total)
 
+def _import_libsumo():
+    """libsumo (mult mai rapid pentru antrenare). Pe Windows, PYTHONPATH-ul setat de instalatorul
+    SUMO pune `SUMO/tools` înaintea pachetelor pip, iar libsumo din instalare nu găsește toate
+    DLL-urile; în acest caz se încarcă pachetul pip `libsumo`, care le conține."""
+    try:
+        import libsumo
+        return libsumo
+    except ImportError:
+        for m in [m for m in sys.modules if m == "libsumo" or m.startswith("libsumo.")]:
+            del sys.modules[m]
+        saved = sys.path[:]
+        sys.path = [p for p in saved if "site-packages" in p] + [p for p in saved if "site-packages" not in p]
+        try:
+            import libsumo
+            return libsumo
+        finally:
+            sys.path = saved
+
+
 sumo_home()
 try:
     if os.environ.get("ROMANA_USE_TRACI"):
         raise ImportError
-    import libsumo as traci  # mult mai rapid pentru antrenare
+    traci = _import_libsumo()
     LIBSUMO = True
 except ImportError:
     import traci

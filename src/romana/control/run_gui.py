@@ -17,14 +17,17 @@ from romana.common import DEMAND_DIR, MODELS_DIR, ROOT
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--scenariu", default=str(ROOT / "sumo/scenarios/referinta_varf.sumocfg"))
-    ap.add_argument("--strategie", default="rl_ppo", choices=["rl_ppo", "rl_ppo_coridor", "fix_webster", "actuated", "max_pressure"])
+    ap.add_argument("--strategie", default="rl_ppo", choices=["rl_ppo", "rl_ppo_coridor", "fix_referinta", "fix_webster",
+                                                              "actuated", "max_pressure"])
     args = ap.parse_args(argv)
     os.environ["ROMANA_USE_TRACI"] = "1"          # sumo-gui necesită TraCI clasic, nu libsumo
     from romana.control import controllers as C
     from romana.control.env import start_sumo, traci
 
     sc = Path(args.scenariu)
-    if args.strategie == "fix_webster":
+    if args.strategie == "fix_referinta":
+        ctrl = C.FixedReference()
+    elif args.strategie == "fix_webster":
         ctrl = C.FixedWebster(DEMAND_DIR / sc.stem / "od_estimat.json")
     elif args.strategie == "actuated":
         ctrl = C.Actuated()
