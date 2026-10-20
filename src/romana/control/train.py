@@ -43,6 +43,8 @@ def main(argv=None) -> None:
                     help="agentul poate alege și fazele „fără dozare” (implicit doar fazele planului real)")
     ap.add_argument("--medii", type=int, default=6,
                     help="simulări SUMO în paralel (procese separate); 1 = un singur proces")
+    ap.add_argument("--continua", action="store_true",
+                    help="continuă antrenarea modelului existent models/ppo_<nume>.zip (pașii se adună)")
     args = ap.parse_args(argv)
 
     from functools import partial
@@ -61,25 +63,36 @@ def main(argv=None) -> None:
     from romana.control.controllers import fixed_phase_indices
 
     phases = None if args.toate_fazele else fixed_phase_indices()
-    fns = [partial(make_env, scen, controlled, args.seed + 1000 * i, phases, str(out / f"monitor_{i}"))
-           for i in range(args.medii)]
+    path = MODELS_DIR / f"ppo_{name}.zip"
+    prev_steps, prev_min = 0, 0.0
+    if args.continua:
+        old = json.loads(path.with_suffix(".json").read_text(encoding="utf-8"))
+        if old.get("faze_actiuni_romana") != phases or old.get("controlate") != controlled:
+            raise SystemExit("Modelul existent are alt spațiu de acțiuni; nu poate fi continuat.")
+        prev_steps, prev_min = old["pasi"], old["durata_min"]
+    # la continuare, jurnalele de episoade primesc un sufix (cele vechi rămân pentru curba de învățare)
+    suffix = f"_de_la_{prev_steps}" if args.continua else ""
+    fns = [partial(make_env, scen, controlled, args.seed + 1000 * i + prev_steps, phases,
+                   str(out / f"monitor_{i}{suffix}")) for i in range(args.medii)]
     env = SubprocVecEnv(fns) if args.medii > 1 else DummyVecEnv(fns)
     # ~1024 de tranziții pe actualizare, indiferent de numărul de medii (multiplu de 64 → loturi întregi de 128)
     n_steps = -(-1024 // (args.medii * 64)) * 64
-    model = PPO("MlpPolicy", env, learning_rate=3e-4, n_steps=n_steps, batch_size=128, n_epochs=10,
-                gamma=0.98, gae_lambda=0.95, ent_coef=0.01, clip_range=0.2,
-                policy_kwargs={"net_arch": [128, 128]}, seed=args.seed, verbose=1, device="cpu")
+    if args.continua:
+        model = PPO.load(str(path), env=env, device="cpu", n_steps=n_steps)
+    else:
+        model = PPO("MlpPolicy", env, learning_rate=3e-4, n_steps=n_steps, batch_size=128, n_epochs=10,
+                    gamma=0.98, gae_lambda=0.95, ent_coef=0.01, clip_range=0.2,
+                    policy_kwargs={"net_arch": [128, 128]}, seed=args.seed, verbose=1, device="cpu")
     t0 = time.time()
-    model.learn(total_timesteps=args.pasi,
+    model.learn(total_timesteps=args.pasi, reset_num_timesteps=not args.continua,
                 callback=CheckpointCallback(save_freq=max(1, 25_000 // args.medii), save_path=str(out / "checkpoints"),
                                             name_prefix=name))
-    path = MODELS_DIR / f"ppo_{name}.zip"
     model.save(str(path))
     from romana.control.policy_numpy import export
 
     export(path)                      # copie NumPy a politicii, rulabilă fără PyTorch
     meta = {"model": path.name, "controlate": controlled, "scenarii": [Path(s).name for s in scen],
-            "pasi": args.pasi, "durata_min": round((time.time() - t0) / 60, 1),
+            "pasi": int(model.num_timesteps), "durata_min": round(prev_min + (time.time() - t0) / 60, 1),
             "hiperparametri": {"lr": 3e-4, "n_steps": n_steps, "medii_paralele": args.medii, "batch": 128, "gamma": 0.98, "ent_coef": 0.01,
                                "retea": [128, 128], "delta_t_s": 5, "verde_min_s": 10, "verde_max_s": 90},
             "faze_romana": load_json(ROOT / "sumo" / "net" / "network_info.json")["phase_names"],
