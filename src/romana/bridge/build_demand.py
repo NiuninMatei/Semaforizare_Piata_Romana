@@ -179,8 +179,8 @@ def background(recs: list[dict], cfg: dict, path: Path) -> int:
     return len(deps)
 
 
-def pedestrians(recs: list[dict], cfg: dict, path: Path) -> int:
-    """Pietonii care traversează zona pieței (trotuare + treceri), cu debitul observat pe cameră."""
+def pedestrian_pool(cfg: dict) -> list[str]:
+    """Trasee pietonale candidate (șiruri de muchii) care trec prin zona pieței (≤ 120 m de centru)."""
     cand = DEMAND_DIR / "candidate_pietoni.rou.xml"
     if not cand.exists():
         tmp = DEMAND_DIR / "_tmp"
@@ -207,7 +207,12 @@ def pedestrians(recs: list[dict], cfg: dict, path: Path) -> int:
                     k += 1
         ET.indent(out)
         ET.ElementTree(out).write(cand, encoding="UTF-8", xml_declaration=True)
-    pool = [el.find("walk").get("edges") for _, el in ET.iterparse(cand) if el.tag == "person"]
+    return [el.find("walk").get("edges") for _, el in ET.iterparse(cand) if el.tag == "person"]
+
+
+def pedestrians(recs: list[dict], cfg: dict, path: Path) -> int:
+    """Pietonii care traversează zona pieței (trotuare + treceri), cu debitul observat pe cameră."""
+    pool = pedestrian_pool(cfg)
     root = ET.Element("routes")
     t0, n = 0.0, 0
     for r in recs:

@@ -1,10 +1,12 @@
 """Geamănul digital live: camera → SUMO în timp real → semafor controlat de AI.
 
 Procesul citește în fiecare secundă starea publicată de modulul de viziune
-(outputs/live/state.json – debite pe brațe și viraje observate) și injectează în SUMO
-vehicule pe brațele Pieței Romane, cu aceleași debite și aceleași proporții de viraj
-(proces Poisson, rute realiste din setul candidat). Semaforul pieței este condus de
-strategia aleasă din dashboard: agentul RL, planul fix Webster, Max-Pressure sau manual.
+(outputs/live/state.json – debite pe brațe, viraje observate, pietoni pe treceri) și
+injectează în SUMO vehicule pe brațele Pieței Romane, cu aceleași debite și aceleași
+proporții de viraj (proces Poisson, rute realiste din setul candidat; bicicliștii pe rute
+permise bicicletelor), plus pietoni pe traseele care trec prin piață (debitul de pe trecerile
+vizibile × factor_extrapolare_pietoni). Semaforul pieței este condus de strategia aleasă din
+dashboard: agentul RL, planul fix de referință (N–S / E–V / pietoni), Max-Pressure sau manual.
 
 Dacă fluxul camerei nu este disponibil (stare mai veche de 60 s), se folosește
 profilul de referință și acest lucru este semnalat explicit în dashboard.
@@ -29,14 +31,16 @@ from romana.control.signals import SignalController, romana_green_phases
 LIVE = OUTPUT_DIR / "live"
 
 
-def load_route_pool(cfg: dict) -> dict[tuple[str, str], list[list[str]]]:
-    arms = cfg["brate"]
-    if not (DEMAND_DIR / "candidate.rou.xml").exists():   # fișier regenerabil, nu e în Git
-        from romana.bridge.build_demand import build_candidates
+def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
+    from romana.bridge.build_demand import build_candidates, candidates_file, write_vtypes
 
-        build_candidates(cfg)
+    arms = cfg["brate"]
+    cand = candidates_file(vclass)
+    if not cand.exists():   # fișier regenerabil, nu e în Git
+        write_vtypes()
+        build_candidates(cfg, vclass=vclass)
     pool = defaultdict(list)
-    for _, el in ET.iterparse(DEMAND_DIR / "candidate.rou.xml"):
+    for _, el in ET.iterparse(cand):
         if el.tag != "route":
             continue
         edges = el.get("edges").split()
@@ -76,6 +80,7 @@ def main(argv=None) -> None:
     ap.add_argument("--gui", action="store_true", help="deschide sumo-gui")
     ap.add_argument("--model", default=str(MODELS_DIR / "ppo_romana.zip"))
     ap.add_argument("--viteza", type=float, default=1.0, help="1 = timp real; 0 = cât de repede se poate")
+    ap.add_argument("--durata", type=int, default=0, help="secunde simulate până la oprire (0 = continuu)")
     args = ap.parse_args(argv)
 
     from romana.common import sumo_binary, sumo_home
@@ -84,7 +89,12 @@ def main(argv=None) -> None:
     import traci  # TraCI clasic: permite și sumo-gui
 
     cfg = load_json("demand.json")
-    pool = load_route_pool(cfg)
+    pools = {"passenger": load_route_pool(cfg), "bicycle": load_route_pool(cfg, "bicycle")}
+    from romana.bridge.build_demand import pedestrian_pool
+
+    ped_pool = pedestrian_pool(cfg)
+    ref = cfg["profil_referinta"]
+    shares = {k: v for k, v in ref["pondere_clase"].items() if v > 0}
     traci.start([sumo_binary("sumo-gui" if args.gui else "sumo"), "-n", str(NET_DIR / "romana.net.xml"),
                  "--additional-files", f"{DEMAND_DIR / 'vtypes.add.xml'},{NET_DIR / 'tls_actuated.add.xml'}",
                  "--no-step-log", "--no-warnings", "--time-to-teleport", "300", "--begin", "0",
@@ -105,48 +115,67 @@ def main(argv=None) -> None:
         rl = RLPolicy(Path(args.model))
         rl.reset(traci)
         rl.ctrls = [ctrl]           # aceeași instanță de controler pentru toate modurile
-    plan_cycle = [0, 1]
+    from romana.control.controllers import fixed_phase_indices
+
+    plan_cycle = fixed_phase_indices()            # planul fix de referință: N–S, E–V, pietoni
+    plan_green = {i: load_json("network.json")["romana_faze"][i]["durata_fixa"] for i in plan_cycle}
     info = json.loads((NET_DIR / "network_info.json").read_text(encoding="utf-8"))
     route_ids: dict[tuple, list[str]] = {}
-    n_veh, t, last_src = 0, 0, ""
+    n_veh, n_ped, t, last_src = 0, 0, 0, ""
     hist = []
     LIVE.mkdir(parents=True, exist_ok=True)
     print("[geamăn digital] pornit. Moduri: ai / fix / max_pressure / manual (din dashboard)")
     try:
-        while True:
+        while not args.durata or t < args.durata:
             t0 = time.time()
             cam = read_json(LIVE / "state.json", max_age=60)
             cmd = read_json(LIVE / "command.json") or {"mod": "ai" if rl else "fix"}
             if cam and cam.get("intrari_veh_h") and cam.get("secunde_interval", 0) >= 60:
                 rates = {k: float(v) for k, v in cam["intrari_veh_h"].items()}
                 obs_turns = cam.get("total_viraje", {})
+                ped_rate = sum(cam.get("pietoni_h", {}).values()) * cfg.get("factor_extrapolare_pietoni", 1.0)
                 src = "camera live"
             else:
-                rates = {k: float(v) for k, v in cfg["profil_referinta"]["intrari_veh_h"].items()}
+                rates = {k: float(v) for k, v in ref["intrari_veh_h"].items()}
                 obs_turns = {}
+                ped_rate = float(ref.get("pietoni_h", 0))
                 src = "profil de referință (camera indisponibilă)"
             if src != last_src:
                 print(f"[geamăn digital] sursa cererii: {src}")
                 last_src = src
             ratios = turning_ratios(cfg, obs_turns)
-            # --- injectare vehicule (Poisson) ---
+            # --- injectare vehicule (Poisson), pe tipuri după ponderile profilului ---
             for o, lam in rates.items():
                 if o not in ratios or random.random() >= lam / 3600.0:
                     continue
                 d = random.choices(list(ratios[o]), weights=list(ratios[o].values()))[0]
-                routes = pool.get((o, d))
+                vt = random.choices(list(shares), weights=list(shares.values()))[0]
+                vclass = "bicycle" if vt == "bicycle" else "passenger"
+                routes = pools[vclass].get((o, d))
                 if not routes:
                     continue
-                key = (o, d)
+                key = (vclass, o, d)
                 if key not in route_ids:
                     route_ids[key] = []
                     for k, edges in enumerate(routes[:20]):
-                        rid = f"r_{o}_{d}_{k}"
+                        rid = f"r_{vclass}_{o}_{d}_{k}"
                         traci.route.add(rid, edges)
                         route_ids[key].append(rid)
-                vt = random.choices(["passenger", "bus", "truck", "motorcycle"], weights=[0.9, 0.04, 0.03, 0.03])[0]
                 traci.vehicle.add(f"live_{n_veh}", random.choice(route_ids[key]), typeID=vt, departLane="best")
                 n_veh += 1
+            # --- injectare pietoni (Poisson) pe traseele care trec prin piață ---
+            if ped_pool and random.random() < ped_rate / 3600.0:
+                edges = random.choice(ped_pool).split()
+                pid = f"pieton_live_{n_ped}"
+                try:
+                    traci.person.add(pid, edges[0], 0.0, typeID="pieton")
+                    traci.person.appendWalkingStage(pid, edges, traci.lane.getLength(f"{edges[-1]}_0") / 2)
+                    n_ped += 1
+                except traci.exceptions.TraCIException as e:   # traseu invalid: se sare peste
+                    print(f"[geamăn digital] pieton omis: {e}")
+                    if pid in traci.person.getIDList():
+                        traci.person.remove(pid)
+                    n_ped += 1
             # --- control semafor ---
             mode = cmd.get("mod", "ai")
             if t % 5 == 0:
@@ -156,19 +185,22 @@ def main(argv=None) -> None:
                     ctrl.request(int(np.argmax(ctrl.phase_pressure())))
                 elif mode == "manual":
                     ctrl.request(int(cmd.get("faza", ctrl.current)))
-                elif mode == "fix" and ctrl.green_time >= (40 if ctrl.current == 0 else 30):
-                    ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % 2] if ctrl.current in plan_cycle else 0)
+                elif mode == "fix":
+                    if ctrl.current not in plan_cycle:
+                        ctrl.request(plan_cycle[0])
+                    elif ctrl.green_time >= plan_green[ctrl.current]:
+                        ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
             traci.simulationStep()
             ctrl.tick()
             t += 1
             # --- stare pentru dashboard ---
             if True:
-                arms_q = defaultdict(int)
+                arms_q, seen = defaultdict(int), set()
                 for i, ln in enumerate(traci.trafficlight.getControlledLanes("romana")):
                     g = info["link_group"][i] or ""
-                    if g.startswith("intrare_"):
-                        arm = g[len("intrare_"):].replace("dacia_est", "dacia_est")
-                        arms_q[arm] += traci.lane.getLastStepHaltingNumber(ln)
+                    if g.startswith("intrare_") and ln not in seen:   # o bandă controlează mai multe legături
+                        seen.add(ln)
+                        arms_q[g[len("intrare_"):]] += traci.lane.getLastStepHaltingNumber(ln)
                 arms_q["pietoni"] = sum(ctrl.ped_waiting())
                 q_tot = sum(traci.lane.getLastStepHaltingNumber(ln) for ln in ctrl.in_lanes)
                 hist.append([t, q_tot])
@@ -178,7 +210,9 @@ def main(argv=None) -> None:
                          "verde_s": ctrl.green_time, "faze": ctrl.names, "model_ai": bool(rl),
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
                          "vehicule_in_retea": traci.vehicle.getIDCount(), "vehicule_injectate": n_veh,
-                         "debite_folosite": rates, "istoric_coada": hist[::5]}
+                         "pietoni_in_retea": traci.person.getIDCount(), "pietoni_injectati": n_ped,
+                         "debite_folosite": rates, "pietoni_h_folositi": round(ped_rate),
+                         "istoric_coada": hist[::5]}
                 tmp = LIVE / "sim_tmp.json"
                 tmp.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
                 tmp.replace(LIVE / "sim_state.json")

@@ -112,7 +112,7 @@ footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1500px;ma
 <footer>Imagini: © WebcamRomania.ro, prelucrate doar în memorie, persoanele estompate. Hartă și rețea: © OpenStreetMap contributors, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0).</footer>
 <script>
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
-const MOD={ai:"Agent AI (PPO)",fix:"Plan fix",max_pressure:"Max-Pressure",manual:"Manual"};
+const MOD={ai:"Agent AI (PPO)",fix:"Plan fix (N–S / E–V / pietoni)",max_pressure:"Max-Pressure",manual:"Manual"};
 // geometrie aproximativă: unghiuri reale ale brațelor (nord sus)
 const BRATE={catargiu:[-130,"in"],caderea_bastiliei:[-80,"out"],dacia_est:[0,"in"],magheru:[100,"in"],mendeleev:[140,"out"],dacia_vest:[180,"in"]};
 const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],[],["magheru","catargiu","dacia_est","dacia_vest"],["magheru","catargiu","dacia_est","dacia_vest"]];
@@ -138,6 +138,8 @@ function schema(s){
       h+=`<text x="${xl}" y="${yl+(Math.sin(a)>0?10:-2)}" text-anchor="middle" font-family="Barlow" font-size="11.5" fill="#5d6873">${NUME[b]} (ieșire)</text>`;
     }
   }
+  const pw=s&&s.coada_brate?(s.coada_brate.pietoni||0):null;
+  if(pw!==null) h+=`<text x="${cx}" y="${cy+4}" text-anchor="middle" font-family="Barlow" font-size="11.5" fill="#1f2a33"><title>Pietoni care așteaptă la trecerile pieței</title>pietoni ${pw}</text>`;
   g.innerHTML=h;
 }
 function grafic(ist){
@@ -185,14 +187,16 @@ async function actualizeaza(){
     $("s-fps").textContent=`${c.fps} cadre/s analizate`; $("s-urm").textContent=`${c.vehicule_urmarite} vehicule urmărite`;
     $("cadru").src="/api/frame.jpg?t="+Date.now(); $("cadru-gol").style.display="none";
     const ins=c.intrari_veh_h||{}, outs=c.iesiri_veh_h||{}, k=Object.keys(NUME);
+    const ped=c.pietoni_h||{};
     $("debite").innerHTML=k.map(b=>`<tr><td>${NUME[b]}</td><td class="n">${ins[b]??"–"}</td><td class="n">${outs[b]??"–"}</td></tr>`).join("")+
+      Object.keys(ped).map(b=>`<tr><td>Pietoni pe trecerea ${NUME[b]||b}</td><td class="n" colspan="2">${ped[b]} pers/h</td></tr>`).join("")+
       `<tr><td colspan="3" class="sub">Interval curent: ${Math.round((c.secunde_interval||0)/60)} min. Debitele se stabilizează după ~5 min.</td></tr>`;
   } else { $("p-cam").className="punct err"; $("s-cam").textContent="camera: modulul de viziune nu rulează"; $("s-fps").textContent=""; $("s-urm").textContent=""; $("cadru-gol").style.display="grid" }
   // simulare
   if(sim){
     $("faza").textContent=sim.faza_nume.split("(")[0].trim();
     const et={green:"verde",yellow:"galben",red:"roșu de degajare"}[sim.etapa];
-    $("faza-det").textContent=`${et}, de ${sim.verde_s} s · condus de ${MOD[sim.mod]} · ${sim.vehicule_in_retea} vehicule în simulare`;
+    $("faza-det").textContent=`${et}, de ${sim.verde_s} s · condus de ${MOD[sim.mod]} · ${sim.vehicule_in_retea} vehicule și ${sim.pietoni_in_retea??0} pietoni în simulare`;
     $("sursa").textContent="Cererea de trafic vine din: "+sim.sursa;
     grafic(sim.istoric_coada);
   } else { $("faza").textContent="—"; $("faza-det").textContent="Geamănul digital nu rulează. Porniți scripts\\6_geaman_digital.bat."; grafic(null) }
