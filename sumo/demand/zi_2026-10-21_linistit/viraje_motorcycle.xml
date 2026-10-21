@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+  <interval id="i0" begin="0" end="900" />
+  <interval id="i900" begin="900" end="1800" />
+  <interval id="i1800" begin="1800" end="2700" />
+  <interval id="i2700" begin="2700" end="3600" />
+</data>
