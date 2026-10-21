@@ -143,6 +143,7 @@ class RLPolicy:
         meta = model_path.with_suffix(".json")
         meta = json.loads(meta.read_text(encoding="utf-8")) if meta.exists() else {}
         self.romana_phases = meta.get("faze_actiuni_romana")   # None = toate fazele (modele vechi)
+        self.upstream_obs = bool(meta.get("obs_amonte", False))
 
     def reset(self, traci):
         from romana.control.signals import action_maps, green_phases_from_program
@@ -157,12 +158,18 @@ class RLPolicy:
             self.ctrls.append(SignalController(traci, tid, g, n))
         self.maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
+        if self.upstream_obs:
+            from romana.control.signals import upstream_groups
+
+            self.upstream = [upstream_groups(traci, c) for c in self.ctrls]
+        else:
+            self.upstream = None
         self.traci = traci
 
     def observe(self):
         from romana.control.signals import observation
 
-        return observation(self.traci, self.ctrls, self.cap)
+        return observation(self.traci, self.ctrls, self.cap, self.upstream)
 
     def act(self, traci, t):
         if self.np_policy is not None:
