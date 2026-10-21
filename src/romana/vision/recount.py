@@ -8,6 +8,7 @@ Exemple:
   python -m romana.vision.recount                                   # toate zilele din data/trajectories
   python -m romana.vision.recount --zi 2026-10-21 --interval 900
   python -m romana.vision.recount --zi 2026-10-21 --directii        # verificarea sensului de mers pe zone
+  python -m romana.vision.recount --flux cadru.jpg                   # câmpul de mișcare, pentru calibrarea zonelor
 """
 from __future__ import annotations
 
@@ -27,7 +28,13 @@ from romana.vision.od_counter import PEDESTRIAN, ODCounter, Params, classify, lo
 def read_trajectories(files: list[Path]):
     for f in files:
         with gzip.open(f, "rt", encoding="utf-8") as fh:
-            for line in fh:
+            while True:
+                try:
+                    line = fh.readline()
+                except (EOFError, OSError):       # fișier în curs de scriere: ultimul bloc e incomplet
+                    break
+                if not line:
+                    break
                 try:
                     r = json.loads(line)
                 except json.JSONDecodeError:      # ultima linie poate fi incompletă dacă procesul a fost oprit
@@ -79,6 +86,52 @@ def directions(files: list[Path], zones, center=(0.55, 0.52)) -> None:
             print(f"{z.id:24s} {z.role:8s} spre centru {a:5d}   dinspre centru {b:5d}   {'OK' if ok else 'SENS INVERS?'}")
 
 
+def flow_image(files: list[Path], zones, background, out_png: Path, cell=(0.015, 0.012)) -> None:
+    """Câmpul de mișcare al vehiculelor (direcția medie pe celule) + capetele traiectoriilor.
+
+    Săgeți galbene = mișcare în jos în imagine, mov = în sus; puncte verzi = începuturi de
+    traiectorii, roșii = sfârșituri. Servește la plasarea zonelor (sensul benzilor și locurile în
+    care vehiculele apar din / dispar în străzile parțial ascunse)."""
+    import cv2
+
+    h, w = background.shape[:2]
+    acc = defaultdict(lambda: np.zeros(3))
+    starts, ends = [], []
+    for _, vt, pts in read_trajectories(files):
+        if vt == PEDESTRIAN or len(pts) < 5:
+            continue
+        P = np.array([(x * w, y * h) for _, x, y in pts])
+        if np.linalg.norm(P[-1] - P[0]) > 0.03 * w:
+            starts.append(P[0])
+            ends.append(P[-1])
+        for a, b in zip(P[:-1], P[1:]):
+            v = b - a
+            n = np.linalg.norm(v)
+            if 3 < n < 250:
+                acc[(int(a[0] / w / cell[0]), int(a[1] / h / cell[1]))] += [v[0] / n, v[1] / n, 1]
+    img = (background * 0.55).astype(np.uint8)
+    for z in zones:
+        cv2.polylines(img, [z.poly_px(w, h)], True, z.color, 3)
+        cv2.putText(img, z.id, tuple(z.poly_px(w, h)[0]), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 2)
+    for p in starts:
+        cv2.circle(img, tuple(p.astype(int)), 5, (0, 200, 0), -1)
+    for p in ends:
+        cv2.circle(img, tuple(p.astype(int)), 5, (0, 0, 230), -1)
+    for (i, j), (vx, vy, n) in acc.items():
+        if n < 5 or np.hypot(vx, vy) / n < 0.5:
+            continue                                      # celule rare sau cu sensuri amestecate
+        c = np.array([(i + 0.5) * cell[0] * w, (j + 0.5) * cell[1] * h])
+        u = np.array([vx, vy]) / np.hypot(vx, vy)
+        cv2.arrowedLine(img, tuple((c - u * 18).astype(int)), tuple((c + u * 18).astype(int)),
+                        (0, 255, 255) if u[1] > 0 else (255, 0, 255), 3, tipLength=0.5)
+    for v in np.arange(0.05, 1.0, 0.05):                 # gradație normalizată, pentru editarea poligoanelor
+        cv2.putText(img, f"{v:.2f}", (int(v * w), int(0.37 * h)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
+        if v >= 0.4:
+            cv2.putText(img, f"{v:.2f}", (5, int(v * h)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2)
+    cv2.imwrite(str(out_png), img[int(0.35 * h):])
+    print(f"[OK] {out_png}  ({len(starts)} traiectorii lungi)")
+
+
 def main(argv=None) -> None:
     cam = load_json("camera.json")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -86,6 +139,8 @@ def main(argv=None) -> None:
     ap.add_argument("--interval", type=int, default=cam.get("interval_s", 900))
     ap.add_argument("--out", default=str(COUNTS_DIR))
     ap.add_argument("--directii", action="store_true", help="doar verificarea sensului de mers pe zone")
+    ap.add_argument("--flux", metavar="IMAGINE.jpg",
+                    help="desenează câmpul de mișcare și capetele traiectoriilor peste un cadru (fișier .jpg)")
     args = ap.parse_args(argv)
     files = sorted(TRAJ_DIR.glob("traiectorii_*.jsonl.gz"))
     if args.zi:
@@ -95,6 +150,12 @@ def main(argv=None) -> None:
     zones = load_zones(cam)
     if args.directii:
         directions(files, zones)
+        return
+    if args.flux:
+        import cv2
+
+        bg = cv2.imread(args.flux)
+        flow_image(files, zones, bg, Path(args.flux).with_name(Path(args.flux).stem + "_flux.jpg"))
         return
     p = Params(capat_s=cam.get("capat_s", 1.5))
     recs = recount(files, zones, args.interval, Path(args.out), p)

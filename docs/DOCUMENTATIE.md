@@ -117,6 +117,29 @@ Fluxul `mono.m3u8` este o listă HLS de segmente `.ts` de 6 s, H.264, 3288 × 18
 `ffprobe` la 20.10.2026). `FrameSource` îl citește prin FFmpeg/OpenCV[^opencv][^ffmpeg] pe un fir separat și
 păstrează doar ultimul cadru; la căderea fluxului se reconectează cu întârziere exponențială (1 s → 30 s).
 
+**Camere pentru intersecțiile conexe.** S-au căutat (21.10.2026) toate camerele publice din zona modelată:
+lista Webcam România pentru București (8 camere)[^webcam-buc], Windy Webcams, Meteoblue și listele de
+intersecții supravegheate. Rezultat:
+
+| Cameră | Ce arată | Folosită? |
+|---|---|---|
+| Webcam România – Piața Romană (HLS) | piața, toate cele 6 brațe, 2 treceri de pietoni | **da** – singura sursă video a proiectului |
+| Webcam România – Piața Victoriei (YouTube live) | pasajul Victoriei, în afara zonei modelate (dincolo de Lascăr Catargiu × Gh. Manu) | nu |
+| „Calea Victoriei City Cam” (YouTube) | imagine statică a Ateneului, fără trafic | nu |
+| Windy / Meteoblue „Piața Romană” | aceeași cameră Webcam România | – |
+| Listele de „intersecții supravegheate” (Dacia × Dorobanți, Magheru × Enescu) | camere ale Poliției / PMB, fără imagine publică | nu (indisponibile) |
+
+Pentru intersecțiile conexe (§ 6.1) nu există deci camere publice. Conform principiului proiectului, traficul
+lor este simulat din datele Pieței Romane: rutele candidate pornesc de la marginea rețelei și traversează
+intersecțiile vecine (§ 5.2), astfel încât fiecare vecin primește exact traficul observat care intră în piață
+sau iese din ea pe brațul lui, plus traficul de fond declarat (15%).
+
+**Calculul pe laptop.** Laptopul nu are placă grafică NVIDIA; YOLO11s la 1600 px rula pe procesor cu ≈0,9
+cadre/s, prea puțin pentru urmărire (traiectorii fragmentate, Magheru subnumărat la ≈250 veh/h). Detectorul
+este exportat automat în formatul Intel OpenVINO[^openvino] (`runtime: "openvino"` în `config/camera.json`) și
+rulează pe placa grafică Intel integrată: ≈5 cadre/s cu exact aceleași detecții pe cadrul de test (34 de
+vehicule, 11 persoane), lăsând procesorul liber pentru simulare și antrenare.
+
 ### 4.2 Detecție și urmărire
 
 * **Detecție:** Ultralytics YOLO11[^yolo11], preantrenat pe COCO[^coco]; clasele folosite: car (2) → `passenger`,
@@ -147,10 +170,29 @@ sfârșit marcate; zonele s-au pus acolo unde traiectoriile intră și ies din c
 preliminară (imagini de noapte)**; rafinarea pe lumină de zi este planificată în Borna 7. Dacă operatorul mută
 camera, zonele se redesenează interactiv cu `scripts\2b_calibrare_zone.bat`.
 
-Regula de numărare (`vision/od_counter.py`): **prima** zonă de intrare vizitată de o traiectorie dă originea,
-**ultima** zonă de ieșire dă destinația. O traiectorie completă produce un viraj (origine → destinație); una
-fragmentată (vehicul pierdut la o ocluzie) contribuie doar la numărătoarea pe braț. Se agregă pe intervale de
-15 minute, separat pe tipuri de vehicule, în `data/counts/numaratori_AAAA-LL-ZZ.csv`.
+Regula de numărare (`classify()` în `vision/od_counter.py`), aplicată pe traiectoria întreagă la închiderea ei:
+
+* originea = **prima** zonă de intrare vizitată **înaintea oricărei ieșiri**; destinația = **ultima** zonă de
+  ieșire a **altui** braț, vizitată după origine. Zonele de intrare și de ieșire ale aceluiași braț sunt
+  alăturate: prima variantă a regulii producea 25 de „întoarceri” Magheru → Magheru în 5 minute, de fapt
+  vehicule care atingeau banda vecină;
+* pe brațele îndepărtate, parțial ascunse (Dacia vest, Lascăr Catargiu, Mendeleev, Căderea Bastiliei), zonele
+  sunt marcate `capat_traiectorie`: o intrare contează doar dacă traiectoria **începe** acolo (vehiculul apare
+  din strada ascunsă), o ieșire doar dacă traiectoria **se termină** acolo (toleranță 1,5 s). Verificarea
+  sensului de mers (`recount --directii`) a arătat că fosta zonă „intrare Dacia vest” prindea de fapt
+  vehiculele care circulă pe inel prin dreptul străzii (73 din 74 se îndepărtau de centru);
+* o traiectorie completă produce un viraj (origine → destinație); una fragmentată (vehicul pierdut la o
+  ocluzie) contribuie doar la numărătoarea pe braț.
+
+Se agregă pe intervale de 15 minute, separat pe tipuri de vehicule, în `data/counts/numaratori_AAAA-LL-ZZ.csv`.
+
+**Jurnalul anonim de traiectorii și renumărarea.** Pe lângă numărători, modulul salvează în
+`data/trajectories/traiectorii_AAAA-LL-ZZ.jsonl.gz` fiecare traiectorie închisă: clasa obiectului și pozițiile
+punctului de contact cu solul, în coordonate normalizate, cu timpul relativ – fără imagini, fără numere de
+înmatriculare, fără ID-ul de urmărire. Astfel zonele pot fi recalibrate **după** colectare, iar
+`python -m romana.vision.recount` reface numărătorile din jurnal (testat: rezultat identic cu numărarea live).
+Tot din jurnal se desenează câmpul de mișcare al vehiculelor și capetele traiectoriilor (`recount --flux`),
+folosite la plasarea zonelor.
 
 ### 4.4 Pietoni și bicicliști
 
@@ -160,7 +202,8 @@ dreapta). Pentru fiecare s-a desenat o zonă cu rolul `trecere` (`config/camera.
 de pe cadrul din 21.10.2026, 01:30 (de verificat pe lumină de zi).
 
 * **Pietoni.** Persoanele detectate sunt urmărite cu același ByteTrack. Un pieton este numărat **o singură dată
-  pe fiecare trecere** pe care a fost văzut în cel puțin 2 cadre (punctul de contact cu solul în zona trecerii);
+  pe fiecare trecere** pe care a fost văzut în cel puțin 2 cadre și pe care s-a deplasat cel puțin 4% din
+  lățimea cadrului (punctul de contact cu solul în zona trecerii) – cine doar așteaptă la bordură nu contează;
   în CSV apar ca rânduri `pietoni` (braț, trecere). Debitul măsurat se extrapolează la toată piața cu
   `factor_extrapolare_pietoni` = 2,5 din `config/demand.json` (ipoteză declarată: camera vede 2 din cele ≈7
   treceri semaforizate; factorul se va verifica printr-o numărătoare manuală).
@@ -175,7 +218,9 @@ Imaginile pot conține persoane și numere de înmatriculare, deci prelucrarea i
 EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate: prelucrare exclusiv în memorie; nicio
 înregistrare video sau decupaj salvat; fără citirea numerelor de înmatriculare; ID-urile de urmărire sunt
 temporare și uitate la închiderea traiectoriei; persoanele sunt estompate în previzualizarea pentru dashboard
-(redusă la 960 px și suprascrisă continuu); se publică doar numărători agregate. Fișierele `.ts`/`.mp4` sunt
+(redusă la 960 px și suprascrisă continuu); se publică doar numărători agregate și jurnalul de traiectorii
+anonime (clasă + poziții normalizate ale punctului de contact cu solul, fără imagini sau identificatori), din
+care nu se poate reconstitui nicio imagine și nicio persoană. Fișierele `.ts`/`.mp4` sunt
 excluse din Git (`.gitignore`). Fluxul este public, iar utilizarea este strict academică; pagina operatorului
 menționează „Toate drepturile rezervate”[^webcam], de aceea imaginile nu sunt redistribuite, iar pentru o
 utilizare dincolo de proiectul academic se recomandă acordul scris al Webcam România.
@@ -575,6 +620,7 @@ utilizare ai resurselor folosite efectiv în proiect.
 | ByteTrack (implementarea din Ultralytics) | MIT[^bytetrack] |
 | Stable-Baselines3, Gymnasium, sumo-rl | MIT[^sb3][^sumorl] |
 | OpenCV | Apache-2.0[^opencv] |
+| Intel OpenVINO (inferența YOLO pe placa grafică Intel) | Apache-2.0[^openvino] |
 | FFmpeg (prin OpenCV) | LGPL-2.1+[^ffmpeg] |
 | Flask | BSD-3-Clause[^flask] |
 | Eclipse Paho MQTT / Mosquitto | EPL-2.0 / EDL-1.0[^mosquitto] |
@@ -595,6 +641,8 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^itu-y2060]: ITU-T, Recomandarea Y.2060 *Overview of the Internet of things*, 2012, https://www.itu.int/rec/T-REC-Y.2060-201206-I.
 [^mqtt]: OASIS, *MQTT Version 5.0*, OASIS Standard, 7.03.2019, https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html.
 [^mosquitto]: R. A. Light, „Mosquitto: server and client implementation of the MQTT protocol”, *Journal of Open Source Software* 2(13):265, 2017, doi:10.21105/joss.00265, https://mosquitto.org. Licență EPL-2.0 / EDL-1.0; clientul Eclipse Paho Python: EPL-2.0 / EDL-1.0.
+[^webcam-buc]: Webcam România, „Webcam Live Municipiul București”, https://webcamromania.ro/webcam-live/municipiul-bucuresti/; pagina Piața Victoriei, https://webcamromania.ro/webcam-orase/webcam-piata-victoriei-bucuresti/, accesate 21.10.2026. © WebcamRomania.ro.
+[^openvino]: Intel, *OpenVINO Toolkit* 2026.4, https://docs.openvino.ai, licență Apache-2.0; exportul din Ultralytics: https://docs.ultralytics.com/integrations/openvino/.
 [^opencv]: G. Bradski, „The OpenCV Library”, *Dr. Dobb's Journal of Software Tools*, 2000; https://opencv.org/license/ (Apache-2.0 de la versiunea 4.5.0).
 [^ffmpeg]: FFmpeg, https://ffmpeg.org/legal.html (LGPL-2.1+ / GPL în funcție de compilare).
 [^yolo11]: G. Jocher, J. Qiu, *Ultralytics YOLO11*, v11.0.0, 2024, https://github.com/ultralytics/ultralytics, https://docs.ultralytics.com/models/yolo11. Licență AGPL-3.0 sau Enterprise.
