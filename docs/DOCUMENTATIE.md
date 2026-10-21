@@ -373,8 +373,8 @@ mediul a fost scris în stilul sumo-rl[^sumorl].
    algoritm fără învățare, cu garanții teoretice de stabilitate, pe care un agent RL trebuie să-l egaleze sau
    să-l depășească pentru a fi convingător. Pe replica fidelă, Max-Pressure cu toate cele 5 faze alegea mereu
    fazele „fără dozare” (cele mai multe legături verzi ⇒ presiunea cea mai mare) și bloca piața complet
-   (scenariul moderat: 1.226 de vehicule rămase în rețea, față de 107 la planul fix); restrâns la fazele planului
-   real, timpul mediu de așteptare a scăzut la 122 s, față de 156 s la planul fix (1 seed).
+   (scenariul moderat, 1 seed: 1.226 de vehicule rămase în rețea, față de 107 la planul fix); restrâns la fazele
+   planului real, nu mai blochează piața (97 de vehicule rămase, media pe 5 seed-uri; rezultatele complete în § 9).
 
 ### 7.5 Metrici
 
@@ -426,7 +426,61 @@ Rezultatele complete, regenerate automat de `scripts\5_evalueaza.bat`, sunt în
 [`docs/rezultate/comparatie_strategii.png`](rezultate/comparatie_strategii.png).
 
 <!-- REZULTATE_INCEPUT -->
-*Secțiune actualizată la finalul Bornei 4.*
+*Secțiune actualizată în Borna 8 (21.10.2026), pe replica fidelă a rețelei, cu toți participanții, pe cele trei
+scenarii de referință ipotetice (§ 5.3) – nu încă pe date reale de zi.*
+
+**Configurație.** 3 scenarii × 6 strategii × 5 seed-uri SUMO = 90 de simulări a câte 75 de minute (60 de minute
+de cerere + 15 minute de golire). Agentul pieței: PPO, 500.736 de pași de decizie (≈ 700 de episoade de o oră),
+72,9 minute de antrenare în 8 procese paralele, recompensa din § 7.1, acțiuni = cele 3 faze ale planului real.
+Agentul coridor: 300.000 de pași, 6 controlere.
+
+**Pierderea totală de timp a tuturor participanților** (vehicule, inclusiv întârzierea la intrare, bicicliști,
+pietoni; ore; media pe 5 seed-uri, procente față de planul fix de referință):
+
+| Strategie | Moderat (1.442 veh/h) | Vârf (2.060 veh/h) | Aglomerat (2.472 veh/h) |
+|---|---|---|---|
+| Plan fix de referință | 183,0 | 432,3 | 728,3 |
+| Plan fix (Webster) | 291,5 (+59%) | 481,6 (+11%) | 731,8 (+0%) |
+| Actuated SUMO | 189,2 (+3%) | 386,1 (−11%) | 580,7 (−20%) |
+| Max-Pressure | 192,2 (+5%) | 379,1 (−12%) | 687,1 (−6%) |
+| **Agent RL piață (PPO)** | **177,8 (−3%)** | **298,6 (−31%)** | **405,3 (−44%)** |
+| Agent RL coridor (PPO) | 361,0 (+97%) | 563,8 (+30%) | 624,0 (−14%) |
+
+**Așteptarea medie a vehiculelor motorizate** (s): agentul pieței obține 121 / 150 / 204 s, față de 135 / 402 /
+790 s la planul fix (−10% / −63% / −74%) și 135 / 261 / 503 s la actuated, cel mai bun algoritm clasic. Abaterea
+standard între seed-uri este mică (25 / 21 / 54 s), deci politica nu mai cade în blocaj ca planurile fixe sau
+Max-Pressure, a căror medie este trasă în sus de câteva rulări blocate (de aceea raportul dă și mediana).
+Bicicliștii câștigă la fel: 61 / 72 / 124 s așteptare, față de 78 / 402 / 807 s la planul fix.
+
+**Pietonii.** Pierderea de timp a pietonilor crește ușor la agentul pieței în scenariile moderat și vârf (+12% și
++6%: 171 și 178 s față de 153 și 168 s) și scade în scenariul aglomerat (−9%). Recompensa cântărește un pieton
+care așteaptă cât un vehicul oprit, iar la volume mari de vehicule agentul favorizează golirea cozilor. Este un
+compromis explicit, care poate fi mutat prin ponderea pietonilor în recompensă (lucrare viitoare: o pondere pe
+persoană, ca pentru călătorii din autobuze).
+
+**Observații.**
+
+* **Webster** dă rezultate mai slabe decât planul de referință: cu debitul de saturație teoretic (1.800
+  veh/h/bandă), gradul de saturație calculat este mic (Y ≈ 0,25), iar ciclul rezultat (≈ 72 s) se dovedește prea
+  scurt pentru inelul pieței: capacitatea reală a intrărilor este mult sub cea teoretică (ipoteză: țeserea pe inel
+  și cozile interne), iar timpul pierdut la schimbarea fazelor are pondere mai mare într-un ciclu scurt.
+* **Max-Pressure** este bun în mediană la vârf (174 s), dar instabil; restrâns la fazele planului real, nu mai
+  blochează piața ca varianta cu toate fazele (§ 7.4).
+* **Agentul coridor** nu depășește planurile `actuated` ale intersecțiilor vecine: cu o acțiune comună pentru 6
+  controlere (fazele vecinilor sunt cele generate de `netconvert`) și 300.000 de pași, curba de învățare se
+  plafonează sub cea a agentului pieței (recompensă medie pe episod ≈ −1.250 față de ≈ −1.050). Rezultatul negativ
+  este raportat ca atare; pentru coordonare, direcțiile promițătoare sunt agenți descentralizați cu parametri
+  comuni (MPLight[^mplight]) sau atenție pe graf (CoLight[^colight]).
+* **Prima versiune a recompensei** a produs un agent coridor care „ascundea” coada la marginea rețelei (§ 7.1);
+  evaluarea pe toți participanții și cu întârzierea la intrare a făcut problema vizibilă.
+* Valorile absolute sunt mari pentru că includ întârzierile de la semafoarele de la marginea zonei și cozile de
+  intrare (§ 7.5); comparația dintre strategii este cea relevantă.
+
+Concluzie: pe replica fidelă a pieței, cu toți participanții și fără a schimba nimic din infrastructură, un
+controler care decide doar **ordinea și durata fazelor existente** reduce pierderea totală de timp cu 31–44% la
+volume de vârf față de planul fix de referință și cu 23–30% față de cel mai bun algoritm clasic (actuated),
+cu un cost mic pentru pietoni la volume moderate. Rezultatele trebuie confirmate pe scenariile din date reale
+de zi (Borna 9).
 <!-- REZULTATE_SFARSIT -->
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
