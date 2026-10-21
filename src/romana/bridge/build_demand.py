@@ -72,6 +72,24 @@ def route_edges(route_file: Path):
                 yield el, r.get("edges").split()
 
 
+def follow_street(net, edge_id: str, forward: bool, max_steps: int = 60) -> str:
+    """Urmează strada (același nume) în amonte (forward=False) sau în aval, până unde își schimbă
+    numele sau până la marginea rețelei; întoarce ultima muchie găsită."""
+    e = net.getEdge(edge_id)
+    seen = {edge_id}
+    for _ in range(max_steps):
+        if e.is_fringe() and len(seen) > 1:
+            break
+        nb = e.getOutgoing() if forward else e.getIncoming()
+        nb = [x for x in nb if x.getID() not in seen and x.allows("passenger") and not x.getID().startswith(":")
+              and x.getName() == e.getName()]
+        if not nb:
+            break
+        e = max(nb, key=lambda x: (x.getPriority(), x.getLaneNumber()))
+        seen.add(e.getID())
+    return e.getID()
+
+
 def candidates_file(vclass: str) -> Path:
     return CANDIDATES if vclass == "passenger" else DEMAND_DIR / f"candidate_{vclass}.rou.xml"
 
@@ -90,17 +108,25 @@ def build_candidates(cfg: dict, force: bool = False, vclass: str = "passenger") 
          "-p", "0.12" if vclass == "passenger" else "0.4", "-b", "0", "-e", "3600", "--min-distance", "300",
          "--validate", "--remove-loops", "--vehicle-class", vclass, "--vclass", vclass, "--seed", str(cfg["seed"]),
          "-o", str(tmp / "rt.trips.xml"), "-r", str(tmp / "rt.rou.xml")])
-    # rute garantate pentru fiecare pereche intrare→ieșire (pornind de la marginea rețelei)
+    import sumolib
+
+    net = sumolib.net.readNet(str(NET))
+    # rute garantate pentru fiecare pereche intrare→ieșire: pornesc de unde începe bulevardul brațului
+    # de intrare și se termină unde se termină strada de ieșire (în limitele rețelei), trecând prin
+    # intersecțiile vecine – nu chiar la linia de oprire a pieței, unde inserarea a sute de vehicule
+    # pe o muchie de 30 m bloca intrarea în rețea
     arms = cfg["brate"]
     trips = ET.Element("routes")
     k = 0
     for o, oi in arms.items():
         if not oi["intrare"]:
             continue
+        start = follow_street(net, oi["intrare"], forward=False)
         for d, di in arms.items():
+            end = follow_street(net, di["iesire"], forward=True)
             for rep in range(3):
                 ET.SubElement(trips, "trip", id=f"via_{o}_{d}_{rep}", depart=str(k), type=vclass, **{
-                    "from": oi["intrare"], "to": di["iesire"], "departLane": "best"})
+                    "from": start, "to": end, "via": f"{oi['intrare']} {di['iesire']}", "departLane": "best"})
                 k += 1
     ET.ElementTree(trips).write(tmp / "via.trips.xml", encoding="UTF-8", xml_declaration=True)
     run([sumo_binary("duarouter"), "-n", str(NET), "--route-files", str(tmp / "via.trips.xml"),
@@ -108,17 +134,20 @@ def build_candidates(cfg: dict, force: bool = False, vclass: str = "passenger") 
          "-o", str(tmp / "via.rou.xml"), "--ignore-errors", "--no-warnings", "--repair"])
     # combinare + filtrare: fără rute care traversează piața de două ori
     entries = {a["intrare"] for a in arms.values() if a["intrare"]}
-    import sumolib
-
-    net = sumolib.net.readNet(str(NET))
     major = ("highway.primary", "highway.secondary", "highway.tertiary", "highway.trunk")
+    arterial = ("highway.primary", "highway.secondary", "highway.trunk")
 
     def realistic(edges: list[str], via: bool) -> bool:
-        """Rute plauzibile: pornesc/se termină pe artere și nu circulă mult pe străzi rezidențiale."""
+        """Rute plauzibile: pornesc/se termină pe artere și nu circulă mult pe străzi rezidențiale.
+
+        Rutele care traversează piața trebuie să pornească și să se termine pe bulevarde / străzi
+        principale (primary / secondary): altfel routeSampler încărca câteva străzi terțiare de la
+        marginea rețelei (Ion Câmpineanu, Occidentului, Alecu Russo) cu peste jumătate din vehicule."""
         if via or vclass != "passenger":   # rute garantate / biciclete: fără filtrul de artere
             return True
         objs = [net.getEdge(e) for e in edges]
-        if not (objs[0].getType().startswith(major) and objs[-1].getType().startswith(major)):
+        ends = arterial if any(e in entries for e in edges) else major
+        if not (objs[0].getType().startswith(ends) and objs[-1].getType().startswith(ends)):
             return False
         tot = sum(o.getLength() for o in objs)
         minor = sum(o.getLength() for o in objs if not o.getType().startswith(major))
