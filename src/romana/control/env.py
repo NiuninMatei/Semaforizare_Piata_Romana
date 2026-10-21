@@ -30,7 +30,7 @@ import numpy as np
 
 from romana.common import NET_DIR, sumo_home
 from romana.control.signals import (SignalController, action_maps, green_phases_from_program, observation,
-                                    romana_green_phases, upstream_groups, waiting_total)
+                                    romana_green_phases, upstream_groups, upstream_halting, waiting_total)
 
 def _import_libsumo():
     """libsumo (mult mai rapid pentru antrenare). Pe Windows, PYTHONPATH-ul setat de instalatorul
@@ -151,6 +151,10 @@ class RomanaEnv(gym.Env):
             c.request(m[int(a)])
         self._sim(self.delta_t)
         halting = self._halting()
+        if self.upstream is not None:
+            # în saturație benzile de la linia de oprire sunt pline oricum, deci numărul de vehicule oprite
+            # pe ele nu mai variază; coada din amonte (~250 m) arată dacă blocajul crește sau scade
+            halting += upstream_halting(traci, self.upstream)
         # vehiculele care nu pot intra în rețea (blocaj la margine) contează cât un vehicul oprit:
         # cu o penalizare mai mică, agentul coridor învăța să țină traficul în afara rețelei
         backlog = len(traci.simulation.getPendingVehicles())

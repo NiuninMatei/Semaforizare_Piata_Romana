@@ -44,7 +44,8 @@ def main(argv=None) -> None:
     ap.add_argument("--medii", type=int, default=6,
                     help="simulări SUMO în paralel (procese separate); 1 = un singur proces")
     ap.add_argument("--obs-amonte", action="store_true",
-                    help="observația include cozile din amonte de intrări (~250 m) și vehiculele neintroduse")
+                    help="observația și recompensa includ cozile din amonte de intrări (~250 m); observația și "
+                         "vehiculele neintroduse")
     ap.add_argument("--continua", action="store_true",
                     help="continuă antrenarea modelului existent models/ppo_<nume>.zip (pașii se adună)")
     args = ap.parse_args(argv)
