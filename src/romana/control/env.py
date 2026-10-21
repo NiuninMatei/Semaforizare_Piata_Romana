@@ -10,9 +10,10 @@ Acțiune: indicele fazei verzi dorite pentru fiecare semafor (MultiDiscrete). La
   lor, adică exact ce se poate programa pe automatul existent.
   Tranzițiile sigure (galben, roșu general, verde minim 10 s, maxim 90 s) sunt impuse de
   SignalController – agentul nu poate genera stări periculoase.
-Recompensă: −(vehicule oprite pe benzile de intrare + pietoni care așteaptă la treceri)/100,
-  calculată la fiecare pas de decizie (5 s) – echivalentă cu minimizarea întârzierii totale.
-  Se adaugă o penalizare mică pentru vehiculele care nu pot intra în rețea (blocaj la margine).
+Recompensă: −(vehicule oprite pe benzile de intrare + pietoni care așteaptă la treceri +
+  vehicule care nu pot intra în rețea)/100, calculată la fiecare pas de decizie (5 s) –
+  echivalentă cu minimizarea întârzierii totale, fără ca agentul să poată „ascunde” coada la
+  marginea rețelei.
 
 Episoadele aleg aleator unul dintre scenariile de antrenare (date reale + referință), astfel
 încât politica să nu se specializeze pe un singur profil de trafic.
@@ -148,8 +149,10 @@ class RomanaEnv(gym.Env):
             c.request(m[int(a)])
         self._sim(self.delta_t)
         halting = self._halting()
-        backlog = traci.simulation.getMinExpectedNumber() - traci.vehicle.getIDCount()
-        reward = -halting / 100.0 - 0.002 * max(0, backlog)
+        # vehiculele care nu pot intra în rețea (blocaj la margine) contează cât un vehicul oprit:
+        # cu o penalizare mai mică, agentul coridor învăța să țină traficul în afara rețelei
+        backlog = len(traci.simulation.getPendingVehicles())
+        reward = -(halting + backlog) / 100.0
         truncated = self.t >= self.episode_s
         info = {"oprite": halting, "timp": self.t}
         return self._obs(), float(reward), False, truncated, info
