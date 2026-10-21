@@ -16,7 +16,7 @@ from romana.common import DEMAND_DIR, MODELS_DIR, ROOT
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenariu", default=str(ROOT / "sumo/scenarios/referinta_varf.sumocfg"))
+    ap.add_argument("--scenariu", default=str(ROOT / "sumo/scenarios/zi_2026-10-21_varf.sumocfg"))
     ap.add_argument("--strategie", default="rl_ppo", choices=["rl_ppo", "rl_ppo_coridor", "fix_referinta", "fix_webster",
                                                               "actuated", "max_pressure"])
     args = ap.parse_args(argv)
