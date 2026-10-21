@@ -25,7 +25,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from romana.common import COUNTS_DIR, OUTPUT_DIR, load_json
+from romana.common import COUNTS_DIR, OUTPUT_DIR, TRAJ_DIR, load_json
 from romana.vision.od_counter import PERSON, VEHICLE_CLASSES, ODCounter, is_rider, load_zones
 from romana.vision.stream import FrameSource
 
@@ -76,6 +76,34 @@ def blur_persons(frame, person_boxes):
     return frame
 
 
+def load_detector(model_name: str, runtime: str, imgsz: int, crop_hw: tuple[int, int], device: str | None):
+    """Detectorul YOLO și dispozitivul de inferență.
+
+    Fără GPU NVIDIA, inferența PyTorch pe procesor dă ≈1 cadru/s la 1600 px – prea puțin pentru
+    urmărire. Cu `runtime: "openvino"`, modelul este exportat o singură dată în formatul Intel
+    OpenVINO (models/viziune/, regenerabil) și rulează pe placa grafică integrată Intel
+    (`intel:gpu`, ≈5 cadre/s de detecție, aceleași detecții) sau, ca rezervă, pe procesor."""
+    from ultralytics import YOLO
+
+    if runtime != "openvino":
+        return YOLO(model_name), device
+    import openvino as ov
+
+    from romana.common import MODELS_DIR
+
+    h, w = crop_hw
+    shape = [(imgsz * h // w + 31) // 32 * 32, imgsz]       # forma fixă a exportului (multiplu de 32)
+    out = MODELS_DIR / "viziune" / f"{Path(model_name).stem}_{shape[0]}x{shape[1]}_openvino_model"
+    if not out.exists():
+        print(f"[viziune] export OpenVINO {model_name} {shape} → {out}")
+        exported = Path(YOLO(model_name).export(format="openvino", imgsz=shape, half=False))
+        out.parent.mkdir(parents=True, exist_ok=True)
+        exported.replace(out)
+    if device is None:
+        device = "intel:gpu" if "GPU" in ov.Core().available_devices else "intel:cpu"
+    return YOLO(str(out), task="detect"), device
+
+
 class MqttOut:
     def __init__(self, host: str, port: int = 1883, base: str = "romana"):
         import paho.mqtt.client as mqtt
@@ -96,34 +124,40 @@ def main(argv=None) -> None:
     ap.add_argument("--model", default=cam.get("model", "yolo11s.pt"))
     ap.add_argument("--imgsz", type=int, default=cam.get("imgsz", 1600))
     ap.add_argument("--conf", type=float, default=cam.get("conf", 0.25))
-    ap.add_argument("--device", default=None, help="'cpu', '0' (GPU NVIDIA) etc.; implicit automat")
+    ap.add_argument("--device", default=cam.get("device"),
+                    help="'cpu', '0' (GPU NVIDIA), 'intel:gpu' / 'intel:cpu' (OpenVINO); implicit automat")
+    ap.add_argument("--runtime", default=cam.get("runtime", "pytorch"), choices=["pytorch", "openvino"])
     ap.add_argument("--fps", type=float, default=cam.get("fps", 6.0), help="cadre analizate pe secundă")
     ap.add_argument("--interval", type=int, default=cam.get("interval_s", 900), help="secunde / interval de agregare")
     ap.add_argument("--minutes", type=float, default=0, help="durata rulării (0 = continuu)")
     ap.add_argument("--show", action="store_true", help="fereastră OpenCV cu suprapunerea zonelor")
     ap.add_argument("--mqtt", default=None, help="gazdă broker MQTT (ex. localhost)")
     ap.add_argument("--out", default=str(COUNTS_DIR))
+    ap.add_argument("--fara-traiectorii", action="store_true",
+                    help="nu salva jurnalul anonim de traiectorii (data/trajectories) pentru renumărare")
     args = ap.parse_args(argv)
 
-    from ultralytics import YOLO
-
-    model = YOLO(args.model)
     zones = load_zones(cam)
     src = FrameSource(args.source, target_fps=args.fps)
+    roi = cam.get("roi_y", [0.0, 1.0])
+    ref_w, ref_h = cam.get("referinta_cadru", [3288, 1850])
+    model, device = load_detector(args.model, args.runtime, args.imgsz,
+                                  (int((roi[1] - roi[0]) * ref_h), ref_w), args.device)
     lost_frames = int(cam.get("lost_after_s", 5) * args.fps)
     # pentru fișiere video se folosește timpul din fișier, decalat față de momentul pornirii
     t0 = time.time()
     sim_time = [t0]
     clock = time.time if src.is_live else (lambda: sim_time[0])
     counter = ODCounter(zones, interval_s=args.interval, lost_after_frames=lost_frames,
-                        out_dir=Path(args.out), clock=clock)
+                        out_dir=Path(args.out), clock=clock, capat_s=cam.get("capat_s", 1.5),
+                        traj_dir=None if args.fara_traiectorii else TRAJ_DIR)
     mqtt = MqttOut(args.mqtt) if args.mqtt else None
     LIVE_DIR.mkdir(parents=True, exist_ok=True)
-    roi = cam.get("roi_y", [0.0, 1.0])
     t_end = time.time() + args.minutes * 60 if args.minutes else None
     t_prev, fps_est, last_live = time.time(), 0.0, 0.0
     n_closed = len(counter.history)
-    print(f"[viziune] sursa={args.source}  model={args.model}  imgsz={args.imgsz}  interval={args.interval}s")
+    print(f"[viziune] sursa={args.source}  model={args.model} ({args.runtime}, {device or 'auto'})  "
+          f"imgsz={args.imgsz}  interval={args.interval}s")
     try:
         for ts, frame in src.frames():
             if not src.is_live:
@@ -133,7 +167,7 @@ def main(argv=None) -> None:
             crop = frame[y0:y1]
             res = model.track(crop, imgsz=args.imgsz, conf=args.conf, classes=VEHICLE_CLASSES + [PERSON],
                               persist=True, tracker=cam.get("tracker", "bytetrack.yaml"),
-                              device=args.device, verbose=False)[0]
+                              device=device, verbose=False)[0]
             dets, persons, feed = [], [], []
             if res.boxes is not None and len(res.boxes):
                 xyxy = res.boxes.xyxy.cpu().numpy()
