@@ -86,5 +86,7 @@
   "durata_scenariu_s": 3600,
   "seed": 42,
   "factor_extrapolare_pietoni": 2.5,
-  "_factor_extrapolare_pietoni": "Camera vede 2 din cele ~7 treceri semaforizate ale pieței; pietonii numărați pe trecerile vizibile se extrapolează la toată piața cu acest factor (ipoteză declarată)."
+  "_factor_extrapolare_pietoni": "Camera vede 2 din cele ~7 treceri semaforizate ale pieței; pietonii numărați pe trecerile vizibile se extrapolează la toată piața cu acest factor (ipoteză declarată).",
+  "echilibrare": "medie",
+  "_echilibrare": "Intrările și ieșirile numărate sunt aduse la media sumelor lor înainte de Furness (camera subnumără intrările de la marginea cadrului și supranumără ieșirile spre străzile parțial ascunse; diferența, ~±15–20%, este acoperită de scenariile de sensibilitate ×0,8 / ×1,2). Valoarea 'intrari' păstrează totalul intrărilor."
 }
