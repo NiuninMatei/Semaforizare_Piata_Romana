@@ -34,7 +34,8 @@ EVAL_DIR = OUTPUT_DIR / "eval"
 DOCS_RES = ROOT / "docs" / "rezultate"
 NAMES_RO = {"fix_referinta": "Plan fix de referință", "fix_webster": "Plan fix (Webster)",
             "actuated": "Actuated SUMO", "max_pressure": "Max-Pressure",
-            "rl_ppo": "Agent RL (PPO)", "rl_ppo_coridor": "Agent RL coridor (PPO)"}
+            "rl_ppo": "Agent RL (PPO)", "rl_ppo_coridor": "Agent RL coridor (PPO)",
+            "rl_ppo_romana_v2": "Agent RL v2 (cozi în amonte)", "rl_ppo_coridor_v2": "Agent RL coridor v2 (cozi în amonte)"}
 BASELINE = "fix_referinta"
 
 
@@ -123,7 +124,8 @@ def make_controllers(sumocfg: Path, models: list[Path]):
     for m in models:
         meta = json.loads(m.with_suffix(".json").read_text(encoding="utf-8")) if m.with_suffix(".json").exists() else {}
         rl = C.RLPolicy(m, controlled=meta.get("controlate", ["romana"]))
-        rl.name = "rl_ppo_coridor" if len(rl.controlled) > 1 else "rl_ppo"
+        standard = {"ppo_romana": "rl_ppo", "ppo_coridor": "rl_ppo_coridor"}
+        rl.name = standard.get(m.stem, "rl_" + m.stem)       # ex. ppo_romana_v2 → rl_ppo_romana_v2
         ctrls.append(rl)
     return ctrls
 
@@ -137,6 +139,7 @@ def report(df: pd.DataFrame) -> None:
     g = df.groupby(["scenariu", "strategie"])[metrics].agg(["mean", "std"])
     med = df.groupby(["scenariu", "strategie"])["asteptare_medie_s"].median()
     order = [s for s in NAMES_RO if s in df["strategie"].unique()]
+    order += sorted(s for s in df["strategie"].unique() if s not in order)
     lines = ["# Rezultate – evaluare comparativă\n",
              f"Medii ± abatere standard pe {df['seed'].nunique()} seed-uri SUMO. Procentele sunt față de "
              f"{NAMES_RO[BASELINE].lower()}. Mediana pe seed-uri este dată separat pentru așteptarea vehiculelor: "
@@ -192,7 +195,7 @@ def report(df: pd.DataFrame) -> None:
         import matplotlib.pyplot as plt
 
         scen = list(df["scenariu"].unique())
-        strat = [s for s in NAMES_RO if s in df["strategie"].unique()]
+        strat = order
         panels = [("asteptare_medie_s", "Așteptare medie vehicule (s)"),
                   ("pierdere_timp_pietoni_s", "Pierdere de timp pietoni (s)"),
                   ("pierdere_totala_h", "Pierdere totală, toți participanții (h)")]
@@ -206,7 +209,7 @@ def report(df: pd.DataFrame) -> None:
             for i, st in enumerate(strat):
                 vals = [g.loc[(sc, st), (m, "mean")] if (sc, st) in g.index else np.nan for sc in scen]
                 errs = [g.loc[(sc, st), (m, "std")] if (sc, st) in g.index else 0 for sc in scen]
-                ax.bar(np.arange(len(scen)) + i * w, vals, w, yerr=errs, label=NAMES_RO[st], color=colors[i % len(colors)])
+                ax.bar(np.arange(len(scen)) + i * w, vals, w, yerr=errs, label=NAMES_RO.get(st, st), color=colors[i % len(colors)])
             ax.set_xticks(np.arange(len(scen)) + w * (len(strat) - 1) / 2)
             ax.set_xticklabels([s.replace("referinta_", "") for s in scen])
             ax.set_title(title)
