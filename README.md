@@ -36,6 +36,8 @@ Autor: **Niunin Matei-Gabriel**.
 4. **Dashboard de dispecerat** pentru operatorul uman: imaginea analizată, cozile pe brațe, faza curentă și preluarea
    controlului (AI / plan fix / Max-Pressure / manual) cu confirmare.
 
+> **Pentru evaluare:** ghidul pas cu pas de instalare, rulare și verificare este în [GHID_PROFESOR.md](GHID_PROFESOR.md).
+
 ## Pornire rapidă (Windows)
 
 ```bat
