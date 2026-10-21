@@ -327,10 +327,14 @@ excepția variantei „coridor”, în care sunt conduse de agent.
   pietoni): agentul decide **ordinea și durata** fazelor, adică exact ce se poate programa pe automatul existent
   (fazele „fără dozare” se pot activa cu `--toate-fazele`). În varianta coridor, câte o acțiune pentru fiecare din
   cele 6 semafoare – spațiu `MultiDiscrete`.
-* **Recompensă:** $r_t = -\frac{1}{100}\left(\sum_{\ell} q_\ell(t) + \sum_{c} p_c(t)\right) - 0{,}002 \cdot b(t)$,
+* **Recompensă:** $r_t = -\frac{1}{100}\left(\sum_{\ell} q_\ell(t) + \sum_{c} p_c(t) + b(t)\right)$,
   unde $q_\ell$ este numărul de vehicule oprite pe banda de intrare $\ell$, $p_c$ numărul de pietoni care
-  așteaptă la trecerea $c$ (un pieton cântărește cât un vehicul), iar $b$ numărul de vehicule care așteaptă să
-  intre în rețea (împiedică „ascunderea” cozii în afara rețelei).
+  așteaptă la trecerea $c$, iar $b$ numărul de vehicule care nu pot intra în rețea (blocate la margine); un
+  pieton și un vehicul neintrodus cântăresc cât un vehicul oprit. *Lecție din Borna 8:* cu o penalizare mică
+  pentru $b$ (0,002), agentul coridor a învățat să „ascundă” coada în afara rețelei – cozi de 4–8 vehicule în
+  piață, dar ≈450 s așteptare medie și ≈400 de vehicule rămase în scenariul moderat. Este un exemplu clasic de
+  exploatare a recompensei (*reward hacking*); modelele au fost reantrenate cu formula de mai sus, iar evaluarea
+  raportează și întârzierea la intrarea în rețea.
 
 ### 7.2 Siguranța prin construcție
 
@@ -377,11 +381,13 @@ mediul a fost scris în stilul sumo-rl[^sumorl].
 Din `tripinfo` SUMO, pe toată durata scenariului plus 15 minute de golire, **separat pe categorii de
 participanți**:
 
-* vehicule motorizate: timpul mediu de așteptare, pierderea de timp (*timeLoss*), durata medie a călătoriei,
-  vehiculele sosite, emisiile de CO₂ (modelul HBEFA din SUMO);
+* vehicule motorizate: timpul mediu de așteptare (medie și mediană pe seed-uri), pierderea de timp
+  (*timeLoss*), întârzierea la intrarea în rețea (*departDelay*), durata medie a călătoriei, vehiculele sosite,
+  emisiile de CO₂ (modelul HBEFA din SUMO);
 * bicicliști (`vType` bicycle): așteptarea și pierderea de timp medii;
 * pietoni (`personinfo`/`walk`): pierderea de timp medie a deplasării;
-* pierderea de timp totală a tuturor participanților (ore), vehiculele rămase în rețea la final, coada medie de
+* pierderea de timp totală a tuturor participanților (ore, inclusiv întârzierea la intrare), vehiculele rămase
+  în rețea sau neintroduse la final, coada medie de
   vehicule și numărul mediu de pietoni care așteaptă la trecerile Pieței Romane (eșantionate la 5 s).
 
 Se raportează media ± abaterea standard pe 5 seed-uri. Observație: o parte din întârzieri se produce la
