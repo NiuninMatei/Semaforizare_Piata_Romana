@@ -42,10 +42,83 @@ def read_trajectories(files: list[Path]):
                 yield r["t0"], r["tip"], [(r["t0"] + t, x, y) for t, x, y in r["p"]]
 
 
-def recount(files: list[Path], zones, interval_s: int, out_dir: Path, params: Params) -> list[dict]:
+def _velocity(pts: list, end: bool, window: float = 1.0) -> np.ndarray:
+    """Viteza medie (unități normalizate / s) pe ultima (end=True) sau prima secundă a traiectoriei."""
+    if end:
+        seg = [p for p in pts if p[0] >= pts[-1][0] - window]
+    else:
+        seg = [p for p in pts if p[0] <= pts[0][0] + window]
+    if len(seg) < 2 or seg[-1][0] - seg[0][0] < 1e-3:
+        return np.zeros(2)
+    return np.array([seg[-1][1] - seg[0][1], seg[-1][2] - seg[0][2]]) / (seg[-1][0] - seg[0][0])
+
+
+def stitch(tracks: list[tuple[str, list]], max_gap: float = 2.0, radius: float = 0.02,
+           aspect: float = 1850 / 3288) -> list[tuple[str, list]]:
+    """Reunește fragmentele aceleiași traiectorii, întrerupte de ocluzii (stâlpi, autobuze, copaci).
+
+    Un fragment care se termină la momentul t este legat de un fragment care începe în (t, t+max_gap],
+    de aceeași categorie (vehicul / pieton), aflat aproape de poziția prezisă din viteza de la capăt
+    (rază `radius` + 30% din distanța parcursă în gol) și cu direcție compatibilă. Legăturile se aleg
+    lacom, după costul cel mai mic. Fără reunire, o ocluzie face ca un vehicul să fie numărat de două
+    ori (două „intrări”) sau deloc (golul cade exact peste o linie de numărare)."""
+    if not tracks:
+        return []
+    tr = sorted(tracks, key=lambda r: r[1][0][0])
+    starts = np.array([r[1][0][0] for r in tr])
+    cands = []
+    for i, (vt, pts) in enumerate(tr):
+        te, xe, ye = pts[-1]
+        ve = _velocity(pts, end=True)
+        ped = vt == PEDESTRIAN
+        lo, hi = np.searchsorted(starts, te, "right"), np.searchsorted(starts, te + max_gap, "right")
+        for j in range(lo, hi):
+            vt2, pts2 = tr[j]
+            if (vt2 == PEDESTRIAN) != ped:
+                continue
+            ts, xs, ys = pts2[0]
+            dt = ts - te
+            pred = np.array([xe, ye]) + ve * dt
+            d = np.hypot(xs - pred[0], (ys - pred[1]) * aspect)
+            r = radius * (0.5 if ped else 1.0) + 0.3 * np.hypot(*(ve * dt * [1, aspect]))
+            if d > r:
+                continue
+            vs = _velocity(pts2, end=False)
+            if np.hypot(*ve) > 0.01 and np.hypot(*vs) > 0.01 and np.dot(ve, vs) < 0:
+                continue                       # direcții opuse
+            cands.append((d / r + dt / max_gap, i, j))
+    nxt, prev = {}, {}
+    for _, i, j in sorted(cands):
+        if i not in nxt and j not in prev:
+            nxt[i], prev[j] = j, i
+    out = []
+    for i in range(len(tr)):
+        if i in prev:
+            continue
+        chain, votes = [], defaultdict(int)
+        k = i
+        while True:
+            vt, pts = tr[k]
+            votes[vt] += len(pts)
+            chain.extend(pts)
+            if k not in nxt:
+                break
+            k = nxt[k]
+        out.append((max(votes, key=votes.get), chain))
+    return out
+
+
+def recount(files: list[Path], zones, interval_s: int, out_dir: Path, params: Params,
+            do_stitch: bool = True) -> list[dict]:
     """Reconstruiește numărătorile pe intervale; suprascrie CSV-urile zilelor respective."""
+    tracks = [(vt, pts) for _, vt, pts in read_trajectories(files)]
+    if do_stitch:
+        n0 = len(tracks)
+        tracks = stitch(tracks)
+        print(f"[renumărare] {n0} fragmente → {len(tracks)} traiectorii după reunire")
     buckets = defaultdict(list)
-    for t0, vt, pts in read_trajectories(files):
+    for vt, pts in tracks:
+        t0 = pts[0][0]
         buckets[t0 - t0 % interval_s].append((vt, pts))
     days = {time.strftime("%Y-%m-%d", time.localtime(s)) for s in buckets}
     for d in days:

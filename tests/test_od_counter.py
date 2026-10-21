@@ -29,11 +29,14 @@ class ODCounterTest(unittest.TestCase):
             self.t[0] += 0.2
             self.counter.update(dets, W, H)
 
-    def walk(self, tid, a, b, n=6):
-        """Pieton care merge de la a la b (coordonate normalizate) în n cadre."""
+    def move(self, tid, cls, a, b, n=6):
+        """Obiect care se deplasează de la a la b (coordonate normalizate) în n cadre."""
         for k in range(n):
             f = k / (n - 1)
-            self.step([(tid, PERSON, (a[0] + f * (b[0] - a[0])) * W, (a[1] + f * (b[1] - a[1])) * H)])
+            self.step([(tid, cls, (a[0] + f * (b[0] - a[0])) * W, (a[1] + f * (b[1] - a[1])) * H)])
+
+    def walk(self, tid, a, b, n=6):
+        self.move(tid, PERSON, a, b, n)
 
     def test_pieton_numarat_o_data_pe_trecere(self):
         # pieton care traversează trecerea de pe Magheru, apoi dispare
@@ -61,19 +64,26 @@ class ODCounterTest(unittest.TestCase):
         self.assertEqual(sum(self.counter.od.values()), 0)
 
     def test_viraj_vehicul(self):
-        self.step([(2, CAR, 0.10 * W, 0.60 * H)], n=3)      # magheru_in
-        self.step([(2, CAR, 0.20 * W, 0.45 * H)], n=3)      # mendeleev_out
+        self.move(2, CAR, (0.05, 0.61), (0.15, 0.60))       # magheru_in, spre dreapta (spre piață)
+        self.move(2, CAR, (0.24, 0.45), (0.17, 0.445), n=11)  # mendeleev_out, spre stânga (iese)
         self.step([], n=5)
         self.assertEqual(dict(self.counter.od), {("magheru", "mendeleev", "passenger"): 1})
 
+    def test_sens_gresit_nu_conteaza(self):
+        # vehicul care se mișcă spre dreapta prin zona de ieșire Mendeleev (circulă pe inel) nu iese acolo
+        self.move(5, CAR, (0.05, 0.61), (0.15, 0.60))
+        self.move(5, CAR, (0.18, 0.445), (0.24, 0.45))
+        self.step([], n=5)
+        self.assertEqual(sum(self.counter.od.values()), 0)
+
     def test_banda_alaturata_nu_produce_intoarcere(self):
         # intră pe Magheru, atinge banda de ieșire alăturată, apoi iese pe Mendeleev
-        self.step([(3, CAR, 0.10 * W, 0.60 * H)], n=3)      # magheru_in
-        self.step([(3, CAR, 0.10 * W, 0.50 * H)], n=2)      # magheru_out (aceeași axă)
-        self.step([(3, CAR, 0.20 * W, 0.45 * H)], n=3)      # mendeleev_out
-        # iese pe Magheru: atinge întâi banda de ieșire, apoi pe cea de intrare
-        self.step([(4, CAR, 0.10 * W, 0.50 * H)], n=3)
-        self.step([(4, CAR, 0.10 * W, 0.60 * H)], n=3)
+        self.move(3, CAR, (0.05, 0.61), (0.15, 0.60))       # magheru_in
+        self.move(3, CAR, (0.15, 0.52), (0.13, 0.51), n=2)  # atinge magheru_out
+        self.move(3, CAR, (0.24, 0.45), (0.17, 0.445), n=11)  # mendeleev_out
+        # iese pe Magheru: banda de ieșire spre stânga, apoi atinge banda de intrare
+        self.move(4, CAR, (0.13, 0.50), (0.04, 0.51))
+        self.move(4, CAR, (0.04, 0.60), (0.03, 0.60), n=3)
         self.step([], n=5)
         self.assertEqual(dict(self.counter.od), {("magheru", "mendeleev", "passenger"): 1})
         self.assertEqual(sum(n for (a, _), n in self.counter.arm_in.items() if a == "magheru"), 1)
@@ -112,8 +122,10 @@ class RecountTest(unittest.TestCase):
                     t[0] += 0.2
                     live.update(dets, W, H)
 
-            step([(2, CAR, 0.10 * W, 0.60 * H)], n=3)
-            step([(2, CAR, 0.20 * W, 0.45 * H)], n=3)
+            for k in range(6):
+                step([(2, CAR, (0.05 + 0.02 * k) * W, 0.61 * H)])
+            for k in range(11):
+                step([(2, CAR, (0.24 - 0.007 * k) * W, 0.45 * H)])
             for k in range(6):
                 f = k / 5
                 step([(1, PERSON, (0.25 + 0.13 * f) * W, (0.70 + 0.12 * f) * H)])

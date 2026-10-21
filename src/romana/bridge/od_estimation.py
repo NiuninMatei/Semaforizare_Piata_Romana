@@ -3,7 +3,10 @@
 Camera nu poate urmări fiecare vehicul de la intrare până la ieșire (ocluzii, distanță,
 stâlpi), așa că se combină trei surse de informație:
   1. numărătorile pe brațe de intrare (cele mai fiabile → totaluri pe linii, T_O);
-  2. numărătorile pe brațe de ieșire (→ totaluri pe coloane, U_D, scalate la ΣT);
+  2. numărătorile pe brațe de ieșire (→ totaluri pe coloane, U_D);
+     cele două sume sunt aduse la media lor (`echilibrare: "medie"`), pentru că ambele sunt
+     măsurători imperfecte ale aceluiași debit (camera subnumără intrările de la marginea cadrului
+     și supranumără ieșirile spre străzile parțial ascunse);
   3. virajele complete observate (→ „sămânța” matricei, structura relativă).
 Sămânța = viraje observate + w · distribuție a priori (config/demand.json).
 Echilibrarea se face cu metoda Furness (IPF – iterative proportional fitting), încheiată
@@ -70,8 +73,14 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     prior = prior / prior.sum(axis=1, keepdims=True)
     seed = obs + cfg.get("pondere_prior", 2.0) * prior / hours
     use_cols = None
+    measured_in, measured_out = rows.sum(), cols.sum()
     if cols.sum() > 0 and rows.sum() > 0:
-        use_cols = cols * rows.sum() / cols.sum()
+        # Intrările și ieșirile sunt două măsurători ale aceluiași debit (stocarea pe inel e neglijabilă
+        # la 15 min). „medie”: totalul = media celor două sume, iar fiecare parte își păstrează
+        # distribuția pe brațe; „intrari”: se ține de intrări (varianta inițială).
+        target = (rows.sum() + cols.sum()) / 2 if cfg.get("echilibrare", "medie") == "medie" else rows.sum()
+        rows = rows * target / rows.sum()
+        use_cols = cols * target / cols.sum()
         use_cols = np.where(use_cols > 0, use_cols, 1e-6)
     od = furness(seed, rows, use_cols)
     # ponderi pe tipuri de vehicule (din intrări)
@@ -85,7 +94,8 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
             "iesiri_veh_h": dict(zip(arms, cols.round(1).tolist())),
             "pondere_clase": {k: round(v, 3) for k, v in shares.items()},
             "viraje_complete": int(complete), "pietoni_h": round(ped, 1),
-            "intrari_numarate": int(rows.sum() * hours / corr)}
+            "intrari_masurate_veh_h": round(float(measured_in), 1), "iesiri_masurate_veh_h": round(float(measured_out), 1),
+            "intrari_numarate": int(measured_in * hours / corr)}
 
 
 def estimate(df: pd.DataFrame, cfg: dict) -> list[dict]:

@@ -14,6 +14,8 @@ fiind folosită live și la renumărarea din jurnalul de traiectorii (`vision/re
     dacă traiectoria **începe** acolo (intrare: vehiculul apare din strada ascunsă) sau
     **se termină** acolo (ieșire: vehiculul dispare în ea), cu o toleranță de `capat_s` secunde –
     altfel un vehicul care doar circulă pe inel prin dreptul străzii ar fi numărat greșit;
+  * opțional, fiecare zonă cere un sens de mers în imagine (`sens`, ±60°), măsurat pe primele /
+    ultimele `capat_s` secunde ale traiectoriei sau pe porțiunea din zonă;
   * zonele de intrare și de ieșire ale aceluiași braț sunt alăturate, deci întoarcerile pe
     același braț nu se pot distinge de atingerea benzii vecine și nu se numără (în cerere ele
     provin doar din distribuția a priori, ~3%).
@@ -57,6 +59,7 @@ class Zone:
     poly_norm: np.ndarray        # Nx2, coordonate normalizate [0..1]
     color: tuple = (0, 255, 0)
     capat: bool = False          # contează doar la începutul (intrare) / sfârșitul (ieșire) traiectoriei
+    sens: tuple | None = None    # direcția de mers cerută în imagine (dx, dy); ±60°
     _poly_px: np.ndarray | None = None
     _size: tuple | None = None
     _poly_f: np.ndarray | None = None
@@ -91,8 +94,25 @@ def load_zones(cam_cfg: dict) -> list[Zone]:
     zones = []
     for z in cam_cfg["zones"]:
         zones.append(Zone(z["id"], z["arm"], z["rol"], np.array(z["poligon"], dtype=float),
-                          tuple(z.get("culoare", (0, 255, 0))), bool(z.get("capat_traiectorie", False))))
+                          tuple(z.get("culoare", (0, 255, 0))), bool(z.get("capat_traiectorie", False)),
+                          tuple(z["sens"]) if z.get("sens") else None))
     return zones
+
+
+def _heading_ok(pts: list, t0: float, t1: float, sens, aspect: float, min_len: float = 0.004) -> bool:
+    """Deplasarea între momentele t0 și t1 are direcția `sens` (±60°). Fără `sens` sau fără
+    deplasare măsurabilă (vehicul oprit), condiția se consideră îndeplinită."""
+    if sens is None:
+        return True
+    seg = [(x, y * aspect) for t, x, y in pts if t0 - 1e-6 <= t <= t1 + 1e-6]
+    if len(seg) < 2:
+        return True
+    v = np.subtract(seg[-1], seg[0])
+    n = np.hypot(*v)
+    if n < min_len:
+        return True
+    s = np.array([sens[0], sens[1] * aspect])
+    return float(np.dot(v, s) / (n * np.hypot(*s))) >= 0.5
 
 
 @dataclass
@@ -137,6 +157,9 @@ def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
             break                              # a atins întâi o ieșire: vehicul care părăsește piața
         if z.capat and first[zid] - t_first > p.capat_s:
             continue                           # nu a apărut din strada ascunsă, doar a trecut prin dreptul ei
+        w0, w1 = (t_first, t_first + p.capat_s) if z.capat else (first[zid], max(last[zid], first[zid] + 1.0))
+        if not _heading_ok(pts, w0, w1, z.sens, p.aspect):
+            continue                           # se mișcă în alt sens decât intrările pe acest braț
         origin, t_origin = z.arm, first[zid]
         break
     dest = None
@@ -146,6 +169,9 @@ def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
             continue
         if z.capat and t_last - last[zid] > p.capat_s:
             continue                           # nu a dispărut în strada ascunsă, a continuat pe inel
+        w0, w1 = (t_last - p.capat_s, t_last) if z.capat else (min(first[zid], last[zid] - 1.0), last[zid])
+        if not _heading_ok(pts, w0, w1, z.sens, p.aspect):
+            continue
         dest = z.arm
         break
     return {"origine": origin, "destinatie": dest}

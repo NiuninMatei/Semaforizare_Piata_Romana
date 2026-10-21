@@ -22,7 +22,7 @@
     0.38,
     1.0
   ],
-  "calibrare": "preliminară, pe imagini de noapte (20–21.10.2026) și traiectorii YOLO+ByteTrack; trecerile de pietoni desenate pe cadrul din 21.10.2026 01:30; de verificat pe lumină de zi",
+  "calibrare": "zi, 21.10.2026: zonele brațelor îndepărtate plasate pe sursele/destinațiile traiectoriilor din jurnal (recount --flux), cu sensul de mers cerut (sens, ±60°); trecerile desenate pe cadrul din 21.10.2026 01:30 și verificate pe cadrul de zi",
   "brate": {
     "magheru": "Bd. Gh. Magheru (sud) – dublu sens",
     "mendeleev": "Str. D. I. Mendeleev – sens unic, doar ieșire din piață",
@@ -38,26 +38,30 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.0208,
-          0.5509
+          0.0,
+          0.52
         ],
         [
-          0.1719,
-          0.5556
+          0.2,
+          0.52
         ],
         [
-          0.1719,
-          0.6435
+          0.22,
+          0.66
         ],
         [
-          0.0312,
-          0.6528
+          0.0,
+          0.66
         ]
       ],
       "culoare": [
         0,
         255,
         0
+      ],
+      "sens": [
+        1,
+        -0.2
       ]
     },
     {
@@ -67,25 +71,29 @@
       "poligon": [
         [
           0.0,
-          0.4676
+          0.45
         ],
         [
-          0.1406,
-          0.463
+          0.2,
+          0.45
         ],
         [
-          0.1406,
-          0.5444
+          0.2,
+          0.555
         ],
         [
           0.0,
-          0.5481
+          0.555
         ]
       ],
       "culoare": [
         0,
         140,
         255
+      ],
+      "sens": [
+        -1,
+        0.2
       ]
     },
     {
@@ -115,7 +123,11 @@
         0,
         255
       ],
-      "capat_traiectorie": true
+      "capat_traiectorie": true,
+      "sens": [
+        -1,
+        0
+      ]
     },
     {
       "id": "dacia_vest_in",
@@ -123,20 +135,20 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.3125,
-          0.4306
+          0.3,
+          0.425
         ],
         [
-          0.4167,
-          0.4241
+          0.43,
+          0.42
         ],
         [
-          0.4167,
-          0.4444
+          0.43,
+          0.47
         ],
         [
-          0.3125,
-          0.4537
+          0.3,
+          0.475
         ]
       ],
       "culoare": [
@@ -144,7 +156,11 @@
         255,
         0
       ],
-      "capat_traiectorie": true
+      "capat_traiectorie": true,
+      "sens": [
+        0,
+        1
+      ]
     },
     {
       "id": "dacia_vest_out",
@@ -152,20 +168,20 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.2917,
-          0.4074
+          0.32,
+          0.4
         ],
         [
-          0.4167,
-          0.4028
+          0.47,
+          0.4
         ],
         [
-          0.4167,
-          0.4231
+          0.47,
+          0.475
         ],
         [
-          0.3021,
-          0.4287
+          0.32,
+          0.475
         ]
       ],
       "culoare": [
@@ -173,7 +189,11 @@
         140,
         255
       ],
-      "capat_traiectorie": true
+      "capat_traiectorie": true,
+      "sens": [
+        0,
+        -1
+      ]
     },
     {
       "id": "catargiu_in",
@@ -181,20 +201,20 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.5521,
-          0.412
+          0.55,
+          0.41
         ],
         [
-          0.599,
-          0.412
+          0.6,
+          0.41
         ],
         [
-          0.599,
-          0.4426
+          0.61,
+          0.485
         ],
         [
-          0.5521,
-          0.4463
+          0.53,
+          0.485
         ]
       ],
       "culoare": [
@@ -202,7 +222,11 @@
         255,
         0
       ],
-      "capat_traiectorie": true
+      "capat_traiectorie": true,
+      "sens": [
+        -0.5,
+        1
+      ]
     },
     {
       "id": "catargiu_out",
@@ -210,20 +234,20 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.6016,
-          0.412
+          0.6,
+          0.395
         ],
         [
-          0.638,
-          0.412
+          0.665,
+          0.395
         ],
         [
-          0.6432,
-          0.4463
+          0.665,
+          0.455
         ],
         [
-          0.6016,
-          0.4463
+          0.6,
+          0.455
         ]
       ],
       "culoare": [
@@ -231,7 +255,11 @@
         140,
         255
       ],
-      "capat_traiectorie": true
+      "capat_traiectorie": true,
+      "sens": [
+        0.2,
+        -1
+      ]
     },
     {
       "id": "caderea_bastiliei_out",
@@ -239,20 +267,20 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.8125,
-          0.4426
+          0.72,
+          0.455
         ],
         [
-          0.8854,
-          0.4426
+          0.87,
+          0.455
         ],
         [
-          0.8854,
-          0.4676
+          0.87,
+          0.51
         ],
         [
-          0.8125,
-          0.4676
+          0.72,
+          0.51
         ]
       ],
       "culoare": [
@@ -260,7 +288,11 @@
         0,
         255
       ],
-      "capat_traiectorie": true
+      "capat_traiectorie": true,
+      "sens": [
+        0.3,
+        -1
+      ]
     },
     {
       "id": "dacia_est_in",
@@ -268,26 +300,30 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.8854,
-          0.5926
+          0.86,
+          0.53
         ],
         [
           1.0,
-          0.6389
+          0.55
         ],
         [
           1.0,
-          0.787
+          0.7
         ],
         [
-          0.9062,
-          0.713
+          0.88,
+          0.66
         ]
       ],
       "culoare": [
         0,
         255,
         0
+      ],
+      "sens": [
+        -1,
+        -0.6
       ]
     },
     {
@@ -316,6 +352,10 @@
         0,
         140,
         255
+      ],
+      "sens": [
+        1,
+        0.5
       ]
     },
     {
@@ -411,5 +451,6 @@
   "device": "intel:gpu",
   "_runtime": "Fără GPU NVIDIA: inferență OpenVINO pe placa grafică Intel integrată (≈5 cadre/s la 1600 px față de ≈1 cu PyTorch pe procesor). runtime=pytorch și device=0 pentru GPU NVIDIA.",
   "capat_s": 1.5,
-  "_capat_traiectorie": "Zonele de pe brațele îndepărtate, parțial ascunse: o intrare contează doar dacă traiectoria începe acolo, o ieșire doar dacă se termină acolo (toleranță capat_s secunde)."
+  "_capat_traiectorie": "Zonele de pe brațele îndepărtate, parțial ascunse: o intrare contează doar dacă traiectoria începe acolo, o ieșire doar dacă se termină acolo (toleranță capat_s secunde).",
+  "_sens": "Direcția de mers în imagine (dx, dy; y în jos) pe care trebuie să o aibă un vehicul în zonă: intrările spre piață, ieșirile dinspre piață. Elimină vehiculele care doar circulă pe inel prin dreptul străzii."
 }
