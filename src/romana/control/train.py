@@ -21,6 +21,40 @@ from romana.common import MODELS_DIR, OUTPUT_DIR, ROOT, load_json
 NEIGHBORS = ["dacia_eminescu", "magheru_enescu", "catargiu_manu", "dacia_victoriei", "dacia_polona"]
 
 
+def behaviour_cloning(model, env, plan: list[float], steps_per_env: int, epochs: int = 8) -> dict:
+    """Preantrenare prin imitație: politica învață întâi să reproducă un plan fix bun, apoi PPO o rafinează.
+
+    Se colectează (observație, acțiune) cu planul fix rulat în toate mediile paralele, apoi rețeaua politicii
+    este antrenată supervizat (entropie încrucișată / −log-probabilitate) pe aceste perechi. Astfel PPO
+    pornește de la performanța planului, nu de la o politică aleatoare."""
+    import numpy as np
+    import torch as th
+
+    obs = env.reset()
+    O, A = [], []
+    for _ in range(steps_per_env):
+        acts = np.array(env.env_method("expert_action", plan))
+        O.append(obs.copy())
+        A.append(acts.copy())
+        obs, _, _, _ = env.step(acts)
+    O, A = np.concatenate(O), np.concatenate(A)
+    pol = model.policy
+    opt = th.optim.Adam(pol.parameters(), lr=1e-3)
+    ot, at = th.as_tensor(O, dtype=th.float32), th.as_tensor(A, dtype=th.long)
+    for _ in range(epochs):
+        perm = th.randperm(len(ot))
+        for i in range(0, len(ot), 256):
+            idx = perm[i:i + 256]
+            loss = -pol.get_distribution(ot[idx]).log_prob(at[idx]).mean()
+            opt.zero_grad()
+            loss.backward()
+            opt.step()
+    with th.no_grad():
+        acc = float((pol.get_distribution(ot).mode() == at).all(dim=1).float().mean())
+    print(f"[imitație] {len(ot)} perechi, plan {plan}, acuratețe {acc:.3f}")
+    return {"plan_verde_s": plan, "perechi": int(len(ot)), "acuratete": round(acc, 3)}
+
+
 def make_env(scen: list[str], controlled: list[str], seed: int, phases, monitor: str, upstream: bool = False):
     """Fabrică de medii (de nivel superior, ca să poată fi trimisă proceselor SubprocVecEnv)."""
     from stable_baselines3.common.monitor import Monitor
@@ -46,6 +80,11 @@ def main(argv=None) -> None:
     ap.add_argument("--obs-amonte", action="store_true",
                     help="observația și recompensa includ cozile din amonte de intrări (~250 m); observația și "
                          "vehiculele neintroduse")
+    ap.add_argument("--bc-plan", default=None,
+                    help="preantrenare prin imitație a unui plan fix, ex. „50,40,10” (verde N–S, E–V, pietoni, s)")
+    ap.add_argument("--bc-pasi", type=int, default=40_000, help="pași de decizie demonstrați de planul fix")
+    ap.add_argument("--gamma", type=float, default=0.98)
+    ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--continua", action="store_true",
                     help="continuă antrenarea modelului existent models/ppo_<nume>.zip (pașii se adună)")
     args = ap.parse_args(argv)
@@ -83,10 +122,15 @@ def main(argv=None) -> None:
     if args.continua:
         model = PPO.load(str(path), env=env, device="cpu", n_steps=n_steps)
     else:
-        model = PPO("MlpPolicy", env, learning_rate=3e-4, n_steps=n_steps, batch_size=128, n_epochs=10,
-                    gamma=0.98, gae_lambda=0.95, ent_coef=0.01, clip_range=0.2,
+        model = PPO("MlpPolicy", env, learning_rate=args.lr, n_steps=n_steps, batch_size=128, n_epochs=10,
+                    gamma=args.gamma, gae_lambda=0.95, ent_coef=0.01 if not args.bc_plan else 0.003,
+                    clip_range=0.2 if not args.bc_plan else 0.1,
                     policy_kwargs={"net_arch": [128, 128]}, seed=args.seed, verbose=1, device="cpu")
     t0 = time.time()
+    bc_info = None
+    if args.bc_plan and not args.continua:
+        bc_info = behaviour_cloning(model, env, [float(x) for x in args.bc_plan.split(",")],
+                                    args.bc_pasi // args.medii)
     model.learn(total_timesteps=args.pasi, reset_num_timesteps=not args.continua,
                 callback=CheckpointCallback(save_freq=max(1, 25_000 // args.medii), save_path=str(out / "checkpoints"),
                                             name_prefix=name))
@@ -96,7 +140,9 @@ def main(argv=None) -> None:
     export(path)                      # copie NumPy a politicii, rulabilă fără PyTorch
     meta = {"model": path.name, "controlate": controlled, "scenarii": [Path(s).name for s in scen],
             "pasi": int(model.num_timesteps), "durata_min": round(prev_min + (time.time() - t0) / 60, 1),
-            "hiperparametri": {"lr": 3e-4, "n_steps": n_steps, "medii_paralele": args.medii, "batch": 128, "gamma": 0.98, "ent_coef": 0.01,
+            "preantrenare_imitatie": bc_info,
+            "hiperparametri": {"lr": args.lr, "n_steps": n_steps, "medii_paralele": args.medii, "batch": 128,
+                               "gamma": args.gamma, "ent_coef": float(model.ent_coef),
                                "retea": [128, 128], "delta_t_s": 5, "verde_min_s": 10, "verde_max_s": 90},
             "faze_romana": load_json(ROOT / "sumo" / "net" / "network_info.json")["phase_names"],
             "faze_actiuni_romana": phases, "obs_amonte": args.obs_amonte}
