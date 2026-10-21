@@ -20,14 +20,24 @@ def all_red_between(a: str, b: str) -> str:
     return "".join(x if (x in "Gg" and y in "Gg") else "r" for x, y in zip(a, b))
 
 
-def green_phases_from_program(traci, tls_id: str) -> list[str]:
+def green_phases_from_program(traci, tls_id: str, min_dur: float = 10.0) -> list[str]:
+    """Fazele verzi principale ale unui program existent (vecinii pieței).
+
+    Se păstrează doar fazele cu durată reală (≥ `min_dur` s): programele generate de netconvert conțin
+    și variante scurte de 5 s (degajarea trecerilor de pietoni, faze doar pentru pietoni), care, oferite
+    agentului ca acțiuni separate, încurcau învățarea și puteau lăsa trecerile fără verde."""
     logic = traci.trafficlight.getAllProgramLogics(tls_id)
     prog = next((lg for lg in logic if lg.programID == traci.trafficlight.getProgram(tls_id)), logic[0])
+    greens = [p for p in prog.phases if "y" not in p.state and any(c in "Gg" for c in p.state)]
     out = []
-    for p in prog.phases:
-        s = p.state
-        if "y" not in s and any(c in "Gg" for c in s) and s not in out:
-            out.append(s)
+    for p in greens:
+        if p.duration >= min_dur and p.state not in out:
+            out.append(p.state)
+    # siguranță: o fază scurtă rămâne dacă este singura care dă verde unei legături (ex. o trecere)
+    for p in greens:
+        served = {i for s in out for i, c in enumerate(s) if c in "Gg"}
+        if any(c in "Gg" and i not in served for i, c in enumerate(p.state)) and p.state not in out:
+            out.append(p.state)
     return out
 
 
