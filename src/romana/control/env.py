@@ -30,7 +30,7 @@ import numpy as np
 
 from romana.common import NET_DIR, sumo_home
 from romana.control.signals import (SignalController, action_maps, green_phases_from_program, observation,
-                                    romana_green_phases, waiting_total)
+                                    romana_green_phases, upstream_groups, waiting_total)
 
 def _import_libsumo():
     """libsumo (mult mai rapid pentru antrenare). Pe Windows, PYTHONPATH-ul setat de instalatorul
@@ -90,11 +90,12 @@ class RomanaEnv(gym.Env):
 
     def __init__(self, scenarios: list[Path], controlled: list[str] = ("romana",), delta_t: int = 5,
                  episode_s: int = 3600, warmup_s: int = 60, seed: int = 0, gui: bool = False,
-                 romana_phases: list[int] | None = None):
+                 romana_phases: list[int] | None = None, upstream_obs: bool = False):
         super().__init__()
         self.scenarios = [Path(s) for s in scenarios]
         self.controlled = list(controlled)
         self.romana_phases = romana_phases   # fazele dintre care alege agentul (None = toate)
+        self.upstream_obs = upstream_obs     # observația include cozile din amonte și vehiculele neintroduse
         self.delta_t, self.episode_s, self.warmup_s = delta_t, episode_s, warmup_s
         self.gui = gui
         self.rng = random.Random(seed)
@@ -121,10 +122,11 @@ class RomanaEnv(gym.Env):
             self.ctrls.append(SignalController(traci, tid, greens, names))
         self.action_maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
+        self.upstream = [upstream_groups(traci, c) for c in self.ctrls] if self.upstream_obs else None
         self.t = 0
 
     def _obs(self) -> np.ndarray:
-        return observation(traci, self.ctrls, self.cap)
+        return observation(traci, self.ctrls, self.cap, self.upstream)
 
     def _halting(self) -> float:
         return waiting_total(traci, self.ctrls)

@@ -167,12 +167,52 @@ def action_maps(controlled: list[str], ctrls: list, romana_phases: list[int] | N
             for tid, c in zip(controlled, ctrls)]
 
 
-def observation(traci, ctrls, cap: dict) -> "np.ndarray":
-    """Starea comună pentru antrenare, evaluare și geamănul digital (aceeași ordine a valorilor)."""
+def upstream_groups(traci, ctrl, reach_m: float = 250.0) -> list[tuple[list[str], float]]:
+    """Pentru fiecare muchie de intrare a controlerului: benzile din amonte pe cel mult `reach_m` metri
+    (muchiile care o alimentează, fără cele interne) și capacitatea lor de stocare (vehicule)."""
+    groups = []
+    for edge in dict.fromkeys(ln.rsplit("_", 1)[0] for ln in ctrl.in_lanes):
+        lanes, frontier, dist, seen = [], [edge], 0.0, {edge}
+        while frontier and dist < reach_m:
+            nxt = []
+            for e in frontier:
+                inc = [x for x in _incoming_edges(traci, e) if x not in seen and not x.startswith(":")]
+                for p in inc:
+                    seen.add(p)
+                    nxt.append(p)
+                    lanes += [f"{p}_{i}" for i in range(traci.edge.getLaneNumber(p))]
+            dist += max((traci.lane.getLength(f"{e}_0") for e in nxt), default=reach_m)
+            frontier = nxt
+        cap = max(1.0, sum(traci.lane.getLength(ln) for ln in lanes) / 7.5)
+        groups.append((lanes, cap))
+    return groups
+
+
+_INCOMING: dict = {}
+
+
+def _incoming_edges(traci, edge: str) -> list[str]:
+    """Muchiile (non-interne) care alimentează `edge` – index construit o singură dată din conexiuni."""
+    if not _INCOMING:
+        for e in traci.edge.getIDList():
+            if e.startswith(":"):
+                continue
+            for i in range(traci.edge.getLaneNumber(e)):
+                for link in traci.lane.getLinks(f"{e}_{i}"):
+                    _INCOMING.setdefault(link[0].rsplit("_", 1)[0], set()).add(e)
+    return sorted(_INCOMING.get(edge, ()))
+
+
+def observation(traci, ctrls, cap: dict, upstream: list | None = None) -> "np.ndarray":
+    """Starea comună pentru antrenare, evaluare și geamănul digital (aceeași ordine a valorilor).
+
+    `upstream` (opțional, câte o listă de grupuri pentru fiecare controler, din `upstream_groups`) adaugă
+    coada din amonte de fiecare intrare (până la ~250 m) și, la final, vehiculele care nu pot intra în
+    rețea – agentul vede astfel și cozile care depășesc banda de la linia de oprire."""
     import numpy as np
 
     parts = []
-    for c in ctrls:
+    for k, c in enumerate(ctrls):
         oh = np.zeros(c.n)
         oh[c.current] = 1.0
         parts.append(oh)
@@ -180,6 +220,11 @@ def observation(traci, ctrls, cap: dict) -> "np.ndarray":
         parts.append([min(1.0, traci.lane.getLastStepHaltingNumber(ln) / cap[ln]) for ln in c.in_lanes])
         parts.append([min(1.0, traci.lane.getLastStepVehicleNumber(ln) / cap[ln]) for ln in c.in_lanes])
         parts.append([min(1.0, w / 15.0) for w in c.ped_waiting()])
+        if upstream is not None:
+            parts.append([min(1.0, sum(traci.lane.getLastStepHaltingNumber(ln) for ln in lanes) / gcap)
+                          for lanes, gcap in upstream[k]])
+    if upstream is not None:
+        parts.append([min(1.0, len(traci.simulation.getPendingVehicles()) / 200.0)])
     return np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
 
 
