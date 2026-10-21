@@ -181,8 +181,26 @@ Regula de numărare (`classify()` în `vision/od_counter.py`), aplicată pe trai
   din strada ascunsă), o ieșire doar dacă traiectoria **se termină** acolo (toleranță 1,5 s). Verificarea
   sensului de mers (`recount --directii`) a arătat că fosta zonă „intrare Dacia vest” prindea de fapt
   vehiculele care circulă pe inel prin dreptul străzii (73 din 74 se îndepărtau de centru);
+* fiecare zonă cere un **sens de mers** în imagine (±60°), măsurat pe primele / ultimele 1,5 s ale
+  traiectoriei (zonele `capat_traiectorie`) sau pe porțiunea din zonă: intrările se mișcă spre piață,
+  ieșirile dinspre piață. Zonele unui braț se pot astfel suprapune fără confuzie;
 * o traiectorie completă produce un viraj (origine → destinație); una fragmentată (vehicul pierdut la o
   ocluzie) contribuie doar la numărătoarea pe braț.
+
+**Calibrarea pe datele de zi (21.10.2026).** Pozițiile zonelor au fost stabilite din jurnalul primelor 1,5 ore
+de traiectorii (≈16.000 de fragmente): câmpul de mișcare arată sensul fiecărei benzi (inelul circulă în sens
+trigonometric), iar hărțile cu începuturile și sfârșiturile traiectoriilor arată unde vehiculele apar din /
+dispar în străzile parțial ascunse (Lascăr Catargiu sus-centru, Dacia vest în spatele stației de troleibuz,
+Căderea Bastiliei sus-dreapta). Geometria din rețeaua OSM (azimutul fiecărui braț văzut din poziția camerei)
+confirmă ordinea brațelor în imagine: camera privește spre vest, deci stânga = sud (Magheru), dreapta = nord
+(Căderea Bastiliei). Corecții: fosta zonă de intrare Dacia vest era pe inel; zona Căderea Bastiliei era prea sus
+(0 vehicule); intrarea Dacia est stătea parțial peste trecerea de pietoni, iar vehiculele circulă deasupra ei.
+
+**Reunirea fragmentelor.** La 5 cadre/s, stâlpii, autobuzele și copacii întrerup urmărirea. Înainte de
+numărare, `recount` reunește fragmentele aceleiași traiectorii: un fragment care se termină este legat de unul
+care începe în cel mult 2 s, aproape de poziția prezisă din viteza de la capăt, de aceeași categorie și cu
+direcție compatibilă (≈12% din fragmente sunt reunite). Chiar și așa, doar ≈10% dintre vehicule sunt urmărite
+de la intrare până la ieșire – matricea O–D se sprijină deci în principal pe totalurile pe brațe (§ 5.1).
 
 Se agregă pe intervale de 15 minute, separat pe tipuri de vehicule, în `data/counts/numaratori_AAAA-LL-ZZ.csv`.
 
@@ -240,8 +258,19 @@ distanța până la brațele îndepărtate). De aceea se combină trei surse (`b
   (`config/demand.json`) folosită doar ca regularizare când observațiile lipsesc ($w = 2$ vehicule-echivalent).
 
 Matricea se echilibrează prin metoda Furness (IPF)[^ortuzar], alternând scalarea coloanelor și a liniilor și
-terminând pe linii, astfel încât **volumele de intrare măsurate sunt respectate exact**. Un factor de corecție
-a detecției (numărătoare manuală / automată) poate fi setat după validarea manuală pe 15 minute.
+terminând pe linii. Un factor de corecție a detecției (numărătoare manuală / automată) poate fi setat după
+validarea manuală pe 15 minute.
+
+**Echilibrarea intrări / ieșiri.** Pe datele de zi, suma ieșirilor numărate a depășit suma intrărilor cu
+≈30% (ex. 12:00–12:15: 1.856 față de 2.436 veh/h). Diferența nu poate fi reală la scara a 15 minute (stocarea
+pe inel este de câteva zeci de vehicule): camera **subnumără intrările** de la marginea cadrului (Magheru, Dacia
+est – vehiculele apar deja parțial în zonă, în spatele chioșcului și al stației de autobuz) și **supranumără
+ieșirile** spre străzile parțial ascunse (un vehicul pierdut lângă o stradă pare că a ieșit pe ea). O
+comparație cu numărarea pe linii de control (*screen lines*) a dat erori de sens opus (≈745 intrări și ≈1.330
+ieșiri pe oră), deci adevărul este între cele două metode. În lipsa unei numărători manuale de referință,
+ambele sume sunt tratate ca măsurători ale aceluiași debit și aduse la **media** lor înainte de Furness
+(`echilibrare: "medie"` în `config/demand.json`); fiecare parte își păstrează distribuția pe brațe. Incertitudinea
+rămasă (≈±15–20%) este acoperită de scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.3).
 
 ### 5.2 De la O–D la vehicule în SUMO
 
