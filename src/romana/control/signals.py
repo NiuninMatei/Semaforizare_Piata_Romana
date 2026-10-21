@@ -228,6 +228,12 @@ def observation(traci, ctrls, cap: dict, upstream: list | None = None) -> "np.nd
     return np.concatenate([np.asarray(p, dtype=np.float32) for p in parts])
 
 
+def upstream_halting(traci, upstream) -> float:
+    """Vehiculele oprite pe benzile din amonte de intrări (fiecare bandă numărată o singură dată)."""
+    lanes = {ln for groups in upstream for lanes, _ in groups for ln in lanes}
+    return float(sum(traci.lane.getLastStepHaltingNumber(ln) for ln in lanes))
+
+
 def waiting_total(traci, ctrls) -> float:
     """Vehicule oprite pe benzile de intrare + pietoni care așteaptă la treceri (toți participanții)."""
     return float(sum(traci.lane.getLastStepHaltingNumber(ln) for c in ctrls for ln in c.in_lanes)
