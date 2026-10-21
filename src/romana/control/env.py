@@ -163,6 +163,18 @@ class RomanaEnv(gym.Env):
         info = {"oprite": halting, "timp": self.t}
         return self._obs(), float(reward), False, truncated, info
 
+    def expert_action(self, plan: list[float]) -> np.ndarray:
+        """Acțiunea pe care ar lua-o un plan fix cu duratele de verde `plan` (câte una pentru fiecare fază
+        permisă a pieței, în ordine); vecinii își păstrează faza curentă. Servește la preantrenarea prin
+        imitație (behaviour cloning) înaintea PPO."""
+        acts = []
+        for k, (c, m) in enumerate(zip(self.ctrls, self.action_maps)):
+            cur = m.index(c.current) if c.current in m else 0
+            if k == 0 and c.stage == "green" and c.green_time >= plan[cur]:
+                cur = (cur + 1) % len(m)
+            acts.append(cur)
+        return np.array(acts)
+
     def close(self):
         if self._running:
             traci.close()
