@@ -270,7 +270,7 @@ comparație cu numărarea pe linii de control (*screen lines*) a dat erori de se
 ieșiri pe oră), deci adevărul este între cele două metode. În lipsa unei numărători manuale de referință,
 ambele sume sunt tratate ca măsurători ale aceluiași debit și aduse la **media** lor înainte de Furness
 (`echilibrare: "medie"` în `config/demand.json`); fiecare parte își păstrează distribuția pe brațe. Incertitudinea
-rămasă (≈±15–20%) este acoperită de scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.3).
+rămasă (≈±15–20%) este acoperită de scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.4).
 
 ### 5.2 De la O–D la vehicule în SUMO
 
@@ -300,7 +300,35 @@ funcționeze aproape de saturație pe replica fidelă a rețelei: peste ≈1,0×
 corespunde congestiei cunoscute a pieței. Scenariile servesc la dezvoltarea și verificarea lanțului și vor fi
 completate cu scenarii construite din numărătorile reale.
 
-### 5.4 Geamănul digital live
+### 5.4 Scenariile din date reale (Borna 9)
+
+Prima zi de date: **miercuri, 21.10.2026, 11:45–21:01** (9 h 15 min de flux continuu, ≈5–6 cadre/s, nicio
+reconectare). Jurnalul de traiectorii a fost renumărat cu zonele calibrate pe zi: 123.829 de fragmente,
+108.585 de traiectorii după reunire, 16.110 intrări numărate, 7.733 de pietoni pe trecerile vizibile.
+
+Profilul zilei (debit echilibrat prin piață, ferestre glisante de o oră) are forma așteptată: ≈2.000 veh/h la
+prânz, un vârf secundar la 13:00–14:00 (≈2.600 veh/h, pauza de masă), creștere de la 15:30, **vârful de seară
+la 17:15–18:15 (≈2.780 veh/h)** și scădere după 18:30 (≈1.260 veh/h la 20:00–21:00). Pietonii numărați pe
+cele două treceri vizibile: 600–1.250 pe oră.
+
+`python -m romana.bridge.scenarii_zi --zi 2026-10-21` alege automat ferestrele și construiește scenariile:
+
+| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Observații |
+|---|---|---|---|---|---|
+| `zi_2026-10-21_pranz` | 12:00–13:00 | 2.068 | 310 | 2.258 | |
+| `zi_2026-10-21_varf` | 17:15–18:15 | 2.779 | 417 | 2.418 | ora de vârf a zilei |
+| `zi_2026-10-21_linistit` | 20:00–21:00 | 1.262 | 189 | 1.988 | |
+| `zi_2026-10-21_varf_x1_2` | vârf × 1,2 | 3.335 | 500 | 2.418 | sensibilitate (marja de măsurare) |
+| `zi_2026-10-21_linistit_x0_8` | liniștit × 0,8 | 1.010 | 151 | 1.988 | sensibilitate |
+
+Compoziția măsurată pe toată ziua (intrări și ieșiri): 92,7% autoturisme, 3,7% autobuze și troleibuze, 3,2%
+camioane, 0,3% biciclete, 0,1% motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi
+de octombrie cu 12–15 °C. Pentru fiecare tip de vehicul,
+`routeSampler` reproduce toate relațiile de viraj țintă (GEH < 5 pentru 100% din relații). Scenariile ipotetice
+`referinta_*` (§ 5.3) rămân în proiect pentru comparație, dar agenții din Borna 9 sunt antrenați **doar** pe
+scenariile din date reale.
+
+### 5.5 Geamănul digital live
 
 `bridge/live_twin.py` rulează SUMO (opțional SUMO-GUI) continuu, în timp real: în fiecare secundă citește
 debitele curente publicate de modulul de viziune și injectează vehicule pe brațe ca proces Poisson cu acele
