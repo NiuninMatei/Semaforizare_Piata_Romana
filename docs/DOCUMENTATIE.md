@@ -628,9 +628,21 @@ Conform cerințelor de integritate academică, se declară folosirea asistențil
 
 * **până la 18.10.2026 inclusiv** (ciorna din `legacy/google_ai_draft/`): modulul AI Google integrat în browserul
   Chrome[^google-ai];
-* **începând cu 20.10.2026** (Bornele 0–8: audit, arhitectură, cod, experimente, documentație): Claude, asistent
-  AI dezvoltat de Anthropic, model Claude Opus 5.5[^claude], lucrând pe repository la cererea și sub
-  coordonarea autorului.
+* **începând cu 20.10.2026** (Bornele 0–9): Claude, asistent AI dezvoltat de Anthropic, model Claude Opus 5.5,
+  rulat prin Claude Code în aplicația desktop Claude[^claude], direct pe calculatorul autorului.
+
+**Contribuția declarată a asistentului.** Claude a realizat cea mai mare parte a muncii de implementare:
+auditul ciornei, arhitectura sistemului, **aproape tot codul sursă** (viziune, estimarea cererii, rețeaua
+SUMO, mediul de învățare, agenții, liniile de bază, evaluarea, geamănul digital, dispeceratul, testele),
+colectarea și calibrarea datelor de pe cameră, antrenarea și evaluarea modelelor, diagnosticarea erorilor și
+redactarea acestei documentații. A lucrat autonom pe repository, cu acordul explicit al autorului de a controla
+calculatorul (inclusiv publicarea commit-urilor pe GitHub prin GitHub Desktop). Fiecare commit realizat de
+asistent poartă linia `Co-Authored-By: Claude …` în istoricul Git.
+
+**Contribuția autorului.** Niunin Matei-Gabriel a definit tema, cerințele și principiile proiectului (replica
+fidelă a rețelei reale, toți participanții la trafic, cererea calibrată pe cameră, lucrul pe borne, lucrul local),
+a coordonat și a direcționat lucrul, a luat deciziile de ansamblu, a pus la dispoziție echipamentul și
+permisiunile și a verificat rezultatele.
 
 Deciziile de proiectare, rezultatele experimentale și sursele au fost verificate prin rularea efectivă a
 codului; afirmațiile despre lumea reală sunt susținute de sursele de mai jos.
@@ -642,6 +654,8 @@ utilizare ai resurselor folosite efectiv în proiect.
 
 | Resursă folosită | Licență / termeni |
 |---|---|
+| Claude (Anthropic), model Claude Opus 5.5, prin Claude Code – asistent AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic; conținutul generat aparține utilizatorului, cu obligația declarării folosirii AI[^claude] |
+| Modulul AI Google din Chrome – ciorna inițială (`legacy/`) | Termenii Google[^google-ai] |
 | Date OpenStreetMap (rețeaua rutieră) | ODbL 1.0 – „© OpenStreetMap contributors”[^osm] |
 | Eclipse SUMO 1.28.0 (simulator, `sumolib`, `traci`, `libsumo`, `routeSampler`) | EPL-2.0[^sumo] |
 | Ultralytics YOLO11 | AGPL-3.0[^yolo11] |
@@ -700,4 +714,4 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^flask]: Pallets, *Flask*, https://flask.palletsprojects.com (BSD-3-Clause).
 [^barlow]: J. Tribby, *Barlow* (familie de fonturi), Google Fonts, https://fonts.google.com/specimen/Barlow (SIL OFL 1.1).
 [^google-ai]: Google, modulul de asistență AI integrat în browserul Chrome, folosit pentru ciorna proiectului până la 18.10.2026.
-[^claude]: Anthropic, Claude (model Claude Opus 5.5), asistent AI generativ, https://www.anthropic.com/claude, folosit începând cu 20.10.2026.
+[^claude]: Anthropic, *Claude* (model Claude Opus 5.5, ID `claude-opus-5-5`), asistent AI generativ, rulat prin *Claude Code* (aplicația desktop Claude), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni de utilizare: https://www.anthropic.com/legal. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13).

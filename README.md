@@ -85,4 +85,6 @@ Jurnalul detaliat: [docs/DOCUMENTATIE.md § 12](docs/DOCUMENTATIE.md#12-jurnalul
 Dependența Ultralytics YOLO este licențiată AGPL-3.0, deci codul acestui proiect, fiind public, trebuie
 distribuit sub o licență compatibilă (recomandat: AGPL-3.0; alegerea finală aparține autorului). Date rețea: © OpenStreetMap contributors, ODbL 1.0.
 Imagini cameră: © WebcamRomania.ro – prelucrate doar în memorie, fără stocare. Simulator: Eclipse SUMO, EPL-2.0.
-Asistenți generativi: modulul AI Google din Chrome (ciorna până la 18.10.2026); Claude (Anthropic) de la 20.10.2026.
+Asistenți generativi: modulul AI Google din Chrome (ciorna până la 18.10.2026); de la 20.10.2026, **Claude (Anthropic,
+model Claude Opus 5.5, prin Claude Code)**, care a scris cea mai mare parte a codului și a documentației, sub coordonarea
+autorului – declarația completă în [docs/DOCUMENTATIE.md § 13](docs/DOCUMENTATIE.md#13-asistență-generativă).
