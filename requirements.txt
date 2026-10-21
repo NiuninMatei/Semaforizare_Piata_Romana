@@ -8,6 +8,7 @@ stable-baselines3>=2.3      # PPO / DQN (MIT)
 gymnasium>=1.0
 torch>=2.2
 ultralytics>=8.3            # YOLO11 + ByteTrack (AGPL-3.0)
+openvino>=2024.0          # inferența YOLO pe placa grafică Intel (Apache-2.0)
 opencv-python>=4.9          # citire stream HLS prin FFmpeg (Apache-2.0)
 numpy>=1.26
 pandas>=2.1
