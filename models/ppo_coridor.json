@@ -1,0 +1,45 @@
+{
+  "model": "ppo_coridor.zip",
+  "controlate": [
+    "romana",
+    "dacia_eminescu",
+    "magheru_enescu",
+    "catargiu_manu",
+    "dacia_victoriei",
+    "dacia_polona"
+  ],
+  "scenarii": [
+    "referinta_aglomerat.sumocfg",
+    "referinta_moderat.sumocfg",
+    "referinta_varf.sumocfg"
+  ],
+  "pasi": 300032,
+  "durata_min": 42.6,
+  "hiperparametri": {
+    "lr": 0.0003,
+    "n_steps": 128,
+    "medii_paralele": 8,
+    "batch": 128,
+    "gamma": 0.98,
+    "ent_coef": 0.01,
+    "retea": [
+      128,
+      128
+    ],
+    "delta_t_s": 5,
+    "verde_min_s": 10,
+    "verde_max_s": 90
+  },
+  "faze_romana": [
+    "N–S: Magheru ↔ Lascăr Catargiu prin centru",
+    "E–V: Dacia în jurul insulei",
+    "Pietoni: toate trecerile, axa centrală se golește",
+    "N–S, cu intrările Dacia deschise (fără dozare)",
+    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+  ],
+  "faze_actiuni_romana": [
+    0,
+    1,
+    2
+  ]
+}

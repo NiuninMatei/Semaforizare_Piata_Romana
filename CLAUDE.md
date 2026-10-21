@@ -36,7 +36,34 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (21.10.2026, 01:20) – Borna 8 în lucru
+## Stare curentă (21.10.2026, 05:40) – Borna 8: pașii 1–5 făcuți (noaptea 21.10)
+
+Făcut în noaptea de 21.10 (commit-uri „Borna 8: …”):
+- Viziune: zone `trecere` (Magheru, Dacia est) desenate pe cadrul de noapte; pietonii numărați o dată pe
+  trecere (≥ 2 cadre), bicicliștii/motocicliștii excluși (`is_rider`); teste în `tests/` (unittest).
+- Liniile de bază reparate pe rețeaua fidelă: `tls_actuated.add.xml` (avea faze greșite), Webster (chei vechi),
+  strategie nouă `fix_referinta` (programul '0'); Max-Pressure și agentul RL aleg doar fazele 0–2 (fazele
+  „fără dozare” blocau inelul). `libsumo` pip se încarcă explicit (PYTHONPATH-ul SUMO îl umbrea).
+- Geamăn digital: pietoni + bicicliști injectați, modul fix = planul de 3 faze; dashboard cu pietoni.
+- Evaluare pe categorii (vehicule, bicicliști, pietoni, întârziere la intrare, total), mediană, `--procese`,
+  `--adauga`, `--doar-raport`. Antrenare paralelă (`--medii 8`), `--continua`.
+- Recompensa: vehiculele neintroduse contează cât unul oprit (agentul coridor „ascundea” coada la margine).
+- Modele: `ppo_romana` (500k pași) – pierdere totală −3% / −31% / −44% față de planul fix; `ppo_coridor`
+  (300k) – mai slab decât actuated (rezultat negativ, documentat). § 9 completat. Modelele vechi: local în
+  `outputs/train/arhiva_recompensa_veche/` (neversionat).
+- **Push-ul nu a mers din linia de comandă** (git fără credențiale în afara GitHub Desktop): commit-urile sunt
+  locale – „Push origin” din GitHub Desktop.
+
+### Pașii următori (actualizați)
+
+1. Pe lumină de zi: verificat zonele de vehicule și cele 2 treceri (`scripts\2b_calibrare_zone.bat`) și
+   detecția bicicliștilor; o numărătoare manuală de 15 min pentru `factor_corectie_detectie` și pentru
+   `factor_extrapolare_pietoni`.
+2. Date reale: `2_viziune_live.bat` în vârful de dimineață/seară, `3_genereaza_cerere.bat --nume <zi> ...`,
+   reantrenare (`4_antreneaza_ai.bat --pasi 500000 --medii 8`), `5_evalueaza.bat`, actualizat § 9.
+3. Opțional: agentul coridor descentralizat (parametri comuni, MPLight) sau pondere mai mare pentru pietoni.
+
+## Stare anterioară (21.10.2026, 01:20) – Borna 8 în lucru
 
 Făcut în Borna 8 (rețea fidelă + toți participanții), comis în acest commit:
 - `network/build_network.py` rescris: geometrie OSM completă, trotuare, treceri (`--crossings.guess`;
@@ -53,7 +80,7 @@ Făcut în Borna 8 (rețea fidelă + toți participanții), comis în acest comm
   pietoni care așteaptă)/100. Funcții comune `observation()` / `waiting_total()` în `control/signals.py`.
 - Modelele vechi (pe rețeaua agregată, incompatibile) au fost scoase din `models/`.
 
-### Pașii următori (în ordine)
+### Pașii următori de atunci (istoric; 1–5 făcuți, vezi mai sus)
 
 1. Viziune: numărarea pietonilor pe trecerile vizibile (zone cu `rol: "trecere"` în `config/camera.json`,
    persoanele intră în `ODCounter` ca tip „pietoni”) și verificarea bicicliștilor; calibrarea zonelor pe
