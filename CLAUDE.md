@@ -36,7 +36,32 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (21.10.2026, 05:40) – Borna 8: pașii 1–5 făcuți (noaptea 21.10)
+## Stare curentă (21.10.2026, 22:30) – Borna 7 făcută, Borna 9 în lucru (date reale)
+
+Făcut pe 21.10 (ziua):
+- Push autonom prin GitHub Desktop (computer use; vezi memoria „push-prin-github-desktop”). Camere publice
+  căutate: în zona modelată există doar camera Piața Romană → vecinii sunt simulați din datele ei (§ 4.1).
+- Viziune: OpenVINO pe GPU Intel (~5 cadre/s), jurnal anonim de traiectorii (data/trajectories) +
+  `vision/recount.py` (renumărare, --directii, --flux, reunirea fragmentelor), regula pe traiectoria întreagă
+  (origine înaintea oricărei ieșiri, zone `capat_traiectorie`, sensul de mers `sens`), zone recalibrate pe zi.
+- Prima zi reală: 21.10, 11:45–21:01 → data/counts/numaratori_2026-10-21.csv; echilibrarea intrări/ieșiri
+  („medie”, diferență măsurată ~30%); zonele Dacia vest mutate (prindeau vehicule de pe inel); rutele pornesc
+  pe bulevardele brațelor (`follow_street`) → scenariile `zi_2026-10-21_{pranz,varf,linistit}` + ×1,2 / ×0,8.
+- Liniile de bază pe scenariile reale: outputs/eval/rezultate.csv (planul fix e cel mai bun clasic la vârf).
+- În curs (pornite 21:50): antrenarea `ppo_romana` 500k pe scenariile zi_* (`--medii 7`), apoi `ppo_coridor`
+  500k (fazele vecinilor curățate, [3 3 3 2 3 2]); colectarea de noapte până pe 22.10, 11:00 (vârful de
+  dimineață). Opțiune nouă `--obs-amonte` (cozile din amonte + vehiculele neintroduse), încă neantrenată.
+- GHID_PROFESOR.md scris; Claude trecut explicit în § 13 / § 14 / README.
+
+### Pașii următori
+
+1. Evaluarea `ppo_romana` / `ppo_coridor` pe scenariile zi_* (`--adauga`), comparată cu liniile de bază; dacă
+   agentul nu bate planul fix la vârf: reantrenare cu `--obs-amonte` și/sau mai mulți pași.
+2. Dimineața 22.10, după 11:00: `recount --zi 2026-10-22`, `scenarii_zi --zi 2026-10-22` (vârful de dimineață),
+   reantrenare pe ambele zile, evaluare finală; § 9 Rezultate pe date reale; jurnalul bornelor.
+3. Explicația cap-coadă pentru autor (în chat) la final.
+
+## Stare anterioară (21.10.2026, 05:40) – Borna 8: pașii 1–5 făcuți (noaptea 21.10)
 
 Făcut în noaptea de 21.10 (commit-uri „Borna 8: …”):
 - Viziune: zone `trecere` (Magheru, Dacia est) desenate pe cadrul de noapte; pietonii numărați o dată pe
