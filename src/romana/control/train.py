@@ -21,14 +21,14 @@ from romana.common import MODELS_DIR, OUTPUT_DIR, ROOT, load_json
 NEIGHBORS = ["dacia_eminescu", "magheru_enescu", "catargiu_manu", "dacia_victoriei", "dacia_polona"]
 
 
-def make_env(scen: list[str], controlled: list[str], seed: int, phases, monitor: str):
+def make_env(scen: list[str], controlled: list[str], seed: int, phases, monitor: str, upstream: bool = False):
     """Fabrică de medii (de nivel superior, ca să poată fi trimisă proceselor SubprocVecEnv)."""
     from stable_baselines3.common.monitor import Monitor
 
     from romana.control.env import RomanaEnv
 
-    return Monitor(RomanaEnv([Path(s) for s in scen], controlled=controlled, seed=seed, romana_phases=phases),
-                   filename=monitor)
+    return Monitor(RomanaEnv([Path(s) for s in scen], controlled=controlled, seed=seed, romana_phases=phases,
+                             upstream_obs=upstream), filename=monitor)
 
 
 def main(argv=None) -> None:
@@ -43,6 +43,8 @@ def main(argv=None) -> None:
                     help="agentul poate alege și fazele „fără dozare” (implicit doar fazele planului real)")
     ap.add_argument("--medii", type=int, default=6,
                     help="simulări SUMO în paralel (procese separate); 1 = un singur proces")
+    ap.add_argument("--obs-amonte", action="store_true",
+                    help="observația include cozile din amonte de intrări (~250 m) și vehiculele neintroduse")
     ap.add_argument("--continua", action="store_true",
                     help="continuă antrenarea modelului existent models/ppo_<nume>.zip (pașii se adună)")
     args = ap.parse_args(argv)
@@ -73,7 +75,7 @@ def main(argv=None) -> None:
     # la continuare, jurnalele de episoade primesc un sufix (cele vechi rămân pentru curba de învățare)
     suffix = f"_de_la_{prev_steps}" if args.continua else ""
     fns = [partial(make_env, scen, controlled, args.seed + 1000 * i + prev_steps, phases,
-                   str(out / f"monitor_{i}{suffix}")) for i in range(args.medii)]
+                   str(out / f"monitor_{i}{suffix}"), args.obs_amonte) for i in range(args.medii)]
     env = SubprocVecEnv(fns) if args.medii > 1 else DummyVecEnv(fns)
     # ~1024 de tranziții pe actualizare, indiferent de numărul de medii (multiplu de 64 → loturi întregi de 128)
     n_steps = -(-1024 // (args.medii * 64)) * 64
@@ -96,7 +98,7 @@ def main(argv=None) -> None:
             "hiperparametri": {"lr": 3e-4, "n_steps": n_steps, "medii_paralele": args.medii, "batch": 128, "gamma": 0.98, "ent_coef": 0.01,
                                "retea": [128, 128], "delta_t_s": 5, "verde_min_s": 10, "verde_max_s": 90},
             "faze_romana": load_json(ROOT / "sumo" / "net" / "network_info.json")["phase_names"],
-            "faze_actiuni_romana": phases}
+            "faze_actiuni_romana": phases, "obs_amonte": args.obs_amonte}
     (MODELS_DIR / f"ppo_{name}.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     env.close()
     print(f"[OK] Model salvat: {path}  ({meta['durata_min']} min)")
