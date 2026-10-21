@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-10-21 21:03:58.689289 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<!-- generated on 2026-10-21 21:40:21.437047 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
 <configuration>
     <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate_bicycle.rou.xml"/>
     <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-21_pranz\viraje_bicycle.xml"/>

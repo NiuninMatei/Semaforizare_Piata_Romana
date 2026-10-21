@@ -1,51 +1,51 @@
 {
   "tipuri": {
     "bicycle": {
-      "viraje_tinta": 2,
+      "viraje_tinta": 4,
       "GEH<5_%": 100.0
     },
     "bus": {
-      "viraje_tinta": 89,
+      "viraje_tinta": 93,
       "GEH<5_%": 100.0
     },
     "passenger": {
-      "viraje_tinta": 1149,
-      "GEH<5_%": 100.0
+      "viraje_tinta": 999,
+      "GEH<5_%": 94.44
     },
     "truck": {
-      "viraje_tinta": 19,
+      "viraje_tinta": 20,
       "GEH<5_%": 100.0
     }
   },
-  "vehicule_fond": 189,
+  "vehicule_fond": 168,
   "pietoni": 1988,
   "sumocfg": "sumo\\scenarios\\zi_2026-10-21_linistit.sumocfg",
   "rezumat_od": {
-    "vehicule_total": 1262,
+    "vehicule_total": 1121,
     "durata_s": 3600,
     "od_vehicule": {
-      "catargiu>caderea_bastiliei": 26,
-      "catargiu>catargiu": 16,
+      "catargiu>caderea_bastiliei": 25,
+      "catargiu>catargiu": 19,
       "catargiu>dacia_est": 3,
-      "catargiu>dacia_vest": 41,
-      "catargiu>magheru": 113,
-      "catargiu>mendeleev": 5,
-      "dacia_est>caderea_bastiliei": 57,
-      "dacia_est>catargiu": 96,
-      "dacia_est>dacia_vest": 27,
-      "dacia_est>magheru": 13,
-      "dacia_est>mendeleev": 2,
-      "dacia_vest>caderea_bastiliei": 38,
-      "dacia_vest>catargiu": 185,
-      "dacia_vest>dacia_est": 10,
-      "dacia_vest>dacia_vest": 6,
-      "dacia_vest>magheru": 248,
+      "catargiu>dacia_vest": 14,
+      "catargiu>magheru": 153,
+      "catargiu>mendeleev": 6,
+      "dacia_est>caderea_bastiliei": 62,
+      "dacia_est>catargiu": 120,
+      "dacia_est>dacia_vest": 9,
+      "dacia_est>magheru": 17,
+      "dacia_est>mendeleev": 1,
+      "dacia_vest>caderea_bastiliei": 20,
+      "dacia_vest>catargiu": 73,
+      "dacia_vest>dacia_est": 7,
+      "dacia_vest>dacia_vest": 2,
+      "dacia_vest>magheru": 185,
       "dacia_vest>mendeleev": 2,
-      "magheru>caderea_bastiliei": 107,
-      "magheru>catargiu": 146,
+      "magheru>caderea_bastiliei": 112,
+      "magheru>catargiu": 210,
       "magheru>dacia_est": 62,
-      "magheru>dacia_vest": 51,
-      "magheru>magheru": 6,
+      "magheru>dacia_vest": 12,
+      "magheru>magheru": 8,
       "magheru>mendeleev": 1
     }
   }
