@@ -195,3 +195,5 @@ venv/
 sumo/demand/_tmp/
 sumo/demand/candidate.rou.xml
 sumo/demand/candidate_*.rou.xml
+# exporturile OpenVINO ale detectorului (regenerabile)
+models/viziune/

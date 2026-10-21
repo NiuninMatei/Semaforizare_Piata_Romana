@@ -1,23 +1,39 @@
 """Numărarea origine–destinație (intrare → ieșire) pe brațele Pieței Romane.
 
 Fiecare vehicul urmărit (ID ByteTrack) trece prin zonele poligonale definite în
-`config/camera.json`. Zonele sunt de două tipuri:
+`config/camera.json`. Zonele sunt de trei tipuri:
   * `intrare` – banda pe care vehiculele se apropie de piață pe un braț;
-  * `iesire`  – banda pe care vehiculele părăsesc piața pe un braț.
+  * `iesire`  – banda pe care vehiculele părăsesc piața pe un braț;
   * `trecere` – suprafața unei treceri de pietoni vizibile (doar pentru pietoni).
-Prima zonă de intrare vizitată = brațul de origine; ultima zonă de ieșire = destinația.
+
+Clasificarea se face pe traiectoria întreagă, la închiderea ei (`classify`), aceeași funcție
+fiind folosită live și la renumărarea din jurnalul de traiectorii (`vision/recount.py`):
+  * originea = prima zonă de intrare vizitată înaintea oricărei ieșiri;
+  * destinația = ultima zonă de ieșire a unui alt braț, vizitată după origine;
+  * zonele de pe brațele îndepărtate, parțial ascunse (`capat_traiectorie`), contează doar
+    dacă traiectoria **începe** acolo (intrare: vehiculul apare din strada ascunsă) sau
+    **se termină** acolo (ieșire: vehiculul dispare în ea), cu o toleranță de `capat_s` secunde –
+    altfel un vehicul care doar circulă pe inel prin dreptul străzii ar fi numărat greșit;
+  * zonele de intrare și de ieșire ale aceluiași braț sunt alăturate, deci întoarcerile pe
+    același braț nu se pot distinge de atingerea benzii vecine și nu se numără (în cerere ele
+    provin doar din distribuția a priori, ~3%).
 O traiectorie completă produce o mișcare de viraj (origine → destinație); traiectoriile
 fragmentate (ocluzii, vehicule pierdute) contribuie doar la numărătorile pe braț.
 Un pieton este numărat o singură dată pe fiecare trecere pe care a fost văzut în cel puțin
-`min_crossing_frames` cadre (persoanele de pe biciclete/motociclete sunt excluse înainte,
-în `run_vision`, ca să nu fie numărate de două ori).
+`min_crossing_frames` cadre și pe care s-a deplasat cel puțin `min_crossing_move` (fracțiune
+din lățimea cadrului) – cine doar așteaptă la bordură nu este numărat. Persoanele de pe
+biciclete/motociclete sunt excluse înainte, în `run_vision`, ca să nu fie numărate de două ori.
 
-Nu se păstrează imagini sau identificatori persistenți: ID-urile de urmărire sunt
-temporare și sunt uitate după închiderea traiectoriei (GDPR – minimizarea datelor).
+Confidențialitate: nu se păstrează imagini. Jurnalul de traiectorii (opțional) conține doar
+clasa obiectului și pozițiile punctului de contact cu solul, în coordonate normalizate, cu
+timpul relativ – fără imagini, fără numere de înmatriculare, fără identificatori persistenți
+(ID-ul de urmărire este temporar și nu se salvează).
 """
 from __future__ import annotations
 
 import csv
+import gzip
+import json
 import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
@@ -40,8 +56,10 @@ class Zone:
     role: str                    # "intrare" | "iesire" | "trecere"
     poly_norm: np.ndarray        # Nx2, coordonate normalizate [0..1]
     color: tuple = (0, 255, 0)
+    capat: bool = False          # contează doar la începutul (intrare) / sfârșitul (ieșire) traiectoriei
     _poly_px: np.ndarray | None = None
     _size: tuple | None = None
+    _poly_f: np.ndarray | None = None
 
     def poly_px(self, w: int, h: int) -> np.ndarray:
         if self._size != (w, h):
@@ -51,6 +69,11 @@ class Zone:
 
     def contains(self, x: float, y: float, w: int, h: int) -> bool:
         return cv2.pointPolygonTest(self.poly_px(w, h), (float(x), float(y)), False) >= 0
+
+    def contains_norm(self, x: float, y: float) -> bool:
+        if self._poly_f is None:
+            self._poly_f = self.poly_norm.astype(np.float32)
+        return cv2.pointPolygonTest(self._poly_f, (float(x), float(y)), False) >= 0
 
 
 def is_rider(person_box, vehicle_boxes, margin: float = 0.25) -> bool:
@@ -68,8 +91,64 @@ def load_zones(cam_cfg: dict) -> list[Zone]:
     zones = []
     for z in cam_cfg["zones"]:
         zones.append(Zone(z["id"], z["arm"], z["rol"], np.array(z["poligon"], dtype=float),
-                          tuple(z.get("culoare", (0, 255, 0)))))
+                          tuple(z.get("culoare", (0, 255, 0))), bool(z.get("capat_traiectorie", False))))
     return zones
+
+
+@dataclass
+class Params:
+    min_track_frames: int = 3
+    min_crossing_frames: int = 2
+    min_crossing_move: float = 0.04     # fracțiune din lățimea cadrului
+    capat_s: float = 1.5                # toleranța pentru zonele `capat_traiectorie`
+    aspect: float = 1850 / 3288         # înălțime / lățime cadru (distanțe comparabile pe cele două axe)
+
+
+def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
+    """Clasificarea unei traiectorii închise.
+
+    pts: [(t, x, y), ...] cu x, y normalizate la cadru și t în secunde, în ordine cronologică.
+    Întoarce {"origine", "destinatie"} pentru vehicule sau {"treceri": [(braț, trecere), ...]}
+    pentru pietoni."""
+    if vtype == PEDESTRIAN:
+        out = []
+        for z in zones:
+            if z.role != "trecere":
+                continue
+            inside = [(x, y * p.aspect) for _, x, y in pts if z.contains_norm(x, y)]
+            if len(inside) >= p.min_crossing_frames:
+                (x0, y0), (x1, y1) = inside[0], inside[-1]
+                if ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5 >= p.min_crossing_move:
+                    out.append((z.arm, z.id))
+        return {"treceri": out}
+    t_first, t_last = pts[0][0], pts[-1][0]
+    first, last = {}, {}                       # zonă -> primul / ultimul moment în zonă
+    for t, x, y in pts:
+        for z in zones:
+            if z.role != "trecere" and z.contains_norm(x, y):
+                first.setdefault(z.id, t)
+                last[z.id] = t
+    by_id = {z.id: z for z in zones}
+    exits_first = [first[i] for i in first if by_id[i].role == "iesire"]
+    origin, t_origin = None, None
+    for zid in sorted((i for i in first if by_id[i].role == "intrare"), key=lambda i: first[i]):
+        z = by_id[zid]
+        if exits_first and min(exits_first) < first[zid]:
+            break                              # a atins întâi o ieșire: vehicul care părăsește piața
+        if z.capat and first[zid] - t_first > p.capat_s:
+            continue                           # nu a apărut din strada ascunsă, doar a trecut prin dreptul ei
+        origin, t_origin = z.arm, first[zid]
+        break
+    dest = None
+    for zid in sorted((i for i in last if by_id[i].role == "iesire"), key=lambda i: -last[i]):
+        z = by_id[zid]
+        if z.arm == origin or (t_origin is not None and last[zid] < t_origin):
+            continue
+        if z.capat and t_last - last[zid] > p.capat_s:
+            continue                           # nu a dispărut în strada ascunsă, a continuat pe inel
+        dest = z.arm
+        break
+    return {"origine": origin, "destinatie": dest}
 
 
 @dataclass
@@ -78,12 +157,10 @@ class TrackState:
     first_seen: float
     last_seen: float
     last_frame: int
-    origin: str | None = None
-    destination: str | None = None
-    zones_seen: list = field(default_factory=list)
     cls_votes: Counter = field(default_factory=Counter)
-    last_point: tuple | None = None
-    crossing_frames: Counter = field(default_factory=Counter)   # trecere -> cadre (pietoni)
+    pts: list = field(default_factory=list)          # (t, x_norm, y_norm)
+    origin: str | None = None                        # provizorii, pentru afișare
+    destination: str | None = None
 
 
 class ODCounter:
@@ -91,15 +168,14 @@ class ODCounter:
 
     def __init__(self, zones: list[Zone], interval_s: int = 900, lost_after_frames: int = 30,
                  min_track_frames: int = 3, out_dir: Path | None = None, clock=time.time,
-                 min_crossing_frames: int = 2):
+                 min_crossing_frames: int = 2, min_crossing_move: float = 0.04, capat_s: float = 1.5,
+                 traj_dir: Path | None = None):
         self.zones = zones
-        self.vehicle_zones = [z for z in zones if z.role != "trecere"]
-        self.crossing_zones = [z for z in zones if z.role == "trecere"]
-        self.min_crossing = min_crossing_frames
+        self.p = Params(min_track_frames, min_crossing_frames, min_crossing_move, capat_s)
         self.interval_s = interval_s
         self.lost_after = lost_after_frames
-        self.min_frames = min_track_frames
         self.out_dir = out_dir
+        self.traj_dir = traj_dir
         self.clock = clock
         self.tracks: dict[int, TrackState] = {}
         self.frame_idx = 0
@@ -122,29 +198,9 @@ class ODCounter:
         self.history.append(rec)
         self.history = self.history[-96:]
         if self.out_dir is not None:
-            self._write_csv(rec)
+            write_csv(rec, self.out_dir)
         self._start_interval(now)
         return rec
-
-    def _write_csv(self, rec: dict) -> None:
-        self.out_dir.mkdir(parents=True, exist_ok=True)
-        day = time.strftime("%Y-%m-%d", time.localtime(rec["start"]))
-        path = self.out_dir / f"numaratori_{day}.csv"
-        new = not path.exists()
-        with open(path, "a", newline="", encoding="utf-8") as f:
-            w = csv.writer(f)
-            if new:
-                w.writerow(["inceput", "sfarsit", "tip", "origine", "destinatie", "vehicul", "numar"])
-            s = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(rec["start"]))
-            e = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(rec["end"]))
-            for (o, d, v), n in sorted(rec["od"].items()):
-                w.writerow([s, e, "viraj", o, d, v, n])
-            for (a, v), n in sorted(rec["in"].items()):
-                w.writerow([s, e, "intrare", a, "", v, n])
-            for (a, v), n in sorted(rec["out"].items()):
-                w.writerow([s, e, "iesire", "", a, v, n])
-            for (a, zid), n in sorted(rec.get("pietoni", {}).items()):
-                w.writerow([s, e, "pietoni", a, zid, PEDESTRIAN, n])
 
     # ------------------------------------------------------------ actualizare
     def update(self, detections, w: int, h: int, now: float | None = None) -> list[dict]:
@@ -163,20 +219,13 @@ class ODCounter:
                 st = self.tracks[tid] = TrackState(vt, now, now, self.frame_idx)
             st.last_seen, st.last_frame = now, self.frame_idx
             st.cls_votes[vt] += 1
-            st.last_point = (x, y)
-            if vt == PEDESTRIAN:
-                for z in self.crossing_zones:
-                    if z.contains(x, y, w, h):
-                        st.crossing_frames[(z.arm, z.id)] += 1
-                continue
-            for z in self.vehicle_zones:
-                if z.contains(x, y, w, h):
-                    if not st.zones_seen or st.zones_seen[-1] != z.id:
-                        st.zones_seen.append(z.id)
-                    if z.role == "intrare" and st.origin is None:
+            st.pts.append((float(now), float(x) / w, float(y) / h))
+            if vt != PEDESTRIAN:                 # etichetă provizorie pentru suprapunerea video
+                for z in self.zones:
+                    if z.role == "intrare" and st.origin is None and z.contains(x, y, w, h):
                         st.origin = z.arm
-                    elif z.role == "iesire":
-                        st.destination = z.arm  # ultima zonă de ieșire vizitată
+                    elif z.role == "iesire" and z.arm != st.origin and z.contains(x, y, w, h):
+                        st.destination = z.arm
         # închiderea traiectoriilor pierdute
         for tid in [t for t, s in self.tracks.items() if self.frame_idx - s.last_frame > self.lost_after]:
             ev = self._finalize(self.tracks.pop(tid))
@@ -187,25 +236,31 @@ class ODCounter:
         return events
 
     def _finalize(self, st: TrackState) -> dict | None:
-        if sum(st.cls_votes.values()) < self.min_frames:
+        if len(st.pts) < self.p.min_track_frames:
             return None
         vt = st.cls_votes.most_common(1)[0][0]
+        if self.traj_dir is not None:
+            log_trajectory(self.traj_dir, vt, st.pts)
+        return self.add(vt, classify(vt, st.pts, self.zones, self.p))
+
+    def add(self, vt: str, res: dict) -> dict | None:
+        """Adaugă rezultatul clasificării unei traiectorii la intervalul curent."""
         if vt == PEDESTRIAN:
-            for key, n in st.crossing_frames.items():
-                if n >= self.min_crossing:
-                    self.peds[key] += 1
-                    self.totals[("pietoni", key[0])] += 1
+            for key in res["treceri"]:
+                self.peds[key] += 1
+                self.totals[("pietoni", key[0])] += 1
             return None
-        if st.origin:
-            self.arm_in[(st.origin, vt)] += 1
-            self.totals[("in", st.origin)] += 1
-        if st.destination:
-            self.arm_out[(st.destination, vt)] += 1
-            self.totals[("out", st.destination)] += 1
-        if st.origin and st.destination:
-            self.od[(st.origin, st.destination, vt)] += 1
-            self.totals[("od", st.origin, st.destination)] += 1
-            return {"origine": st.origin, "destinatie": st.destination, "vehicul": vt}
+        o, d = res["origine"], res["destinatie"]
+        if o:
+            self.arm_in[(o, vt)] += 1
+            self.totals[("in", o)] += 1
+        if d:
+            self.arm_out[(d, vt)] += 1
+            self.totals[("out", d)] += 1
+        if o and d:
+            self.od[(o, d, vt)] += 1
+            self.totals[("od", o, d)] += 1
+            return {"origine": o, "destinatie": d, "vehicul": vt}
         return None
 
     def flush(self) -> dict:
@@ -229,3 +284,35 @@ class ODCounter:
                 "iesiri_veh_h": {a: round(n * 3600 / el) for a, n in outs.items()},
                 "pietoni_h": {a: round(n * 3600 / el) for a, n in peds.items()},
                 "secunde_interval": round(el)}
+
+
+def write_csv(rec: dict, out_dir: Path) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    day = time.strftime("%Y-%m-%d", time.localtime(rec["start"]))
+    path = out_dir / f"numaratori_{day}.csv"
+    new = not path.exists()
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        if new:
+            w.writerow(["inceput", "sfarsit", "tip", "origine", "destinatie", "vehicul", "numar"])
+        s = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(rec["start"]))
+        e = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(rec["end"]))
+        for (o, d, v), n in sorted(rec["od"].items()):
+            w.writerow([s, e, "viraj", o, d, v, n])
+        for (a, v), n in sorted(rec["in"].items()):
+            w.writerow([s, e, "intrare", a, "", v, n])
+        for (a, v), n in sorted(rec["out"].items()):
+            w.writerow([s, e, "iesire", "", a, v, n])
+        for (a, zid), n in sorted(rec.get("pietoni", {}).items()):
+            w.writerow([s, e, "pietoni", a, zid, PEDESTRIAN, n])
+
+
+def log_trajectory(traj_dir: Path, vtype: str, pts: list) -> None:
+    """Jurnal anonim: clasa + punctele de contact cu solul (normalizate) + timpul relativ."""
+    traj_dir.mkdir(parents=True, exist_ok=True)
+    t0 = pts[0][0]
+    day = time.strftime("%Y-%m-%d", time.localtime(t0))
+    rec = {"t0": round(t0, 2), "tip": vtype,
+           "p": [[round(t - t0, 2), round(x, 4), round(y, 4)] for t, x, y in pts]}
+    with gzip.open(traj_dir / f"traiectorii_{day}.jsonl.gz", "at", encoding="utf-8") as f:
+        f.write(json.dumps(rec, separators=(",", ":")) + "\n")

@@ -14,6 +14,7 @@ NET_DIR = SUMO_DIR / "net"
 DEMAND_DIR = SUMO_DIR / "demand"
 OUTPUT_DIR = ROOT / "outputs"
 COUNTS_DIR = ROOT / "data" / "counts"
+TRAJ_DIR = ROOT / "data" / "trajectories"
 MODELS_DIR = ROOT / "models"
 
 

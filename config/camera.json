@@ -114,7 +114,8 @@
         255,
         0,
         255
-      ]
+      ],
+      "capat_traiectorie": true
     },
     {
       "id": "dacia_vest_in",
@@ -142,7 +143,8 @@
         0,
         255,
         0
-      ]
+      ],
+      "capat_traiectorie": true
     },
     {
       "id": "dacia_vest_out",
@@ -170,7 +172,8 @@
         0,
         140,
         255
-      ]
+      ],
+      "capat_traiectorie": true
     },
     {
       "id": "catargiu_in",
@@ -198,7 +201,8 @@
         0,
         255,
         0
-      ]
+      ],
+      "capat_traiectorie": true
     },
     {
       "id": "catargiu_out",
@@ -226,7 +230,8 @@
         0,
         140,
         255
-      ]
+      ],
+      "capat_traiectorie": true
     },
     {
       "id": "caderea_bastiliei_out",
@@ -254,7 +259,8 @@
         255,
         0,
         255
-      ]
+      ],
+      "capat_traiectorie": true
     },
     {
       "id": "dacia_est_in",
@@ -400,5 +406,10 @@
         255
       ]
     }
-  ]
+  ],
+  "runtime": "openvino",
+  "device": "intel:gpu",
+  "_runtime": "Fără GPU NVIDIA: inferență OpenVINO pe placa grafică Intel integrată (≈5 cadre/s la 1600 px față de ≈1 cu PyTorch pe procesor). runtime=pytorch și device=0 pentru GPU NVIDIA.",
+  "capat_s": 1.5,
+  "_capat_traiectorie": "Zonele de pe brațele îndepărtate, parțial ascunse: o intrare contează doar dacă traiectoria începe acolo, o ieșire doar dacă se termină acolo (toleranță capat_s secunde)."
 }
