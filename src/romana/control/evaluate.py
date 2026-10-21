@@ -75,7 +75,7 @@ def _mean(xs: list[float]) -> float:
 
 def parse_tripinfo(path: Path) -> dict:
     """Agregate pe categorii: vehicule motorizate, bicicliști (vType bicycle) și pietoni (walk)."""
-    veh = {"wait": [], "loss": [], "dur": []}
+    veh = {"wait": [], "loss": [], "dur": [], "depart": []}
     bike = {"wait": [], "loss": []}
     ped = {"loss": [], "dur": []}
     co2, n_arr, n_unf, n_ped = 0.0, 0, 0, 0
@@ -92,6 +92,7 @@ def parse_tripinfo(path: Path) -> dict:
                 veh["wait"].append(float(el.get("waitingTime")))
                 veh["loss"].append(float(el.get("timeLoss")))
                 veh["dur"].append(float(el.get("duration")))
+                veh["depart"].append(float(el.get("departDelay", 0)))
             em = el.find("emissions")
             if em is not None:
                 co2 += float(em.get("CO2_abs", 0))
@@ -104,9 +105,11 @@ def parse_tripinfo(path: Path) -> dict:
                 ped["dur"].append(float(w.get("duration", 0)))
             el.clear()
     path.unlink(missing_ok=True)   # fișierele brute sunt mari; păstrăm doar agregatele
-    total_h = (sum(veh["loss"]) + sum(bike["loss"]) + sum(ped["loss"])) / 3600
+    # întârzierea la intrare (vehicul care nu încape în rețea) face parte din pierderea totală
+    total_h = (sum(veh["loss"]) + sum(veh["depart"]) + sum(bike["loss"]) + sum(ped["loss"])) / 3600
     return {"vehicule_sosite": n_arr, "vehicule_neterminate": n_unf,
             "asteptare_medie_s": _mean(veh["wait"]), "pierdere_timp_medie_s": _mean(veh["loss"]),
+            "intarziere_intrare_s": _mean(veh["depart"]),
             "durata_medie_s": _mean(veh["dur"]), "co2_kg": co2 / 1e6,
             "biciclisti": len(bike["loss"]), "asteptare_biciclete_s": _mean(bike["wait"]),
             "pierdere_timp_biciclete_s": _mean(bike["loss"]),
@@ -127,7 +130,7 @@ def make_controllers(sumocfg: Path, models: list[Path]):
 
 def report(df: pd.DataFrame) -> None:
     DOCS_RES.mkdir(parents=True, exist_ok=True)
-    metrics = ["asteptare_medie_s", "pierdere_timp_medie_s", "durata_medie_s", "coada_medie_romana",
+    metrics = ["asteptare_medie_s", "pierdere_timp_medie_s", "intarziere_intrare_s", "durata_medie_s", "coada_medie_romana",
                "vehicule_sosite", "nefinalizate", "co2_kg", "asteptare_biciclete_s", "pierdere_timp_biciclete_s",
                "pierdere_timp_pietoni_s", "pietoni_asteapta_medie", "pierdere_totala_h"]
     metrics = [m for m in metrics if m in df.columns]
@@ -151,9 +154,11 @@ def report(df: pd.DataFrame) -> None:
         base = (lambda m: b[(m, "mean")]) if b is not None else (lambda m: None)  # noqa: E731
         lines.append(f"\n## Scenariul `{sc}`\n")
         lines.append("**Vehicule motorizate**\n")
+        has_dep = "intarziere_intrare_s" in metrics
         lines.append("| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | "
-                     "Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |")
-        lines.append("|---|---|---|---|---|---|---|---|---|")
+                     + ("Întârziere la intrarea în rețea (s) | " if has_dep else "")
+                     + "Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |")
+        lines.append("|---" * (10 if has_dep else 9) + "|")
         for st in sts:
             r = g.loc[(sc, st)]
             cell = lambda m, d=1: f"{r[(m, 'mean')]:.{d}f} ± {r[(m, 'std')]:.{d}f}"  # noqa: E731
@@ -162,6 +167,7 @@ def report(df: pd.DataFrame) -> None:
             dm = "" if st == BASELINE or not mb else f" ({100 * (med[(sc, st)] - mb) / mb:+.0f}%)"
             lines.append(f"| {NAMES_RO.get(st, st)} | {cell('asteptare_medie_s')}{dl} | {med[(sc, st)]:.1f}{dm} | "
                          f"{cell('pierdere_timp_medie_s')} | "
+                         + (f"{cell('intarziere_intrare_s')} | " if has_dep else "") +
                          f"{cell('durata_medie_s')} | {cell('coada_medie_romana')} | {cell('vehicule_sosite', 0)} | "
                          f"{cell('nefinalizate', 0)} | {cell('co2_kg', 0)} |")
         if "pierdere_timp_pietoni_s" in metrics:
