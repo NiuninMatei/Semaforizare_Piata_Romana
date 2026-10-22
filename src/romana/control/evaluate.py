@@ -36,7 +36,7 @@ NAMES_RO = {"fix_referinta": "Plan fix de referință", "fix_webster": "Plan fix
             "actuated": "Actuated SUMO", "max_pressure": "Max-Pressure",
             "rl_ppo": "Agent RL (PPO)", "rl_ppo_coridor": "Agent RL coridor (PPO)",
             "rl_ppo_romana_v2": "Agent RL v2 (cozi în amonte)", "rl_ppo_coridor_v2": "Agent RL coridor v2 (cozi în amonte)",
-            "rl_ppo_romana_v3": "Agent RL v3 (imitație + PPO)"}
+            "rl_ppo_romana_v3": "Agent RL v3 (imitație + PPO)", "rl_ppo_coridor_final": "Agent RL coridor (piață + 4 vecini)"}
 BASELINE = "fix_referinta"
 
 

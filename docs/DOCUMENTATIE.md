@@ -684,12 +684,16 @@ infrastructură sau de gestionare a cererii, în afara scopului acestui proiect.
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
-* **Date de calibrare.** Zonele camerei sunt calibrate preliminar pe imagini de noapte; până la colectarea
-  numărătorilor de zi, rezultatele sunt obținute pe scenarii ipotetice declarate (§ 5.3). Precizia detectorului
-  trebuie validată printr-o numărătoare manuală de 15 minute (factorul de corecție din `config/demand.json`).
-* **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine; o parte din vehicule
-  sunt pierdute de detector – de aici folosirea totalurilor pe brațe și a echilibrării Furness în loc de
-  virajele complete.
+* **Precizia numărării.** Zonele sunt calibrate pe datele de zi (§ 4.3), dar nu există o numărătoare manuală de
+  referință: suma ieșirilor numărate depășește suma intrărilor cu ≈30%, iar adevărul este între cele două
+  (echilibrarea „medie”, § 5.1). O numărătoare manuală de 15 minute pe fiecare braț ar permite fixarea
+  factorului de corecție din `config/demand.json` și ar reduce incertitudinea (acum ±15–20%, acoperită de
+  scenariile de sensibilitate).
+* **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine și parțial ascunse;
+  doar ≈10% dintre vehicule sunt urmărite de la intrare până la ieșire, deci matricea O–D se sprijină pe
+  totalurile pe brațe și pe distribuția a priori a virajelor, nu pe virajele observate.
+* **Două zile de date** (o zi lucrătoare de miercuri după-amiaza și seara, joi noaptea și dimineața), în
+  octombrie, cu vreme rece: weekendul, vara, ploaia puternică sau evenimentele speciale nu sunt acoperite.
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
@@ -741,9 +745,9 @@ Flux tipic pentru o zi de date: rulați `2_viziune_live.bat` în intervalul dori
 | B4 | 20–21.10.2026 | mediu RL, PPO (piață și coridor), Webster / actuated / Max-Pressure, evaluare | Claude |
 | B5 | 20.10.2026 | geamăn digital live, dispecerat web, MQTT, scripturi Windows | Claude |
 | B6 | 20–21.10.2026 | documentația de față | Claude |
-| B7 | planificat | calibrare pe lumină de zi (zonele de vehicule și trecerile de pietoni) și date de vârf reale | Claude |
+| B7 | 21–22.10.2026 | viziune pe lumină de zi: căutarea camerelor publice pentru intersecțiile conexe, OpenVINO pe GPU Intel (~5 cadre/s), jurnal anonim de traiectorii și renumărare, sensul de mers pe zone, reunirea fragmentelor, zone recalibrate din câmpul de mișcare; colectare continuă 21.10 11:45 – 22.10 11:00 (zi, seară, noapte, vârf de dimineață) | Claude |
 | B8 | 21.10.2026 | replica fidelă a rețelei (16 semafoare fizice într-un controler, grupuri de semnal, treceri, trotuare, benzi STB); toți participanții: pietoni și bicicliști în cerere, cameră, geamăn digital, recompensă și evaluare; liniile de bază corectate pe rețeaua nouă (plan fix de referință, Webster, actuated, Max-Pressure); antrenare paralelă; reantrenare și evaluare | Claude |
-| B9 | planificat | reantrenare și evaluare pe scenariile din datele reale de zi; verificare finală | Claude |
+| B9 | 21–22.10.2026 | scenariile din date reale (10, din două zile), echilibrarea intrări/ieșiri, corectarea zonelor Dacia vest și a rutelor (bulevardele brațelor), agenții PPO pe date reale (v1–v3 și experimente, selecție pe seed-uri de validare), plafonul planurilor fixe și localizarea întârzierilor, test de generalizare pe ziua nevăzută, coridorul cu 4 vecini (fără Bd. Dacia × Str. Polonă, sens unic de ieșire), agentul final antrenat pe ambele zile, GHID_PROFESOR.md | Claude |
 
 Fiecare bornă corespunde unui commit cu prefixul „Borna N” în istoricul GitHub.
 
