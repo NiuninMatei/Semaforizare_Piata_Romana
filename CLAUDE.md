@@ -48,6 +48,17 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
+### Demonstrația live (22.10, seara) – în lucru
+
+- Pregătită și reparată: tampon de redare de 8 s pentru camera HLS (fără sacade), fereastra camerei
+  redimensionabilă, bucla live robustă (PermissionError, debitele la granița de 15 min), SUMO-GUI centrat
+  pe piață, `scripts\9_demo_comparatie.bat` (plan fix / Max-Pressure / AI, prânzul 21.10: −4,8% la AI).
+- Formatul convenit cu autorul (rol de profesor): ecranul împărțit – fereastra sistemului în stânga
+  (2/3), Claude în dreapta; câte un pas pe mesaj, autorul scrie „mai departe”. Pașii: 1 camera (făcut),
+  2 geamănul SUMO, 3 dispeceratul și preluarea controlului, 4 comparația măsurată, 5 rezultate și limite.
+- Reluare: `scripts\PORNESTE_TOT.bat`, apoi aranjarea ferestrelor (camera / SUMO / Chrome „Dispecerat”).
+  De scris după demo: scenariul de prezentare în GHID_PROFESOR.md.
+
 ### Pași posibili în continuare
 
 1. O numărătoare manuală de 15 min pe fiecare braț (factorul de corecție, § 10).
