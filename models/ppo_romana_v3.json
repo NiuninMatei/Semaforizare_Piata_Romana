@@ -1,0 +1,52 @@
+{
+  "model": "ppo_romana_v3.zip",
+  "controlate": [
+    "romana"
+  ],
+  "scenarii": [
+    "zi_2026-10-21_linistit.sumocfg",
+    "zi_2026-10-21_linistit_x0_8.sumocfg",
+    "zi_2026-10-21_pranz.sumocfg",
+    "zi_2026-10-21_varf.sumocfg",
+    "zi_2026-10-21_varf_x1_2.sumocfg"
+  ],
+  "pasi": 500736,
+  "durata_min": 101.7,
+  "preantrenare_imitatie": {
+    "plan_verde_s": [
+      50.0,
+      40.0,
+      10.0
+    ],
+    "perechi": 40000,
+    "acuratete": 1.0
+  },
+  "hiperparametri": {
+    "lr": 0.0001,
+    "n_steps": 128,
+    "medii_paralele": 8,
+    "batch": 128,
+    "gamma": 0.99,
+    "ent_coef": 0.003,
+    "retea": [
+      128,
+      128
+    ],
+    "delta_t_s": 5,
+    "verde_min_s": 10,
+    "verde_max_s": 90
+  },
+  "faze_romana": [
+    "N–S: Magheru ↔ Lascăr Catargiu prin centru",
+    "E–V: Dacia în jurul insulei",
+    "Pietoni: toate trecerile, axa centrală se golește",
+    "N–S, cu intrările Dacia deschise (fără dozare)",
+    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+  ],
+  "faze_actiuni_romana": [
+    0,
+    1,
+    2
+  ],
+  "obs_amonte": true
+}

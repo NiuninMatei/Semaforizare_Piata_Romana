@@ -537,8 +537,54 @@ Rezultatele complete, regenerate automat de `scripts\5_evalueaza.bat`, sunt în
 [`docs/rezultate/comparatie_strategii.png`](rezultate/comparatie_strategii.png).
 
 <!-- REZULTATE_INCEPUT -->
-*Secțiune actualizată în Borna 8 (21.10.2026), pe replica fidelă a rețelei, cu toți participanții, pe cele trei
-scenarii de referință ipotetice (§ 5.3) – nu încă pe date reale de zi.*
+### 9.1 Pe datele reale din 21.10.2026 (Borna 9)
+
+*Scenariile din § 5.4 (prânz, vârf, liniștit, plus sensibilitățile ×1,2 și ×0,8), 5 seed-uri SUMO pe scenariu
+(1–5); selecția modelelor s-a făcut pe alte seed-uri (11–13), ca alegerea să nu fie făcută pe datele de test.*
+
+**Pierderea totală de timp a tuturor participanților** (vehicule, inclusiv întârzierea la intrare, bicicliști,
+pietoni; ore; media pe 5 seed-uri; procente față de planul fix de referință):
+
+| Strategie | Liniștit ×0,8 | Liniștit | Prânz | Vârf | Vârf ×1,2 |
+|---|---|---|---|---|---|
+| Plan fix de referință | 105,1 | 112,1 | 244,0 | 335,7 | 427,2 |
+| Plan fix (Webster) | 100,2 (−5%) | 120,5 (+7%) | 237,8 (−3%) | 389,7 (+16%) | 426,9 (0%) |
+| Actuated SUMO | 99,8 (−5%) | 107,9 (−4%) | 255,3 (+5%) | 428,0 (+27%) | 553,4 (+30%) |
+| Max-Pressure | 90,6 (−14%) | 101,1 (−10%) | 256,0 (+5%) | 346,3 (+3%) | 447,6 (+5%) |
+| **Agent RL v1 (PPO)** | **90,9 (−13%)** | 106,7 (−5%) | **232,3 (−5%)** | **327,9 (−2%)** | 430,1 (+1%) |
+| Agent RL v2 (cozi în amonte) | 91,0 (−13%) | 102,7 (−8%) | 237,2 (−3%) | 328,5 (−2%) | 491,6 (+15%) |
+| Agent RL v3 (imitație + PPO) | 116,0 (+10%) | 121,1 (+8%) | 272,1 (+12%) | 335,2 (0%) | 455,6 (+7%) |
+
+**Ce arată datele reale.**
+
+* **Agentul v1 este singura strategie care nu pierde nicăieri semnificativ** față de planul fix: câștigă clar la
+  volume mici și medii (−13% / −5% / −5%), iar la vârf și la suprasarcină este la egalitate statistică (−2% și
+  +1%, în condițiile în care între seed-uri valorile variază cu ±5–8%). Max-Pressure este foarte bun când traficul
+  e lejer, dar pierde la prânz și la vârf; actuated pierde mult în saturație (+27–30%).
+* **Plafonul la vârf este mic.** O căutare exhaustivă a planului fix la vârf (32 de împărțiri ale verdelui N–S /
+  E–V / pietoni × 2 seed-uri) găsește cel mai bun plan, 50 / 40 / 10 s, la **−5,4%** față de planul de referință;
+  planurile prost alese ajung la +69%. Planul actual al proiectului este deci deja aproape de optimul planurilor
+  fixe, iar spațiul de câștig al oricărui semafor al pieței la vârf este de ordinul câtorva procente.
+* **De ce:** la vârf, 68% din timpul pierdut este al vehiculelor care nu încap în rețea – coada de pe Bd. Dacia
+  dinspre Calea Victoriei continuă dincolo de marginea zonei modelate –, 24% se pierde în zona pieței (intrări și
+  250 m în amonte), iar doar 8% în restul rețelei. Brațul Dacia vest (2 benzi pentru autoturisme, verde doar în
+  faza E–V) este gâtuirea; mai mult verde pentru el înseamnă mai puțin pentru axa N–S, la fel de încărcată.
+* **Experimente negative, raportate ca atare.** (1) v2 – observația și recompensa cu cozile din amonte (§ 7.1) –
+  nu aduce câștig față de v1 și se degradează la suprasarcină. (2) v3 – preantrenarea prin imitație a celui mai bun
+  plan fix la vârf, urmată de PPO – reproduce planul cu acuratețe 99,5%, dar planul optim la vârf (ciclu lung) este
+  risipitor când traficul e lejer, iar agentul păstrează prea mult din el: +8–12% la volume mici și medii; niciun
+  checkpoint intermediar nu este mai bun.
+* **Pietonii câștigă și ei** la agentul v1, spre deosebire de scenariile ipotetice (§ 9.2): pierderea lor de timp
+  scade de la 153 la 125 s (liniștit ×0,8, −19%), de la 154 la 140 s (liniștit, −9%), de la 154 la 141 s (prânz,
+  −8%), de la 188 la 178 s (vârf, −5%) și rămâne practic egală la suprasarcină (185 față de 182 s, +1%).
+  Detaliile pe toate categoriile de participanți sunt în `docs/rezultate/rezultate.md`.
+
+### 9.2 Pe scenariile ipotetice (Borna 8, înaintea datelor reale)
+
+*Secțiune păstrată pentru comparație: replica fidelă a rețelei, cu toți participanții, pe cele trei scenarii de
+referință ipotetice (§ 5.3). Diferența față de § 9.1 este instructivă: cu cererea ipotetică, planul fix intra des
+în blocaj, iar agentul îl evita; pe datele reale, după corectarea erorilor de numărare (§ 4.3, § 5.1), rețeaua
+este saturată în alt loc (brațul Dacia vest), iar câștigurile sunt mult mai mici.*
 
 **Configurație.** 3 scenarii × 6 strategii × 5 seed-uri SUMO = 90 de simulări a câte 75 de minute (60 de minute
 de cerere + 15 minute de golire). Agentul pieței: PPO, 500.736 de pași de decizie (≈ 700 de episoade de o oră),
@@ -587,11 +633,20 @@ persoană, ca pentru călătorii din autobuze).
 * Valorile absolute sunt mari pentru că includ întârzierile de la semafoarele de la marginea zonei și cozile de
   intrare (§ 7.5); comparația dintre strategii este cea relevantă.
 
-Concluzie: pe replica fidelă a pieței, cu toți participanții și fără a schimba nimic din infrastructură, un
-controler care decide doar **ordinea și durata fazelor existente** reduce pierderea totală de timp cu 31–44% la
-volume de vârf față de planul fix de referință și cu 23–30% față de cel mai bun algoritm clasic (actuated),
-cu un cost mic pentru pietoni la volume moderate. Rezultatele trebuie confirmate pe scenariile din date reale
-de zi (Borna 9).
+Pe cererea ipotetică, agentul reducea pierderea totală cu 31–44% la volume mari – în principal pentru că planul
+fix intra în blocaj, iar agentul îl evita. Datele reale (§ 9.1) nu au confirmat această amploare: cererea
+măsurată are altă structură, iar după corectarea erorilor de numărare gâtuirea este capacitatea brațului Dacia
+vest, pe care niciun program de semafor nu o poate mări.
+
+### 9.3 Concluzie
+
+Pe replica fidelă a pieței, cu toți participanții și cu cererea măsurată pe cameră, un controler care schimbă doar
+**ordinea și durata fazelor existente** (ce se poate programa pe automatul real) aduce câștiguri reale dar
+modeste: −5…−13% din pierderea totală de timp la volume mici și medii (inclusiv pentru pietoni) și egalitate cu
+planul fix la vârf, unde și cel mai bun plan fix posibil câștigă doar ≈5%. Pentru decongestionarea la vârf,
+analiza arată unde este problema – capacitatea brațului Dacia vest și cozile care depășesc zona pieței –, deci
+direcțiile cu efect mare sunt coordonarea cu intersecțiile vecine (§ 9.4, varianta coridor) și măsuri de
+infrastructură sau de gestionare a cererii, în afara scopului acestui proiect.
 <!-- REZULTATE_SFARSIT -->
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
