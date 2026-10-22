@@ -607,6 +607,17 @@ pietoni; ore; media pe 5 seed-uri; procente față de planul fix de referință)
   plan fix la vârf, urmată de PPO – reproduce planul cu acuratețe 99,5%, dar planul optim la vârf (ciclu lung) este
   risipitor când traficul e lejer, iar agentul păstrează prea mult din el: +8–12% la volume mici și medii; niciun
   checkpoint intermediar nu este mai bun.
+* **Generalizare pe o zi nevăzută.** Agentul v1, antrenat doar pe 21.10, a fost evaluat pe scenariile din
+  22.10 (noapte, vârf de dimineață, vârful zilei 09:45–10:45). Față de planul fix: noapte −7% și −8,5%,
+  dimineața 07:30–08:30 0%, **vârful zilei −4,2%** și vârf ×1,2 −1,7% – singura strategie care întrece planul
+  fix la vârf pe 22.10 (Max-Pressure +6%, Webster +9%, actuated +45%). Agentul a învățat o regulă generală, nu
+  scenariile pe care a fost antrenat.
+* **Alegerea agentului final.** Două agenți noi, antrenați pe ambele zile (rețetă v1, inițializări diferite),
+  au fost comparați cu v1 pe seed-uri de validare separate (11–13), pe 4 scenarii (prânz și vârf 21.10,
+  dimineață și vârf 22.10): scor mediu față de planul fix −3,5% (v1), +1,5% și +6,9% (noii agenți). Agentul
+  oficial rămâne **v1** (`models/ppo_romana`); variația mare de la o antrenare la alta este o proprietate
+  cunoscută a PPO, iar selecția pe date de validare – nu pe cele de test – este procedura corectă
+  (`docs/rezultate/validare_finala.csv`, `alegere_agent.json`).
 * **Pietonii câștigă și ei** la agentul v1, spre deosebire de scenariile ipotetice (§ 9.2): pierderea lor de timp
   scade de la 153 la 125 s (liniștit ×0,8, −19%), de la 154 la 140 s (liniștit, −9%), de la 154 la 141 s (prânz,
   −8%), de la 188 la 178 s (vârf, −5%) și rămâne practic egală la suprasarcină (185 față de 182 s, +1%).
