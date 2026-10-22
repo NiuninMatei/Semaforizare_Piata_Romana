@@ -38,6 +38,19 @@ Autor: **Niunin Matei-Gabriel**.
 
 > **Pentru evaluare:** ghidul pas cu pas de instalare, rulare și verificare este în [GHID_PROFESOR.md](GHID_PROFESOR.md).
 
+## Rezultate pe date reale (pe scurt)
+
+Două zile de trafic real analizat pe cameră (21.10.2026 11:45 – 22.10.2026 11:00), 10 scenarii SUMO, 300 de
+simulări. Pierderea totală de timp a tuturor participanților, față de planul fix actual (medie pe 10 scenarii):
+
+| Agent RL piață | Max-Pressure | Webster | Actuated | Agent RL coridor |
+|---|---|---|---|---|
+| **−4,6%** (până la −13,5%; niciodată mai rău de +0,7%) | −2,0% | +2,4% | +13,1% | +35,4% |
+
+Agentul AI al pieței este cea mai bună strategie și generalizează pe o zi nevăzută la antrenare (−4,2% la vârful
+din 22.10). La vârf, spațiul de câștig este mic (cel mai bun plan fix posibil: −5%), iar coordonarea învățată cu
+vecinii a dat un rezultat negativ – detalii și explicații în [docs/DOCUMENTATIE.md § 9](docs/DOCUMENTATIE.md#9-rezultate).
+
 ## Pornire rapidă (Windows)
 
 ```bat

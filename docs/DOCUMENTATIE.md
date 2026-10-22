@@ -570,7 +570,33 @@ Rezultatele complete, regenerate automat de `scripts\5_evalueaza.bat`, sunt în
 [`docs/rezultate/comparatie_strategii.png`](rezultate/comparatie_strategii.png).
 
 <!-- REZULTATE_INCEPUT -->
-### 9.1 Pe datele reale din 21.10.2026 (Borna 9)
+### 9.0 Rezumat final – cele 10 scenarii din date reale (21 și 22.10.2026)
+
+*300 de simulări: 10 scenarii (§ 5.4) × 6 strategii × 5 seed-uri SUMO (1–5). Pierderea totală de timp a tuturor
+participanților – vehicule (inclusiv întârzierea la intrare), bicicliști, pietoni –, procente față de planul fix
+de referință; agentul oficial (v1) a fost ales pe seed-uri de validare separate (11–13).*
+
+| Scenariu | Plan fix (h) | Webster | Actuated | Max-Pressure | **Agent RL piață (v1)** | Agent RL coridor |
+|---|---|---|---|---|---|---|
+| 21.10 liniștit ×0,8 | 105,1 | −5% | −5% | −14% | **−13%** | −7% |
+| 21.10 liniștit (20–21) | 112,1 | +7% | −4% | −10% | **−5%** | −9% |
+| 21.10 prânz (12–13) | 244,0 | −3% | +5% | +5% | **−5%** | +60% |
+| 21.10 vârf (17:15–18:15) | 335,7 | +16% | +27% | +3% | **−2%** | +60% |
+| 21.10 vârf ×1,2 | 427,2 | 0% | +30% | +5% | **+1%** | +88% |
+| 22.10 dimineața (07:30–08:30) | 301,4 | −4% | +8% | −1% | **0%** | +58% |
+| 22.10 noaptea (03:45–04:45) | 8,6 | −5% | −6% | −9% | **−7%** | +6% |
+| 22.10 noaptea ×0,8 | 7,1 | −6% | −8,5% | −7% | **−8,5%** | +1% |
+| 22.10 vârf (09:45–10:45) | 339,0 | +9% | +45% | +6% | **−4%** | +55% |
+| 22.10 vârf ×1,2 | 462,8 | +13% | +39% | +2% | **−2%** | +43% |
+| **Media pe cele 10 scenarii** | – | +2,4% | +13,1% | −2,0% | **−4,6%** | +35,4% |
+
+**Agentul RL al pieței este cea mai bună strategie în medie (−4,6%) și singura care nu pierde semnificativ în
+niciun scenariu** (cel mai rău caz: +0,7% la suprasarcina de 3.000 veh/h, în marja de variație între seed-uri).
+Câștigă clar la trafic lejer și mediu (până la −13,5%) și la vârful zilei de 22.10 (−4,2%), zi pe care nu a
+văzut-o la antrenare. Max-Pressure, al doilea, e foarte bun noaptea, dar pierde la vârf; actuated și Webster
+pierd mult în saturație.
+
+### 9.1 Pe datele reale din 21.10.2026 (Borna 9) – dezvoltarea agentului
 
 *Scenariile din § 5.4 (prânz, vârf, liniștit, plus sensibilitățile ×1,2 și ×0,8), 5 seed-uri SUMO pe scenariu
 (1–5); selecția modelelor s-a făcut pe alte seed-uri (11–13), ca alegerea să nu fie făcută pe datele de test.*
@@ -682,15 +708,31 @@ fix intra în blocaj, iar agentul îl evita. Datele reale (§ 9.1) nu au confirm
 măsurată are altă structură, iar după corectarea erorilor de numărare gâtuirea este capacitatea brațului Dacia
 vest, pe care niciun program de semafor nu o poate mări.
 
-### 9.3 Concluzie
+### 9.3 Coridorul (piața + 4 vecini) – rezultat negativ
+
+Agentul coridor final (rețeta v1, 500.000 de pași pe ambele zile, 5 controlere: piața și cei 4 vecini care o
+alimentează, cu fazele vecinilor curățate de variantele de 5 s) este **mult mai slab** decât lăsarea vecinilor pe
+programele lor actuale: +55…+88% la prânz, vârf și suprasarcină, apropiat de planul fix doar noaptea și seara.
+Motivele probabile: (1) vecinii au deja programe `actuated` bune (ca sistemul BTMS real), iar o politică
+învățată comun pentru 5 intersecții, cu un spațiu de acțiuni de 3×3×3×2×3 = 162 de combinații, nu ajunge la
+nivelul lor în 500.000 de pași; (2) o decizie proastă la un vecin (de ex. verde scurt pe direcția spre piață)
+umple brațul respectiv al pieței, iar efectul se propagă. Încercările anterioare (cu 6 controlere, cu recompensa
+veche, cu cozile din amonte) au dat același verdict. **Concluzia practică: AI-ul conduce semaforul Pieței
+Romane, iar intersecțiile vecine rămân pe programele lor adaptive actuale.** Pentru o coordonare reală ar fi
+nevoie de agenți descentralizați, câte unul pe intersecție, cu parametri comuni (MPLight[^mplight]) sau de
+atenție pe graf (CoLight[^colight]), și de mult mai mult timp de antrenare.
+
+### 9.4 Concluzie
 
 Pe replica fidelă a pieței, cu toți participanții și cu cererea măsurată pe cameră, un controler care schimbă doar
 **ordinea și durata fazelor existente** (ce se poate programa pe automatul real) aduce câștiguri reale dar
-modeste: −5…−13% din pierderea totală de timp la volume mici și medii (inclusiv pentru pietoni) și egalitate cu
-planul fix la vârf, unde și cel mai bun plan fix posibil câștigă doar ≈5%. Pentru decongestionarea la vârf,
-analiza arată unde este problema – capacitatea brațului Dacia vest și cozile care depășesc zona pieței –, deci
-direcțiile cu efect mare sunt coordonarea cu intersecțiile vecine (§ 9.4, varianta coridor) și măsuri de
-infrastructură sau de gestionare a cererii, în afara scopului acestui proiect.
+modeste: în medie −4,6% din pierderea totală de timp pe 10 scenarii din două zile, până la −13,5% la trafic
+lejer, −4,2% la vârful unei zile nevăzute la antrenare, câștiguri și pentru pietoni, și niciodată o pierdere
+semnificativă – ceea ce niciun algoritm clasic testat nu reușește. La vârf, spațiul de câștig este oricum mic:
+și cel mai bun plan fix posibil câștigă doar ≈5%, pentru că gâtuirea este capacitatea brațului Dacia vest și
+coada care depășește zona pieței. Coordonarea învățată cu vecinii (§ 9.3) nu a funcționat în forma încercată;
+pentru câștiguri mari la vârf rămân direcțiile din afara scopului proiectului: coordonare descentralizată mult mai
+antrenată, măsuri de infrastructură sau de gestionare a cererii.
 <!-- REZULTATE_SFARSIT -->
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
