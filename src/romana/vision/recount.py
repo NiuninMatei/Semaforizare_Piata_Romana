@@ -159,7 +159,7 @@ def directions(files: list[Path], zones, center=(0.55, 0.52)) -> None:
             print(f"{z.id:24s} {z.role:8s} spre centru {a:5d}   dinspre centru {b:5d}   {'OK' if ok else 'SENS INVERS?'}")
 
 
-def flow_image(files: list[Path], zones, background, out_png: Path, cell=(0.015, 0.012)) -> None:
+def flow_image(files: list[Path], zones, background, out_png: Path, cell=(0.015, 0.012), capete: bool = True) -> None:
     """Câmpul de mișcare al vehiculelor (direcția medie pe celule) + capetele traiectoriilor.
 
     Săgeți galbene = mișcare în jos în imagine, mov = în sus; puncte verzi = începuturi de
@@ -186,9 +186,9 @@ def flow_image(files: list[Path], zones, background, out_png: Path, cell=(0.015,
     for z in zones:
         cv2.polylines(img, [z.poly_px(w, h)], True, z.color, 3)
         cv2.putText(img, z.id, tuple(z.poly_px(w, h)[0]), cv2.FONT_HERSHEY_SIMPLEX, 1.1, (255, 255, 255), 2)
-    for p in starts:
+    for p in starts if capete else []:
         cv2.circle(img, tuple(p.astype(int)), 5, (0, 200, 0), -1)
-    for p in ends:
+    for p in ends if capete else []:
         cv2.circle(img, tuple(p.astype(int)), 5, (0, 0, 230), -1)
     for (i, j), (vx, vy, n) in acc.items():
         if n < 5 or np.hypot(vx, vy) / n < 0.5:

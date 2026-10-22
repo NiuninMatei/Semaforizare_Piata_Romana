@@ -161,8 +161,15 @@ poligoane – banda de intrare spre piață și banda de ieșire – iar pentru 
 (10 zone în total, `config/camera.json`, coordonate normalizate 0–1, independente de rezoluție).
 
 ![Zonele de numărare pe imaginea camerei](img/zone_camera.jpg)
-*Zonele de numărare (verde = intrare, portocaliu = ieșire, mov = străzi cu sens unic de ieșire). Imagine:
-© WebcamRomania.ro, captură din 20.10.2026, 22:59, persoane estompate; folosită în scop de citare academică.*
+*Zonele de numărare finale (verde = intrare, portocaliu = ieșire, mov = străzi cu sens unic de ieșire, roșu =
+treceri de pietoni); săgețile albe arată sensul de mers cerut în fiecare zonă. Imagine: © WebcamRomania.ro,
+captură din 21.10.2026, 11:18, persoane estompate automat; folosită în scop de citare academică.*
+
+![Câmpul de mișcare al vehiculelor](img/flux_traiectorii.jpg)
+*Câmpul de mișcare calculat din ≈119.000 de traiectorii ale zilei de 21.10 (direcția medie pe celule; galben =
+spre partea de jos a imaginii, mov = spre partea de sus): se văd inelul circulat în sens trigonometric, intrările
+de pe Magheru (stânga jos, spre dreapta) și Dacia est (dreapta, în sus), ieșirile spre Catargiu și Căderea
+Bastiliei (sus). Imagine de fundal: © WebcamRomania.ro, persoane estompate.*
 
 Poziția zonelor nu a fost aleasă „din ochi”: s-au înregistrat 3 minute de flux, s-au urmărit vehiculele cu
 YOLO11 + ByteTrack (256 de traiectorii) și s-au suprapus traiectoriile pe imagine, cu punctele de început și de
