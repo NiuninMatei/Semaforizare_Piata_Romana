@@ -48,7 +48,16 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
-### Demonstrația live (22.10, seara) – în lucru
+### Evaluarea prin demonstrație (22.10, 20:48–22:00) – pașii 1–4 făcuți, Pasul 5 rămas
+
+- Autorul în rol de profesor; observațiile O1–O9 și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`.
+- Zonele camerei recalibrate (O1–O7, 7 treceri); fluxul MJPEG în dispecerat și pași de 0,2 s în SUMO (O8);
+  demo-ul de comparație cu bicicliști/pietoni (O9).
+- **De făcut:** Pasul 5 al demonstrației (rezultate și limite); renumărarea oficială cu zonele noi (`recount`)
+  → `scenarii_zi` → reevaluarea agenților (măsurat: intrări −29%, Mendeleev ×10, Catargiu out încă prea mare);
+  verificarea pe lumină de zi a celor 5 treceri noi și a zonei Catargiu out; scenariul de demo în GHID_PROFESOR.md.
+
+### Demonstrația live (22.10, seara) – pregătire
 
 - Pregătită și reparată: tampon de redare de 8 s pentru camera HLS (fără sacade), fereastra camerei
   redimensionabilă, bucla live robustă (PermissionError, debitele la granița de 15 min), SUMO-GUI centrat
