@@ -16,7 +16,7 @@ Autor: Niunin Matei-Gabriel. Implementarea a fost realizată în cea mai mare pa
    numără din ce braț intră fiecare vehicul, pe ce braț iese și câți pietoni traversează.
 2. **Numărătorile** devin cerere de trafic în SUMO (estimare origine–destinație Furness + `routeSampler`),
    pe o **replică fidelă a rețelei reale** (OpenStreetMap): inelul pieței, axa centrală, benzile STB,
-   trotuarele, trecerile și cele 16 semafoare fizice ale pieței, plus 5 intersecții semaforizate vecine.
+   trotuarele, trecerile și cele 16 semafoare fizice ale pieței, plus intersecțiile semaforizate vecine (4 dintre ele în coridorul controlat).
 3. **Un agent de învățare prin întărire (PPO)** învață să conducă semaforul existent al pieței – doar ordinea și
    durata fazelor reale, singurul lucru implementabil pe automatul real – și este comparat cu planul fix, Webster,
    semaforizarea „actuated” și Max-Pressure, pe scenarii construite din date reale.
@@ -69,7 +69,7 @@ Evaluarea completă (`scripts\5_evalueaza.bat`, 5 seed-uri × toate scenariile �
 | 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără ziua din jurnalul de traiectorii (după o recalibrare a zonelor) | ~5 min |
 | 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf, prânzul și ora liniștită și construiește scenariile SUMO | ~5 min |
 | 3 | `3_genereaza_cerere.bat --nume X --de-la "..." --pana-la "..."` | un scenariu pe o fereastră aleasă manual | ~1 min |
-| 4 | `4_antreneaza_ai.bat --pasi 500000 --medii 8 --scenarii sumo\scenarios\zi_*.sumocfg` | antrenarea agentului PPO al pieței (`--coridor` pentru piață + 5 vecini) | ~1,5 h pe laptopul de test |
+| 4 | `4_antreneaza_ai.bat --pasi 500000 --medii 8 --scenarii sumo\scenarios\zi_*.sumocfg` | antrenarea agentului PPO al pieței (`--coridor` pentru piață + 4 vecini) | ~1,5 h pe laptopul de test |
 | 5 | `5_evalueaza.bat` | evaluarea comparativă; actualizează `docs\rezultate\` | ~1 h |
 | 6 | `6_geaman_digital.bat` | SUMO-GUI alimentat **live** de cameră, semafor condus de AI | continuu |
 | 7 | `7_dashboard.bat` | dispeceratul web la http://localhost:8050 | continuu |

@@ -21,32 +21,38 @@
     "dacia_eminescu": {
       "lat": 44.44681,
       "lon": 26.09944,
-      "nume": "Bd. Dacia × Str. M. Eminescu × Calea Dorobanților",
-      "camera": false
+      "nume": "Bd. Dacia × Str. M. Eminescu × Calea Dorobanți",
+      "camera": false,
+      "coridor": true
     },
     "magheru_enescu": {
       "lat": 44.44394,
       "lon": 26.09825,
       "nume": "Bd. Magheru × Str. G. Enescu / Tache Ionescu",
-      "camera": false
+      "camera": false,
+      "coridor": true
     },
     "catargiu_manu": {
       "lat": 44.44939,
       "lon": 26.09173,
       "nume": "Bd. Lascăr Catargiu × Str. Gh. Manu",
-      "camera": false
+      "camera": false,
+      "coridor": true
     },
     "dacia_victoriei": {
       "lat": 44.4455,
       "lon": 26.09102,
       "nume": "Bd. Dacia × Calea Victoriei",
-      "camera": false
+      "camera": false,
+      "coridor": true
     },
     "dacia_polona": {
       "lat": 44.44652,
       "lon": 26.10334,
       "nume": "Bd. Dacia × Str. Polonă",
-      "camera": false
+      "camera": false,
+      "coridor": false,
+      "_nota": "Nu face parte din coridorul controlat: Bd. Dacia este aici sens unic de ieșire din piață (OSM oneway=yes, doar autobuzele în contrasens). Rămâne în rețea, pe programul actual."
     }
   },
   "romana_grupuri": {

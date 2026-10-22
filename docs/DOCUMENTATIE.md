@@ -60,7 +60,7 @@ date de trafic → model digital al intersecției → decizie automată → supr
 | R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje, pe tipuri de vehicule (inclusiv biciclete); pietoni din numărătorile de pe treceri; trafic de fond doar ca fracțiune declarată |
 | R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale |
 | R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe 5 seed-uri, pentru toți participanții (vehicule, bicicliști, pietoni) |
-| R6 | Extindere la intersecțiile principale conexe | varianta „coridor”: Piața Romană + 5 intersecții vecine controlate simultan |
+| R6 | Extindere la intersecțiile principale conexe | varianta „coridor”: Piața Romană + cei 4 vecini imediați care o alimentează, controlați simultan |
 | R7 | Documentație în limba română, cu surse și licențe | acest document; note de subsol; § 14 |
 | R8 | Evoluție vizibilă pe GitHub, pe borne | commit + push la fiecare bornă (§ 12) |
 
@@ -345,18 +345,26 @@ planul de referință complet (N–S / E–V / pietoni, § 6.3).
 `network/build_network.py` pornește de la extrasul OpenStreetMap[^osm] al zonei și rulează `netconvert`[^sumo]
 pe un dreptunghi de 2,2 × 1,6 km, care include Piața Romană și primele intersecții semaforizate pe fiecare braț:
 
-| ID în proiect | Intersecție | Cameră |
-|---|---|---|
-| `romana` | Piața Romană (Magheru – Lascăr Catargiu – Dacia) | da |
-| `dacia_eminescu` | Bd. Dacia × Str. M. Eminescu × Calea Dorobanților | nu |
-| `magheru_enescu` | Bd. Magheru × Str. G. Enescu / Tache Ionescu | nu |
-| `catargiu_manu` | Bd. Lascăr Catargiu × Str. Gh. Manu | nu |
-| `dacia_victoriei` | Bd. Dacia × Calea Victoriei | nu |
-| `dacia_polona` | Bd. Dacia × Str. Polonă | nu |
+| ID în proiect | Intersecție | Distanța | Cameră | În coridorul controlat |
+|---|---|---|---|---|
+| `romana` | Piața Romană (Magheru – Lascăr Catargiu – Dacia) | – | da | da (controlerul principal) |
+| `dacia_eminescu` | Bd. Dacia × Str. M. Eminescu × Calea Dorobanți (Dacia est) | ~215 m | nu | da |
+| `magheru_enescu` | Bd. Magheru × Str. G. Enescu / Tache Ionescu (sud) | ~350 m | nu | da |
+| `catargiu_manu` | Bd. Lascăr Catargiu × Str. Gh. Manu (nord-vest) | ~490 m | nu | da |
+| `dacia_victoriei` | Bd. Dacia × Calea Victoriei (Dacia vest) | ~480 m | nu | da |
+| `dacia_polona` | Bd. Dacia × Str. Polonă | ~525 m | nu | nu – Bd. Dacia este aici sens unic de ieșire din piață |
 
 Semafoarele sunt găsite **după coordonatele geografice** (centroidul nodurilor), nu după ID-urile generate de
 `netconvert`, care se schimbă la fiecare regenerare. Sensurile unice Mendeleev și Căderea Bastiliei (doar ieșire
 din piață) sunt confirmate atât de etichetele OSM (`oneway=yes`), cât și de traiectoriile observate pe cameră.
+
+**Coridorul controlat** (varianta „coridor” a agentului) cuprinde piața și cei 4 vecini imediați care o
+alimentează. Bd. Dacia × Str. Polonă a fost scoasă din coridor la observația autorului, confirmată de OSM: pe
+ambele tronsoane dintre Calea Dorobanți și Str. Polonă, Bd. Dacia are `oneway=yes` (doar autobuzele circulă în
+contrasens, `oneway:bus=no`), deci la Polonă traficul obișnuit doar pleacă din piață. Intersecția rămâne în
+simulare, pe programul ei actual. Piața Victoriei și Piața Universității sunt mai departe (≈0,9 și ≈1,5 km, cu
+alte intersecții semaforizate între ele și piață) și în afara zonei modelate; nicio cameră publică nu le acoperă.
+Denumirea străzii este **Calea Dorobanți**; în OSM apare ca „Calea Dorobanților”.
 
 ### 6.2 Replica fidelă a pieței (Borna 8)
 
@@ -428,7 +436,7 @@ excepția variantei „coridor”, în care sunt conduse de agent.
 * **Acțiune:** faza verde dorită. La Piața Romană, implicit una din cele 3 faze ale planului real (N–S, E–V,
   pietoni): agentul decide **ordinea și durata** fazelor, adică exact ce se poate programa pe automatul existent
   (fazele „fără dozare” se pot activa cu `--toate-fazele`). În varianta coridor, câte o acțiune pentru fiecare din
-  cele 6 semafoare – spațiu `MultiDiscrete`.
+  cele 5 semafoare ale coridorului – spațiu `MultiDiscrete`.
 * **Recompensă:** $r_t = -\frac{1}{100}\left(\sum_{\ell} q_\ell(t) + \sum_{c} p_c(t) + b(t)\right)$,
   unde $q_\ell$ este numărul de vehicule oprite pe banda de intrare $\ell$, $p_c$ numărul de pietoni care
   așteaptă la trecerea $c$, iar $b$ numărul de vehicule care nu pot intra în rețea (blocate la margine); un
@@ -686,7 +694,7 @@ SUMO poate fi instalarea oficială existentă (cu `SUMO_HOME` setat) sau pachetu
 | `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele; `q` = oprire); scrie numărătorile |
 | `2b_calibrare_zone.bat` | redesenarea zonelor pe un cadru live |
 | `3_genereaza_cerere.bat` | scenariu SUMO din numărători, ex.: `--nume dimineata --de-la "2026-10-21 07:30" --pana-la "2026-10-21 08:30"` |
-| `4_antreneaza_ai.bat` | antrenare PPO (`--coridor` pentru 6 semafoare, `--pasi N`) |
+| `4_antreneaza_ai.bat` | antrenare PPO (`--coridor` pentru piață + 4 vecini, `--pasi N`) |
 | `5_evalueaza.bat` | evaluare comparativă, actualizează `docs/rezultate/` |
 | `6_geaman_digital.bat` | SUMO-GUI alimentat live de cameră |
 | `7_dashboard.bat` | dispeceratul web |
