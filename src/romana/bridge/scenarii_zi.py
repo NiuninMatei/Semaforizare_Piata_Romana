@@ -3,7 +3,8 @@
 Pentru o zi colectată (data/counts/numaratori_AAAA-LL-ZZ.csv):
   1. se calculează, pe ferestre glisante de o oră (pas 15 min), debitul echilibrat prin piață
      (media dintre suma intrărilor și suma ieșirilor, ca în od_estimation);
-  2. se aleg ora de vârf (debitul maxim), ora cea mai liniștită și ora de la prânz (12:00–13:00);
+  2. se aleg ora de vârf (debitul maxim), ora cea mai liniștită și, dacă datele le acoperă și nu se suprapun cu
+     vârful, orele fixe de dimineață (07:30–08:30), prânz (12:00–13:00) și seară (17:30–18:30);
   3. pentru fiecare se construiește scenariul cu build_demand (Furness + routeSampler);
   4. se adaugă scenariile de sensibilitate: vârf × 1,2 și liniștit × 0,8 (incertitudinea măsurării).
 
@@ -51,8 +52,17 @@ def main(argv=None) -> None:
     windows = {
         "varf": (end_peak - 3 * h, end_peak + h),
         "linistit": (end_low - 3 * h, end_low + h),
+        "dimineata": (pd.Timestamp(f"{args.zi} 07:30"), pd.Timestamp(f"{args.zi} 08:30")),
         "pranz": (pd.Timestamp(f"{args.zi} 12:00"), pd.Timestamp(f"{args.zi} 13:00")),
+        "seara": (pd.Timestamp(f"{args.zi} 17:30"), pd.Timestamp(f"{args.zi} 18:30")),
     }
+    # se păstrează doar ferestrele acoperite integral de date și care nu se suprapun peste vârful zilei
+    covered = set(prof.index)
+    windows = {k: (a, b) for k, (a, b) in windows.items()
+               if all(t in covered for t in pd.date_range(a, b - h, freq="15min"))}
+    a0, b0 = windows["varf"]
+    windows = {k: (a, b) for k, (a, b) in windows.items()
+               if k in ("varf", "linistit") or b <= a0 or a >= b0}
     summary = {"zi": args.zi, "profil": {str(k): round(v, 1) for k, v in prof["echilibrat_veh_h"].items()},
                "ferestre": {k: [str(a), str(b)] for k, (a, b) in windows.items()}}
     print("\nFerestre alese:", {k: f"{a:%H:%M}–{b:%H:%M}" for k, (a, b) in windows.items()})
