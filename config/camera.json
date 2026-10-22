@@ -22,7 +22,7 @@
     0.38,
     1.0
   ],
-  "calibrare": "zi, 21.10.2026: zonele brațelor îndepărtate plasate pe sursele/destinațiile traiectoriilor din jurnal (recount --flux), cu sensul de mers cerut (sens, ±60°); trecerile desenate pe cadrul din 21.10.2026 01:30 și verificate pe cadrul de zi",
+  "calibrare": "22.10.2026, 21:20: toate zonele redesenate pe cadrul live după observațiile profesorului (docs/OBSERVATII_EVALUARE.md): benzile Magheru despărțite pe axă, Dacia vest / Catargiu intrare-stânga / ieșire-dreapta, Mendeleev și Căderea Bastiliei pe gura străzii, Dacia est pe carosabilul real; 7 treceri de pietoni (Mendeleev, Dacia vest, Catargiu, Căderea Bastiliei și Dacia est nord – noi, poziționate pe cadru, de verificat pe lumină de zi)",
   "brate": {
     "magheru": "Bd. Gh. Magheru (sud) – dublu sens",
     "mendeleev": "Str. D. I. Mendeleev – sens unic, doar ieșire din piață",
@@ -39,19 +39,19 @@
       "poligon": [
         [
           0.0,
-          0.52
+          0.558
         ],
         [
-          0.2,
-          0.52
+          0.21,
+          0.552
         ],
         [
           0.22,
-          0.66
+          0.622
         ],
         [
           0.0,
-          0.66
+          0.632
         ]
       ],
       "culoare": [
@@ -71,19 +71,19 @@
       "poligon": [
         [
           0.0,
-          0.45
+          0.508
         ],
         [
           0.2,
-          0.45
+          0.502
         ],
         [
-          0.2,
-          0.555
+          0.21,
+          0.552
         ],
         [
           0.0,
-          0.555
+          0.558
         ]
       ],
       "culoare": [
@@ -102,20 +102,20 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.1562,
-          0.4352
+          0.07,
+          0.468
         ],
         [
-          0.2448,
-          0.4278
+          0.26,
+          0.456
         ],
         [
-          0.25,
-          0.4583
+          0.27,
+          0.49
         ],
         [
-          0.1562,
-          0.4676
+          0.08,
+          0.505
         ]
       ],
       "culoare": [
@@ -126,7 +126,7 @@
       "capat_traiectorie": true,
       "sens": [
         -1,
-        0
+        0.1
       ]
     },
     {
@@ -135,20 +135,20 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.35,
-          0.415
+          0.32,
+          0.41
         ],
         [
-          0.46,
-          0.412
+          0.4,
+          0.41
         ],
         [
-          0.46,
-          0.448
+          0.4,
+          0.445
         ],
         [
-          0.35,
-          0.452
+          0.315,
+          0.445
         ]
       ],
       "culoare": [
@@ -168,20 +168,20 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.35,
-          0.4
+          0.4,
+          0.41
         ],
         [
           0.47,
-          0.398
+          0.41
         ],
         [
-          0.47,
-          0.448
+          0.475,
+          0.445
         ],
         [
-          0.35,
-          0.452
+          0.4,
+          0.445
         ]
       ],
       "culoare": [
@@ -201,20 +201,20 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.55,
-          0.41
+          0.52,
+          0.4
         ],
         [
-          0.6,
-          0.41
+          0.585,
+          0.4
         ],
         [
-          0.61,
-          0.485
+          0.59,
+          0.443
         ],
         [
-          0.53,
-          0.485
+          0.515,
+          0.443
         ]
       ],
       "culoare": [
@@ -224,7 +224,7 @@
       ],
       "capat_traiectorie": true,
       "sens": [
-        -0.5,
+        -0.3,
         1
       ]
     },
@@ -235,19 +235,19 @@
       "poligon": [
         [
           0.6,
-          0.395
+          0.4
+        ],
+        [
+          0.66,
+          0.4
         ],
         [
           0.665,
-          0.395
+          0.438
         ],
         [
-          0.665,
-          0.455
-        ],
-        [
-          0.6,
-          0.455
+          0.605,
+          0.438
         ]
       ],
       "culoare": [
@@ -267,20 +267,20 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.72,
-          0.455
+          0.69,
+          0.43
         ],
         [
-          0.87,
-          0.455
+          0.8,
+          0.43
         ],
         [
-          0.87,
-          0.51
+          0.8,
+          0.465
         ],
         [
-          0.72,
-          0.51
+          0.7,
+          0.465
         ]
       ],
       "culoare": [
@@ -290,8 +290,8 @@
       ],
       "capat_traiectorie": true,
       "sens": [
-        0.3,
-        -1
+        1,
+        -0.4
       ]
     },
     {
@@ -300,20 +300,32 @@
       "rol": "intrare",
       "poligon": [
         [
-          0.86,
-          0.53
-        ],
-        [
-          1.0,
-          0.55
-        ],
-        [
-          1.0,
-          0.7
+          0.82,
+          0.62
         ],
         [
           0.88,
-          0.66
+          0.58
+        ],
+        [
+          0.95,
+          0.63
+        ],
+        [
+          1.0,
+          0.68
+        ],
+        [
+          1.0,
+          0.74
+        ],
+        [
+          0.93,
+          0.765
+        ],
+        [
+          0.86,
+          0.74
         ]
       ],
       "culoare": [
@@ -332,19 +344,27 @@
       "rol": "iesire",
       "poligon": [
         [
-          0.7552,
-          0.9167
+          0.7,
+          0.9
+        ],
+        [
+          0.88,
+          0.84
+        ],
+        [
+          0.94,
+          0.87
         ],
         [
           1.0,
-          0.8704
+          0.885
         ],
         [
           1.0,
           1.0
         ],
         [
-          0.7552,
+          0.7,
           1.0
         ]
       ],
@@ -364,28 +384,164 @@
       "rol": "trecere",
       "poligon": [
         [
-          0.145,
-          0.645
+          0.0,
+          0.5
         ],
         [
-          0.26,
+          0.045,
+          0.5
+        ],
+        [
+          0.068,
+          0.625
+        ],
+        [
+          0.0,
+          0.64
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
+        255
+      ]
+    },
+    {
+      "id": "trecere_mendeleev",
+      "arm": "mendeleev",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.05,
+          0.462
+        ],
+        [
+          0.085,
+          0.46
+        ],
+        [
+          0.09,
+          0.505
+        ],
+        [
+          0.05,
+          0.51
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
+        255
+      ]
+    },
+    {
+      "id": "trecere_dacia_vest",
+      "arm": "dacia_vest",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.31,
+          0.43
+        ],
+        [
+          0.475,
+          0.428
+        ],
+        [
+          0.478,
+          0.444
+        ],
+        [
+          0.31,
+          0.447
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
+        255
+      ]
+    },
+    {
+      "id": "trecere_catargiu",
+      "arm": "catargiu",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.515,
+          0.438
+        ],
+        [
+          0.67,
+          0.434
+        ],
+        [
+          0.672,
+          0.452
+        ],
+        [
+          0.515,
+          0.456
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
+        255
+      ]
+    },
+    {
+      "id": "trecere_caderea_bastiliei",
+      "arm": "caderea_bastiliei",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.665,
+          0.432
+        ],
+        [
+          0.69,
+          0.432
+        ],
+        [
+          0.705,
+          0.47
+        ],
+        [
+          0.68,
+          0.472
+        ]
+      ],
+      "culoare": [
+        90,
+        90,
+        255
+      ]
+    },
+    {
+      "id": "trecere_dacia_est_nord",
+      "arm": "dacia_est",
+      "rol": "trecere",
+      "poligon": [
+        [
+          0.855,
+          0.75
+        ],
+        [
+          0.97,
           0.66
         ],
         [
-          0.54,
-          0.877
+          1.0,
+          0.675
         ],
         [
-          0.4,
-          0.9
+          1.0,
+          0.73
         ],
         [
-          0.287,
-          0.84
-        ],
-        [
-          0.149,
-          0.725
+          0.905,
+          0.8
         ]
       ],
       "culoare": [
@@ -400,44 +556,28 @@
       "rol": "trecere",
       "poligon": [
         [
-          0.611,
-          0.944
+          0.7,
+          0.88
         ],
         [
-          0.929,
-          0.668
+          0.8,
+          0.795
         ],
         [
-          0.987,
-          0.709
+          0.95,
+          0.85
         ],
         [
-          0.985,
-          0.755
+          0.95,
+          0.89
         ],
         [
-          0.917,
-          0.796
-        ],
-        [
-          0.906,
-          0.842
-        ],
-        [
-          0.937,
-          0.883
-        ],
-        [
-          0.889,
-          0.995
-        ],
-        [
-          0.685,
+          0.83,
           1.0
         ],
         [
-          0.611,
-          0.964
+          0.7,
+          1.0
         ]
       ],
       "culoare": [
