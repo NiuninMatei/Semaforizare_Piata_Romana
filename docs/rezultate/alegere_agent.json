@@ -1,0 +1,13 @@
+{
+  "ales": "ppo_romana",
+  "scor_mediu_procent": {
+    "ppo_romana": -3.46,
+    "ppo_romana_final_a": 1.5,
+    "ppo_romana_final_b": 6.93
+  },
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ]
+}
