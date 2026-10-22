@@ -132,3 +132,113 @@ Medii ± abatere standard pe 5 seed-uri SUMO. Procentele sunt față de plan fix
 | Agent RL (PPO) | 473.1 ± 100.3 | 555.6 ± 105.0 | 184.6 ± 19.3 (+1%) | 21.1 ± 7.0 | 430.1 ± 62.8 (+1%) |
 | Agent RL v2 (cozi în amonte) | 418.1 ± 142.9 | 501.1 ± 150.0 | 237.2 ± 28.5 (+30%) | 35.5 ± 11.3 | 491.6 ± 86.5 (+15%) |
 | Agent RL v3 (imitație + PPO) | 319.0 ± 90.7 | 398.4 ± 95.0 | 193.0 ± 39.5 (+6%) | 19.3 ± 1.5 | 455.6 ± 84.0 (+7%) |
+
+## Scenariul `zi_2026-10-22_dimineata`
+
+**Vehicule motorizate**
+
+| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | Întârziere la intrarea în rețea (s) | Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |
+|---|---|---|---|---|---|---|---|---|---|
+| Plan fix de referință | 122.8 ± 10.1 | 120.1 | 181.9 ± 11.7 | 145.2 ± 13.4 | 303.7 ± 12.0 | 20.3 ± 1.5 | 2190 ± 17 | 269 ± 16 | 1661 ± 33 |
+| Plan fix (Webster) | 117.0 ± 10.9 (-5%) | 117.4 (-2%) | 177.6 ± 13.5 | 130.8 ± 21.9 | 298.6 ± 13.3 | 20.5 ± 1.3 | 2250 ± 20 | 212 ± 19 | 1692 ± 52 |
+| Actuated SUMO | 139.8 ± 11.9 (+14%) | 131.3 (+9%) | 201.7 ± 12.1 | 104.1 ± 3.0 | 322.4 ± 12.1 | 29.3 ± 1.8 | 2245 ± 27 | 243 ± 48 | 1779 ± 36 |
+| Max-Pressure | 110.9 ± 11.4 (-10%) | 117.5 (-2%) | 174.3 ± 13.7 | 158.0 ± 16.0 | 295.6 ± 13.8 | 21.1 ± 1.7 | 2212 ± 14 | 240 ± 15 | 1675 ± 40 |
+| Agent RL (PPO) | 104.8 ± 17.0 (-15%) | 95.4 (-21%) | 164.8 ± 20.0 | 153.2 ± 13.4 | 285.9 ± 20.0 | 17.1 ± 2.1 | 2220 ± 21 | 268 ± 73 | 1644 ± 59 |
+
+**Bicicliști, pietoni și total**
+
+| Strategie | Așteptare bicicliști (s) | Pierdere de timp bicicliști (s) | Pierdere de timp pietoni (s) | Pietoni care așteaptă la treceri (medie) | Pierdere totală, toți participanții (h) |
+|---|---|---|---|---|---|
+| Plan fix de referință | 180.3 ± 27.8 | 234.5 ± 30.1 | 158.9 ± 6.5 | 14.0 ± 1.7 | 301.4 ± 10.8 |
+| Plan fix (Webster) | 146.5 ± 22.7 | 199.7 ± 23.1 | 149.6 ± 18.1 (-6%) | 12.5 ± 6.4 | 289.6 ± 28.2 (-4%) |
+| Actuated SUMO | 172.1 ± 59.2 | 221.6 ± 63.8 | 211.7 ± 20.9 (+33%) | 27.3 ± 4.4 | 326.7 ± 16.7 (+8%) |
+| Max-Pressure | 131.2 ± 43.7 | 183.3 ± 48.4 | 143.6 ± 12.3 (-10%) | 9.4 ± 0.5 | 297.7 ± 21.7 (-1%) |
+| Agent RL (PPO) | 151.8 ± 42.5 | 206.7 ± 48.7 | 162.9 ± 34.2 (+2%) | 12.0 ± 0.9 | 301.8 ± 38.6 (+0%) |
+
+## Scenariul `zi_2026-10-22_linistit`
+
+**Vehicule motorizate**
+
+| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | Întârziere la intrarea în rețea (s) | Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |
+|---|---|---|---|---|---|---|---|---|---|
+| Plan fix de referință | 53.5 ± 1.7 | 53.9 | 94.3 ± 1.7 | 0.5 ± 0.0 | 229.8 ± 2.1 | 1.2 ± 0.0 | 297 ± 0 | 0 ± 0 | 220 ± 1 |
+| Plan fix (Webster) | 49.9 ± 0.6 (-7%) | 49.9 (-7%) | 91.1 ± 1.1 | 0.5 ± 0.0 | 226.6 ± 1.3 | 0.9 ± 0.0 | 297 ± 0 | 0 ± 0 | 219 ± 2 |
+| Actuated SUMO | 47.8 ± 2.1 (-11%) | 48.3 (-10%) | 88.8 ± 3.2 | 0.5 ± 0.0 | 224.3 ± 3.3 | 0.7 ± 0.0 | 297 ± 0 | 0 ± 0 | 217 ± 3 |
+| Max-Pressure | 42.1 ± 0.7 (-21%) | 42.4 (-21%) | 80.5 ± 1.7 | 0.5 ± 0.0 | 216.0 ± 1.9 | 0.4 ± 0.0 | 297 ± 0 | 1 ± 1 | 211 ± 2 |
+| Agent RL (PPO) | 46.9 ± 2.3 (-12%) | 46.6 (-13%) | 88.1 ± 2.4 | 0.5 ± 0.0 | 223.6 ± 2.1 | 0.8 ± 0.1 | 297 ± 0 | 0 ± 0 | 219 ± 2 |
+
+**Bicicliști, pietoni și total**
+
+| Strategie | Așteptare bicicliști (s) | Pierdere de timp bicicliști (s) | Pierdere de timp pietoni (s) | Pietoni care așteaptă la treceri (medie) | Pierdere totală, toți participanții (h) |
+|---|---|---|---|---|---|
+| Plan fix de referință | nan ± nan | nan ± nan | 148.3 ± 4.0 | 0.1 ± 0.0 | 8.6 ± 0.2 |
+| Plan fix (Webster) | nan ± nan | nan ± nan | 120.2 ± 6.0 (-19%) | 0.1 ± 0.0 | 8.2 ± 0.1 (-5%) |
+| Actuated SUMO | nan ± nan | nan ± nan | 130.9 ± 6.6 (-12%) | 0.1 ± 0.0 | 8.1 ± 0.3 (-6%) |
+| Max-Pressure | nan ± nan | nan ± nan | 220.4 ± 15.0 (+49%) | 0.1 ± 0.0 | 7.8 ± 0.2 (-9%) |
+| Agent RL (PPO) | nan ± nan | nan ± nan | 123.5 ± 9.6 (-17%) | 0.1 ± 0.0 | 8.0 ± 0.2 (-7%) |
+
+## Scenariul `zi_2026-10-22_linistit_x0_8`
+
+**Vehicule motorizate**
+
+| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | Întârziere la intrarea în rețea (s) | Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |
+|---|---|---|---|---|---|---|---|---|---|
+| Plan fix de referință | 53.1 ± 1.2 | 53.0 | 92.7 ± 1.3 | 0.5 ± 0.0 | 227.7 ± 1.7 | 1.0 ± 0.1 | 241 ± 0 | 0 ± 1 | 180 ± 1 |
+| Plan fix (Webster) | 48.6 ± 0.9 (-8%) | 48.4 (-9%) | 88.8 ± 1.8 | 0.5 ± 0.0 | 223.8 ± 1.9 | 0.7 ± 0.0 | 241 ± 0 | 0 ± 1 | 180 ± 1 |
+| Actuated SUMO | 46.4 ± 0.8 (-13%) | 46.5 (-12%) | 86.1 ± 0.5 | 0.5 ± 0.0 | 221.1 ± 0.6 | 0.6 ± 0.0 | 241 ± 0 | 0 ± 1 | 178 ± 1 |
+| Max-Pressure | 42.0 ± 1.2 (-21%) | 42.2 (-20%) | 79.2 ± 1.6 | 0.5 ± 0.0 | 214.2 ± 1.6 | 0.3 ± 0.0 | 241 ± 0 | 1 ± 1 | 173 ± 1 |
+| Agent RL (PPO) | 46.1 ± 0.7 (-13%) | 45.7 (-14%) | 85.4 ± 0.9 | 0.5 ± 0.0 | 220.4 ± 0.6 | 0.7 ± 0.0 | 241 ± 0 | 0 ± 1 | 180 ± 1 |
+
+**Bicicliști, pietoni și total**
+
+| Strategie | Așteptare bicicliști (s) | Pierdere de timp bicicliști (s) | Pierdere de timp pietoni (s) | Pietoni care așteaptă la treceri (medie) | Pierdere totală, toți participanții (h) |
+|---|---|---|---|---|---|
+| Plan fix de referință | nan ± nan | nan ± nan | 166.3 ± 6.2 | 0.1 ± 0.0 | 7.1 ± 0.1 |
+| Plan fix (Webster) | nan ± nan | nan ± nan | 132.5 ± 7.1 (-20%) | 0.1 ± 0.0 | 6.7 ± 0.1 (-6%) |
+| Actuated SUMO | nan ± nan | nan ± nan | 141.6 ± 6.0 (-15%) | 0.1 ± 0.0 | 6.5 ± 0.0 (-8%) |
+| Max-Pressure | nan ± nan | nan ± nan | 240.4 ± 34.9 (+45%) | 0.1 ± 0.0 | 6.6 ± 0.2 (-7%) |
+| Agent RL (PPO) | nan ± nan | nan ± nan | 139.3 ± 6.2 (-16%) | 0.1 ± 0.0 | 6.5 ± 0.1 (-9%) |
+
+## Scenariul `zi_2026-10-22_varf`
+
+**Vehicule motorizate**
+
+| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | Întârziere la intrarea în rețea (s) | Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |
+|---|---|---|---|---|---|---|---|---|---|
+| Plan fix de referință | 179.4 ± 32.8 | 164.1 | 250.7 ± 35.8 | 103.4 ± 6.7 | 375.0 ± 35.6 | 32.4 ± 3.4 | 2384 ± 45 | 435 ± 73 | 2118 ± 116 |
+| Plan fix (Webster) | 186.4 ± 38.6 (+4%) | 184.8 (+13%) | 261.6 ± 44.6 | 119.3 ± 13.3 | 385.6 ± 44.7 | 34.1 ± 4.9 | 2401 ± 41 | 449 ± 100 | 2187 ± 155 |
+| Actuated SUMO | 324.6 ± 43.1 (+81%) | 310.0 (+89%) | 414.1 ± 47.4 | 107.6 ± 10.6 | 532.9 ± 46.8 | 43.3 ± 3.5 | 2345 ± 74 | 505 ± 102 | 2839 ± 142 |
+| Max-Pressure | 241.8 ± 88.4 (+35%) | 213.3 (+30%) | 321.3 ± 90.8 | 66.8 ± 19.8 | 444.2 ± 88.2 | 37.0 ± 5.7 | 2259 ± 172 | 599 ± 249 | 2342 ± 267 |
+| Agent RL (PPO) | 172.0 ± 35.0 (-4%) | 166.9 (+2%) | 244.2 ± 39.0 | 86.9 ± 23.2 | 368.5 ± 38.7 | 30.4 ± 3.5 | 2357 ± 48 | 471 ± 81 | 2097 ± 125 |
+
+**Bicicliști, pietoni și total**
+
+| Strategie | Așteptare bicicliști (s) | Pierdere de timp bicicliști (s) | Pierdere de timp pietoni (s) | Pietoni care așteaptă la treceri (medie) | Pierdere totală, toți participanții (h) |
+|---|---|---|---|---|---|
+| Plan fix de referință | 193.9 ± 25.9 | 254.7 ± 31.3 | 164.1 ± 13.7 | 14.1 ± 1.5 | 339.0 ± 28.9 |
+| Plan fix (Webster) | 188.5 ± 54.5 | 246.0 ± 58.4 | 181.3 ± 40.0 (+10%) | 12.5 ± 3.2 | 370.1 ± 43.5 (+9%) |
+| Actuated SUMO | 308.6 ± 113.2 | 368.2 ± 116.6 | 201.9 ± 10.5 (+23%) | 25.6 ± 1.8 | 492.7 ± 37.4 (+45%) |
+| Max-Pressure | 383.4 ± 144.9 | 445.3 ± 145.8 | 165.4 ± 29.8 (+1%) | 12.9 ± 2.5 | 357.9 ± 60.9 (+6%) |
+| Agent RL (PPO) | 256.9 ± 31.9 | 316.0 ± 32.8 | 167.9 ± 29.3 (+2%) | 13.3 ± 1.5 | 324.9 ± 33.9 (-4%) |
+
+## Scenariul `zi_2026-10-22_varf_x1_2`
+
+**Vehicule motorizate**
+
+| Strategie | Așteptare medie (s) | Așteptare mediană (s) | Pierdere de timp (s) | Întârziere la intrarea în rețea (s) | Durată călătorie (s) | Coadă medie piață (veh) | Vehicule sosite | Rămase în rețea | CO₂ (kg) |
+|---|---|---|---|---|---|---|---|---|---|
+| Plan fix de referință | 247.7 ± 46.9 | 215.5 | 339.0 ± 56.0 | 121.5 ± 11.6 | 463.5 ± 55.7 | 39.4 ± 4.5 | 2705 ± 49 | 676 ± 91 | 2872 ± 232 |
+| Plan fix (Webster) | 287.0 ± 43.8 (+16%) | 311.6 (+45%) | 383.2 ± 47.9 | 121.9 ± 13.2 | 505.7 ± 47.1 | 44.8 ± 3.9 | 2726 ± 86 | 721 ± 133 | 3127 ± 186 |
+| Actuated SUMO | 351.7 ± 52.9 (+42%) | 332.0 (+54%) | 447.9 ± 56.1 | 173.2 ± 16.9 | 562.6 ± 56.3 | 45.2 ± 5.6 | 2597 ± 79 | 817 ± 110 | 3398 ± 171 |
+| Max-Pressure | 296.3 ± 87.8 (+20%) | 273.3 (+27%) | 394.0 ± 90.5 | 74.7 ± 5.7 | 515.7 ± 86.4 | 40.4 ± 5.0 | 2545 ± 186 | 873 ± 243 | 3041 ± 311 |
+| Agent RL (PPO) | 250.6 ± 28.1 (+1%) | 246.4 (+14%) | 349.6 ± 32.0 | 104.5 ± 14.1 | 474.0 ± 31.5 | 39.4 ± 2.9 | 2678 ± 51 | 687 ± 41 | 2910 ± 133 |
+
+**Bicicliști, pietoni și total**
+
+| Strategie | Așteptare bicicliști (s) | Pierdere de timp bicicliști (s) | Pierdere de timp pietoni (s) | Pietoni care așteaptă la treceri (medie) | Pierdere totală, toți participanții (h) |
+|---|---|---|---|---|---|
+| Plan fix de referință | 210.7 ± 30.7 | 273.6 ± 34.8 | 166.4 ± 9.6 | 16.8 ± 2.7 | 462.8 ± 49.3 |
+| Plan fix (Webster) | 211.3 ± 37.0 | 275.3 ± 38.7 | 189.5 ± 25.8 (+14%) | 17.0 ± 3.7 | 521.5 ± 43.9 (+13%) |
+| Actuated SUMO | 281.1 ± 54.9 | 346.5 ± 60.3 | 215.7 ± 26.8 (+30%) | 29.5 ± 6.4 | 641.9 ± 61.2 (+39%) |
+| Max-Pressure | 332.1 ± 115.2 | 397.7 ± 116.2 | 184.5 ± 25.6 (+11%) | 15.5 ± 2.5 | 474.0 ± 74.5 (+2%) |
+| Agent RL (PPO) | 289.0 ± 76.3 | 359.5 ± 82.5 | 165.7 ± 11.7 (-0%) | 15.1 ± 1.6 | 455.0 ± 30.3 (-2%) |
