@@ -185,7 +185,9 @@ async function actualizeaza(){
     $("p-cam").className="punct "+(c.conectat?"ok":"atent");
     $("s-cam").textContent=c.conectat?"camera: flux live":"camera: reconectare în curs";
     $("s-fps").textContent=`${c.fps} cadre/s analizate`; $("s-urm").textContent=`${c.vehicule_urmarite} vehicule urmărite`;
-    $("cadru").src="/api/frame.jpg?t="+Date.now(); $("cadru-gol").style.display="none";
+    // flux MJPEG continuu (pornit o singură dată), nu o imagine reîncărcată la fiecare secundă
+    if(!$("cadru").dataset.flux){ $("cadru").dataset.flux="1"; $("cadru").src="/api/video" }
+    $("cadru-gol").style.display="none";
     const ins=c.intrari_veh_h||{}, outs=c.iesiri_veh_h||{}, k=Object.keys(NUME);
     const ped=c.pietoni_h||{};
     $("debite").innerHTML=k.map(b=>`<tr><td>${NUME[b]}</td><td class="n">${ins[b]??"–"}</td><td class="n">${outs[b]??"–"}</td></tr>`).join("")+
