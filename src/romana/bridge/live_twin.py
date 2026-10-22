@@ -103,6 +103,10 @@ def main(argv=None) -> None:
                  "--no-step-log", "--no-warnings", "--time-to-teleport", "300"])
     for tid in traci.trafficlight.getIDList():
         traci.trafficlight.setProgram(tid, "0")
+    if args.gui:   # vederea pornește centrată pe Piața Romană (centrul benzilor controlate de semafor)
+        pts = [p for ln in set(traci.trafficlight.getControlledLanes("romana")) for p in traci.lane.getShape(ln)]
+        traci.gui.setOffset("View #0", sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))
+        traci.gui.setZoom("View #0", 700)
 
     greens, names = romana_green_phases()
     ctrl = SignalController(traci, "romana", greens, names)
@@ -120,6 +124,7 @@ def main(argv=None) -> None:
     info = json.loads((NET_DIR / "network_info.json").read_text(encoding="utf-8"))
     route_ids: dict[tuple, list[str]] = {}
     n_veh, n_ped, t, last_src = 0, 0, 0, ""
+    good_cam, good_t = None, 0.0
     hist = []
     LIVE.mkdir(parents=True, exist_ok=True)
     print("[geamăn digital] pornit. Moduri: ai / fix / max_pressure / manual (din dashboard)")
@@ -129,6 +134,12 @@ def main(argv=None) -> None:
             cam = read_json(LIVE / "state.json", max_age=60)
             cmd = read_json(LIVE / "command.json") or {"mod": "ai" if rl else "fix"}
             if cam and cam.get("intrari_veh_h") and cam.get("secunde_interval", 0) >= 60:
+                good_cam, good_t = cam, time.time()
+            elif good_cam and time.time() - good_t < 1200:
+                # primul minut al unui interval nou de 15 min (debite încă nesigure) sau o citire eșuată:
+                # păstrăm ultimele debite bune ale camerei în loc să revenim la profilul de referință
+                cam = good_cam
+            if cam and cam.get("intrari_veh_h") and (cam is good_cam):
                 rates = {k: float(v) for k, v in cam["intrari_veh_h"].items()}
                 obs_turns = cam.get("total_viraje", {})
                 ped_rate = sum(cam.get("pietoni_h", {}).values()) * cfg.get("factor_extrapolare_pietoni", 1.0)
@@ -214,7 +225,10 @@ def main(argv=None) -> None:
                          "istoric_coada": hist[::5]}
                 tmp = LIVE / "sim_tmp.json"
                 tmp.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
-                tmp.replace(LIVE / "sim_state.json")
+                try:   # pe Windows eșuează cât timp dashboard-ul citește fișierul: următoarea scriere reușește
+                    tmp.replace(LIVE / "sim_state.json")
+                except PermissionError:
+                    pass
             if args.viteza > 0:
                 time.sleep(max(0.0, 1.0 / args.viteza - (time.time() - t0)))
     except (KeyboardInterrupt, traci.exceptions.FatalTraCIError):
