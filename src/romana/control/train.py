@@ -2,7 +2,7 @@
 
 Exemple:
   python -m romana.control.train --pasi 150000                       # doar Piața Romană
-  python -m romana.control.train --coridor --pasi 300000             # piața + 5 intersecții vecine
+  python -m romana.control.train --coridor --pasi 300000             # piața + 4 intersecții vecine
   python -m romana.control.train --scenarii sumo/scenarios/dimineata_*.sumocfg
 
 Modelul se salvează în models/ppo_<nume>.zip; curba de învățare în outputs/train/.
@@ -18,7 +18,10 @@ from pathlib import Path
 
 from romana.common import MODELS_DIR, OUTPUT_DIR, ROOT, load_json
 
-NEIGHBORS = ["dacia_eminescu", "magheru_enescu", "catargiu_manu", "dacia_victoriei", "dacia_polona"]
+# Vecinii imediați care alimentează piața. Bd. Dacia × Str. Polonă nu face parte din coridor: în OSM, Bd. Dacia
+# este acolo sens unic de ieșire din piață (doar banda de autobuz în contrasens), deci intersecția nu trimite
+# trafic spre piață; rămâne în simulare, pe programul ei actual.
+NEIGHBORS = ["dacia_eminescu", "magheru_enescu", "catargiu_manu", "dacia_victoriei"]
 
 
 def behaviour_cloning(model, env, plan: list[float], steps_per_env: int, epochs: int = 8) -> dict:
@@ -70,7 +73,7 @@ def main(argv=None) -> None:
     ap.add_argument("--scenarii", nargs="*", default=None,
                     help="fișiere .sumocfg pentru antrenare (implicit toate din sumo/scenarios)")
     ap.add_argument("--pasi", type=int, default=150_000, help="pași de decizie (1 pas = 5 s simulate)")
-    ap.add_argument("--coridor", action="store_true", help="controlează și cele 5 intersecții vecine")
+    ap.add_argument("--coridor", action="store_true", help="controlează și cele 4 intersecții vecine care alimentează piața")
     ap.add_argument("--nume", default=None)
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--toate-fazele", action="store_true",
