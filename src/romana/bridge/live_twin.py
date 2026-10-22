@@ -27,6 +27,7 @@ from romana.common import DEMAND_DIR, MODELS_DIR, NET_DIR, OUTPUT_DIR, load_json
 from romana.control.signals import SignalController, romana_green_phases
 
 LIVE = OUTPUT_DIR / "live"
+SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă în SUMO-GUI
 
 
 def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
@@ -96,11 +97,12 @@ def main(argv=None) -> None:
     traci.start([sumo_binary("sumo-gui" if args.gui else "sumo"), "-n", str(NET_DIR / "romana.net.xml"),
                  "--additional-files", f"{DEMAND_DIR / 'vtypes.add.xml'},{NET_DIR / 'tls_actuated.add.xml'}",
                  "--no-step-log", "--no-warnings", "--time-to-teleport", "300", "--begin", "0",
+                 "--step-length", str(1 / SUBPASI), "--delay", "0",
                  "--gui-settings-file", str(NET_DIR / "view.xml"), "--start", "--quit-on-end"]
                 if args.gui else
                 [sumo_binary("sumo"), "-n", str(NET_DIR / "romana.net.xml"),
                  "--additional-files", f"{DEMAND_DIR / 'vtypes.add.xml'},{NET_DIR / 'tls_actuated.add.xml'}",
-                 "--no-step-log", "--no-warnings", "--time-to-teleport", "300"])
+                 "--no-step-log", "--no-warnings", "--time-to-teleport", "300", "--step-length", str(1 / SUBPASI)])
     for tid in traci.trafficlight.getIDList():
         traci.trafficlight.setProgram(tid, "0")
     if args.gui:   # vederea pornește centrată pe Piața Romană (centrul benzilor controlate de semafor)
@@ -200,7 +202,12 @@ def main(argv=None) -> None:
                         ctrl.request(plan_cycle[0])
                     elif ctrl.green_time >= plan_green[ctrl.current]:
                         ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
-            traci.simulationStep()
+            # o secundă de simulare în SUBPASI pași mici, întinși pe secunda reală: mișcarea apare fluentă,
+            # iar controlerul (verde minim, galben, roșu de degajare) rămâne pe secunde întregi
+            for k in range(SUBPASI):
+                traci.simulationStep()
+                if args.viteza > 0:
+                    time.sleep(max(0.0, t0 + (k + 1) / (SUBPASI * args.viteza) - time.time()))
             ctrl.tick()
             t += 1
             # --- stare pentru dashboard ---
@@ -229,8 +236,6 @@ def main(argv=None) -> None:
                     tmp.replace(LIVE / "sim_state.json")
                 except PermissionError:
                     pass
-            if args.viteza > 0:
-                time.sleep(max(0.0, 1.0 / args.viteza - (time.time() - t0)))
     except (KeyboardInterrupt, traci.exceptions.FatalTraCIError):
         pass
     finally:

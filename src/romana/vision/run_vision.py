@@ -206,16 +206,17 @@ def main(argv=None) -> None:
                     mqtt.publish("numaratori/interval", {k: {str(kk): vv for kk, vv in v.items()}
                                                          if isinstance(v, dict) else v for k, v in rec.items()},
                                  retain=True)
-            if now - last_live > 1.0 or args.show:
+            if True:
                 vis = draw_overlay(blur_persons(frame.copy(), persons), zones, dets, counter, fps_est)
+                # cadrul pentru dispecerat la fiecare imagine analizată (fluxul MJPEG din dashboard)
+                small = cv2.resize(vis, (960, int(960 * h / w)))
+                cv2.imwrite(str(LIVE_DIR / "frame_tmp.jpg"), small, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                try:   # pe Windows, înlocuirea eșuează cât timp dashboard-ul citește cadrul: îl sărim
+                    Path(LIVE_DIR / "frame_tmp.jpg").replace(LIVE_DIR / "frame.jpg")
+                except PermissionError:
+                    pass
                 if now - last_live > 1.0:
                     last_live = now
-                    small = cv2.resize(vis, (960, int(960 * h / w)))
-                    cv2.imwrite(str(LIVE_DIR / "frame_tmp.jpg"), small, [cv2.IMWRITE_JPEG_QUALITY, 70])
-                    try:   # pe Windows, înlocuirea eșuează cât timp dashboard-ul citește cadrul: îl sărim
-                        Path(LIVE_DIR / "frame_tmp.jpg").replace(LIVE_DIR / "frame.jpg")
-                    except PermissionError:
-                        pass
                     state = {"timestamp": now, "fps": round(fps_est, 2), "conectat": src.connected or not src.is_live,
                              "reconectari": src.reconnects, "vehicule_urmarite": len(counter.tracks),
                              **counter.current_rates(),
