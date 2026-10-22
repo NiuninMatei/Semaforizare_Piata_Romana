@@ -156,6 +156,10 @@ def main(argv=None) -> None:
     t_end = time.time() + args.minutes * 60 if args.minutes else None
     t_prev, fps_est, last_live = time.time(), 0.0, 0.0
     n_closed = len(counter.history)
+    win = "Piata Romana - viziune artificiala (q = iesire)"
+    if args.show:   # fereastră redimensionabilă: imaginea se scalează la mărimea ferestrei, cu proporțiile păstrate
+        cv2.namedWindow(win, cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)
+        cv2.resizeWindow(win, 1280, 720)
     print(f"[viziune] sursa={args.source}  model={args.model} ({args.runtime}, {device or 'auto'})  "
           f"imgsz={args.imgsz}  interval={args.interval}s")
     try:
@@ -208,7 +212,10 @@ def main(argv=None) -> None:
                     last_live = now
                     small = cv2.resize(vis, (960, int(960 * h / w)))
                     cv2.imwrite(str(LIVE_DIR / "frame_tmp.jpg"), small, [cv2.IMWRITE_JPEG_QUALITY, 70])
-                    Path(LIVE_DIR / "frame_tmp.jpg").replace(LIVE_DIR / "frame.jpg")
+                    try:   # pe Windows, înlocuirea eșuează cât timp dashboard-ul citește cadrul: îl sărim
+                        Path(LIVE_DIR / "frame_tmp.jpg").replace(LIVE_DIR / "frame.jpg")
+                    except PermissionError:
+                        pass
                     state = {"timestamp": now, "fps": round(fps_est, 2), "conectat": src.connected or not src.is_live,
                              "reconectari": src.reconnects, "vehicule_urmarite": len(counter.tracks),
                              **counter.current_rates(),
@@ -216,11 +223,16 @@ def main(argv=None) -> None:
                              "ultimul_interval": ({"start": counter.history[-1]["start"],
                                                    "od": {f"{o}>{d}>{v}": n for (o, d, v), n in counter.history[-1]["od"].items()}}
                                                   if counter.history else None)}
-                    (LIVE_DIR / "state.json").write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+                    # scriere atomică: geamănul digital și dashboard-ul nu citesc niciodată un fișier pe jumătate
+                    (LIVE_DIR / "state_tmp.json").write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+                    try:
+                        (LIVE_DIR / "state_tmp.json").replace(LIVE_DIR / "state.json")
+                    except PermissionError:
+                        pass
                     if mqtt:
                         mqtt.publish("stare/camera", state, retain=True)
                 if args.show:
-                    cv2.imshow("Piata Romana - viziune artificiala (q = iesire)", cv2.resize(vis, (1644, 925)))
+                    cv2.imshow(win, cv2.resize(vis, (1644, 925)))
                     if cv2.waitKey(1) & 0xFF == ord("q"):
                         break
             if t_end and time.time() > t_end:
