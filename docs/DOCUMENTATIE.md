@@ -321,7 +321,25 @@ cele două treceri vizibile: 600–1.250 pe oră.
 | `zi_2026-10-21_varf_x1_2` | vârf × 1,2 | 3.335 | 500 | 2.418 | sensibilitate (marja de măsurare) |
 | `zi_2026-10-21_linistit_x0_8` | liniștit × 0,8 | 1.010 | 151 | 1.988 | sensibilitate |
 
-Compoziția măsurată pe toată ziua (intrări și ieșiri): 92,7% autoturisme, 3,7% autobuze și troleibuze, 3,2%
+**A doua zi de date: joi, 22.10.2026, 00:00–11:00** (colectarea a continuat peste noapte și în vârful de
+dimineață; prioritatea procesului de viziune a fost ridicată în timpul vârfului, ca antrenarea care rula în
+paralel să nu-i scadă rata de cadre). 79.041 de fragmente → 66.915 traiectorii; noaptea 230–500 veh/h
+(01:00–05:00), creștere bruscă de la 06:30, vârful de dimineață de la 07:15 și un platou de 2.300–2.700 veh/h
+între 08:00 și 10:45:
+
+| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Observații |
+|---|---|---|---|---|---|
+| `zi_2026-10-22_dimineata` | 07:30–08:30 | 2.243 | 336 | 2.218 | vârful clasic de dimineață |
+| `zi_2026-10-22_varf` | 09:45–10:45 | 2.502 | 375 | 2.152 | ora cu debitul maxim |
+| `zi_2026-10-22_linistit` | 03:45–04:45 | 284 | 43 | 19 | noaptea |
+| `zi_2026-10-22_varf_x1_2` | vârf × 1,2 | 3.003 | 450 | 2.152 | sensibilitate |
+| `zi_2026-10-22_linistit_x0_8` | noapte × 0,8 | 227 | 34 | 19 | sensibilitate |
+
+Cu cele două zile, proiectul are **10 scenarii din date reale**, de la noapte (≈230 veh/h) la vârful de seară
+(≈2.500 veh/h) și suprasarcina de sensibilitate (≈3.000 veh/h). Agentul v1 a fost antrenat doar pe 21.10; ziua
+de 22.10 servește întâi ca test de generalizare (§ 9.1), apoi agenții finali sunt antrenați pe ambele zile.
+
+Compoziția măsurată pe toată ziua de 21.10 (intrări și ieșiri): 92,7% autoturisme, 3,7% autobuze și troleibuze, 3,2%
 camioane, 0,3% biciclete, 0,1% motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi
 de octombrie cu 12–15 °C. Pentru fiecare tip de vehicul,
 `routeSampler` reproduce toate relațiile de viraj țintă (GEH < 5 pentru 100% din relații). Scenariile ipotetice
