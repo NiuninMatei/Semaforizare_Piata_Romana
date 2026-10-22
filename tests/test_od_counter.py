@@ -40,17 +40,17 @@ class ODCounterTest(unittest.TestCase):
 
     def test_pieton_numarat_o_data_pe_trecere(self):
         # pieton care traversează trecerea de pe Magheru, apoi dispare
-        self.walk(1, (0.25, 0.70), (0.38, 0.82))
+        self.walk(1, (0.02, 0.52), (0.04, 0.62))
         self.step([], n=5)
         self.assertEqual(dict(self.counter.peds), {("magheru", "trecere_magheru"): 1})
 
     def test_pieton_care_asteapta_la_bordura_nu_conteaza(self):
-        self.step([(1, PERSON, 0.30 * W, 0.75 * H)], n=8)   # stă pe loc în zona trecerii
+        self.step([(1, PERSON, 0.02 * W, 0.57 * H)], n=8)   # stă pe loc în zona trecerii
         self.step([], n=5)
         self.assertEqual(sum(self.counter.peds.values()), 0)
 
     def test_pieton_vazut_un_singur_cadru_nu_conteaza(self):
-        self.step([(1, PERSON, 0.30 * W, 0.75 * H)])
+        self.step([(1, PERSON, 0.02 * W, 0.57 * H)])
         self.step([(1, PERSON, 0.30 * W, 0.55 * H)], n=3)   # pe carosabil, în afara trecerii
         self.step([], n=5)
         self.assertEqual(sum(self.counter.peds.values()), 0)
@@ -65,24 +65,24 @@ class ODCounterTest(unittest.TestCase):
 
     def test_viraj_vehicul(self):
         self.move(2, CAR, (0.05, 0.61), (0.15, 0.60))       # magheru_in, spre dreapta (spre piață)
-        self.move(2, CAR, (0.24, 0.45), (0.17, 0.445), n=11)  # mendeleev_out, spre stânga (iese)
+        self.move(2, CAR, (0.24, 0.475), (0.17, 0.482), n=11)  # mendeleev_out, spre stânga (iese)
         self.step([], n=5)
         self.assertEqual(dict(self.counter.od), {("magheru", "mendeleev", "passenger"): 1})
 
     def test_sens_gresit_nu_conteaza(self):
         # vehicul care se mișcă spre dreapta prin zona de ieșire Mendeleev (circulă pe inel) nu iese acolo
         self.move(5, CAR, (0.05, 0.61), (0.15, 0.60))
-        self.move(5, CAR, (0.18, 0.445), (0.24, 0.45))
+        self.move(5, CAR, (0.18, 0.482), (0.24, 0.475))
         self.step([], n=5)
         self.assertEqual(sum(self.counter.od.values()), 0)
 
     def test_banda_alaturata_nu_produce_intoarcere(self):
         # intră pe Magheru, atinge banda de ieșire alăturată, apoi iese pe Mendeleev
         self.move(3, CAR, (0.05, 0.61), (0.15, 0.60))       # magheru_in
-        self.move(3, CAR, (0.15, 0.52), (0.13, 0.51), n=2)  # atinge magheru_out
-        self.move(3, CAR, (0.24, 0.45), (0.17, 0.445), n=11)  # mendeleev_out
+        self.move(3, CAR, (0.15, 0.53), (0.13, 0.525), n=2)  # atinge magheru_out
+        self.move(3, CAR, (0.24, 0.475), (0.17, 0.482), n=11)  # mendeleev_out
         # iese pe Magheru: banda de ieșire spre stânga, apoi atinge banda de intrare
-        self.move(4, CAR, (0.13, 0.50), (0.04, 0.51))
+        self.move(4, CAR, (0.13, 0.53), (0.04, 0.535))
         self.move(4, CAR, (0.04, 0.60), (0.03, 0.60), n=3)
         self.step([], n=5)
         self.assertEqual(dict(self.counter.od), {("magheru", "mendeleev", "passenger"): 1})
@@ -94,7 +94,7 @@ class ODCounterTest(unittest.TestCase):
         self.assertFalse(is_rider([100, 100, 140, 200], [[400, 150, 445, 215]]))
 
     def test_csv_ajunge_in_cererea_de_pietoni(self):
-        self.walk(1, (0.25, 0.70), (0.38, 0.82))
+        self.walk(1, (0.02, 0.52), (0.04, 0.62))
         self.step([], n=5)
         self.t[0] += 60
         self.counter.flush()
