@@ -53,6 +53,26 @@ def frame():
     return resp
 
 
+@app.get("/api/video")
+def video():
+    """Flux MJPEG: fiecare cadru nou analizat de modulul de viziune este trimis imediat (~6 cadre/s)."""
+    def gen():
+        p, last = LIVE / "frame.jpg", 0.0
+        while True:
+            try:
+                m = p.stat().st_mtime
+                if m != last:
+                    data = p.read_bytes()
+                    last = m
+                    yield b"--cadru\r\nContent-Type: image/jpeg\r\n\r\n" + data + b"\r\n"
+            except OSError:          # fișierul tocmai este înlocuit: încercăm din nou
+                pass
+            time.sleep(0.04)
+    resp = app.response_class(gen(), mimetype="multipart/x-mixed-replace; boundary=cadru")
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
 @app.post("/api/command")
 def command():
     body = request.get_json(force=True, silent=True) or {}
