@@ -31,7 +31,7 @@ Autor: **Niunin Matei-Gabriel**.
    SUMO exact virajele observate, nu trafic aleatoriu; intersecțiile vecine fără cameră primesc doar traficul care
    iese/intră din piață, plus un trafic de fond declarat explicit.
 3. **Antrenarea unui agent RL** care decide ordinea și durata fazelor reale ale semaforului (și, în varianta
-   „coridor”, ale celor 5 intersecții vecine) – singurul lucru care se schimbă față de realitate – comparat cu planul
+   „coridor”, ale celor 4 intersecții vecine care o alimentează) – singurul lucru care se schimbă față de realitate – comparat cu planul
    fix de referință, planul Webster, semaforizarea actuated a SUMO și Max-Pressure, pentru toți participanții.
 4. **Dashboard de dispecerat** pentru operatorul uman: imaginea analizată, cozile pe brațe, faza curentă și preluarea
    controlului (AI / plan fix / Max-Pressure / manual) cu confirmare.
