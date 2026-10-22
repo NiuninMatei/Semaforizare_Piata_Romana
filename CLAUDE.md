@@ -36,7 +36,25 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (21.10.2026, 22:30) – Borna 7 făcută, Borna 9 în lucru (date reale)
+## Stare curentă (22.10.2026, 16:10) – Bornele 7 și 9 încheiate
+
+- Date reale: 21.10 11:45 – 22.10 11:00 (traiectorii + numărători în data/), 10 scenarii `zi_2026-10-2*`.
+- Agentul oficial = `models/ppo_romana` (v1, antrenat pe 21.10, ales pe seed-uri de validare 11–13 față de doi
+  agenți antrenați pe ambele zile). Evaluare finală (300 de simulări): −4,6% în medie față de planul fix, cea mai
+  bună strategie, niciodată mai rău de +0,7%; generalizează pe 22.10 (−4,2% la vârf). Max-Pressure −2,0%.
+- Coridorul (piața + 4 vecini, fără Dacia × Polonă – sens unic de ieșire) = rezultat negativ (+35% în medie):
+  vecinii rămân pe programele actuated. Experimentele v2, v3, E1 (γ=0,99) – negative, documentate.
+- Plafonul la vârf: cel mai bun plan fix posibil −5,4%; 68% din întârzierea la vârf = coada Dacia vest dincolo
+  de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
+- Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
+
+### Pași posibili în continuare
+
+1. O numărătoare manuală de 15 min pe fiecare braț (factorul de corecție, § 10).
+2. Mai multe zile de date (weekend, vreme rea) → `scenarii_zi` → reantrenare cu selecție pe validare.
+3. Coordonare descentralizată cu vecinii (MPLight / CoLight), cu mult mai mult timp de antrenare.
+
+## Stare anterioară (21.10.2026, 22:30) – Borna 7 făcută, Borna 9 în lucru (date reale)
 
 Făcut pe 21.10 (ziua):
 - Push autonom prin GitHub Desktop (computer use; vezi memoria „push-prin-github-desktop”). Camere publice
