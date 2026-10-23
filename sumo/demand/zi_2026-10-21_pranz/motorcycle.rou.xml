@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-10-23 12:49:37.249449 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<configuration>
+    <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate.rou.xml"/>
+    <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-21_pranz\viraje_motorcycle.xml"/>
+    <output-file value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-21_pranz\motorcycle.rou.xml"/>
+    <mismatch-output value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-21_pranz\mismatch_motorcycle.xml"/>
+    <prefix value="motorcycle_"/>
+    <attributes value="type=&quot;motorcycle&quot; departLane=&quot;best&quot;"/>
+    <turn-max-gap value="25"/>
+    <optimize value="full"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+<!-- begin="1800.0" end="2700.0" -->
+    <vehicle id="motorcycle_1800_0" depart="2337.17" type="motorcycle" departLane="best">
+        <route edges="232079775#0 232079775#1 232079775#2 232079775#3 232079775#4 130848151 448266588#0 448266588#1 448266585 448266587 778823269 778823265 119238384#0 125445934#0 125445934#1 125445934#2 125445934#3 125445934#4 125445934#5"/>
+    </vehicle>
+    <vehicle id="motorcycle_1800_1" depart="2501.72" type="motorcycle" departLane="best">
+        <route edges="231257019#0 231257019#2 231257019#3 231257019#4 231257019#5 407982022#0 407982022#1 407982022#2 407982022#3 407982022#4 407982022#5 407982022#6 407982022#7 407982022#8 232079775#0 232079775#1 232079775#2 232079775#3 232079775#4 130848151 448266588#0 448266588#1 448266585 23781788 241212475 44499684#0 44499684#1 44499684#2"/>
+    </vehicle>
+</routes>
