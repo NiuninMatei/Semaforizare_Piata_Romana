@@ -54,6 +54,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   și „Căderea Bastiliei trecere” poziționate manual – de verificat. Teste independente de coordonate.
 - data/counts renumărate (4 995 viraje complete față de 2 800), 10 scenarii zi_* regenerate, agentul reevaluat
   (3 strategii × 3 seed-uri; § 9.5). Vechile rezultate: `outputs/eval/rezultate_zone_vechi.csv` + istoricul git.
+- **Reevaluare (§ 9.5):** pe scenariile noi agentul vechi dă +5,2% în medie (−7…−17% la trafic lejer/prânz,
+  +23…+34% la vârf); Max-Pressure +9,1%. **Primul pas următor: reantrenarea `ppo_romana` pe scenariile noi**
+  (`4_antreneaza_ai.bat --pasi 500000 --medii 8`, ~o noapte), selecție pe seed-urile 11–13, evaluarea completă.
 - **De făcut:** Dacia est are în Street View o bandă pe sens + parcare, în rețea (OSM) două → corectare OSM,
   regenerarea rețelei, reantrenarea agentului; reantrenarea pe datele renumărate; evaluarea completă (5 strategii ×
   5 seed-uri); numărătoarea manuală de 15 min pe braț (autorul, pe teren).
