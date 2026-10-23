@@ -2,7 +2,7 @@
 <configuration>
   <input>
     <net-file value="../net/romana.net.xml" />
-    <route-files value="../demand/zi_2026-10-21_linistit/bicycle.rou.xml,../demand/zi_2026-10-21_linistit/bus.rou.xml,../demand/zi_2026-10-21_linistit/passenger.rou.xml,../demand/zi_2026-10-21_linistit/truck.rou.xml,../demand/zi_2026-10-21_linistit/fond.rou.xml,../demand/zi_2026-10-21_linistit/pietoni.rou.xml" />
+    <route-files value="../demand/zi_2026-10-21_linistit/bus.rou.xml,../demand/zi_2026-10-21_linistit/passenger.rou.xml,../demand/zi_2026-10-21_linistit/truck.rou.xml,../demand/zi_2026-10-21_linistit/fond.rou.xml,../demand/zi_2026-10-21_linistit/pietoni.rou.xml" />
     <additional-files value="../demand/vtypes.add.xml" />
   </input>
   <time>
