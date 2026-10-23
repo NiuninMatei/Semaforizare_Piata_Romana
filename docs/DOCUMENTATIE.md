@@ -735,6 +735,31 @@ pentru câștiguri mari la vârf rămân direcțiile din afara scopului proiectu
 antrenată, măsuri de infrastructură sau de gestionare a cererii.
 <!-- REZULTATE_SFARSIT -->
 
+### 9.5 Reevaluarea pe datele renumărate cu zonele corectate (23.10.2026)
+
+După evaluarea prin demonstrație (`docs/OBSERVATII_EVALUARE.md`), zonele camerei au fost redesenate de autor,
+cele două zile au fost renumărate (virajele urmărite complet: 2 800 → 4 995) și cele 10 scenarii regenerate.
+Agentul oficial (antrenat pe scenariile vechi) a fost reevaluat pe scenariile noi, nevăzute la antrenare:
+3 strategii × 10 scenarii × 3 seed-uri = 90 de simulări (`outputs/eval/rezultate.csv`, `docs/rezultate/`).
+Pierderea totală de timp față de planul fix:
+
+| Scenariu | Max-Pressure | Agent RL (antrenat pe datele vechi) |
+|---|---|---|
+| 21.10 liniștit / ×0,8 | −7,3% / −8,2% | **−7,4% / −8,0%** |
+| 21.10 prânz | +22,6% | **−16,8%** |
+| 21.10 vârf / ×1,2 | +28,8% / +11,4% | +33,6% / +22,8% |
+| 22.10 dimineață | +16,2% | +10,9% |
+| 22.10 liniștit / ×0,8 | −4,0% / −9,5% | **−7,6%** / −9,1% |
+| 22.10 vârf / ×1,2 | +17,9% / +23,4% | +23,1% / +10,2% |
+| **Medie** | **+9,1%** | **+5,2%** |
+
+**Interpretare.** Cu cererea măsurată mai corect, planul fix rămâne cea mai bună strategie la vârf, iar
+agentul păstrează câștigul doar la trafic lejer și moderat (până la −16,8% la prânz). Agentul a fost antrenat pe
+o cerere estimată cu zonele vechi, cu alte proporții de viraj; rezultatul arată că politica învățată depinde de
+calitatea datelor de intrare și **trebuie reantrenată pe scenariile noi** (cu selecție pe seed-urile de validare
+11–13, ca în § 9.2). Rezultatul de −4,6% din § 9.1 rămâne valabil pentru scenariile construite cu zonele vechi
+(`docs/rezultate/rezultate_v1_si_experimente.csv`, `outputs/eval/rezultate_zone_vechi.csv`).
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt calibrate pe datele de zi (§ 4.3), dar nu există o numărătoare manuală de
