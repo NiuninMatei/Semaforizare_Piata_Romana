@@ -7,6 +7,20 @@ făcut pentru ea (rezolvat / planificat), ca să rămână în istoricul proiect
 Pașii demonstrației: 1 – camera și viziunea artificială; 2 – geamănul digital SUMO; 3 – dispeceratul și
 preluarea controlului; 4 – comparația măsurată (`scripts\9_demo_comparatie.bat`); 5 – rezultate și limite.
 
+## Continuarea din 23.10.2026 (12:40–13:30)
+
+Autorul a desenat el însuși zonele pe capturi ale camerei (16 decupaje: intrări, ieșiri, treceri) și a adăugat
+capturi Google Street View ale fiecărui braț (`C:\Users\Matei\Pictures\Screenshots`, nepublicate).
+
+| Ce | Rezultat |
+|---|---|
+| Zonele camerei | decupajele autorului localizate automat în cadrul de 3288 px: SIFT cu scara fixă 3288/1920 (capturi pe ecran de 1920 px; scara confirmată de potrivirile sigure – Dacia est trecere 185 de puncte, Dacia est out 71, Magheru trecere 23) și vot pe translație; „Dacia vest in” și „Căderea Bastiliei trecere” (o singură potrivire) poziționate manual, cu forma și mărimea decupajului – **de verificat de autor** |
+| Datele | ambele zile renumărate din traiectorii: 24 014 intrări, **4 995 viraje complete (față de 2 800)**, 17 123 pietoni |
+| Scenariile | cele 10 scenarii `zi_*` regenerate; `routeSampler`: GEH < 5 pentru ~94% din relații |
+| Agentul | reevaluat pe scenariile noi (nevăzute la antrenare) – vezi `docs/DOCUMENTATIE.md` § 9.5 |
+| Rețeaua SUMO față de Street View | treceri pe toate brațele, Căderea Bastiliei sens unic, Magheru 4 + 3 benzi – ca în teren; **Dacia est: o bandă pe sens + parcare în Street View, două benzi pe sens în rețea (OSM)** – planificat (corectare OSM → rețea → reantrenare) |
+| Testele | punctele de test se calculează din zonele configurate; 10/10 trec după orice recalibrare |
+
 ## Probleme găsite și rezolvate la pregătirea demonstrației
 
 | # | Problemă | Rezolvare |
