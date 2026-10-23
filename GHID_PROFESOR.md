@@ -75,6 +75,20 @@ Evaluarea completă (`scripts\5_evalueaza.bat`, 5 seed-uri × toate scenariile �
 | 7 | `7_dashboard.bat` | dispeceratul web la http://localhost:8050 | continuu |
 | – | `PORNESTE_TOT.bat` | 2 + 6 + 7 în trei ferestre: sistemul complet în timp real | continuu |
 
+## 5b. Demonstrația live (scenariul de prezentare, ~20 de minute)
+
+Folosit la evaluarea prin demonstrație din 22.10.2026 (observațiile și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`).
+Pornire: `scripts\PORNESTE_TOT.bat` (camera, geamănul SUMO-GUI, dispeceratul în browser), apoi câte o fereastră
+pe ecran, în ordinea în care circulă datele:
+
+| Pas | Fereastra | Ce se arată |
+|---|---|---|
+| 1. Ochii sistemului | „Piata Romana – viziune artificiala” | detecțiile YOLO11 + ByteTrack, zonele de intrare/ieșire/trecere, debitele pe brațe (imaginea e redată cu 8 s întârziere, fluent) |
+| 2. Geamănul digital | SUMO-GUI | rețeaua fidelă OSM, cele 16 semafoare ca un controler, traficul generat din debitele camerei, în timp real |
+| 3. Omul în buclă | dispeceratul, http://localhost:8050 | camera ca flux video, faza curentă în cuvinte, cozile pe brațe; „Plan fix” → „Confirm” schimbă semaforul din SUMO, „Agent AI” → „Confirm” îl readuce |
+| 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | aceeași oră reală cu planul fix, Max-Pressure și agentul AI, pe categorii (vehicule, bicicliști, pietoni, CO₂) |
+| 5. Rezultate și limite | `docs/DOCUMENTATIE.md` § 9–10 | evaluarea oficială și limitările declarate |
+
 ## 6. Unde se găsesc lucrurile
 
 | Director / fișier | Conținut |

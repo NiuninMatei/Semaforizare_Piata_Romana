@@ -48,7 +48,17 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
-### Evaluarea prin demonstrație (22.10, 20:48–22:00) – pașii 1–4 făcuți, Pasul 5 rămas
+### 23.10.2026, 12:40–13:30 – zonele din decupajele autorului, date renumărate, scenarii regenerate
+
+- `config/camera.json` = decupajele autorului (capturi 1920 px, SIFT cu scara fixă 3288/1920); „Dacia vest in”
+  și „Căderea Bastiliei trecere” poziționate manual – de verificat. Teste independente de coordonate.
+- data/counts renumărate (4 995 viraje complete față de 2 800), 10 scenarii zi_* regenerate, agentul reevaluat
+  (3 strategii × 3 seed-uri; § 9.5). Vechile rezultate: `outputs/eval/rezultate_zone_vechi.csv` + istoricul git.
+- **De făcut:** Dacia est are în Street View o bandă pe sens + parcare, în rețea (OSM) două → corectare OSM,
+  regenerarea rețelei, reantrenarea agentului; reantrenarea pe datele renumărate; evaluarea completă (5 strategii ×
+  5 seed-uri); numărătoarea manuală de 15 min pe braț (autorul, pe teren).
+
+### Evaluarea prin demonstrație (22.10, 20:48–22:00) – pașii 1–5 prezentați
 
 - Autorul în rol de profesor; observațiile O1–O9 și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`.
 - Zonele camerei recalibrate (O1–O7, 7 treceri); fluxul MJPEG în dispecerat și pași de 0,2 s în SUMO (O8);
