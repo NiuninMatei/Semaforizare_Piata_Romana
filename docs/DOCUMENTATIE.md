@@ -780,11 +780,11 @@ calitatea datelor de intrare și **trebuie reantrenată pe scenariile noi** (cu 
 * **Trecerile de pietoni** sunt reconstruite de `netconvert` (`--crossings.guess`), nu importate direct din OSM
   (crash în netconvert 1.28). *Verificat pe 23.10* cu capturile din cameră și din Google Street View: rețeaua
   are treceri pe toate brațele pieței (Magheru 12, Lascăr Catargiu 6, Dacia 34, Mendeleev 9, Căderea Bastiliei 13
-  segmente de trecere), Căderea Bastiliei este sens unic de ieșire (indicatorul din Street View), Magheru are
-  4 benzi spre piață și 3 dinspre piață, ca în rețea. **Diferență găsită, nerezolvată încă:** pe Bd. Dacia est,
-  Street View (mai 2023) arată câte o bandă de circulație pe sens plus parcare, iar rețeaua (din OSM) are două
-  benzi pe sens; schimbarea cere corectarea datelor OSM, regenerarea rețelei și reantrenarea agentului
-  (observația lui depinde de numărul de benzi), deci este planificată, nu făcută în grabă.
+  segmente de trecere); Str. Mendeleev și Str. Căderea Bastiliei sunt sens unic de ieșire din piață, ca în
+  rețea; Magheru are 4 benzi spre piață și 3 dinspre piață, iar Bd. Dacia (vest și est) câte 2 benzi pe sens,
+  ca în rețea. Pe brațele pieței nu există parcare pe carosabil, cu excepția străzilor Mendeleev și Căderea
+  Bastiliei (verificat de autor în Street View); vehiculele parcate nu sunt modelate în SUMO, iar pe aceste două
+  străzi ele ocupă doar marginea, în afara benzii de circulație.
 * **Pietonii** sunt număraţi acum pe 6 zone de trecere desenate de autor (față de 2), dar pe trecerile
   îndepărtate persoanele sunt prea mici în imagine pentru detector; extrapolarea cu un factor declarat (2,5)
   rămâne; traseele lor în simulare sunt plauzibile (drumuri minime prin zona pieței), nu observate.
