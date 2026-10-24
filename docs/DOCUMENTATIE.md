@@ -808,11 +808,15 @@ reantrenarea completă a agentului.
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
-* **Precizia numărării.** Zonele sunt calibrate pe datele de zi (§ 4.3), dar nu există o numărătoare manuală de
-  referință: suma ieșirilor numărate depășește suma intrărilor cu ≈30%, iar adevărul este între cele două
-  (echilibrarea „medie”, § 5.1). O numărătoare manuală de 15 minute pe fiecare braț ar permite fixarea
-  factorului de corecție din `config/demand.json` și ar reduce incertitudinea (acum ±15–20%, acoperită de
-  scenariile de sensibilitate).
+* **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare
+  de referință independentă: suma ieșirilor numărate depășește suma intrărilor, iar adevărul este între cele
+  două (echilibrarea „medie”, § 5.1). O numărătoare manuală în teren nu este realistă pentru un singur om la
+  peste 1 000 de vehicule pe oră și 6 brațe (observația autorului, 24.10.2026); în practica ingineriei de trafic
+  referința se obține din câteva minute de înregistrare adnotate cadru cu cadru sau de echipe de numărători.
+  Pentru acest proiect, incertitudinea (±15–20%) este acoperită de scenariile de sensibilitate (×0,8 și ×1,2) și
+  de verificarea echilibrului intrări–ieșiri; o adnotare de 2–3 minute de video (estompat, șters după adnotare)
+  ar permite fixarea factorului de corecție din `config/demand.json` – lucrare viitoare, nu condiție a
+  rezultatelor.
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine și parțial ascunse.
   *Redus pe 22–23.10:* zonele au fost redesenate după observațiile de la evaluarea prin demonstrație
   (`docs/OBSERVATII_EVALUARE.md`) și apoi înlocuite cu decupajele desenate de autor pe capturi ale camerei
