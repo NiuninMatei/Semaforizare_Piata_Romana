@@ -48,6 +48,15 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
+### 24.10.2026, 09:19–10:55 – observațiile O10–O12, reantrenarea (E2, negativă), programul pe tipuri de trafic
+
+- Trecerea Căderea Bastiliei deasupra ieșirii; documentația: Mendeleev + Căderea Bastiliei sens unic, Dacia 2+2 benzi.
+- E2: `ppo_romana_zn` (+100k pași pe scenariile noi) mai slab pe validare (+19,8% vs +11,3%) → oficial rămâne `ppo_romana`.
+- Grila de planuri fixe pe datele noi (§ 9.6): referința 36/28/12 e practic optimă în medie; 46/48/12 câștigă la vârf.
+  Program pe tipuri de trafic (lejer → AI, prânz → referință, vârf/dimineață → 46/48/12), ales pe validare: −6,3%.
+- **Pasul următor:** antrenare completă de la zero pe scenariile noi (500k+ pași, ~2–3 h la ~80–130 pași/s),
+  selecție pe seed-urile 11–13; implementarea programului pe tipuri de trafic în `live_twin.py` (comutare după debit).
+
 ### 23.10.2026, 12:40–13:30 – zonele din decupajele autorului, date renumărate, scenarii regenerate
 
 - `config/camera.json` = decupajele autorului (capturi 1920 px, SIFT cu scara fixă 3288/1920); „Dacia vest in”
