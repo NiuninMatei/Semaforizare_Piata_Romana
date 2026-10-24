@@ -96,6 +96,7 @@ footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1500px;ma
         <button data-mod="fix">Plan fix</button>
         <button data-mod="max_pressure">Max-Pressure</button>
         <button data-mod="manual">Manual</button>
+        <button data-mod="program" style="grid-column:1/-1" title="Agentul AI la trafic lejer, planul fix la prânz, planul cu ciclu lung la vârf (documentația § 9.6)">Program pe tipuri de trafic</button>
       </div>
       <div class="manual" id="manual"><p class="sub" style="margin:10px 0 6px">Alegeți faza verde. Galbenul și roșul de degajare se aplică automat.</p><div class="faze" id="faze"></div></div>
       <div class="confirm" id="confirm" role="alertdialog" aria-live="assertive">
@@ -112,7 +113,7 @@ footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1500px;ma
 <footer>Imagini: © WebcamRomania.ro, prelucrate doar în memorie, persoanele estompate. Hartă și rețea: © OpenStreetMap contributors, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0).</footer>
 <script>
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
-const MOD={ai:"Agent AI (PPO)",fix:"Plan fix (N–S / E–V / pietoni)",max_pressure:"Max-Pressure",manual:"Manual"};
+const MOD={ai:"Agent AI (PPO)",fix:"Plan fix (N–S / E–V / pietoni)",max_pressure:"Max-Pressure",manual:"Manual",program:"Program pe tipuri de trafic",plan_lung:"plan cu ciclu lung 46/48/12 s"};
 // geometrie aproximativă: unghiuri reale ale brațelor (nord sus)
 const BRATE={catargiu:[-130,"in"],caderea_bastiliei:[-80,"out"],dacia_est:[0,"in"],magheru:[100,"in"],mendeleev:[140,"out"],dacia_vest:[180,"in"]};
 const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],[],["magheru","catargiu","dacia_est","dacia_vest"],["magheru","catargiu","dacia_est","dacia_vest"]];
@@ -198,7 +199,7 @@ async function actualizeaza(){
   if(sim){
     $("faza").textContent=sim.faza_nume.split("(")[0].trim();
     const et={green:"verde",yellow:"galben",red:"roșu de degajare"}[sim.etapa];
-    $("faza-det").textContent=`${et}, de ${sim.verde_s} s · condus de ${MOD[sim.mod]} · ${sim.vehicule_in_retea} vehicule și ${sim.pietoni_in_retea??0} pietoni în simulare`;
+    $("faza-det").textContent=`${et}, de ${sim.verde_s} s · condus de ${MOD[sim.mod]}${sim.mod_program?` (acum: ${MOD[sim.mod_program]})`:""} · ${sim.vehicule_in_retea} vehicule și ${sim.pietoni_in_retea??0} pietoni în simulare`;
     $("sursa").textContent="Cererea de trafic vine din: "+sim.sursa;
     grafic(sim.istoric_coada);
   } else { $("faza").textContent="—"; $("faza-det").textContent="Geamănul digital nu rulează. Porniți scripts\\6_geaman_digital.bat."; grafic(null) }

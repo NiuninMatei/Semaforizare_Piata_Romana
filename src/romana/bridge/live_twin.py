@@ -28,6 +28,10 @@ from romana.control.signals import SignalController, romana_green_phases
 
 LIVE = OUTPUT_DIR / "live"
 SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă în SUMO-GUI
+# programul pe tipuri de trafic (docs/DOCUMENTATIE.md § 9.6): sub PRAG_LEJER veh/h intrați în piață → agentul AI,
+# între praguri → planul de referință, peste PRAG_GREU → planul cu ciclu lung (verde N–S, E–V, pietoni, s)
+PRAG_LEJER, PRAG_GREU = 1300, 2000
+PLAN_LUNG = (46, 48, 12)
 
 
 def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
@@ -129,7 +133,7 @@ def main(argv=None) -> None:
     good_cam, good_t = None, 0.0
     hist = []
     LIVE.mkdir(parents=True, exist_ok=True)
-    print("[geamăn digital] pornit. Moduri: ai / fix / max_pressure / manual (din dashboard)")
+    print("[geamăn digital] pornit. Moduri: ai / fix / max_pressure / manual / program (din dashboard)")
     try:
         while not args.durata or t < args.durata:
             t0 = time.time()
@@ -189,15 +193,26 @@ def main(argv=None) -> None:
                     n_ped += 1
             # --- control semafor ---
             mode = cmd.get("mod", "ai")
+            sub = None
+            if mode == "program":
+                # programul pe tipuri de trafic (§ 9.6), după debitul măsurat de cameră la intrările pieței
+                tot = sum(rates.values())
+                sub = ("ai" if rl is not None else "fix") if tot < PRAG_LEJER else "fix" if tot < PRAG_GREU else "plan_lung"
+            efectiv = sub or mode
             if t % 5 == 0:
-                if mode == "ai" and rl is not None:
+                if efectiv == "plan_lung":
+                    if ctrl.current not in plan_cycle:
+                        ctrl.request(plan_cycle[0])
+                    elif ctrl.green_time >= PLAN_LUNG[plan_cycle.index(ctrl.current)]:
+                        ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
+                elif efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
-                elif mode == "max_pressure" and ctrl.can_switch():
+                elif efectiv == "max_pressure" and ctrl.can_switch():
                     p = ctrl.phase_pressure()              # doar fazele planului real (vezi MaxPressure)
                     ctrl.request(max(plan_cycle, key=lambda i: p[i]))
-                elif mode == "manual":
+                elif efectiv == "manual":
                     ctrl.request(int(cmd.get("faza", ctrl.current)))
-                elif mode == "fix":
+                elif efectiv == "fix":
                     if ctrl.current not in plan_cycle:
                         ctrl.request(plan_cycle[0])
                     elif ctrl.green_time >= plan_green[ctrl.current]:
@@ -222,7 +237,7 @@ def main(argv=None) -> None:
                 q_tot = sum(traci.lane.getLastStepHaltingNumber(ln) for ln in ctrl.in_lanes)
                 hist.append([t, q_tot])
                 hist = hist[-600:]
-                state = {"timestamp": time.time(), "timp_sim": t, "mod": mode, "sursa": src,
+                state = {"timestamp": time.time(), "timp_sim": t, "mod": mode, "mod_program": sub, "sursa": src,
                          "faza": ctrl.current, "faza_nume": ctrl.names[ctrl.current], "etapa": ctrl.stage,
                          "verde_s": ctrl.green_time, "faze": ctrl.names, "model_ai": bool(rl),
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
