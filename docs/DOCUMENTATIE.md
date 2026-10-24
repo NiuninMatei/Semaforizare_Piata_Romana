@@ -768,6 +768,31 @@ antrenat în continuare 100 000 de pași pe cele 10 scenarii noi (`models/ppo_ro
 continuare scurtă a antrenării pe o cerere mult mai grea la vârf destabilizează politica; e nevoie de o
 antrenare completă (500 000 de pași sau mai mult, de la zero, cu selecție pe validare), care cere câteva ore.
 
+### 9.6 Cel mai bun plan fix pe datele noi și programul pe tipuri de trafic (24.10.2026)
+
+**Grila de planuri fixe** (`docs/rezultate/grila_plan_zone_noi.csv`): 11 planuri (verde N–S ∈ {36, 46, 56} s ×
+E–V ∈ {28, 38, 48} s, pietoni 12 s, plus 50/40/10 s), selecție pe seed-ul de validare 11 (5 scenarii), test pe
+seed-urile 1–3 (10 scenarii). Planul de referință (36/28/12 s) iese practic optim în medie; cel mai bun din grilă,
+**46/48/12 s**, dă +0,2% în medie pe test, dar **câștigă la trafic greu** (vârf 21.10 ×1,2: −15,0%; vârf 22.10
+×1,2: −11,5%; vârf 21.10: −3,7%; dimineața 22.10: −2,4%) și pierde la trafic lejer (+7…+9%).
+
+**Programul pe tipuri de trafic** (practică curentă la automatele reale: planuri diferite pe intervale orare).
+Agentul RL (§ 9.5) și planul 46/48/12 se completează: agentul câștigă la trafic lejer, planul cu ciclu lung la
+trafic greu. Regula, stabilită pe datele de validare (nu pe cele de test): trafic lejer → agentul RL; prânz →
+planul de referință (pe validare niciuna dintre alternative nu l-a bătut); vârf și dimineață → planul 46/48/12.
+Pe scenariile de test (seed-urile 1–3), față de planul fix actual:
+
+| Tip | Scenarii | Strategie | Rezultat |
+|---|---|---|---|
+| lejer | 21.10 / 22.10 liniștit, ×0,8 | agent RL | −7,4%, −8,0%, −7,6%, −9,1% |
+| prânz | 21.10 prânz | plan de referință | 0% |
+| greu | vârf 21.10 / 22.10, ×1,2, dimineața 22.10 | plan 46/48/12 | −3,7%, −15,0%, +1,7%, −11,5%, −2,4% |
+| **medie** | 10 scenarii | | **−6,3%** |
+
+Limite: planul a fost ales pe un singur seed de validare; regula presupune că tipul de trafic se cunoaște
+(intervalul orar sau debitul măsurat de cameră, deja disponibil live); câștigul la prânz rămâne de obținut prin
+reantrenarea completă a agentului.
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt calibrate pe datele de zi (§ 4.3), dar nu există o numărătoare manuală de

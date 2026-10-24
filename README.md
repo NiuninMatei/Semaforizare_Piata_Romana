@@ -50,7 +50,9 @@ simulări. Pierderea totală de timp a tuturor participanților, față de planu
 Agentul AI al pieței este cea mai bună strategie și generalizează pe o zi nevăzută la antrenare (−4,2% la vârful
 din 22.10). **Actualizare 23.10:** după corectarea zonelor camerei și renumărarea datelor, agentul (antrenat pe
 datele vechi) câștigă doar la trafic lejer și moderat (până la −16,8%), iar la vârf planul fix e mai bun (medie
-+5,2%): agentul trebuie reantrenat pe scenariile noi – detalii în § 9.5. La vârf, spațiul de câștig este mic (cel mai bun plan fix posibil: −5%), iar coordonarea învățată cu
++5,2%): agentul trebuie reantrenat pe scenariile noi – detalii în § 9.5. **24.10:** un program pe tipuri de
+trafic (agentul AI la trafic lejer, planul cu ciclu lung 46/48/12 s la vârf), ales pe validare, dă **−6,3%** în
+medie pe scenariile noi (§ 9.6); o reantrenare scurtă a agentului a fost negativă (experimentul E2). La vârf, spațiul de câștig este mic (cel mai bun plan fix posibil: −5%), iar coordonarea învățată cu
 vecinii a dat un rezultat negativ – detalii și explicații în [docs/DOCUMENTATIE.md § 9](docs/DOCUMENTATIE.md#9-rezultate).
 
 ## Pornire rapidă (Windows)
