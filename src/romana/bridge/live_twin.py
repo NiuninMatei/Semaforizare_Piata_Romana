@@ -32,6 +32,7 @@ SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă 
 # între praguri → planul de referință, peste PRAG_GREU → planul cu ciclu lung (verde N–S, E–V, pietoni, s)
 PRAG_LEJER, PRAG_GREU = 1300, 2000
 PLAN_LUNG = (46, 48, 12)
+MODEL_PRANZ = MODELS_DIR / "ppo_romana_zn3.zip"   # agentul E3, cel mai bun la trafic moderat (prânz)
 
 
 def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
@@ -123,6 +124,11 @@ def main(argv=None) -> None:
         rl = RLPolicy(Path(args.model))
         rl.reset(traci)
         rl.ctrls = [ctrl]           # aceeași instanță de controler pentru toate modurile
+    rl_pranz = None                 # agentul E3 (§ 9.6): banda de mijloc a programului pe tipuri de trafic
+    if Path(MODEL_PRANZ).exists():
+        rl_pranz = RLPolicy(Path(MODEL_PRANZ))
+        rl_pranz.reset(traci)
+        rl_pranz.ctrls = [ctrl]
     from romana.control.controllers import fixed_phase_indices
 
     plan_cycle = fixed_phase_indices()            # planul fix de referință: N–S, E–V, pietoni
@@ -197,7 +203,8 @@ def main(argv=None) -> None:
             if mode == "program":
                 # programul pe tipuri de trafic (§ 9.6), după debitul măsurat de cameră la intrările pieței
                 tot = sum(rates.values())
-                sub = ("ai" if rl is not None else "fix") if tot < PRAG_LEJER else "fix" if tot < PRAG_GREU else "plan_lung"
+                sub = (("ai" if rl is not None else "fix") if tot < PRAG_LEJER else
+                       ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
             efectiv = sub or mode
             if t % 5 == 0:
                 if efectiv == "plan_lung":
@@ -207,6 +214,8 @@ def main(argv=None) -> None:
                         ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
                 elif efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
+                elif efectiv == "ai_pranz":
+                    rl_pranz.act(traci, t)
                 elif efectiv == "max_pressure" and ctrl.can_switch():
                     p = ctrl.phase_pressure()              # doar fazele planului real (vezi MaxPressure)
                     ctrl.request(max(plan_cycle, key=lambda i: p[i]))
