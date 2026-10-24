@@ -1,9 +1,9 @@
 {
   "scor_mediu_procent": {
     "ppo_romana": 11.28,
-    "ppo_romana_zn": 19.77
+    "ppo_romana_zn3": 11.0
   },
-  "ales": "ppo_romana",
+  "ales": "ppo_romana_zn3",
   "seeduri_validare": [
     11,
     12,

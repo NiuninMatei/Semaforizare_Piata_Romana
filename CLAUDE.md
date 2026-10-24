@@ -54,6 +54,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - E2: `ppo_romana_zn` (+100k pași pe scenariile noi) mai slab pe validare (+19,8% vs +11,3%) → oficial rămâne `ppo_romana`.
 - Grila de planuri fixe pe datele noi (§ 9.6): referința 36/28/12 e practic optimă în medie; 46/48/12 câștigă la vârf.
   Program pe tipuri de trafic (lejer → AI, prânz → referință, vârf/dimineață → 46/48/12), ales pe validare: −6,3%.
+- E3: `ppo_romana_zn3` (+60k pași, lr 3e-5) ≈ agentul vechi în medie, dar −17,6% la prânz (test) → programul cu E3 la
+  prânz: −8,1%. Modul „program” din `live_twin.py`/dispecerat e implementat (banda de mijloc = planul de referință;
+  de adăugat E3 ca al doilea model). `train.py`: `--lr` se aplică acum și la `--continua`.
 - **Pasul următor:** antrenare completă de la zero pe scenariile noi (500k+ pași, ~2–3 h la ~80–130 pași/s),
   selecție pe seed-urile 11–13; implementarea programului pe tipuri de trafic în `live_twin.py` (comutare după debit).
 
