@@ -789,6 +789,11 @@ Pe scenariile de test (seed-urile 1–3), față de planul fix actual:
 | greu | vârf 21.10 / 22.10, ×1,2, dimineața 22.10 | plan 46/48/12 | −3,7%, −15,0%, +1,7%, −11,5%, −2,4% |
 | **medie** | 10 scenarii | | **−6,3%** |
 
+**Implementat** în geamănul live și în dispecerat: modul „Program pe tipuri de trafic” comută automat după debitul
+măsurat de cameră la intrările pieței (sub 1 300 veh/h → agentul AI; 1 300–2 000 → planul de referință; peste
+2 000 → planul 46/48/12; pragurile despart scenariile liniștite, de prânz și de vârf), iar dispeceratul arată ce
+strategie e activă în fiecare moment.
+
 Limite: planul a fost ales pe un singur seed de validare; regula presupune că tipul de trafic se cunoaște
 (intervalul orar sau debitul măsurat de cameră, deja disponibil live); câștigul la prânz rămâne de obținut prin
 reantrenarea completă a agentului.

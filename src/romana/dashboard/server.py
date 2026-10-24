@@ -19,7 +19,7 @@ from romana.common import OUTPUT_DIR
 LIVE = OUTPUT_DIR / "live"
 STATIC = Path(__file__).parent / "static"
 app = Flask(__name__, static_folder=str(STATIC), static_url_path="/static")
-MODES = {"ai", "fix", "max_pressure", "manual"}
+MODES = {"ai", "fix", "max_pressure", "manual", "program"}
 
 
 def _read(name: str):
