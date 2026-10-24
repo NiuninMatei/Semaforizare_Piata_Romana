@@ -119,9 +119,14 @@ def parse_tripinfo(path: Path) -> dict:
             "durata_pietoni_s": _mean(ped["dur"]), "pierdere_totala_h": total_h}
 
 
-def make_controllers(sumocfg: Path, models: list[Path]):
+def make_controllers(sumocfg: Path, models: list[Path], plans=()):
     od = DEMAND_DIR / sumocfg.stem / "od_estimat.json"
     ctrls = [C.FixedReference(), C.FixedWebster(od), C.Actuated(), C.MaxPressure()]
+    for p in plans:                     # planuri fixe date prin durate (verde N–S, E–V, pietoni), ex. 46,48,12
+        ctrl = C.FixedWebster.__new__(C.FixedWebster)
+        ctrl.plan = {"verde_s": [float(v) for v in p]}
+        ctrl.name = "plan_" + "_".join(str(int(v)) for v in p)
+        ctrls.append(ctrl)
     for m in models:
         meta = json.loads(m.with_suffix(".json").read_text(encoding="utf-8")) if m.with_suffix(".json").exists() else {}
         rl = C.RLPolicy(m, controlled=meta.get("controlate", ["romana"]))
@@ -222,9 +227,9 @@ def report(df: pd.DataFrame) -> None:
         print("grafic omis:", e)
 
 
-def run_task(sc: Path, models: list[Path], name: str, seed: int) -> dict:
+def run_task(sc: Path, models: list[Path], name: str, seed: int, plans=()) -> dict:
     """O rulare, construind controlerul în procesul curent (libsumo: o simulare per proces)."""
-    ctrl = next(c for c in make_controllers(sc, models) if c.name == name)
+    ctrl = next(c for c in make_controllers(sc, models, plans) if c.name == name)
     return run_one(sc, ctrl, seed)
 
 
@@ -236,6 +241,8 @@ def main(argv=None) -> None:
     ap.add_argument("--strategii", nargs="*", default=None,
                     help="filtru: fix_referinta fix_webster actuated max_pressure rl_ppo rl_ppo_coridor")
     ap.add_argument("--procese", type=int, default=1, help="simulări în paralel (procese separate)")
+    ap.add_argument("--planuri", nargs="*", default=[],
+                    help="planuri fixe suplimentare, ca durate de verde N–S,E–V,pietoni (ex. 46,48,12 → strategia plan_46_48_12)")
     ap.add_argument("--adauga", action="store_true",
                     help="păstrează rezultatele existente din outputs/eval/rezultate.csv (înlocuiește doar rulările refăcute)")
     ap.add_argument("--doar-raport", action="store_true",
@@ -247,7 +254,8 @@ def main(argv=None) -> None:
         return
     scen = [Path(s) for s in (args.scenarii or sorted(glob.glob(str(ROOT / "sumo/scenarios/*.sumocfg"))))]
     models = [Path(m) for m in (args.model if args.model is not None else sorted(glob.glob(str(ROOT / "models/ppo_*.zip"))))]
-    tasks = [(sc, c.name, seed) for sc in scen for c in make_controllers(sc, models)
+    plans = [tuple(float(v) for v in p.split(",")) for p in args.planuri]
+    tasks = [(sc, c.name, seed) for sc in scen for c in make_controllers(sc, models, plans)
              if not args.strategii or c.name in args.strategii for seed in range(1, args.seeds + 1)]
 
     def show(r):
@@ -260,12 +268,12 @@ def main(argv=None) -> None:
         from concurrent.futures import ProcessPoolExecutor, as_completed
 
         with ProcessPoolExecutor(max_workers=args.procese) as ex:
-            for f in as_completed([ex.submit(run_task, sc, models, name, seed) for sc, name, seed in tasks]):
+            for f in as_completed([ex.submit(run_task, sc, models, name, seed, plans) for sc, name, seed in tasks]):
                 rows.append(f.result())
                 show(rows[-1])
     else:
         for sc, name, seed in tasks:
-            rows.append(run_task(sc, models, name, seed))
+            rows.append(run_task(sc, models, name, seed, plans))
             show(rows[-1])
     df = pd.DataFrame(rows)
     key = ["scenariu", "strategie", "seed"]
