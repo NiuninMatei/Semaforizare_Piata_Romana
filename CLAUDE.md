@@ -48,7 +48,15 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
-### 24.10.2026, 12:11–17:00 – antrenarea completă de la zero și evaluarea completă (în lucru)
+### 24.10.2026, 12:11–14:20 – evaluarea completă făcută; antrenarea de la zero oprită la 550k (de continuat)
+
+
+- **Evaluarea completă (§ 9.7):** 350 de simulări (7 strategii × 10 scenarii × 5 seed-uri): programul pe tipuri de
+  trafic −8,5% (cea mai bună), actuated −3,2%, E3 −1,4%, Webster −1,3%, plan 46/48/12 −0,9%, oficial +2,8%, MP +9,6%.
+- `models/ppo_romana_nou` = punctul intermediar de la 550k pași (antrenarea oprită la cererea autorului; metadatele
+  .json copiate de la ppo_romana). **De făcut:** `train --nume romana_nou --continua --pasi 250000 --medii 8` (peste
+  noapte), validare pe seed-urile 11–13 față de ppo_romana / ppo_romana_zn3, evaluarea completă `--adauga`.
+- `evaluate.py --planuri 46,48,12` evaluează orice plan fix dat prin durate.
 
 - `ppo_romana_nou`: PPO de la zero pe cele 10 scenarii noi, 800k pași, 8 medii (puncte intermediare la 25k în
   `outputs/train/checkpoints`); apoi validare pe seed-urile 11–13 și evaluarea completă (toate strategiile, 5 seed-uri).
