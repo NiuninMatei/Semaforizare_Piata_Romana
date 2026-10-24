@@ -789,6 +789,14 @@ Pe scenariile de test (seed-urile 1–3), față de planul fix actual:
 | greu | vârf 21.10 / 22.10, ×1,2, dimineața 22.10 | plan 46/48/12 | −3,7%, −15,0%, +1,7%, −11,5%, −2,4% |
 | **medie** | 10 scenarii | | **−6,3%** |
 
+**Experimentul E3 – fine-tuning cu rată de învățare mică (24.10.2026).** Agentul oficial continuat 60 000 de pași
+pe scenariile noi cu rata de învățare 3·10⁻⁵ (de 10 ori mai mică decât la E2; `models/ppo_romana_zn3`). Pe
+validare (seed-urile 11–13): +11,0% în medie față de planul fix, practic la fel ca agentul vechi (+11,3%), dar
+**primul agent care bate planul fix la prânz** (−5,2% pe validare, −17,6% pe seed-urile de test 1–3). Cu E3 la
+prânz, programul pe tipuri de trafic devine: lejer → agentul oficial, prânz → E3, vârf/dimineață → 46/48/12 s,
+cu **−8,1% în medie** pe cele 10 scenarii de test (față de −6,3% cu planul de referință la prânz). În geamănul
+live, banda de mijloc folosește încă planul de referință (un al doilea model în `live_twin.py` – pas următor).
+
 **Implementat** în geamănul live și în dispecerat: modul „Program pe tipuri de trafic” comută automat după debitul
 măsurat de cameră la intrările pieței (sub 1 300 veh/h → agentul AI; 1 300–2 000 → planul de referință; peste
 2 000 → planul 46/48/12; pragurile despart scenariile liniștite, de prânz și de vârf), iar dispeceratul arată ce
