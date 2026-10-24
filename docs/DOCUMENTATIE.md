@@ -798,7 +798,7 @@ cu **−8,1% în medie** pe cele 10 scenarii de test (față de −6,3% cu planu
 live, banda de mijloc folosește încă planul de referință (un al doilea model în `live_twin.py` – pas următor).
 
 **Implementat** în geamănul live și în dispecerat: modul „Program pe tipuri de trafic” comută automat după debitul
-măsurat de cameră la intrările pieței (sub 1 300 veh/h → agentul AI; 1 300–2 000 → planul de referință; peste
+măsurat de cameră la intrările pieței (sub 1 300 veh/h → agentul AI; 1 300–2 000 → agentul E3; peste
 2 000 → planul 46/48/12; pragurile despart scenariile liniștite, de prânz și de vârf), iar dispeceratul arată ce
 strategie e activă în fiecare moment.
 
