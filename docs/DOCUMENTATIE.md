@@ -806,6 +806,31 @@ Limite: planul a fost ales pe un singur seed de validare; regula presupune că t
 (intervalul orar sau debitul măsurat de cameră, deja disponibil live); câștigul la prânz rămâne de obținut prin
 reantrenarea completă a agentului.
 
+### 9.7 Evaluarea completă pe datele noi (24.10.2026)
+
+350 de simulări: 7 strategii × 10 scenarii (din datele renumărate) × 5 seed-uri de test
+(`outputs/eval/rezultate.csv`, `docs/rezultate/rezultate.md`, `rezultate_brute.csv`). Pierderea totală de timp a
+tuturor participanților față de planul fix actual, medie pe cele 10 scenarii:
+
+| Strategie | Medie | Trafic lejer (4 sc.) | Prânz | Trafic greu (5 sc.) |
+|---|---|---|---|---|
+| **Program pe tipuri de trafic** (§ 9.6) | **−8,5%** | −7,5 … −11,0% | −7,8% | −14,8 … +1,1% |
+| Actuated (SUMO) | −3,2% | −5,5 … −9,9% | +17,0% | −13,2 … +9,5% |
+| Agent E3 (`ppo_romana_zn3`) | −1,4% | −6,1 … −7,5% | −7,8% | −1,5 … +15,8% |
+| Webster | −1,3% | −6,0 … −9,4% | +11,3% | −9,2 … +12,1% |
+| Plan fix 46/48/12 s | −0,9% | +6,3 … +9,1% | +2,4% | −14,8 … +1,1% |
+| Agent RL oficial (`ppo_romana`, date vechi) | +2,8% | −7,5 … −11,0% | −8,0% | +5,5 … +29,2% |
+| Max-Pressure | +9,6% | −4,3 … −9,1% | +22,9% | +12,1 … +27,0% |
+
+Programul pe tipuri de trafic (lejer → agentul oficial, prânz → E3, vârf și dimineață → planul 46/48/12; regula
+aleasă pe seed-urile de validare 11–13, § 9.6) este cea mai bună strategie pe datele noi: **−8,5%** în medie,
+toate componentele lui fiind implementabile pe infrastructura existentă (doar programul semaforului se schimbă).
+
+**Agentul antrenat de la zero pe datele noi** (`ppo_romana_nou`, PPO, 8 medii) a fost oprit la 550 000 de pași
+(din 800 000 planificați) din motive de timp; la 375 000 de pași dădea +10,9% pe validare (cel oficial +11,3%),
+mai bun la vârf (+8,1% față de +22,3% la 21.10). Validarea și evaluarea lui completă (și eventual continuarea
+antrenării cu `--continua`) rămân pasul următor.
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare
