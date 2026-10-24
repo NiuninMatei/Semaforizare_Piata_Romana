@@ -87,7 +87,8 @@ def main(argv=None) -> None:
                     help="preantrenare prin imitație a unui plan fix, ex. „50,40,10” (verde N–S, E–V, pietoni, s)")
     ap.add_argument("--bc-pasi", type=int, default=40_000, help="pași de decizie demonstrați de planul fix")
     ap.add_argument("--gamma", type=float, default=0.98)
-    ap.add_argument("--lr", type=float, default=3e-4)
+    ap.add_argument("--lr", type=float, default=None,
+                    help="rata de învățare (implicit 3e-4; la --continua, implicit cea salvată în model)")
     ap.add_argument("--continua", action="store_true",
                     help="continuă antrenarea modelului existent models/ppo_<nume>.zip (pașii se adună)")
     args = ap.parse_args(argv)
@@ -123,9 +124,11 @@ def main(argv=None) -> None:
     # ~1024 de tranziții pe actualizare, indiferent de numărul de medii (multiplu de 64 → loturi întregi de 128)
     n_steps = -(-1024 // (args.medii * 64)) * 64
     if args.continua:
-        model = PPO.load(str(path), env=env, device="cpu", n_steps=n_steps)
+        # la continuare, --lr (dacă e dat) înlocuiește rata salvată: fine-tuning cu pași mai mici
+        lr = {"learning_rate": args.lr, "lr_schedule": lambda _: args.lr} if args.lr is not None else None
+        model = PPO.load(str(path), env=env, device="cpu", n_steps=n_steps, custom_objects=lr)
     else:
-        model = PPO("MlpPolicy", env, learning_rate=args.lr, n_steps=n_steps, batch_size=128, n_epochs=10,
+        model = PPO("MlpPolicy", env, learning_rate=args.lr or 3e-4, n_steps=n_steps, batch_size=128, n_epochs=10,
                     gamma=args.gamma, gae_lambda=0.95, ent_coef=0.01 if not args.bc_plan else 0.003,
                     clip_range=0.2 if not args.bc_plan else 0.1,
                     policy_kwargs={"net_arch": [128, 128]}, seed=args.seed, verbose=1, device="cpu")
@@ -144,7 +147,7 @@ def main(argv=None) -> None:
     meta = {"model": path.name, "controlate": controlled, "scenarii": [Path(s).name for s in scen],
             "pasi": int(model.num_timesteps), "durata_min": round(prev_min + (time.time() - t0) / 60, 1),
             "preantrenare_imitatie": bc_info,
-            "hiperparametri": {"lr": args.lr, "n_steps": n_steps, "medii_paralele": args.medii, "batch": 128,
+            "hiperparametri": {"lr": args.lr if args.lr is not None else model.learning_rate, "n_steps": n_steps, "medii_paralele": args.medii, "batch": 128,
                                "gamma": args.gamma, "ent_coef": float(model.ent_coef),
                                "retea": [128, 128], "delta_t_s": 5, "verde_min_s": 10, "verde_max_s": 90},
             "faze_romana": load_json(ROOT / "sumo" / "net" / "network_info.json")["phase_names"],
