@@ -48,6 +48,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
+### 24.10.2026, 12:11–17:00 – antrenarea completă de la zero și evaluarea completă (în lucru)
+
+- `ppo_romana_nou`: PPO de la zero pe cele 10 scenarii noi, 800k pași, 8 medii (puncte intermediare la 25k în
+  `outputs/train/checkpoints`); apoi validare pe seed-urile 11–13 și evaluarea completă (toate strategiile, 5 seed-uri).
+- Numărătoarea manuală în teren scoasă din pașii următori (nerealistă pentru un om, observația autorului); înlocuită
+  în § 10 cu adnotarea a 2–3 minute de video ca lucrare viitoare opțională.
+
 ### 24.10.2026, 09:19–10:55 – observațiile O10–O12, reantrenarea (E2, negativă), programul pe tipuri de trafic
 
 - Trecerea Căderea Bastiliei deasupra ieșirii; documentația: Mendeleev + Căderea Bastiliei sens unic, Dacia 2+2 benzi.
