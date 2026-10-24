@@ -1,0 +1,19 @@
+{
+  "scor_mediu_procent": {
+    "ppo_romana": 11.28,
+    "ppo_romana_zn": 19.77
+  },
+  "ales": "ppo_romana",
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ],
+  "scenarii": [
+    "zi_2026-10-21_pranz",
+    "zi_2026-10-21_varf",
+    "zi_2026-10-22_dimineata",
+    "zi_2026-10-22_varf",
+    "zi_2026-10-22_linistit"
+  ]
+}

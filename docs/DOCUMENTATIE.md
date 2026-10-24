@@ -760,6 +760,14 @@ calitatea datelor de intrare și **trebuie reantrenată pe scenariile noi** (cu 
 11–13, ca în § 9.2). Rezultatul de −4,6% din § 9.1 rămâne valabil pentru scenariile construite cu zonele vechi
 (`docs/rezultate/rezultate_v1_si_experimente.csv`, `outputs/eval/rezultate_zone_vechi.csv`).
 
+**Experimentul E2 – reantrenarea pe scenariile noi (24.10.2026, rezultat negativ).** Agentul oficial a fost
+antrenat în continuare 100 000 de pași pe cele 10 scenarii noi (`models/ppo_romana_zn`, 8 medii paralele,
+~20 min) și comparat cu agentul vechi pe seed-urile de validare 11–13, pe 5 scenarii
+(`docs/rezultate/validare_zone_noi.csv`): agentul vechi +11,3% față de planul fix, cel reantrenat +19,8%
+(+53% la vârful din 22.10). Conform regulii de selecție, agentul oficial rămâne `ppo_romana`. Interpretare: o
+continuare scurtă a antrenării pe o cerere mult mai grea la vârf destabilizează politica; e nevoie de o
+antrenare completă (500 000 de pași sau mai mult, de la zero, cu selecție pe validare), care cere câteva ore.
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt calibrate pe datele de zi (§ 4.3), dar nu există o numărătoare manuală de
