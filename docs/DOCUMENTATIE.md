@@ -891,6 +891,16 @@ greu (peste 2 000) → planul fix 46/48/12 s. Evaluat pe **10 seed-uri de test**
 | Program vs. planul fix actual | **−6,9%** | 0,00034 | 0,000018 | **79 / 100** |
 | Program vs. actuated | **−3,2%** | 0,040 | 0,0019 | 68 / 100 |
 
+Tabelul complet pe 10 seed-uri de test (100 de rulări pe strategie; media pe scenarii a diferenței față de planul
+fix actual; `docs/rezultate/rezultate.md`, `rezultate_brute.csv`):
+
+| Program pe tipuri de trafic | Actuated | Webster | E3 | Plan 46/48/12 | E7-400k | E9 | Agent oficial | Max-Pressure |
+|---|---|---|---|---|---|---|---|---|
+| **−6,9%** | −2,8% | +0,2% | +0,8% | +1,4% | +1,9% | +3,4% | +5,4% | +11,4% |
+
+Fiecare agent, aplicat pe toate tipurile de trafic, nu bate planul fix; combinați după tipul de trafic – fiecare
+doar acolo unde a fost cel mai bun pe validare – dau cea mai bună strategie, cu o marjă clară.
+
 Pe scenarii (față de planul fix): liniștit 21.10 −10,3%, ×0,8 −11,0%; liniștit 22.10 −6,8%, ×0,8 −10,0%; prânz
 −5,1%; vârf 21.10 −4,4%, ×1,2 −12,9%; vârf 22.10 −11,6%, ×1,2 −9,9%; dimineața 22.10 +12,6% (singurul scenariu
 unde programul pierde – pe seed-urile 6–10 planul cu ciclu lung e dezavantajat dimineața; o bandă dedicată
