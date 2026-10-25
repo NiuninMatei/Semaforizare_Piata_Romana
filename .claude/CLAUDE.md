@@ -45,7 +45,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   marginea de sus = „medie” (scenariile din istoricul git). Auditul numărării: ieșiri/intrări = 1,6; ieșirile
   îndepărtate nu se pot deosebi de vehiculele pierdute (§ 4.3).
 - Rezultate (cap. 9): programul pe tipuri de trafic – marginea de sus −6,9% (p = 0,0003; E9 / E3 / plan 46/48/12),
-  marginea de jos −2,9% (actuated / E3 / plan fix actual; ales pe validare 11–15); duminica 25.10: −5,2% / −4,5%;
+  marginea de jos −1,5% pe 10 seed-uri (actuated / E3 / plan fix actual; ales pe validare 11–15; E3 instabil la prânz); duminica 25.10: −5,2% / −4,5%;
   **participanți indisciplinați** (`vtypes_indisciplinat.add.xml`, `indisciplinat_*.sumocfg`): E3 −14,1% (p = 0,00001; 40/50),
   E9 −9,9% (p = 0,003) față de planul fix pe 10 seed-uri, până la −28% la vârf.
 - Defect corectat: `control/env.py` ignora tipurile de participanți din scenariu (primul test de indisciplină invalid).
