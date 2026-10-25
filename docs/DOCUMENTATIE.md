@@ -24,6 +24,7 @@ Informatică ID, anul III · Discipline: *Interfețe om-calculator* și *Interne
 12. [Jurnalul proiectului](#12-jurnalul-proiectului)
 13. [Asistență generativă](#13-asistență-generativă)
 14. [Bibliografie și licențe](#14-bibliografie-și-licențe)
+- [Anexa A. Fișierele de rezultate](#anexa-a-fișierele-de-rezultate-docsrezultate)
 
 ---
 
@@ -1124,3 +1125,19 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^barlow]: J. Tribby, *Barlow* (familie de fonturi), Google Fonts, https://fonts.google.com/specimen/Barlow (SIL OFL 1.1).
 [^google-ai]: Google, modulul de asistență AI integrat în browserul Chrome, folosit pentru ciorna proiectului până la 18.10.2026.
 [^claude]: Anthropic, *Claude* (model Claude Opus 5.5, ID `claude-opus-5-5`), asistent AI generativ, rulat prin *Claude Code* (aplicația desktop Claude), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni de utilizare: https://www.anthropic.com/legal. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13).
+
+## Anexa A. Fișierele de rezultate (`docs/rezultate/`)
+
+Datele brute din care provin cifrele capitolului 9 (fiecare rând = o simulare: scenariu, strategie, seed și toate
+metricile din § 7.5). Se regenerează cu `scripts\5_evalueaza.bat` și scripturile de validare.
+
+| Fișier | Conținut |
+|---|---|
+| `rezultate_brute.csv`, `rezultate.md`, `comparatie_strategii.png` | evaluarea pe scenariile actuale (marginea de jos a cererii: zile lucrătoare și duminică, seed-urile de test), cu tabelul detaliat pe categorii de participanți și graficul |
+| `rezultate_brute_marginea_de_sus.csv` | evaluarea pe scenariile cu cererea „medie” (marginea de sus): 1 400 de simulări, zile lucrătoare cu seed-urile 1–10 și duminica dimineața |
+| `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) |
+| `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4) |
+| `validare_*.csv` (+ `*_alegere.json`) | validările pe seed-urile 11–15 (11–13 la primele), din care s-au ales agenții, planurile și componentele programului: `validare_intrari` (marginea de jos), `validare_indisciplinat` (programul realist), `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9`, `validare_nou_*`, `validare_e2_e3`, `validare_clasice`, `validare_finala` |
+| `grila_plan*.csv` | grilele de planuri fixe (§ 9.5) |
+| `calibrare_conservare*.csv` | încercarea de calibrare a ieșirilor pe criteriul conservării vehiculelor (§ 4.3) |
+| `candidati_*.csv`, `alegere_agent*.json` | candidații și alegerea agenților din experimentele timpurii |
