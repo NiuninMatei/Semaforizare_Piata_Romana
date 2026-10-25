@@ -160,9 +160,13 @@ def main(argv=None) -> None:
                 rates = {k: float(v) for k, v in cam["intrari_veh_h"].items()}
                 obs_turns = cam.get("total_viraje", {})
                 ped_rate = sum(cam.get("pietoni_h", {}).values()) * cfg.get("factor_extrapolare_pietoni", 1.0)
+                # debitul prin piață ca în scenarii (§ 5.1): media dintre intrările (subnumărate) și ieșirile
+                # (supranumărate) măsurate; pe el se aleg benzile programului pe tipuri de trafic
+                debit = (sum(rates.values()) + sum(float(v) for v in cam.get("iesiri_veh_h", {}).values())) / 2
                 src = "camera live"
             else:
                 rates = {k: float(v) for k, v in ref["intrari_veh_h"].items()}
+                debit = sum(rates.values())
                 obs_turns = {}
                 ped_rate = float(ref.get("pietoni_h", 0))
                 src = "profil de referință (camera indisponibilă)"
@@ -207,7 +211,7 @@ def main(argv=None) -> None:
             sub = None
             if mode == "program":
                 # programul pe tipuri de trafic (§ 9.6), după debitul măsurat de cameră la intrările pieței
-                tot = sum(rates.values())
+                tot = debit
                 sub = (("ai_lejer" if rl_lejer is not None else "ai" if rl is not None else "fix") if tot < PRAG_LEJER else
                        ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
             efectiv = sub or mode
@@ -259,7 +263,7 @@ def main(argv=None) -> None:
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
                          "vehicule_in_retea": traci.vehicle.getIDCount(), "vehicule_injectate": n_veh,
                          "pietoni_in_retea": traci.person.getIDCount(), "pietoni_injectati": n_ped,
-                         "debite_folosite": rates, "pietoni_h_folositi": round(ped_rate),
+                         "debite_folosite": rates, "debit_echilibrat_veh_h": round(debit), "pietoni_h_folositi": round(ped_rate),
                          "istoric_coada": hist[::5]}
                 tmp = LIVE / "sim_tmp.json"
                 tmp.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")

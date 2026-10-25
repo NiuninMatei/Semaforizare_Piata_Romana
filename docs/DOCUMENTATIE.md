@@ -800,7 +800,10 @@ live, banda de mijloc folosește încă planul de referință (un al doilea mode
 **Implementat** în geamănul live și în dispecerat: modul „Program pe tipuri de trafic” comută automat după debitul
 măsurat de cameră la intrările pieței (sub 1 300 veh/h → agentul AI; 1 300–2 000 → agentul E3; peste
 2 000 → planul 46/48/12; pragurile despart scenariile liniștite, de prânz și de vârf), iar dispeceratul arată ce
-strategie e activă în fiecare moment.
+strategie e activă în fiecare moment. **Corectură (25.10):** comutarea se face pe debitul echilibrat – media dintre
+intrările și ieșirile măsurate de cameră, exact ca la construirea scenariilor (§ 5.1) –, nu doar pe intrări:
+intrările camerei reprezintă în medie 0,64 din debitul scenariilor (camera subnumără intrările și supranumără
+ieșirile), iar la vârful real (~2 500 veh/h) ar fi părut trafic moderat (~1 550 veh/h).
 
 Limite: planul a fost ales pe un singur seed de validare; regula presupune că tipul de trafic se cunoaște
 (intervalul orar sau debitul măsurat de cameră, deja disponibil live); câștigul la prânz rămâne de obținut prin
