@@ -831,6 +831,22 @@ toate componentele lui fiind implementabile pe infrastructura existentă (doar p
 mai bun la vârf (+8,1% față de +22,3% la 21.10). Validarea și evaluarea lui completă (și eventual continuarea
 antrenării cu `--continua`) rămân pasul următor.
 
+### 9.8 Experimentele din noaptea de 25.10.2026: agent general vs. specialiști
+
+* **E4 – agentul general antrenat de la zero pe datele noi** (`ppo_romana_nou`, 1 000 000 de pași, 10 medii).
+  Validare (seed-urile 11–13, 5 scenarii; `docs/rezultate/validare_nou_1M.csv`): final +12,9%, cel mai bun punct
+  intermediar (700k) +11,6% față de planul fix – la nivelul agentului oficial (+11,3%) și al lui E3 (+11,0%).
+  Un agent unic pentru toate tipurile de trafic atinge același plafon pe cererea grea.
+* **Specialiști pentru trafic greu**, antrenați doar pe cele 5 scenarii grele (vârfurile, vârfurile ×1,2,
+  dimineața): **E5** – fine-tuning al agentului oficial cu rată mică (`ppo_romana_greu`); **E6** – imitarea
+  planului 46/48/12, apoi PPO (`ppo_romana_greu_bc`). Validare pe scenariile grele (`validare_greu.csv`):
+  E6 −5,8%, planul 46/48/12 −4,7%, actuated −0,2%, E5 +9,4%. Pe test (5 seed-uri), însă, pe banda grea:
+  planul 46/48/12 −8,4%, E6 −5,7% (E6 câștigă la vârful din 22.10: −17,7%; pierde la vârful din 21.10: +10,9%).
+  Avantajul de 1,1 puncte pe validare nu este robust, deci **programul păstrează planul 46/48/12 la trafic
+  greu** (−8,5% în medie, § 9.7); cu E6 ar fi −7,1%. E6 este primul agent învățat care se apropie de cel mai bun
+  plan fix la vârf. Pentru experimentele următoare, validarea folosește 5 seed-uri (11–15), stabilit înainte
+  de rulare, ca deciziile să nu depindă de zgomot.
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare
