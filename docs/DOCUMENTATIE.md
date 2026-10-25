@@ -613,7 +613,9 @@ Niciun agent AI, aplicat singur pe toate tipurile de trafic, nu bate în mod rob
 greu) se folosește strategia care a fost cea mai bună pe datele de validare, iar la performanță practic egală se
 preferă strategia mai simplă. Toate componentele sunt implementabile pe automatul existent (se schimbă doar
 programul semaforului). Programul este implementat în geamănul digital și în dispecerat (modul „Program pe tipuri
-de trafic”, `bridge/live_twin.py`), cu comutare automată după debitul măsurat de cameră.
+de trafic”, `bridge/live_twin.py`), cu comutare automată după debitul măsurat de cameră – varianta pentru marginea de
+sus a cererii, care comută după media intrărilor și ieșirilor măsurate, la 1 300 și 2 000 veh/h (aceeași măsură ca
+scenariile acelei calibrări).
 
 | Calibrarea cererii | Trafic lejer | Trafic moderat (prânz) | Trafic greu (vârf, dimineață) |
 |---|---|---|---|
@@ -656,7 +658,12 @@ antrenare sau la alegere.
   (p = 0,03; mai bun în 43 din 50) și semnificativ mai bun decât actuated (p = 0,0006). Agenții AI singuri au
   bătut toți planul fix, inclusiv la vârful de weekend: E9 −6,5%, E3 −5,0% (−7,2% la vârf), agentul oficial
   −4,9%; Max-Pressure −4,5%, actuated −1,5%, Webster +0,4%, planul 46/48/12 +5,3%.
-* **Marginea de jos** (toată ziua până la 13:50; vârf ≈3 480 veh/h): [[DUMINICA_JOS]]
+* **Marginea de jos** (datele până la 13:50; vârful 11:45–12:45 cu ≈3 480 veh/h la intrări, mai mult decât orice
+  scenariu de antrenare; 5 scenarii × 5 seed-uri): programul (regula aleasă pe validare pentru această calibrare)
+  −4,5% față de planul fix – mai bun în toate cele 15 rulări în care diferă de el (Wilcoxon p = 0,0001); cea mai
+  bună strategie a fost aici actuated (−6,2%, mai bun în 22 din 25), iar agenții AI au câștigat doar la trafic lejer
+  și în dimineața de duminică (−4…−8%), fiind la vârful foarte mare egali cu planul fix sau mai slabi (agentul
+  oficial −2,0% în medie, E3 −0,4%, E9 −0,3%).
 
 Concluzie: agenții AI se adaptează la o zi nouă, în timp ce planurile fixe reglate pe zilele lucrătoare (46/48/12)
 nu se potrivesc vârfului de duminică – planurile fixe trebuie reglate pe tipuri de zile, agentul nu.
@@ -713,23 +720,23 @@ administratorul drumului.
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
-* **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare
-  de referință independentă: suma ieșirilor numărate depășește suma intrărilor, iar adevărul este între cele
-  două (echilibrarea „medie”, § 5.1). O numărătoare manuală în teren nu este realistă pentru un singur om la
-  peste 1 000 de vehicule pe oră și 6 brațe (observația autorului, 24.10.2026); în practica ingineriei de trafic
-  referința se obține din câteva minute de înregistrare adnotate cadru cu cadru sau de echipe de numărători.
-  Pentru acest proiect, incertitudinea (±15–20%) este acoperită de scenariile de sensibilitate (×0,8 și ×1,2) și
-  de verificarea echilibrului intrări–ieșiri; o adnotare de 2–3 minute de video (estompat, șters după adnotare)
-  ar permite fixarea factorului de corecție din `config/demand.json` – lucrare viitoare, nu condiție a
-  rezultatelor.
-* **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine și parțial ascunse.
-  *Redus pe 22–23.10:* zonele au fost redesenate după observațiile autorului de la verificarea live
-  (§ 12.2) și apoi înlocuite cu decupajele desenate de autor pe capturi ale camerei
-  (§ 4.3); după renumărare, virajele urmărite complet au crescut de la 2 800 la 4 995 (≈21% din intrări, față
-  de ≈11%), deci matricea O–D se sprijină mai mult pe viraje observate.
-* **Două zile de date** (o zi lucrătoare de miercuri după-amiaza și seara, joi noaptea și dimineața), în
-  octombrie, cu vreme rece: weekendul, vara, ploaia puternică sau evenimentele speciale nu sunt acoperite.
-* **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
+* **Precizia numărării – cererea reală este cunoscută doar ca interval.** Auditul numărării (§ 4.3) a arătat că
+  ieșirile de pe brațele îndepărtate sunt supranumărate (vehicule mici pierdute de detector pe inelul din fundal),
+  iar intrările pot fi subnumărate (vehicule ascunse de chioșc, de autobuze sau unele de altele în aglomerație).
+  De aceea rezultatele se raportează pentru două calibrări – doar intrări (marginea de jos) și media intrări /
+  ieșiri (marginea de sus) – care diferă cu ≈35% la vârf (§ 5.1, § 9.2). O numărătoare manuală în teren nu este
+  realistă pentru un singur om la peste 1 000 de vehicule pe oră și 6 brațe (observația autorului); în practica
+  ingineriei de trafic referința se obține din câteva minute de înregistrare adnotate cadru cu cadru sau de echipe
+  de numărători – o adnotare de 2–3 minute de video (estompat, șters după adnotare) ar fixa nivelul real al cererii
+  între cele două margini (lucrare viitoare).
+* **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine; virajele urmărite complet
+  sunt ≈21% din intrări, deci proporțiile de viraj se sprijină parțial pe distribuția a priori (§ 5.1).
+* **Trei zile de date** (două zile lucrătoare de octombrie și o duminică), cu vreme rece: vara, ploaia puternică
+  sau evenimentele speciale nu sunt acoperite. Pe duminică, vârful a depășit volumele de antrenare, iar agenții AI
+  au pierdut din avantaj (§ 9.3) – reantrenarea periodică pe date noi ar fi necesară într-o utilizare reală.
+* **Comportamentul participanților** din simulare este cel al modelelor SUMO; indisciplina (trecerea pe roșu,
+  blocarea intersecției, pietonii pe roșu) este modelată doar în testul de robustețe (§ 9.4), iar traversările
+  prin afara trecerilor nu pot fi modelate în SUMO.* **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
 * **Trecerile de pietoni** sunt reconstruite de `netconvert` (`--crossings.guess`), nu importate direct din OSM
