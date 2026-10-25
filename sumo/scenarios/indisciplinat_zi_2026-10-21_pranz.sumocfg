@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+  <input>
+    <net-file value="../net/romana.net.xml" />
+    <route-files value="../demand/zi_2026-10-21_pranz/bicycle.rou.xml,../demand/zi_2026-10-21_pranz/bus.rou.xml,../demand/zi_2026-10-21_pranz/motorcycle.rou.xml,../demand/zi_2026-10-21_pranz/passenger.rou.xml,../demand/zi_2026-10-21_pranz/truck.rou.xml,../demand/zi_2026-10-21_pranz/fond.rou.xml,../demand/zi_2026-10-21_pranz/pietoni.rou.xml" />
+    <additional-files value="../demand/vtypes_indisciplinat.add.xml" />
+  </input>
+  <time>
+    <begin value="0" />
+    <end value="4500" />
+  </time>
+  <processing>
+    <time-to-teleport value="300" />
+    <ignore-route-errors value="true" />
+  </processing>
+  <report>
+    <no-step-log value="true" />
+    <duration-log.statistics value="true" />
+  </report>
+  <gui_only>
+    <gui-settings-file value="../net/view.xml" />
+  </gui_only>
+</configuration>
