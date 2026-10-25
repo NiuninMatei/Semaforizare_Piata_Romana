@@ -45,7 +45,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - Coridorul (piața + 4 vecini, fără Dacia × Polonă – sens unic de ieșire) = rezultat negativ (+35% în medie):
   vecinii rămân pe programele actuated. Experimentele v2, v3, E1 (γ=0,99) – negative, documentate.
 - Plafonul la vârf: cel mai bun plan fix posibil −5,4%; 68% din întârzierea la vârf = coada Dacia vest dincolo
-  de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
+  de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
 ### 25.10.2026 (noaptea, de la 01:12; autorul revine la 18:00) – E4–E7, date de weekend
@@ -108,7 +108,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   demo-ul de comparație cu bicicliști/pietoni (O9).
 - **De făcut:** Pasul 5 al demonstrației (rezultate și limite); renumărarea oficială cu zonele noi (`recount`)
   → `scenarii_zi` → reevaluarea agenților (măsurat: intrări −29%, Mendeleev ×10, Catargiu out încă prea mare);
-  verificarea pe lumină de zi a celor 5 treceri noi și a zonei Catargiu out; scenariul de demo în GHID_PROFESOR.md.
+  verificarea pe lumină de zi a celor 5 treceri noi și a zonei Catargiu out; scenariul de demo în GHID.md.
 
 ### Demonstrația live (22.10, seara) – pregătire
 
@@ -119,7 +119,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   (2/3), Claude în dreapta; câte un pas pe mesaj, autorul scrie „mai departe”. Pașii: 1 camera (făcut),
   2 geamănul SUMO, 3 dispeceratul și preluarea controlului, 4 comparația măsurată, 5 rezultate și limite.
 - Reluare: `scripts\PORNESTE_TOT.bat`, apoi aranjarea ferestrelor (camera / SUMO / Chrome „Dispecerat”).
-  De scris după demo: scenariul de prezentare în GHID_PROFESOR.md.
+  De scris după demo: scenariul de prezentare în GHID.md.
 
 ### Pași posibili în continuare
 
@@ -142,7 +142,7 @@ Făcut pe 21.10 (ziua):
 - În curs (pornite 21:50): antrenarea `ppo_romana` 500k pe scenariile zi_* (`--medii 7`), apoi `ppo_coridor`
   500k (fazele vecinilor curățate, [3 3 3 2 3 2]); colectarea de noapte până pe 22.10, 11:00 (vârful de
   dimineață). Opțiune nouă `--obs-amonte` (cozile din amonte + vehiculele neintroduse), încă neantrenată.
-- GHID_PROFESOR.md scris; Claude trecut explicit în § 13 / § 14 / README.
+- GHID.md scris; Claude trecut explicit în § 13 / § 14 / README.
 
 ### Pașii următori
 

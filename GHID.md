@@ -1,6 +1,8 @@
-# Ghid pentru evaluare – „Semaforizare Piața Romană”
+# Ghid de utilizare – „Semaforizare Piața Romană”
 
-Acest ghid explică, pas cu pas, cum se instalează, se rulează și se verifică proiectul. Documentația completă
+Acest ghid se adresează oricărui cititor – profesor, student, inginer de trafic sau curios – și explică, pas cu
+pas, cum se instalează, se rulează și se verifică proiectul. Povestea construirii lui, cu provocările întâlnite
+și deciziile luate, este în [`JURNAL.md`](JURNAL.md). Documentația completă
 (metodă, decizii, rezultate, bibliografie) este în [`docs/DOCUMENTATIE.md`](docs/DOCUMENTATIE.md).
 
 Autor: Niunin Matei-Gabriel. Implementarea a fost realizată în cea mai mare parte cu asistentul AI Claude
@@ -77,7 +79,7 @@ Evaluarea completă (`scripts\5_evalueaza.bat`, 5 seed-uri × toate scenariile �
 
 ## 5b. Demonstrația live (scenariul de prezentare, ~20 de minute)
 
-Folosit la evaluarea prin demonstrație din 22.10.2026 (observațiile și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`).
+Folosit la repetiția susținerii din 22.10.2026 (observațiile și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`).
 Pornire: `scripts\PORNESTE_TOT.bat` (camera, geamănul SUMO-GUI, dispeceratul în browser), apoi câte o fereastră
 pe ecran, în ordinea în care circulă datele:
 

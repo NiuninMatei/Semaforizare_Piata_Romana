@@ -122,6 +122,11 @@ class Params:
     min_crossing_move: float = 0.04     # fracțiune din lățimea cadrului
     capat_s: float = 1.5                # toleranța pentru zonele `capat_traiectorie`
     aspect: float = 1850 / 3288         # înălțime / lățime cadru (distanțe comparabile pe cele două axe)
+    # ieșirile pe brațele îndepărtate (`capat_traiectorie`): vehiculele mici se pierd oriunde pe inelul din fundal,
+    # deci „a dispărut în zona ieșirii” nu ajunge – se cer și cadre în zonă și o deplasare în sensul străzii
+    capat_min_cadre: int = 0
+    capat_min_deplasare: float = 0.0    # fracțiune din lățimea cadrului, proiectată pe sensul zonei
+    capat_min_fractie: float = 0.0      # fracțiune din lungimea zonei în sensul străzii (independentă de perspectivă)
 
 
 def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
@@ -169,6 +174,20 @@ def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
             continue
         if z.capat and t_last - last[zid] > p.capat_s:
             continue                           # nu a dispărut în strada ascunsă, a continuat pe inel
+        if z.capat and (p.capat_min_cadre or p.capat_min_deplasare or p.capat_min_fractie):
+            inside = [(x, y * p.aspect) for _, x, y in pts if z.contains_norm(x, y)]
+            if len(inside) < max(p.capat_min_cadre, 1):
+                continue                       # prea puțin văzut în zonă: probabil pierdut de detector, nu ieșit
+            if (p.capat_min_deplasare or p.capat_min_fractie) and z.sens:
+                sx, sy = z.sens[0], z.sens[1] * p.aspect
+                n = (sx * sx + sy * sy) ** 0.5
+                dx, dy = inside[-1][0] - inside[0][0], inside[-1][1] - inside[0][1]
+                avans = (dx * sx + dy * sy) / n
+                proiectii = [(x * sx + y * p.aspect * sy) / n for x, y in z.poly_norm]
+                lungime = max(proiectii) - min(proiectii)
+                if avans < p.capat_min_deplasare or avans < p.capat_min_fractie * lungime:
+                    continue                   # nu a înaintat pe stradă
+
         w0, w1 = (t_last - p.capat_s, t_last) if z.capat else (min(first[zid], last[zid] - 1.0), last[zid])
         if not _heading_ok(pts, w0, w1, z.sens, p.aspect):
             continue
