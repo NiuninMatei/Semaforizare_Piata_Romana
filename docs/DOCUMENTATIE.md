@@ -906,6 +906,31 @@ Pe scenarii (față de planul fix): liniștit 21.10 −10,3%, ×0,8 −11,0%; li
 unde programul pierde – pe seed-urile 6–10 planul cu ciclu lung e dezavantajat dimineața; o bandă dedicată
 dimineții, cu planul de referință, e o îmbunătățire posibilă, de validat pe date noi).
 
+### 9.11 Testul de generalizare pe o zi de weekend (duminică, 25.10.2026)
+
+Camera a colectat date continuu de duminică de la 01:14 (`data/counts/numaratori_2026-10-25.csv`); nicio strategie
+nu a fost antrenată sau aleasă pe aceste date. Din datele de până la 11:30 au rezultat 5 scenarii (liniștit
+513 veh/h și ×0,8; dimineața 968 veh/h; vârful 09:15–10:15 cu 2 840 veh/h – mai mare decât vârfurile din zilele
+lucrătoare – și ×1,2), evaluate cu 10 seed-uri (450 de rulări). Față de planul fix actual:
+
+| Strategie | Medie | Liniștit / ×0,8 | Dimineața | Vârf / ×1,2 |
+|---|---|---|---|---|
+| Agent E9 (specialist lejer) | **−6,5%** | −6,4 / −7,1% | −9,9% | −4,8 / −4,3% |
+| **Program pe tipuri de trafic** | **−5,2%** | −6,4 / −7,1% | −9,9% | −2,0 / −0,7% |
+| Agent E3 | −5,0% | −3,7 / −4,4% | −4,0% | **−7,2 / −5,5%** |
+| Agentul oficial | −4,9% | −4,6 / −7,7% | −5,4% | −3,1 / −3,9% |
+| Max-Pressure | −4,5% | −4,2 / −6,2% | −6,6% | −3,3 / −1,9% |
+| Actuated | −1,5% | −7,0 / −8,5% | −3,5% | +1,2 / +10,2% |
+| Webster | +0,4% | −3,7 / −7,3% | −5,0% | +11,5 / +6,5% |
+| Plan fix 46/48/12 | +5,3% | +11,0 / +9,4% | +8,7% | −2,0 / −0,7% |
+
+Programul pe tipuri de trafic rămâne semnificativ mai bun decât planul fix (p = 0,03; mai bun în 43/50 rulări) și
+decât actuated (p = 0,0006). Două concluzii: (1) **agenții AI generalizează** pe o zi nevăzută, cu alt tipar de
+trafic – toți trei bat planul fix, inclusiv la vârful de weekend; (2) planul cu ciclu lung, reglat pe vârfurile
+din zilele lucrătoare, nu se potrivește vârfului de duminică (−2,0% față de −7,2% pentru agentul E3): planurile
+fixe trebuie reglate pe tipuri de zile, în timp ce agentul se adaptează – un argument practic pentru controlul
+învățat. Rezultatul este preliminar (doar dimineața duminicii); se completează cu după-amiaza.
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare
