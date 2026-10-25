@@ -52,6 +52,8 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **Program realist** (ales pe validare cu participanți indisciplinați): lejer → `ppo_romana`, moderat + greu → E3;
   −16,0% vs plan fix (p = 0,00001; 42/50), −18,4% vs actuated – varianta implicită în `live_twin.py`
   (`VARIANTA_PROGRAM = "realist"`; „marginea_sus” = E9 / E3 / plan 46/48/12). Praguri pe debitul echilibrat 1 300 / 2 000.
+- Programul realist pe duminică cu participanți indisciplinați: −4,3% (nesemnificativ, p = 0,37); agentul oficial
+  singur −9,1% (§ 9.4). Colectarea de duminică oprită la ~17:00; datele finale 25.10 comise.
 - Pași posibili: reantrenarea agenților pe scenariile „doar intrări” și cu participanți indisciplinați; adnotarea a
   2–3 minute de video pentru a fixa nivelul cererii între cele două margini.
 ## Stare anterioară (22.10.2026, 16:10) – Bornele 7 și 9 încheiate
