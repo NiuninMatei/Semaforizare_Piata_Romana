@@ -56,7 +56,8 @@ validare, este cea mai bună strategie pe datele noi: **−8,5%** în evaluarea 
 5 seed-uri, § 9.7), față de actuated −3,2%, agentul E3 −1,4%, Webster −1,3%, agentul oficial +2,8% și
 Max-Pressure +9,6%. Programul final (agentul E9 la trafic lejer, E3 la moderat, planul 46/48/12 la greu),
 evaluat pe 10 seed-uri, dă **−6,9% față de planul fix actual** (p = 0,0003; mai bun în 79 din 100 de rulări) și
-−3,2% față de actuated (p = 0,04) – § 9.9–9.10. Coordonarea învățată cu vecinii a dat un rezultat negativ – detalii și explicații în [docs/DOCUMENTATIE.md § 9](docs/DOCUMENTATIE.md#9-rezultate).
+−3,2% față de actuated (p = 0,04) – § 9.9–9.10. **Pe o zi nevăzută, de weekend** (duminică 25.10), programul
+dă −5,2% (p = 0,03), iar agenții AI singuri −4,9…−6,5%, inclusiv la vârf – generalizează (§ 9.11). Coordonarea învățată cu vecinii a dat un rezultat negativ – detalii și explicații în [docs/DOCUMENTATIE.md § 9](docs/DOCUMENTATIE.md#9-rezultate).
 
 ## Pornire rapidă (Windows)
 
