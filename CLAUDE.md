@@ -48,6 +48,15 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   de rețea. § 9 din docs/DOCUMENTATIE.md rescris complet; GHID_PROFESOR.md pentru evaluare.
 - Laptop: modul Windows „Cea mai bună performanță” + Lenovo „Performanță” (~2,8 GHz pe toate firele).
 
+### 25.10.2026 (noaptea, de la 01:12; autorul revine la 18:00) – E4–E7, date de weekend
+
+- E4: `ppo_romana_nou` (1M pași de la zero) – validare +11,6…+12,9%, fără câștig față de oficial (§ 9.8).
+- E5/E6: specialiști pentru trafic greu; E6 (`ppo_romana_greu_bc`, imitație 46/48/12 + PPO) −5,8% pe validare,
+  dar −5,7% pe test față de planul 46/48/12 −8,4% → programul păstrează planul (−8,5%). Validare cu 5 seed-uri
+  (11–15) pentru experimentele următoare.
+- În lucru: E7 (E6 continuat cu lr mic), colectarea de date de duminică 25.10 (`run_vision` fără fereastră, de la 01:14)
+  → `scenarii_zi --zi 2026-10-25` spre seară, test de generalizare.
+
 ### 24.10.2026, 12:11–14:20 – evaluarea completă făcută; antrenarea de la zero oprită la 550k (de continuat)
 
 
