@@ -737,7 +737,7 @@ antrenată, măsuri de infrastructură sau de gestionare a cererii.
 
 ### 9.5 Reevaluarea pe datele renumărate cu zonele corectate (23.10.2026)
 
-După evaluarea prin demonstrație (`docs/OBSERVATII_EVALUARE.md`), zonele camerei au fost redesenate de autor,
+După verificarea live a sistemului de către autor (`docs/OBSERVATII_EVALUARE.md`), zonele camerei au fost redesenate de autor,
 cele două zile au fost renumărate (virajele urmărite complet: 2 800 → 4 995) și cele 10 scenarii regenerate.
 Agentul oficial (antrenat pe scenariile vechi) a fost reevaluat pe scenariile noi, nevăzute la antrenare:
 3 strategii × 10 scenarii × 3 seed-uri = 90 de simulări (`outputs/eval/rezultate.csv`, `docs/rezultate/`).
@@ -943,7 +943,7 @@ fixe trebuie reglate pe tipuri de zile, în timp ce agentul se adaptează – un
   ar permite fixarea factorului de corecție din `config/demand.json` – lucrare viitoare, nu condiție a
   rezultatelor.
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine și parțial ascunse.
-  *Redus pe 22–23.10:* zonele au fost redesenate după observațiile de la evaluarea prin demonstrație
+  *Redus pe 22–23.10:* zonele au fost redesenate după observațiile autorului de la verificarea live
   (`docs/OBSERVATII_EVALUARE.md`) și apoi înlocuite cu decupajele desenate de autor pe capturi ale camerei
   (§ 4.3); după renumărare, virajele urmărite complet au crescut de la 2 800 la 4 995 (≈21% din intrări, față
   de ≈11%), deci matricea O–D se sprijină mai mult pe viraje observate.
@@ -1010,7 +1010,7 @@ Flux tipic pentru o zi de date: rulați `2_viziune_live.bat` în intervalul dori
 | B7 | 21–22.10.2026 | viziune pe lumină de zi: căutarea camerelor publice pentru intersecțiile conexe, OpenVINO pe GPU Intel (~5 cadre/s), jurnal anonim de traiectorii și renumărare, sensul de mers pe zone, reunirea fragmentelor, zone recalibrate din câmpul de mișcare; colectare continuă 21.10 11:45 – 22.10 11:00 (zi, seară, noapte, vârf de dimineață) | Claude |
 | B8 | 21.10.2026 | replica fidelă a rețelei (16 semafoare fizice într-un controler, grupuri de semnal, treceri, trotuare, benzi STB); toți participanții: pietoni și bicicliști în cerere, cameră, geamăn digital, recompensă și evaluare; liniile de bază corectate pe rețeaua nouă (plan fix de referință, Webster, actuated, Max-Pressure); antrenare paralelă; reantrenare și evaluare | Claude |
 | B9 | 21–22.10.2026 | scenariile din date reale (10, din două zile), echilibrarea intrări/ieșiri, corectarea zonelor Dacia vest și a rutelor (bulevardele brațelor), agenții PPO pe date reale (v1–v3 și experimente, selecție pe seed-uri de validare), plafonul planurilor fixe și localizarea întârzierilor, test de generalizare pe ziua nevăzută, coridorul cu 4 vecini (fără Bd. Dacia × Str. Polonă, sens unic de ieșire), agentul final antrenat pe ambele zile, ghidul de utilizare (GHID.md) | Claude |
-| B9 (cont.) | 22.10.2026 | evaluarea prin demonstrație (autorul în rol de profesor, observațiile O1–O9 în `docs/OBSERVATII_EVALUARE.md`): zonele camerei redesenate, 7 treceri, redare fluentă a camerei (tampon de 8 s), flux MJPEG în dispecerat, pași de 0,2 s în SUMO, `9_demo_comparatie.bat` | Claude, autorul |
+| B9 (cont.) | 22.10.2026 | verificarea live a sistemului de către autor (observațiile O1–O9 în `docs/OBSERVATII_EVALUARE.md`): zonele camerei redesenate, 7 treceri, redare fluentă a camerei (tampon de 8 s), flux MJPEG în dispecerat, pași de 0,2 s în SUMO, `9_demo_comparatie.bat` | Claude, autorul |
 | B9 (cont.) | 23.10.2026 | zonele = decupajele desenate de autor (SIFT, scara fixă), renumărarea celor două zile (viraje complete 2 800 → 4 995), cele 10 scenarii regenerate, reevaluarea agentului (§ 9.5), verificarea rețelei cu Street View | Claude, autorul |
 | B9 (cont.) | 24.10.2026 | observațiile O10–O12; experimentele E2–E3; grila de planuri fixe; programul pe tipuri de trafic implementat în geamăn și dispecerat; evaluarea completă (350 de simulări, § 9.7) | Claude |
 | B9 (cont.) | 25.10.2026 | experimentele E4–E9 (agent general de la zero, specialiști pe tipuri de trafic, validare cu 5 seed-uri), statistica pe 10 seed-uri: programul final −6,9% față de planul fix (p = 0,0003), −3,2% față de actuated (§ 9.8–9.10); date de duminică pentru testul de generalizare | Claude |

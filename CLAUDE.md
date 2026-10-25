@@ -103,7 +103,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 
 ### Evaluarea prin demonstrație (22.10, 20:48–22:00) – pașii 1–5 prezentați
 
-- Autorul în rol de profesor; observațiile O1–O9 și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`.
+- Verificarea live de către autor; observațiile O1–O9 și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`.
 - Zonele camerei recalibrate (O1–O7, 7 treceri); fluxul MJPEG în dispecerat și pași de 0,2 s în SUMO (O8);
   demo-ul de comparație cu bicicliști/pietoni (O9).
 - **De făcut:** Pasul 5 al demonstrației (rezultate și limite); renumărarea oficială cu zonele noi (`recount`)
