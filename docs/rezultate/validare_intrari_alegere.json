@@ -1,0 +1,28 @@
+{
+  "scor_mediu_procent": {
+    "ACTUATED": -1.91,
+    "PLAN_46_48_12": 6.81,
+    "ppo_romana": -0.13,
+    "ppo_romana_greu_e7_400k": 5.25,
+    "ppo_romana_lejer": 3.38,
+    "ppo_romana_zn3": -1.4
+  },
+  "ales": "ACTUATED",
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ],
+  "scenarii": [
+    "zi_2026-10-21_linistit",
+    "zi_2026-10-21_linistit_x0_8",
+    "zi_2026-10-21_pranz",
+    "zi_2026-10-21_varf",
+    "zi_2026-10-21_varf_x1_2",
+    "zi_2026-10-22_dimineata",
+    "zi_2026-10-22_linistit",
+    "zi_2026-10-22_linistit_x0_8",
+    "zi_2026-10-22_varf",
+    "zi_2026-10-22_varf_x1_2"
+  ]
+}

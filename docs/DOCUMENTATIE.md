@@ -335,43 +335,42 @@ completate cu scenarii construite din numărătorile reale.
 
 ### 5.4 Scenariile din date reale (Borna 9)
 
-Prima zi de date: **miercuri, 21.10.2026, 11:45–21:01** (9 h 15 min de flux continuu, ≈5–6 cadre/s, nicio
-reconectare). Jurnalul de traiectorii a fost renumărat cu zonele calibrate pe zi: 123.829 de fragmente,
-108.585 de traiectorii după reunire, 16.110 intrări numărate, 7.733 de pietoni pe trecerile vizibile.
+Datele colectate: **miercuri 21.10.2026 de la 11:45 până joi 22.10.2026 la 11:00** (zi, seară, noapte și vârful
+de dimineață, flux continuu la ≈5–6 cadre/s) și **duminică 25.10.2026 de la 01:14** (noapte, dimineață, prânz;
+colectarea a continuat până la oprirea sistemului). Toate zilele sunt numărate cu zonele finale (§ 4.3): pentru
+21–22.10, ≈200 000 de traiectorii după reunirea fragmentelor, ≈24 000 de intrări numărate și ≈5 000 de viraje
+urmărite complet. Profilurile au forma așteptată: în zilele lucrătoare vârful de seară (17:15–18:15) și platoul
+de dimineață (08:00–10:45), noaptea câteva sute de vehicule pe oră; duminică traficul crește abia de la 08:30,
+cu vârful la prânz.
 
-Profilul zilei (debit echilibrat prin piață, ferestre glisante de o oră) are forma așteptată: ≈2.000 veh/h la
-prânz, un vârf secundar la 13:00–14:00 (≈2.600 veh/h, pauza de masă), creștere de la 15:30, **vârful de seară
-la 17:15–18:15 (≈2.780 veh/h)** și scădere după 18:30 (≈1.260 veh/h la 20:00–21:00). Pietonii numărați pe
-cele două treceri vizibile: 600–1.250 pe oră.
+`python -m romana.bridge.scenarii_zi --zi AAAA-LL-ZZ` alege automat ferestrele (ora de vârf, ora cea mai liniștită
+și, dacă nu se suprapun cu vârful, dimineața 07:30–08:30 și prânzul 12:00–13:00) și construiește scenariile, plus
+sensibilitățile vârf ×1,2 și liniștit ×0,8. Cu zonele finale (§ 4.3), datele renumărate și cererea calculată doar
+din intrări (marginea de jos, § 5.1), scenariile actuale sunt:
 
-`python -m romana.bridge.scenarii_zi --zi 2026-10-21` alege automat ferestrele și construiește scenariile:
-
-| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Observații |
+| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Marginea de sus* |
 |---|---|---|---|---|---|
-| `zi_2026-10-21_pranz` | 12:00–13:00 | 2.068 | 310 | 2.258 | |
-| `zi_2026-10-21_varf` | 17:15–18:15 | 2.779 | 417 | 2.418 | ora de vârf a zilei |
-| `zi_2026-10-21_linistit` | 20:00–21:00 | 1.262 | 189 | 1.988 | |
-| `zi_2026-10-21_varf_x1_2` | vârf × 1,2 | 3.335 | 500 | 2.418 | sensibilitate (marja de măsurare) |
-| `zi_2026-10-21_linistit_x0_8` | liniștit × 0,8 | 1.010 | 151 | 1.988 | sensibilitate |
+| `zi_2026-10-21_pranz` (miercuri) | 12:00–13:00 | 1 194 | 179 | 3 152 | ≈1 780 |
+| `zi_2026-10-21_varf` | 17:15–18:15 | 1 636 | 245 | 3 205 | ≈2 510 |
+| `zi_2026-10-21_varf_x1_2` | vârf × 1,2 | 1 963 | 294 | 3 205 | ≈3 020 |
+| `zi_2026-10-21_linistit` | 23:00–00:00 | 649 | 97 | 247 | ≈860 |
+| `zi_2026-10-21_linistit_x0_8` | liniștit × 0,8 | 519 | 78 | 247 | ≈690 |
+| `zi_2026-10-22_dimineata` (joi) | 07:30–08:30 | 1 534 | 230 | 3 027 | ≈2 220 |
+| `zi_2026-10-22_varf` | 09:45–10:45 | 1 646 | 247 | 2 869 | ≈2 400 |
+| `zi_2026-10-22_varf_x1_2` | vârf × 1,2 | 1 975 | 296 | 2 869 | ≈2 880 |
+| `zi_2026-10-22_linistit` | 02:30–03:30 | 162 | 24 | 20 | ≈300 |
+| `zi_2026-10-22_linistit_x0_8` | liniștit × 0,8 | 130 | 19 | 20 | ≈240 |
+| `zi_2026-10-25_dimineata` (duminică) | 07:30–08:30 | 704 | 106 | 450 | – |
+| `zi_2026-10-25_varf` | 11:45–12:45 | 3 483 | 522 | 1 963 | – |
+| `zi_2026-10-25_varf_x1_2` | vârf × 1,2 | 4 180 | 627 | 1 963 | – |
+| `zi_2026-10-25_linistit` | 05:15–06:15 | 349 | 52 | 183 | – |
+| `zi_2026-10-25_linistit_x0_8` | liniștit × 0,8 | 279 | 42 | 183 | – |
 
-**A doua zi de date: joi, 22.10.2026, 00:00–11:00** (colectarea a continuat peste noapte și în vârful de
-dimineață; prioritatea procesului de viziune a fost ridicată în timpul vârfului, ca antrenarea care rula în
-paralel să nu-i scadă rata de cadre). 79.041 de fragmente → 66.915 traiectorii; noaptea 230–500 veh/h
-(01:00–05:00), creștere bruscă de la 06:30, vârful de dimineață de la 07:15 și un platou de 2.300–2.700 veh/h
-între 08:00 și 10:45:
-
-| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Observații |
-|---|---|---|---|---|---|
-| `zi_2026-10-22_dimineata` | 07:30–08:30 | 2.243 | 336 | 2.218 | vârful clasic de dimineață |
-| `zi_2026-10-22_varf` | 09:45–10:45 | 2.502 | 375 | 2.152 | ora cu debitul maxim |
-| `zi_2026-10-22_linistit` | 03:45–04:45 | 284 | 43 | 19 | noaptea |
-| `zi_2026-10-22_varf_x1_2` | vârf × 1,2 | 3.003 | 450 | 2.152 | sensibilitate |
-| `zi_2026-10-22_linistit_x0_8` | noapte × 0,8 | 227 | 34 | 19 | sensibilitate |
-
-Cu cele două zile, proiectul are **10 scenarii din date reale**, de la noapte (≈230 veh/h) la vârful de seară
-(≈2.500 veh/h) și suprasarcina de sensibilitate (≈3.000 veh/h). Agentul v1 a fost antrenat doar pe 21.10; ziua
-de 22.10 servește întâi ca test de generalizare (§ 9.1), apoi agenții finali sunt antrenați pe ambele zile.
-
+\* Vehiculele prin piață cu calibrarea „medie” (media intrări/ieșiri), folosită până la 25.10 (scenariile se
+regăsesc în istoricul git); pentru duminică, scenariile cu această calibrare au fost construite din datele de
+până la 11:30 (§ 9.3). Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
+GEH < 5 pentru ≈94% din relațiile autoturismelor și 100% din cele ale celorlalte tipuri. Agenții au fost
+antrenați pe scenariile din zilele lucrătoare; duminica servește doar ca test de generalizare.
 Compoziția măsurată pe toată ziua de 21.10 (intrări și ieșiri): 92,7% autoturisme, 3,7% autobuze și troleibuze, 3,2%
 camioane, 0,3% biciclete, 0,1% motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi
 de octombrie cu 12–15 °C. Pentru fiecare tip de vehicul,
@@ -591,371 +590,126 @@ aranjare pe o coloană sub 900 px. Atribuirile cerute (OSM, Webcam România, SUM
 
 ## 9. Rezultate
 
-Rezultatele complete, regenerate automat de `scripts\5_evalueaza.bat`, sunt în
-[`docs/rezultate/rezultate.md`](rezultate/rezultate.md), iar graficul comparativ în
-[`docs/rezultate/comparatie_strategii.png`](rezultate/comparatie_strategii.png).
+### 9.1 Cum se evaluează
 
-<!-- REZULTATE_INCEPUT -->
-### 9.0 Rezumat final – cele 10 scenarii din date reale (21 și 22.10.2026)
+* **Scenariile** (§ 5.4): 10 ore de trafic din zilele lucrătoare 21–22.10.2026 (liniștit, prânz, dimineață, vârf
+  și variantele de sensibilitate ×0,8 / ×1,2) și 5 ore din duminica 25.10.2026, zi pe care nicio strategie nu a
+  fost antrenată sau aleasă. Fiecare scenariu durează o oră de cerere plus 15 minute de golire.
+* **Indicatorul principal**: pierderea totală de timp a tuturor participanților – vehicule (inclusiv întârzierea
+  la intrarea în rețea), bicicliști și pietoni –, exprimată față de planul fix de referință (programul actual,
+  36/28/12 s, § 6.3). Restul metricilor (§ 7.5) sunt în `docs/rezultate/rezultate.md`.
+* **Separarea datelor**: fiecare simulare depinde de un seed aleatoriu (sosirile, comportamentul șoferilor).
+  Alegerile – ce agent, ce plan, ce strategie pe ce tip de trafic – s-au făcut **numai pe seed-urile de validare
+  11–15**; rezultatele raportate sunt pe **seed-urile de test 1–10**, nefolosite la alegere.
+* **Statistica**: comparațiile se fac pe perechi (același scenariu, același seed), cu testul t pe perechi și
+  testul Wilcoxon; „mai bun în k din n” numără rulările în care strategia are o pierdere totală mai mică.
+* **Cele două calibrări ale cererii** (§ 5.1): marginea de sus (media intrări/ieșiri măsurate) și marginea de jos
+  (doar intrările). Adevărul se află între ele, de aceea rezultatele sunt raportate pentru ambele.
 
-*300 de simulări: 10 scenarii (§ 5.4) × 6 strategii × 5 seed-uri SUMO (1–5). Pierderea totală de timp a tuturor
-participanților – vehicule (inclusiv întârzierea la intrare), bicicliști, pietoni –, procente față de planul fix
-de referință; agentul oficial (v1) a fost ales pe seed-uri de validare separate (11–13).*
+### 9.2 Rezultatul principal: programul pe tipuri de trafic
 
-| Scenariu | Plan fix (h) | Webster | Actuated | Max-Pressure | **Agent RL piață (v1)** | Agent RL coridor |
-|---|---|---|---|---|---|---|
-| 21.10 liniștit ×0,8 | 105,1 | −5% | −5% | −14% | **−13%** | −7% |
-| 21.10 liniștit (20–21) | 112,1 | +7% | −4% | −10% | **−5%** | −9% |
-| 21.10 prânz (12–13) | 244,0 | −3% | +5% | +5% | **−5%** | +60% |
-| 21.10 vârf (17:15–18:15) | 335,7 | +16% | +27% | +3% | **−2%** | +60% |
-| 21.10 vârf ×1,2 | 427,2 | 0% | +30% | +5% | **+1%** | +88% |
-| 22.10 dimineața (07:30–08:30) | 301,4 | −4% | +8% | −1% | **0%** | +58% |
-| 22.10 noaptea (03:45–04:45) | 8,6 | −5% | −6% | −9% | **−7%** | +6% |
-| 22.10 noaptea ×0,8 | 7,1 | −6% | −8,5% | −7% | **−8,5%** | +1% |
-| 22.10 vârf (09:45–10:45) | 339,0 | +9% | +45% | +6% | **−4%** | +55% |
-| 22.10 vârf ×1,2 | 462,8 | +13% | +39% | +2% | **−2%** | +43% |
-| **Media pe cele 10 scenarii** | – | +2,4% | +13,1% | −2,0% | **−4,6%** | +35,4% |
+Niciun agent AI, aplicat singur pe toate tipurile de trafic, nu bate în mod robust un plan fix bine reglat
+(§ 9.5). Soluția găsită este un **program pe tipuri de trafic**: pentru fiecare tip de trafic (lejer, moderat,
+greu) se folosește strategia care a fost cea mai bună pe datele de validare, iar la performanță practic egală se
+preferă strategia mai simplă. Toate componentele sunt implementabile pe automatul existent (se schimbă doar
+programul semaforului). Programul este implementat în geamănul digital și în dispecerat (modul „Program pe tipuri
+de trafic”, `bridge/live_twin.py`), cu comutare automată după debitul măsurat de cameră.
 
-**Agentul RL al pieței este cea mai bună strategie în medie (−4,6%) și singura care nu pierde semnificativ în
-niciun scenariu** (cel mai rău caz: +0,7% la suprasarcina de 3.000 veh/h, în marja de variație între seed-uri).
-Câștigă clar la trafic lejer și mediu (până la −13,5%) și la vârful zilei de 22.10 (−4,2%), zi pe care nu a
-văzut-o la antrenare. Max-Pressure, al doilea, e foarte bun noaptea, dar pierde la vârf; actuated și Webster
-pierd mult în saturație.
-
-### 9.1 Pe datele reale din 21.10.2026 (Borna 9) – dezvoltarea agentului
-
-*Scenariile din § 5.4 (prânz, vârf, liniștit, plus sensibilitățile ×1,2 și ×0,8), 5 seed-uri SUMO pe scenariu
-(1–5); selecția modelelor s-a făcut pe alte seed-uri (11–13), ca alegerea să nu fie făcută pe datele de test.*
-
-**Pierderea totală de timp a tuturor participanților** (vehicule, inclusiv întârzierea la intrare, bicicliști,
-pietoni; ore; media pe 5 seed-uri; procente față de planul fix de referință):
-
-| Strategie | Liniștit ×0,8 | Liniștit | Prânz | Vârf | Vârf ×1,2 |
-|---|---|---|---|---|---|
-| Plan fix de referință | 105,1 | 112,1 | 244,0 | 335,7 | 427,2 |
-| Plan fix (Webster) | 100,2 (−5%) | 120,5 (+7%) | 237,8 (−3%) | 389,7 (+16%) | 426,9 (0%) |
-| Actuated SUMO | 99,8 (−5%) | 107,9 (−4%) | 255,3 (+5%) | 428,0 (+27%) | 553,4 (+30%) |
-| Max-Pressure | 90,6 (−14%) | 101,1 (−10%) | 256,0 (+5%) | 346,3 (+3%) | 447,6 (+5%) |
-| **Agent RL v1 (PPO)** | **90,9 (−13%)** | 106,7 (−5%) | **232,3 (−5%)** | **327,9 (−2%)** | 430,1 (+1%) |
-| Agent RL v2 (cozi în amonte) | 91,0 (−13%) | 102,7 (−8%) | 237,2 (−3%) | 328,5 (−2%) | 491,6 (+15%) |
-| Agent RL v3 (imitație + PPO) | 116,0 (+10%) | 121,1 (+8%) | 272,1 (+12%) | 335,2 (0%) | 455,6 (+7%) |
-
-**Ce arată datele reale.**
-
-* **Agentul v1 este singura strategie care nu pierde nicăieri semnificativ** față de planul fix: câștigă clar la
-  volume mici și medii (−13% / −5% / −5%), iar la vârf și la suprasarcină este la egalitate statistică (−2% și
-  +1%, în condițiile în care între seed-uri valorile variază cu ±5–8%). Max-Pressure este foarte bun când traficul
-  e lejer, dar pierde la prânz și la vârf; actuated pierde mult în saturație (+27–30%).
-* **Plafonul la vârf este mic.** O căutare exhaustivă a planului fix la vârf (32 de împărțiri ale verdelui N–S /
-  E–V / pietoni × 2 seed-uri) găsește cel mai bun plan, 50 / 40 / 10 s, la **−5,4%** față de planul de referință;
-  planurile prost alese ajung la +69%. Planul actual al proiectului este deci deja aproape de optimul planurilor
-  fixe, iar spațiul de câștig al oricărui semafor al pieței la vârf este de ordinul câtorva procente.
-* **De ce:** la vârf, 68% din timpul pierdut este al vehiculelor care nu încap în rețea – coada de pe Bd. Dacia
-  dinspre Calea Victoriei continuă dincolo de marginea zonei modelate –, 24% se pierde în zona pieței (intrări și
-  250 m în amonte), iar doar 8% în restul rețelei. Brațul Dacia vest (2 benzi pentru autoturisme, verde doar în
-  faza E–V) este gâtuirea; mai mult verde pentru el înseamnă mai puțin pentru axa N–S, la fel de încărcată.
-* **Experimente negative, raportate ca atare.** (1) v2 – observația și recompensa cu cozile din amonte (§ 7.1) –
-  nu aduce câștig față de v1 și se degradează la suprasarcină. (2) v3 – preantrenarea prin imitație a celui mai bun
-  plan fix la vârf, urmată de PPO – reproduce planul cu acuratețe 99,5%, dar planul optim la vârf (ciclu lung) este
-  risipitor când traficul e lejer, iar agentul păstrează prea mult din el: +8–12% la volume mici și medii; niciun
-  checkpoint intermediar nu este mai bun.
-* **Generalizare pe o zi nevăzută.** Agentul v1, antrenat doar pe 21.10, a fost evaluat pe scenariile din
-  22.10 (noapte, vârf de dimineață, vârful zilei 09:45–10:45). Față de planul fix: noapte −7% și −8,5%,
-  dimineața 07:30–08:30 0%, **vârful zilei −4,2%** și vârf ×1,2 −1,7% – singura strategie care întrece planul
-  fix la vârf pe 22.10 (Max-Pressure +6%, Webster +9%, actuated +45%). Agentul a învățat o regulă generală, nu
-  scenariile pe care a fost antrenat.
-* **Alegerea agentului final.** Două agenți noi, antrenați pe ambele zile (rețetă v1, inițializări diferite),
-  au fost comparați cu v1 pe seed-uri de validare separate (11–13), pe 4 scenarii (prânz și vârf 21.10,
-  dimineață și vârf 22.10): scor mediu față de planul fix −3,5% (v1), +1,5% și +6,9% (noii agenți). Agentul
-  oficial rămâne **v1** (`models/ppo_romana`); variația mare de la o antrenare la alta este o proprietate
-  cunoscută a PPO, iar selecția pe date de validare – nu pe cele de test – este procedura corectă
-  (`docs/rezultate/validare_finala.csv`, `alegere_agent.json`).
-* **Pietonii câștigă și ei** la agentul v1, spre deosebire de scenariile ipotetice (§ 9.2): pierderea lor de timp
-  scade de la 153 la 125 s (liniștit ×0,8, −19%), de la 154 la 140 s (liniștit, −9%), de la 154 la 141 s (prânz,
-  −8%), de la 188 la 178 s (vârf, −5%) și rămâne practic egală la suprasarcină (185 față de 182 s, +1%).
-  Detaliile pe toate categoriile de participanți sunt în `docs/rezultate/rezultate.md`.
-
-### 9.2 Pe scenariile ipotetice (Borna 8, înaintea datelor reale)
-
-*Secțiune păstrată pentru comparație: replica fidelă a rețelei, cu toți participanții, pe cele trei scenarii de
-referință ipotetice (§ 5.3). Diferența față de § 9.1 este instructivă: cu cererea ipotetică, planul fix intra des
-în blocaj, iar agentul îl evita; pe datele reale, după corectarea erorilor de numărare (§ 4.3, § 5.1), rețeaua
-este saturată în alt loc (brațul Dacia vest), iar câștigurile sunt mult mai mici.*
-
-**Configurație.** 3 scenarii × 6 strategii × 5 seed-uri SUMO = 90 de simulări a câte 75 de minute (60 de minute
-de cerere + 15 minute de golire). Agentul pieței: PPO, 500.736 de pași de decizie (≈ 700 de episoade de o oră),
-72,9 minute de antrenare în 8 procese paralele, recompensa din § 7.1, acțiuni = cele 3 faze ale planului real.
-Agentul coridor: 300.000 de pași, 6 controlere.
-
-**Pierderea totală de timp a tuturor participanților** (vehicule, inclusiv întârzierea la intrare, bicicliști,
-pietoni; ore; media pe 5 seed-uri, procente față de planul fix de referință):
-
-| Strategie | Moderat (1.442 veh/h) | Vârf (2.060 veh/h) | Aglomerat (2.472 veh/h) |
+| Calibrarea cererii | Trafic lejer | Trafic moderat (prânz) | Trafic greu (vârf, dimineață) |
 |---|---|---|---|
-| Plan fix de referință | 183,0 | 432,3 | 728,3 |
-| Plan fix (Webster) | 291,5 (+59%) | 481,6 (+11%) | 731,8 (+0%) |
-| Actuated SUMO | 189,2 (+3%) | 386,1 (−11%) | 580,7 (−20%) |
-| Max-Pressure | 192,2 (+5%) | 379,1 (−12%) | 687,1 (−6%) |
-| **Agent RL piață (PPO)** | **177,8 (−3%)** | **298,6 (−31%)** | **405,3 (−44%)** |
-| Agent RL coridor (PPO) | 361,0 (+97%) | 563,8 (+30%) | 624,0 (−14%) |
+| marginea de sus (media intrări/ieșiri) | agentul E9 (`ppo_romana_lejer`) | agentul E3 (`ppo_romana_zn3`) | plan fix 46/48/12 s |
+| marginea de jos (doar intrări) | actuated* (egal cu agentul oficial, mai simplu) | agentul E3 | planul fix actual (toate alternativele egale cu el) |
 
-**Așteptarea medie a vehiculelor motorizate** (s): agentul pieței obține 121 / 150 / 204 s, față de 135 / 402 /
-790 s la planul fix (−10% / −63% / −74%) și 135 / 261 / 503 s la actuated, cel mai bun algoritm clasic. Abaterea
-standard între seed-uri este mică (25 / 21 / 54 s), deci politica nu mai cade în blocaj ca planurile fixe sau
-Max-Pressure, a căror medie este trasă în sus de câteva rulări blocate (de aceea raportul dă și mediana).
-Bicicliștii câștigă la fel: 61 / 72 / 124 s așteptare, față de 78 / 402 / 807 s la planul fix.
+\* Programul actuated presupune detectarea vehiculelor la intrări (bucle inductive sau camera, ca în acest proiect).
 
-**Pietonii.** Pierderea de timp a pietonilor crește ușor la agentul pieței în scenariile moderat și vârf (+12% și
-+6%: 171 și 178 s față de 153 și 168 s) și scade în scenariul aglomerat (−9%). Recompensa cântărește un pieton
-care așteaptă cât un vehicul oprit, iar la volume mari de vehicule agentul favorizează golirea cozilor. Este un
-compromis explicit, care poate fi mutat prin ponderea pietonilor în recompensă (lucrare viitoare: o pondere pe
-persoană, ca pentru călătorii din autobuze).
+**Zilele lucrătoare, marginea de sus** – 100 de rulări pe strategie (10 scenarii × 10 seed-uri de test), media pe
+scenarii față de planul fix actual:
 
-**Observații.**
-
-* **Webster** dă rezultate mai slabe decât planul de referință: cu debitul de saturație teoretic (1.800
-  veh/h/bandă), gradul de saturație calculat este mic (Y ≈ 0,25), iar ciclul rezultat (≈ 72 s) se dovedește prea
-  scurt pentru inelul pieței: capacitatea reală a intrărilor este mult sub cea teoretică (ipoteză: țeserea pe inel
-  și cozile interne), iar timpul pierdut la schimbarea fazelor are pondere mai mare într-un ciclu scurt.
-* **Max-Pressure** este bun în mediană la vârf (174 s), dar instabil; restrâns la fazele planului real, nu mai
-  blochează piața ca varianta cu toate fazele (§ 7.4).
-* **Agentul coridor** nu depășește planurile `actuated` ale intersecțiilor vecine: cu o acțiune comună pentru 6
-  controlere (fazele vecinilor sunt cele generate de `netconvert`) și 300.000 de pași, curba de învățare se
-  plafonează sub cea a agentului pieței (recompensă medie pe episod ≈ −1.250 față de ≈ −1.050). Rezultatul negativ
-  este raportat ca atare; pentru coordonare, direcțiile promițătoare sunt agenți descentralizați cu parametri
-  comuni (MPLight[^mplight]) sau atenție pe graf (CoLight[^colight]).
-* **Prima versiune a recompensei** a produs un agent coridor care „ascundea” coada la marginea rețelei (§ 7.1);
-  evaluarea pe toți participanții și cu întârzierea la intrare a făcut problema vizibilă.
-* Valorile absolute sunt mari pentru că includ întârzierile de la semafoarele de la marginea zonei și cozile de
-  intrare (§ 7.5); comparația dintre strategii este cea relevantă.
-
-Pe cererea ipotetică, agentul reducea pierderea totală cu 31–44% la volume mari – în principal pentru că planul
-fix intra în blocaj, iar agentul îl evita. Datele reale (§ 9.1) nu au confirmat această amploare: cererea
-măsurată are altă structură, iar după corectarea erorilor de numărare gâtuirea este capacitatea brațului Dacia
-vest, pe care niciun program de semafor nu o poate mări.
-
-### 9.3 Coridorul (piața + 4 vecini) – rezultat negativ
-
-Agentul coridor final (rețeta v1, 500.000 de pași pe ambele zile, 5 controlere: piața și cei 4 vecini care o
-alimentează, cu fazele vecinilor curățate de variantele de 5 s) este **mult mai slab** decât lăsarea vecinilor pe
-programele lor actuale: +55…+88% la prânz, vârf și suprasarcină, apropiat de planul fix doar noaptea și seara.
-Motivele probabile: (1) vecinii au deja programe `actuated` bune (ca sistemul BTMS real), iar o politică
-învățată comun pentru 5 intersecții, cu un spațiu de acțiuni de 3×3×3×2×3 = 162 de combinații, nu ajunge la
-nivelul lor în 500.000 de pași; (2) o decizie proastă la un vecin (de ex. verde scurt pe direcția spre piață)
-umple brațul respectiv al pieței, iar efectul se propagă. Încercările anterioare (cu 6 controlere, cu recompensa
-veche, cu cozile din amonte) au dat același verdict. **Concluzia practică: AI-ul conduce semaforul Pieței
-Romane, iar intersecțiile vecine rămân pe programele lor adaptive actuale.** Pentru o coordonare reală ar fi
-nevoie de agenți descentralizați, câte unul pe intersecție, cu parametri comuni (MPLight[^mplight]) sau de
-atenție pe graf (CoLight[^colight]), și de mult mai mult timp de antrenare.
-
-### 9.4 Concluzie
-
-Pe replica fidelă a pieței, cu toți participanții și cu cererea măsurată pe cameră, un controler care schimbă doar
-**ordinea și durata fazelor existente** (ce se poate programa pe automatul real) aduce câștiguri reale dar
-modeste: în medie −4,6% din pierderea totală de timp pe 10 scenarii din două zile, până la −13,5% la trafic
-lejer, −4,2% la vârful unei zile nevăzute la antrenare, câștiguri și pentru pietoni, și niciodată o pierdere
-semnificativă – ceea ce niciun algoritm clasic testat nu reușește. La vârf, spațiul de câștig este oricum mic:
-și cel mai bun plan fix posibil câștigă doar ≈5%, pentru că gâtuirea este capacitatea brațului Dacia vest și
-coada care depășește zona pieței. Coordonarea învățată cu vecinii (§ 9.3) nu a funcționat în forma încercată;
-pentru câștiguri mari la vârf rămân direcțiile din afara scopului proiectului: coordonare descentralizată mult mai
-antrenată, măsuri de infrastructură sau de gestionare a cererii.
-<!-- REZULTATE_SFARSIT -->
-
-### 9.5 Reevaluarea pe datele renumărate cu zonele corectate (23.10.2026)
-
-După verificarea live a sistemului de către autor (§ 12.2), zonele camerei au fost redesenate de autor,
-cele două zile au fost renumărate (virajele urmărite complet: 2 800 → 4 995) și cele 10 scenarii regenerate.
-Agentul oficial (antrenat pe scenariile vechi) a fost reevaluat pe scenariile noi, nevăzute la antrenare:
-3 strategii × 10 scenarii × 3 seed-uri = 90 de simulări (`outputs/eval/rezultate.csv`, `docs/rezultate/`).
-Pierderea totală de timp față de planul fix:
-
-| Scenariu | Max-Pressure | Agent RL (antrenat pe datele vechi) |
-|---|---|---|
-| 21.10 liniștit / ×0,8 | −7,3% / −8,2% | **−7,4% / −8,0%** |
-| 21.10 prânz | +22,6% | **−16,8%** |
-| 21.10 vârf / ×1,2 | +28,8% / +11,4% | +33,6% / +22,8% |
-| 22.10 dimineață | +16,2% | +10,9% |
-| 22.10 liniștit / ×0,8 | −4,0% / −9,5% | **−7,6%** / −9,1% |
-| 22.10 vârf / ×1,2 | +17,9% / +23,4% | +23,1% / +10,2% |
-| **Medie** | **+9,1%** | **+5,2%** |
-
-**Interpretare.** Cu cererea măsurată mai corect, planul fix rămâne cea mai bună strategie la vârf, iar
-agentul păstrează câștigul doar la trafic lejer și moderat (până la −16,8% la prânz). Agentul a fost antrenat pe
-o cerere estimată cu zonele vechi, cu alte proporții de viraj; rezultatul arată că politica învățată depinde de
-calitatea datelor de intrare și **trebuie reantrenată pe scenariile noi** (cu selecție pe seed-urile de validare
-11–13, ca în § 9.2). Rezultatul de −4,6% din § 9.1 rămâne valabil pentru scenariile construite cu zonele vechi
-(`docs/rezultate/rezultate_v1_si_experimente.csv`, `outputs/eval/rezultate_zone_vechi.csv`).
-
-**Experimentul E2 – reantrenarea pe scenariile noi (24.10.2026, rezultat negativ).** Agentul oficial a fost
-antrenat în continuare 100 000 de pași pe cele 10 scenarii noi (`models/ppo_romana_zn`, 8 medii paralele,
-~20 min) și comparat cu agentul vechi pe seed-urile de validare 11–13, pe 5 scenarii
-(`docs/rezultate/validare_zone_noi.csv`): agentul vechi +11,3% față de planul fix, cel reantrenat +19,8%
-(+53% la vârful din 22.10). Conform regulii de selecție, agentul oficial rămâne `ppo_romana`. Interpretare: o
-continuare scurtă a antrenării pe o cerere mult mai grea la vârf destabilizează politica; e nevoie de o
-antrenare completă (500 000 de pași sau mai mult, de la zero, cu selecție pe validare), care cere câteva ore.
-
-### 9.6 Cel mai bun plan fix pe datele noi și programul pe tipuri de trafic (24.10.2026)
-
-**Grila de planuri fixe** (`docs/rezultate/grila_plan_zone_noi.csv`): 11 planuri (verde N–S ∈ {36, 46, 56} s ×
-E–V ∈ {28, 38, 48} s, pietoni 12 s, plus 50/40/10 s), selecție pe seed-ul de validare 11 (5 scenarii), test pe
-seed-urile 1–3 (10 scenarii). Planul de referință (36/28/12 s) iese practic optim în medie; cel mai bun din grilă,
-**46/48/12 s**, dă +0,2% în medie pe test, dar **câștigă la trafic greu** (vârf 21.10 ×1,2: −15,0%; vârf 22.10
-×1,2: −11,5%; vârf 21.10: −3,7%; dimineața 22.10: −2,4%) și pierde la trafic lejer (+7…+9%).
-
-**Programul pe tipuri de trafic** (practică curentă la automatele reale: planuri diferite pe intervale orare).
-Agentul RL (§ 9.5) și planul 46/48/12 se completează: agentul câștigă la trafic lejer, planul cu ciclu lung la
-trafic greu. Regula, stabilită pe datele de validare (nu pe cele de test): trafic lejer → agentul RL; prânz →
-planul de referință (pe validare niciuna dintre alternative nu l-a bătut); vârf și dimineață → planul 46/48/12.
-Pe scenariile de test (seed-urile 1–3), față de planul fix actual:
-
-| Tip | Scenarii | Strategie | Rezultat |
-|---|---|---|---|
-| lejer | 21.10 / 22.10 liniștit, ×0,8 | agent RL | −7,4%, −8,0%, −7,6%, −9,1% |
-| prânz | 21.10 prânz | plan de referință | 0% |
-| greu | vârf 21.10 / 22.10, ×1,2, dimineața 22.10 | plan 46/48/12 | −3,7%, −15,0%, +1,7%, −11,5%, −2,4% |
-| **medie** | 10 scenarii | | **−6,3%** |
-
-**Experimentul E3 – fine-tuning cu rată de învățare mică (24.10.2026).** Agentul oficial continuat 60 000 de pași
-pe scenariile noi cu rata de învățare 3·10⁻⁵ (de 10 ori mai mică decât la E2; `models/ppo_romana_zn3`). Pe
-validare (seed-urile 11–13): +11,0% în medie față de planul fix, practic la fel ca agentul vechi (+11,3%), dar
-**primul agent care bate planul fix la prânz** (−5,2% pe validare, −17,6% pe seed-urile de test 1–3). Cu E3 la
-prânz, programul pe tipuri de trafic devine: lejer → agentul oficial, prânz → E3, vârf/dimineață → 46/48/12 s,
-cu **−8,1% în medie** pe cele 10 scenarii de test (față de −6,3% cu planul de referință la prânz). În geamănul
-live, banda de mijloc folosește încă planul de referință (un al doilea model în `live_twin.py` – pas următor).
-
-**Implementat** în geamănul live și în dispecerat: modul „Program pe tipuri de trafic” comută automat după debitul
-măsurat de cameră la intrările pieței (sub 1 300 veh/h → agentul AI; 1 300–2 000 → agentul E3; peste
-2 000 → planul 46/48/12; pragurile despart scenariile liniștite, de prânz și de vârf), iar dispeceratul arată ce
-strategie e activă în fiecare moment. **Corectură (25.10):** comutarea se face pe debitul echilibrat – media dintre
-intrările și ieșirile măsurate de cameră, exact ca la construirea scenariilor (§ 5.1) –, nu doar pe intrări:
-intrările camerei reprezintă în medie 0,64 din debitul scenariilor (camera subnumără intrările și supranumără
-ieșirile), iar la vârful real (~2 500 veh/h) ar fi părut trafic moderat (~1 550 veh/h).
-
-Limite: planul a fost ales pe un singur seed de validare; regula presupune că tipul de trafic se cunoaște
-(intervalul orar sau debitul măsurat de cameră, deja disponibil live); câștigul la prânz rămâne de obținut prin
-reantrenarea completă a agentului.
-
-### 9.7 Evaluarea completă pe datele noi (24.10.2026)
-
-350 de simulări: 7 strategii × 10 scenarii (din datele renumărate) × 5 seed-uri de test
-(`outputs/eval/rezultate.csv`, `docs/rezultate/rezultate.md`, `rezultate_brute.csv`). Pierderea totală de timp a
-tuturor participanților față de planul fix actual, medie pe cele 10 scenarii:
-
-| Strategie | Medie | Trafic lejer (4 sc.) | Prânz | Trafic greu (5 sc.) |
-|---|---|---|---|---|
-| **Program pe tipuri de trafic** (§ 9.6) | **−8,5%** | −7,5 … −11,0% | −7,8% | −14,8 … +1,1% |
-| Actuated (SUMO) | −3,2% | −5,5 … −9,9% | +17,0% | −13,2 … +9,5% |
-| Agent E3 (`ppo_romana_zn3`) | −1,4% | −6,1 … −7,5% | −7,8% | −1,5 … +15,8% |
-| Webster | −1,3% | −6,0 … −9,4% | +11,3% | −9,2 … +12,1% |
-| Plan fix 46/48/12 s | −0,9% | +6,3 … +9,1% | +2,4% | −14,8 … +1,1% |
-| Agent RL oficial (`ppo_romana`, date vechi) | +2,8% | −7,5 … −11,0% | −8,0% | +5,5 … +29,2% |
-| Max-Pressure | +9,6% | −4,3 … −9,1% | +22,9% | +12,1 … +27,0% |
-
-Programul pe tipuri de trafic (lejer → agentul oficial, prânz → E3, vârf și dimineață → planul 46/48/12; regula
-aleasă pe seed-urile de validare 11–13, § 9.6) este cea mai bună strategie pe datele noi: **−8,5%** în medie,
-toate componentele lui fiind implementabile pe infrastructura existentă (doar programul semaforului se schimbă).
-
-**Agentul antrenat de la zero pe datele noi** (`ppo_romana_nou`, PPO, 8 medii) a fost oprit la 550 000 de pași
-(din 800 000 planificați) din motive de timp; la 375 000 de pași dădea +10,9% pe validare (cel oficial +11,3%),
-mai bun la vârf (+8,1% față de +22,3% la 21.10). Validarea și evaluarea lui completă (și eventual continuarea
-antrenării cu `--continua`) rămân pasul următor.
-
-### 9.8 Experimentele din noaptea de 25.10.2026: agent general vs. specialiști
-
-* **E4 – agentul general antrenat de la zero pe datele noi** (`ppo_romana_nou`, 1 000 000 de pași, 10 medii).
-  Validare (seed-urile 11–13, 5 scenarii; `docs/rezultate/validare_nou_1M.csv`): final +12,9%, cel mai bun punct
-  intermediar (700k) +11,6% față de planul fix – la nivelul agentului oficial (+11,3%) și al lui E3 (+11,0%).
-  Un agent unic pentru toate tipurile de trafic atinge același plafon pe cererea grea.
-* **Specialiști pentru trafic greu**, antrenați doar pe cele 5 scenarii grele (vârfurile, vârfurile ×1,2,
-  dimineața): **E5** – fine-tuning al agentului oficial cu rată mică (`ppo_romana_greu`); **E6** – imitarea
-  planului 46/48/12, apoi PPO (`ppo_romana_greu_bc`). Validare pe scenariile grele (`validare_greu.csv`):
-  E6 −5,8%, planul 46/48/12 −4,7%, actuated −0,2%, E5 +9,4%. Pe test (5 seed-uri), însă, pe banda grea:
-  planul 46/48/12 −8,4%, E6 −5,7% (E6 câștigă la vârful din 22.10: −17,7%; pierde la vârful din 21.10: +10,9%).
-  Avantajul de 1,1 puncte pe validare nu este robust, deci **programul păstrează planul 46/48/12 la trafic
-  greu** (−8,5% în medie, § 9.7); cu E6 ar fi −7,1%. E6 este primul agent învățat care se apropie de cel mai bun
-  plan fix la vârf. Pentru experimentele următoare, validarea folosește 5 seed-uri (11–15), stabilit înainte
-  de rulare, ca deciziile să nu depindă de zgomot.
-
-* **E7 – specialistul E6 antrenat în continuare cu rată mică** (`ppo_romana_greu_e7`, 400 000 de pași în plus).
-  Validare cu 5 seed-uri (11–15) pe scenariile grele (`validare_greu_e7.csv`): punctul intermediar de la
-  400 000 de pași (`ppo_romana_greu_e7_400k`) −9,3%, E6 −8,5%, planul 46/48/12 −7,5%, E7 final −4,1%; E7-400k
-  e mai bun decât planul fix pe toate cele 5 scenarii grele. Pe test (seed-urile 1–5): E7-400k −7,0%, planul
-  46/48/12 −8,4% pe banda grea.
-
-### 9.9 Semnificația statistică (test pe perechi scenariu × seed)
-
-| Comparație (seed-urile de test 1–5) | Diferență medie | p (t pe perechi) | p (Wilcoxon) | Mai bun în |
-|---|---|---|---|---|
-| Program pe tipuri de trafic vs. planul fix actual | −7,7% | 0,0022 | 0,00037 | 41 / 50 rulări |
-| Program pe tipuri de trafic vs. actuated (cea mai bună metodă clasică) | −4,3% | 0,022 | 0,0069 | 34 / 50 rulări |
-| Banda grea: plan 46/48/12 vs. planul fix | −8,4% | 0,0035 | – | – |
-| Banda grea: agent E7-400k vs. planul fix | −7,0% | 0,034 | – | – |
-| Banda grea: agent E7-400k vs. plan 46/48/12 | +1,5 puncte | 0,32 | 0,35 | – |
-
-Programul pe tipuri de trafic este **semnificativ mai bun** atât decât planul fix actual, cât și decât actuated.
-La trafic greu, agentul învățat E7-400k și planul 46/48/12 sunt **statistic echivalenți** (diferențele de 1,5–1,8
-puncte își schimbă semnul între seed-urile de validare și cele de test); ambele sunt semnificativ mai bune decât
-planul fix. La performanță echivalentă, programul folosește planul 46/48/12 – mai simplu, determinist și ușor de
-verificat de operator –, iar E7-400k rămâne alternativa învățată, documentată.
-
-### 9.10 Specialiștii de trafic moderat și lejer; statistica pe 10 seed-uri (25.10.2026)
-
-* **E8 – specialist de trafic moderat** (E3 antrenat în continuare pe prânzul 21.10 și dimineața 22.10, rată
-  mică; `validare_moderat_e8.csv`, seed-urile 11–15): +17,1% (final) / +11,8% (la jumătate) față de planul fix,
-  mai slab decât E3 (+9,0% în medie; **−8,8% la prânz**) → rezultat negativ; la prânz rămâne E3 (confirmat pe
-  validare cu 5 seed-uri și pe test).
-* **E9 – specialist de trafic lejer** (agentul oficial antrenat în continuare pe cele 4 scenarii liniștite, rată
-  mică; `ppo_romana_lejer`): validare (11–15) −9,2% față de −8,6% (oficial); test (seed-urile 1–10, 40 de rulări)
-  −9,5% față de −9,0%, diferență mică dar consecventă și semnificativă (p = 0,001; mai bun în 25/40) → **E9
-  conduce banda de trafic lejer a programului** (și în `live_twin.py`, `MODEL_LEJER`).
-
-**Programul final pe tipuri de trafic**: lejer (sub 1 300 veh/h) → agentul E9; moderat (1 300–2 000) → agentul E3;
-greu (peste 2 000) → planul fix 46/48/12 s. Evaluat pe **10 seed-uri de test** (100 de rulări pe perechi):
-
-| Comparație | Diferență medie | p (t) | p (Wilcoxon) | Mai bun în |
-|---|---|---|---|---|
-| Program vs. planul fix actual | **−6,9%** | 0,00034 | 0,000018 | **79 / 100** |
-| Program vs. actuated | **−3,2%** | 0,040 | 0,0019 | 68 / 100 |
-
-Tabelul complet pe 10 seed-uri de test (100 de rulări pe strategie; media pe scenarii a diferenței față de planul
-fix actual; `docs/rezultate/rezultate.md`, `rezultate_brute.csv`):
-
-| Program pe tipuri de trafic | Actuated | Webster | E3 | Plan 46/48/12 | E7-400k | E9 | Agent oficial | Max-Pressure |
+| Program pe tipuri de trafic | Actuated | Webster | Agent E3 | Plan 46/48/12 | Agent E7 | Agent E9 | Agent oficial | Max-Pressure |
 |---|---|---|---|---|---|---|---|---|
 | **−6,9%** | −2,8% | +0,2% | +0,8% | +1,4% | +1,9% | +3,4% | +5,4% | +11,4% |
 
-Fiecare agent, aplicat pe toate tipurile de trafic, nu bate planul fix; combinați după tipul de trafic – fiecare
-doar acolo unde a fost cel mai bun pe validare – dau cea mai bună strategie, cu o marjă clară.
+Programul este semnificativ mai bun decât planul fix (−6,9%; p = 0,0003 t / 0,00002 Wilcoxon; mai bun în 79 din
+100 de rulări) și decât actuated, cea mai bună metodă clasică (−3,2%; p = 0,04 / 0,002; 68 din 100). Pe
+scenarii: liniștit −6,8…−11,0%, prânz −5,1%, vârf −4,4…−12,9%, dimineața +12,6% (singurul scenariu unde pierde).
 
-Pe scenarii (față de planul fix): liniștit 21.10 −10,3%, ×0,8 −11,0%; liniștit 22.10 −6,8%, ×0,8 −10,0%; prânz
-−5,1%; vârf 21.10 −4,4%, ×1,2 −12,9%; vârf 22.10 −11,6%, ×1,2 −9,9%; dimineața 22.10 +12,6% (singurul scenariu
-unde programul pierde – pe seed-urile 6–10 planul cu ciclu lung e dezavantajat dimineața; o bandă dedicată
-dimineții, cu planul de referință, e o îmbunătățire posibilă, de validat pe date noi).
+**Zilele lucrătoare, marginea de jos** – 50 de rulări pe strategie (seed-urile de test 1–5):
 
-### 9.11 Testul de generalizare pe o zi de weekend (duminică, 25.10.2026)
+| Program pe tipuri de trafic | Actuated | Agent E3 | Agent E9 | Agent oficial | Plan 46/48/12 | Max-Pressure |
+|---|---|---|---|---|---|---|
+| **−2,9%** | +0,6% | +1,2% | +2,6% | +3,8% | +6,5% | +22,0% |
 
-Camera a colectat date continuu de duminică de la 01:14 (`data/counts/numaratori_2026-10-25.csv`); nicio strategie
-nu a fost antrenată sau aleasă pe aceste date. Din datele de până la 11:30 au rezultat 5 scenarii (liniștit
-513 veh/h și ×0,8; dimineața 968 veh/h; vârful 09:15–10:15 cu 2 840 veh/h – mai mare decât vârfurile din zilele
-lucrătoare – și ×1,2), evaluate cu 10 seed-uri (450 de rulări). Față de planul fix actual:
+La volume mai mici (vârful ≈1 650 veh/h în loc de ≈2 500), planul fix actual este greu de bătut la vârf; programul
+câștigă la trafic lejer (−5,3…−7,7%) și la prânz (−2,3%) și rămâne pe planul fix la vârf. Pe cele 25 de rulări în
+care diferă de planul fix este mai bun în 22 (Wilcoxon p = 0,008).
 
-| Strategie | Medie | Liniștit / ×0,8 | Dimineața | Vârf / ×1,2 |
-|---|---|---|---|---|
-| Agent E9 (specialist lejer) | **−6,5%** | −6,4 / −7,1% | −9,9% | −4,8 / −4,3% |
-| **Program pe tipuri de trafic** | **−5,2%** | −6,4 / −7,1% | −9,9% | −2,0 / −0,7% |
-| Agent E3 | −5,0% | −3,7 / −4,4% | −4,0% | **−7,2 / −5,5%** |
-| Agentul oficial | −4,9% | −4,6 / −7,7% | −5,4% | −3,1 / −3,9% |
-| Max-Pressure | −4,5% | −4,2 / −6,2% | −6,6% | −3,3 / −1,9% |
-| Actuated | −1,5% | −7,0 / −8,5% | −3,5% | +1,2 / +10,2% |
-| Webster | +0,4% | −3,7 / −7,3% | −5,0% | +11,5 / +6,5% |
-| Plan fix 46/48/12 | +5,3% | +11,0 / +9,4% | +8,7% | −2,0 / −0,7% |
+**Ce înseamnă.** Câștigul programului depinde de cât trafic este de fapt în piață: între ≈3% (marginea de jos) și
+≈7% (marginea de sus) din timpul pierdut de toți participanții, fără nicio lucrare pe stradă. O oră aglomerată
+pierde în piață câteva sute de ore-om, deci câștigul înseamnă zeci de ore-om pe fiecare oră aglomerată.
 
-Programul pe tipuri de trafic rămâne semnificativ mai bun decât planul fix (p = 0,03; mai bun în 43/50 rulări) și
-decât actuated (p = 0,0006). Două concluzii: (1) **agenții AI generalizează** pe o zi nevăzută, cu alt tipar de
-trafic – toți trei bat planul fix, inclusiv la vârful de weekend; (2) planul cu ciclu lung, reglat pe vârfurile
-din zilele lucrătoare, nu se potrivește vârfului de duminică (−2,0% față de −7,2% pentru agentul E3): planurile
-fixe trebuie reglate pe tipuri de zile, în timp ce agentul se adaptează – un argument practic pentru controlul
-învățat. Rezultatul este preliminar (doar dimineața duminicii); se completează cu după-amiaza.
+### 9.3 Generalizarea pe o zi de weekend (duminică, 25.10.2026)
+
+Duminica are alt tipar de trafic (vârf la prânz, mai mare decât în zilele lucrătoare) și nu a fost folosită la
+antrenare sau la alegere.
+
+* **Marginea de sus** (date până la 11:30; 5 scenarii × 10 seed-uri): programul −5,2% față de planul fix
+  (p = 0,03; mai bun în 43 din 50) și semnificativ mai bun decât actuated (p = 0,0006). Agenții AI singuri au
+  bătut toți planul fix, inclusiv la vârful de weekend: E9 −6,5%, E3 −5,0% (−7,2% la vârf), agentul oficial
+  −4,9%; Max-Pressure −4,5%, actuated −1,5%, Webster +0,4%, planul 46/48/12 +5,3%.
+* **Marginea de jos** (toată ziua până la 13:50; vârf ≈3 480 veh/h): [[DUMINICA_JOS]]
+
+Concluzie: agenții AI se adaptează la o zi nouă, în timp ce planurile fixe reglate pe zilele lucrătoare (46/48/12)
+nu se potrivesc vârfului de duminică – planurile fixe trebuie reglate pe tipuri de zile, agentul nu.
+
+### 9.4 Robustețea la participanți indisciplinați
+
+Șoferii și pietonii din București nu respectă întotdeauna regulile (observația autorului). Testul folosește
+aceleași scenarii (marginea de jos) cu tipurile de participanți din `sumo/demand/vtypes_indisciplinat.add.xml`:
+vehicule care blochează intersecția după 1 s de așteptare, trec pe roșu în primele 2 s și pe galben târziu,
+schimbă banda agresiv; pietoni care traversează pe roșu în primele 5 s și ignoră uneori vehiculele.
+
+[[INDISCIPLINAT]]
+
+### 9.5 Drumul până la rezultat: ce nu a mers
+
+| Etapă | Rezultat | Concluzie |
+|---|---|---|
+| Agentul oficial `ppo_romana` pe datele numărate cu zonele inițiale (22.10, 300 de simulări) | −4,6% față de planul fix | rezultat construit pe zone greșite (§ 12.1, etapa 5) |
+| Același agent pe datele renumărate cu zonele corecte (23.10) | +5,2% (câștig la trafic lejer, pierdere la vârf) | rezultatul nu supraviețuiește datelor corecte |
+| Agent cu cozile din amonte (v2), imitație + PPO (v3), orizont lung (E1) | toate mai slabe decât v1 | negative |
+| Coridorul: piața + 4 intersecții vecine, un singur agent | +35,4% | negativ; ar cere agenți descentralizați (MPLight[^mplight], CoLight[^colight]) și mult mai mult timp de antrenare |
+| E2 – reantrenare scurtă pe datele noi | +19,8% pe validare (vechiul +11,3%) | negativ |
+| E3 – reantrenare cu pași de învățare mici | ≈ vechiul în medie, dar −17,6% la prânz | **adoptat pentru traficul moderat** |
+| E4 – agent nou de la zero, 1 000 000 de pași | +11,6…+12,9% pe validare | fără câștig: plafonul unui agent universal |
+| E5 – specialist trafic greu, reantrenare | +9,4% pe validare | negativ |
+| E6/E7 – specialist trafic greu pornind de la planul 46/48/12 | E7: −9,3% validare, −7,0% test | echivalent statistic cu planul 46/48/12 (p = 0,32) → se păstrează planul, mai simplu |
+| E8 – specialist trafic moderat | mai slab decât E3 | negativ |
+| E9 – specialist trafic lejer | −9,5% față de −9,0% (agentul oficial), p = 0,001 | **adoptat pentru traficul lejer** (marginea de sus) |
+| Grila de 11 planuri fixe (verde N–S × E–V × pietoni) | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** (marginea de sus) |
+
+Lecția metodologică: diferențele de 1–2 puncte își schimbau semnul între seed-urile de validare și cele de test,
+de aceea validarea a trecut de la 3 la 5 seed-uri, iar rezultatele finale se raportează pe 10 seed-uri de test, cu
+teste statistice.
+
+### 9.6 Limita fizică la vârf
+
+Analiza localizării întârzierilor (datele din 21–22.10, marginea de sus) arată că, la vârf, **68% din timpul
+pierdut** se acumulează în coada de pe Bd. Dacia vest, care se întinde dincolo de zona pieței, și doar ≈24% în
+piață propriu-zisă; nici cel mai bun plan fix posibil nu câștigă mai mult de ≈5% la vârf. Niciun program de
+semafor nu poate elimina complet această coadă: decongestionarea serioasă a vârfului cere intervenții pe
+capacitatea acelui braț sau pe cerere (transport public, rute alternative) – o informație utilă pentru
+administratorul drumului.
+
+### 9.7 Concluzie
+
+1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Combinată cu planuri
+   clasice într-un program pe tipuri de trafic, reduce timpul pierdut de toți participanții cu ≈3–7% față de
+   programul actual, semnificativ statistic, fără nicio lucrare pe stradă.
+2. **Un singur agent AI nu bate un plan fix bine reglat la vârf**, dar e cel mai bun la trafic lejer și moderat și
+   se adaptează la zile noi (weekend), unde planurile fixe reglate pe alte zile pierd.
+3. **Calitatea datelor contează cel mai mult**: corectarea zonelor și a felului de numărare a schimbat rezultatul
+   mai mult decât orice algoritm; incertitudinea măsurării cererii se reflectă într-un interval, nu într-un număr.
+4. **La vârf există o limită fizică** (coada de pe Dacia vest), care cere măsuri dincolo de semafor.
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
