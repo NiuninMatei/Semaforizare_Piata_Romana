@@ -847,6 +847,28 @@ antrenării cu `--continua`) rămân pasul următor.
   plan fix la vârf. Pentru experimentele următoare, validarea folosește 5 seed-uri (11–15), stabilit înainte
   de rulare, ca deciziile să nu depindă de zgomot.
 
+* **E7 – specialistul E6 antrenat în continuare cu rată mică** (`ppo_romana_greu_e7`, 400 000 de pași în plus).
+  Validare cu 5 seed-uri (11–15) pe scenariile grele (`validare_greu_e7.csv`): punctul intermediar de la
+  400 000 de pași (`ppo_romana_greu_e7_400k`) −9,3%, E6 −8,5%, planul 46/48/12 −7,5%, E7 final −4,1%; E7-400k
+  e mai bun decât planul fix pe toate cele 5 scenarii grele. Pe test (seed-urile 1–5): E7-400k −7,0%, planul
+  46/48/12 −8,4% pe banda grea.
+
+### 9.9 Semnificația statistică (test pe perechi scenariu × seed)
+
+| Comparație (seed-urile de test 1–5) | Diferență medie | p (t pe perechi) | p (Wilcoxon) | Mai bun în |
+|---|---|---|---|---|
+| Program pe tipuri de trafic vs. planul fix actual | −7,7% | 0,0022 | 0,00037 | 41 / 50 rulări |
+| Program pe tipuri de trafic vs. actuated (cea mai bună metodă clasică) | −4,3% | 0,022 | 0,0069 | 34 / 50 rulări |
+| Banda grea: plan 46/48/12 vs. planul fix | −8,4% | 0,0035 | – | – |
+| Banda grea: agent E7-400k vs. planul fix | −7,0% | 0,034 | – | – |
+| Banda grea: agent E7-400k vs. plan 46/48/12 | +1,5 puncte | 0,32 | 0,35 | – |
+
+Programul pe tipuri de trafic este **semnificativ mai bun** atât decât planul fix actual, cât și decât actuated.
+La trafic greu, agentul învățat E7-400k și planul 46/48/12 sunt **statistic echivalenți** (diferențele de 1,5–1,8
+puncte își schimbă semnul între seed-urile de validare și cele de test); ambele sunt semnificativ mai bune decât
+planul fix. La performanță echivalentă, programul folosește planul 46/48/12 – mai simplu, determinist și ușor de
+verificat de operator –, iar E7-400k rămâne alternativa învățată, documentată.
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare

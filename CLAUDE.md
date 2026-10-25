@@ -54,7 +54,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - E5/E6: specialiști pentru trafic greu; E6 (`ppo_romana_greu_bc`, imitație 46/48/12 + PPO) −5,8% pe validare,
   dar −5,7% pe test față de planul 46/48/12 −8,4% → programul păstrează planul (−8,5%). Validare cu 5 seed-uri
   (11–15) pentru experimentele următoare.
-- În lucru: E7 (E6 continuat cu lr mic), colectarea de date de duminică 25.10 (`run_vision` fără fereastră, de la 01:14)
+- E7: `ppo_romana_greu_e7_400k` −9,3% pe validare (5 seed-uri), −7,0% pe test; statistic echivalent cu planul 46/48/12
+  (p = 0,32) → programul păstrează planul. Programul vs plan fix: p = 0,002 (41/50); vs actuated: p = 0,02 (§ 9.9).
+- În lucru: colectarea de date de duminică 25.10 (`run_vision` fără fereastră, de la 01:14)
   → `scenarii_zi --zi 2026-10-25` spre seară, test de generalizare.
 
 ### 24.10.2026, 12:11–14:20 – evaluarea completă făcută; antrenarea de la zero oprită la 550k (de continuat)
