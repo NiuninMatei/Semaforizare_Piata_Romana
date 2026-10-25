@@ -641,18 +641,21 @@ Programul este semnificativ mai bun decât planul fix (−6,9%; p = 0,0003 t / 0
 100 de rulări) și decât actuated, cea mai bună metodă clasică (−3,2%; p = 0,04 / 0,002; 68 din 100). Pe
 scenarii: liniștit −6,8…−11,0%, prânz −5,1%, vârf −4,4…−12,9%, dimineața +12,6% (singurul scenariu unde pierde).
 
-**Zilele lucrătoare, marginea de jos** – 50 de rulări pe strategie (seed-urile de test 1–5):
+**Zilele lucrătoare, marginea de jos** – programul, planul fix, actuated și agentul E3 pe 100 de rulări (seed-urile
+de test 1–10); celelalte strategii pe 50 (seed-urile 1–5):
 
 | Program pe tipuri de trafic | Actuated | Agent E3 | Agent E9 | Agent oficial | Plan 46/48/12 | Max-Pressure |
 |---|---|---|---|---|---|---|
-| **−2,9%** | +0,6% | +1,2% | +2,6% | +3,8% | +6,5% | +22,0% |
+| **−1,5%** | −0,4% | +0,7% | +2,6% | +3,8% | +6,5% | +22,0% |
 
-La volume mai mici (vârful ≈1 650 veh/h în loc de ≈2 500), planul fix actual este greu de bătut la vârf; programul
-câștigă la trafic lejer (−5,3…−7,7%) și la prânz (−2,3%) și rămâne pe planul fix la vârf. Pe cele 25 de rulări în
-care diferă de planul fix este mai bun în 22 (Wilcoxon p = 0,008).
+La volume mai mici (vârful ≈1 650 veh/h în loc de ≈2 500), planul fix actual este greu de bătut la vârf, iar
+programul rămâne pe el. Programul câștigă constant la trafic lejer (−6,0…−7,3%): pe cele 50 de rulări în care
+diferă de planul fix este mai bun în 44 (Wilcoxon p = 0,0003). La prânz, agentul E3 este instabil la această
+calibrare (−2,3% pe seed-urile 1–5, +11,7% în medie pe seed-urile 1–10), ceea ce reduce câștigul mediu la −1,5%.
 
-**Ce înseamnă.** Câștigul programului depinde de cât trafic este de fapt în piață: între ≈3% (marginea de jos) și
-≈7% (marginea de sus) din timpul pierdut de toți participanții, fără nicio lucrare pe stradă. O oră aglomerată
+**Ce înseamnă.** Câștigul programului depinde de cât trafic este de fapt în piață și de cât de disciplinați sunt
+participanții: ≈1,5% (marginea de jos), ≈7% (marginea de sus) și ≈16% cu participanți indisciplinați (§ 9.4) din
+timpul pierdut de toți participanții, fără nicio lucrare pe stradă. O oră aglomerată
 pierde în piață câteva sute de ore-om, deci câștigul înseamnă zeci de ore-om pe fiecare oră aglomerată.
 
 ### 9.3 Generalizarea pe o zi de weekend (duminică, 25.10.2026)
@@ -751,7 +754,7 @@ administratorul drumului.
 ### 9.7 Concluzie
 
 1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Într-un program pe tipuri
-   de trafic reduce timpul pierdut de toți participanții față de programul actual cu ≈3–7% când participanții
+   de trafic reduce timpul pierdut de toți participanții față de programul actual cu ≈1,5–7% când participanții
    respectă regulile și cu **≈16%** când nu le respectă (cazul real din București), semnificativ statistic, fără
    nicio lucrare pe stradă.
 2. **Când participanții respectă regulile, un singur agent AI nu bate un plan fix bine reglat la vârf**, dar e
