@@ -869,6 +869,30 @@ puncte își schimbă semnul între seed-urile de validare și cele de test); am
 planul fix. La performanță echivalentă, programul folosește planul 46/48/12 – mai simplu, determinist și ușor de
 verificat de operator –, iar E7-400k rămâne alternativa învățată, documentată.
 
+### 9.10 Specialiștii de trafic moderat și lejer; statistica pe 10 seed-uri (25.10.2026)
+
+* **E8 – specialist de trafic moderat** (E3 antrenat în continuare pe prânzul 21.10 și dimineața 22.10, rată
+  mică; `validare_moderat_e8.csv`, seed-urile 11–15): +17,1% (final) / +11,8% (la jumătate) față de planul fix,
+  mai slab decât E3 (+9,0% în medie; **−8,8% la prânz**) → rezultat negativ; la prânz rămâne E3 (confirmat pe
+  validare cu 5 seed-uri și pe test).
+* **E9 – specialist de trafic lejer** (agentul oficial antrenat în continuare pe cele 4 scenarii liniștite, rată
+  mică; `ppo_romana_lejer`): validare (11–15) −9,2% față de −8,6% (oficial); test (seed-urile 1–10, 40 de rulări)
+  −9,5% față de −9,0%, diferență mică dar consecventă și semnificativă (p = 0,001; mai bun în 25/40) → **E9
+  conduce banda de trafic lejer a programului** (și în `live_twin.py`, `MODEL_LEJER`).
+
+**Programul final pe tipuri de trafic**: lejer (sub 1 300 veh/h) → agentul E9; moderat (1 300–2 000) → agentul E3;
+greu (peste 2 000) → planul fix 46/48/12 s. Evaluat pe **10 seed-uri de test** (100 de rulări pe perechi):
+
+| Comparație | Diferență medie | p (t) | p (Wilcoxon) | Mai bun în |
+|---|---|---|---|---|
+| Program vs. planul fix actual | **−6,9%** | 0,00034 | 0,000018 | **79 / 100** |
+| Program vs. actuated | **−3,2%** | 0,040 | 0,0019 | 68 / 100 |
+
+Pe scenarii (față de planul fix): liniștit 21.10 −10,3%, ×0,8 −11,0%; liniștit 22.10 −6,8%, ×0,8 −10,0%; prânz
+−5,1%; vârf 21.10 −4,4%, ×1,2 −12,9%; vârf 22.10 −11,6%, ×1,2 −9,9%; dimineața 22.10 +12,6% (singurul scenariu
+unde programul pierde – pe seed-urile 6–10 planul cu ciclu lung e dezavantajat dimineața; o bandă dedicată
+dimineții, cu planul de referință, e o îmbunătățire posibilă, de validat pe date noi).
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării.** Zonele sunt desenate de autor pe imaginea camerei (§ 4.3), dar nu există o numărătoare

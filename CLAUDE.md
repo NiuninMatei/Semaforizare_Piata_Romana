@@ -56,6 +56,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   (11–15) pentru experimentele următoare.
 - E7: `ppo_romana_greu_e7_400k` −9,3% pe validare (5 seed-uri), −7,0% pe test; statistic echivalent cu planul 46/48/12
   (p = 0,32) → programul păstrează planul. Programul vs plan fix: p = 0,002 (41/50); vs actuated: p = 0,02 (§ 9.9).
+- E8 (specialist moderat) negativ; E9 (`ppo_romana_lejer`, specialist lejer) −9,5% vs −9,0% (p = 0,001) → banda lejeră.
+  Program final (E9 / E3 / plan 46/48/12) pe 10 seed-uri: −6,9% vs plan fix (p = 0,0003, 79/100), −3,2% vs actuated
+  (p = 0,04) – § 9.10. `evaluate.py --seed-start`; `live_twin.py`: `MODEL_LEJER`.
 - În lucru: colectarea de date de duminică 25.10 (`run_vision` fără fereastră, de la 01:14)
   → `scenarii_zi --zi 2026-10-25` spre seară, test de generalizare.
 
