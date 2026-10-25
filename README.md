@@ -8,7 +8,8 @@ Proiect pentru disciplinele *Interfețe om-calculator* și *Internet of Things*,
 Facultatea de Matematică și Informatică, Informatică ID, anul III. Autor: **Niunin Matei-Gabriel**.
 
 **Toată documentația – metoda, rezultatele, limitările, ghidul de utilizare, jurnalul proiectului și bibliografia –
-este într-un singur document: [docs/DOCUMENTATIE.md](docs/DOCUMENTATIE.md).**
+este într-un singur document: [docs/DOCUMENTATIE.md](docs/DOCUMENTATIE.md)** (și în PDF, cu pagini numerotate:
+[docs/DOCUMENTATIE.pdf](docs/DOCUMENTATIE.pdf)).
 
 Pornire rapidă (Windows): `scripts\0_instalare.bat` (o singură dată), apoi `scripts\PORNESTE_TOT.bat`.
 
