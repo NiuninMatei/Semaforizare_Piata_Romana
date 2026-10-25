@@ -20,8 +20,8 @@ Informatică ID, anul III · Discipline: *Interfețe om-calculator* și *Interne
 8. [Interfața om-calculator: dispeceratul](#8-interfața-om-calculator-dispeceratul)
 9. [Rezultate](#9-rezultate)
 10. [Limitări, aspecte etice și lucrări viitoare](#10-limitări-aspecte-etice-și-lucrări-viitoare)
-11. [Ghid de instalare și rulare](#11-ghid-de-instalare-și-rulare)
-12. [Jurnalul bornelor](#12-jurnalul-bornelor)
+11. [Ghid de utilizare](#11-ghid-de-utilizare)
+12. [Jurnalul proiectului](#12-jurnalul-proiectului)
 13. [Asistență generativă](#13-asistență-generativă)
 14. [Bibliografie și licențe](#14-bibliografie-și-licențe)
 
@@ -158,7 +158,8 @@ Camera vede cele șase brațe ale pieței, de la stânga la dreapta: Bd. Magheru
 (ieșire), Bd. Dacia vest (centru-stânga), Bd. Lascăr Catargiu (centru-dreapta), Str. Căderea Bastiliei (ieșire,
 lângă clădirea ASE) și Bd. Dacia est (extremă dreapta). Pentru fiecare braț cu dublu sens s-au definit **două**
 poligoane – banda de intrare spre piață și banda de ieșire – iar pentru străzile cu sens unic doar zona de ieșire
-(10 zone în total, `config/camera.json`, coordonate normalizate 0–1, independente de rezoluție).
+(10 zone de vehicule, plus 6 zone de trecere pentru pietoni, § 4.4; `config/camera.json`, coordonate normalizate
+0–1, independente de rezoluție).
 
 ![Zonele de numărare pe imaginea camerei](img/zone_camera.jpg)
 *Zonele de numărare finale, desenate de autor (verde = intrare, portocaliu = ieșire, mov = străzi cu sens unic
@@ -233,17 +234,18 @@ folosite la plasarea zonelor.
 
 ### 4.4 Pietoni și bicicliști
 
-În simulare intră toți participanții observabili pe cameră. Camera vede două dintre cele 7 treceri semaforizate
-ale pieței: trecerea de pe Bd. Magheru (prim-plan, stânga) și trecerea dublă de pe Bd. Dacia est (prim-plan,
-dreapta). Pentru fiecare s-a desenat o zonă cu rolul `trecere` (`config/camera.json`), peste marcajul zebră
-de pe cadrul din 21.10.2026, 01:30 (de verificat pe lumină de zi).
+În simulare intră toți participanții observabili pe cameră. Autorul a desenat 6 zone cu rolul `trecere`
+(`config/camera.json`): Magheru, Mendeleev, Dacia vest, Lascăr Catargiu, Căderea Bastiliei și trecerea dublă de pe
+Dacia est. În practică, pietonii sunt detectați de încredere doar pe trecerile din prim-plan (Magheru, la marginea
+cadrului și parțial ascunsă de chioșc, și mai ales Dacia est): pe trecerile îndepărtate persoanele sunt prea mici
+în imagine pentru detector.
 
 * **Pietoni.** Persoanele detectate sunt urmărite cu același ByteTrack. Un pieton este numărat **o singură dată
   pe fiecare trecere** pe care a fost văzut în cel puțin 2 cadre și pe care s-a deplasat cel puțin 4% din
   lățimea cadrului (punctul de contact cu solul în zona trecerii) – cine doar așteaptă la bordură nu contează;
   în CSV apar ca rânduri `pietoni` (braț, trecere). Debitul măsurat se extrapolează la toată piața cu
-  `factor_extrapolare_pietoni` = 2,5 din `config/demand.json` (ipoteză declarată: camera vede 2 din cele ≈7
-  treceri semaforizate; factorul se va verifica printr-o numărătoare manuală).
+  `factor_extrapolare_pietoni` = 2,5 din `config/demand.json` (ipoteză declarată: pietonii sunt detectați de
+  încredere pe ≈2 din cele ≈7 treceri semaforizate).
 * **Bicicliști și motocicliști.** Bicicleta (clasa 1) este numărată ca vehicul pe zonele de intrare/ieșire, ca
   orice alt vehicul, și primește în SUMO rute pe care bicicletele au acces. Persoana de pe bicicletă sau
   motocicletă **nu** este numărată ca pieton: o persoană al cărei punct de contact cu solul cade în caseta unei
@@ -277,8 +279,8 @@ distanța până la brațele îndepărtate). De aceea se combină trei surse (`b
   (`config/demand.json`) folosită doar ca regularizare când observațiile lipsesc ($w = 2$ vehicule-echivalent).
 
 Matricea se echilibrează prin metoda Furness (IPF)[^ortuzar], alternând scalarea coloanelor și a liniilor și
-terminând pe linii. Un factor de corecție a detecției (numărătoare manuală / automată) poate fi setat după
-validarea manuală pe 15 minute.
+terminând pe linii (cu `echilibrare: "doar_intrari"` se scalează doar liniile). Un factor de corecție a
+detecției (`factor_corectie_detectie`) poate fi setat după o adnotare de referință (§ 10).
 
 **Echilibrarea intrări / ieșiri.** Pe datele de zi, suma ieșirilor numărate a depășit suma intrărilor cu
 ≈30% (ex. 12:00–12:15: 1.856 față de 2.436 veh/h). Diferența nu poate fi reală la scara a 15 minute (stocarea
@@ -371,12 +373,11 @@ regăsesc în istoricul git); pentru duminică, scenariile cu această calibrare
 până la 11:30 (§ 9.3). Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
 GEH < 5 pentru ≈94% din relațiile autoturismelor și 100% din cele ale celorlalte tipuri. Agenții au fost
 antrenați pe scenariile din zilele lucrătoare; duminica servește doar ca test de generalizare.
-Compoziția măsurată pe toată ziua de 21.10 (intrări și ieșiri): 92,7% autoturisme, 3,7% autobuze și troleibuze, 3,2%
-camioane, 0,3% biciclete, 0,1% motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi
-de octombrie cu 12–15 °C. Pentru fiecare tip de vehicul,
-`routeSampler` reproduce toate relațiile de viraj țintă (GEH < 5 pentru 100% din relații). Scenariile ipotetice
-`referinta_*` (§ 5.3) rămân în proiect pentru comparație, dar agenții din Borna 9 sunt antrenați **doar** pe
-scenariile din date reale.
+
+Compoziția traficului măsurată (prima zi, 21.10): ≈93% autoturisme, ≈4% autobuze și troleibuze, ≈3% camioane,
+sub 0,5% biciclete și motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi de
+octombrie cu 12–15 °C; duminică, la prânz, ≈95% autoturisme și ≈3% autobuze. Scenariile ipotetice `referinta_*`
+(§ 5.3) rămân în proiect pentru comparație, dar agenții sunt antrenați **doar** pe scenariile din date reale.
 
 ### 5.5 Geamănul digital live
 
@@ -385,8 +386,12 @@ debitele curente publicate de modulul de viziune și injectează vehicule pe bra
 debite, cu destinații după proporțiile de viraj observate și tipuri după compoziția traficului (bicicliștii pe
 rute permise bicicletelor). Pietonii sunt injectați tot Poisson, pe trasee pietonale care trec prin piață, cu
 debitul măsurat pe trecerile vizibile × factorul de extrapolare. Dacă fluxul camerei lipsește mai mult de 60 s,
-trece pe profilul de referință și **afișează explicit** acest lucru în dashboard. Modul „plan fix” rulează
-planul de referință complet (N–S / E–V / pietoni, § 6.3).
+trece pe profilul de referință și **afișează explicit** acest lucru în dashboard; la începutul fiecărui interval
+de numărare de 15 minute păstrează ultimele debite bune ale camerei. Simularea avansează în pași de 0,2 s
+întinși pe secunda reală (mișcare fluentă în SUMO-GUI), iar controlerul semaforului lucrează pe secunde întregi.
+Modurile de control, alese din dispecerat: agentul AI, planul fix de referință (N–S / E–V / pietoni, § 6.3),
+Max-Pressure, manual și „Program pe tipuri de trafic” (§ 9.2, § 9.4), care comută automat după debitul măsurat
+de cameră (media intrărilor și ieșirilor).
 
 ## 6. Rețeaua rutieră în SUMO
 
@@ -574,9 +579,9 @@ algoritmul și poate prelua oricând controlul.
 
 | Euristică Nielsen[^nielsen] | Aplicare în dashboard |
 |---|---|
-| Vizibilitatea stării sistemului | indicatoare pentru flux cameră / reconectare, cadre/s, vârsta datelor; faza curentă cu etapa (verde/galben/roșu de degajare) și secundele de verde; sursa cererii („camera live” sau „profil de referință”); vehiculele și pietonii din simulare, pietonii care așteaptă la treceri, debitul de pietoni măsurat de cameră |
+| Vizibilitatea stării sistemului | imaginea camerei ca flux video continuu (MJPEG, ≈6 cadre/s); indicatoare pentru flux cameră / reconectare, cadre/s, vârsta datelor; în modul „Program”, componenta care conduce semaforul în acel moment; faza curentă cu etapa (verde/galben/roșu de degajare) și secundele de verde; sursa cererii („camera live” sau „profil de referință”); vehiculele și pietonii din simulare, pietonii care așteaptă la treceri, debitul de pietoni măsurat de cameră |
 | Potrivirea cu lumea reală | schema pieței respectă orientarea reală a brațelor; denumiri de străzi, nu ID-uri de muchii; culori de semafor |
-| Controlul și libertatea utilizatorului | patru moduri de control; revenirea la AI sau la planul fix dintr-un clic; `Esc` anulează |
+| Controlul și libertatea utilizatorului | cinci moduri de control (Agent AI, Plan fix, Max-Pressure, Manual, Program pe tipuri de trafic); revenirea la AI sau la planul fix dintr-un clic; `Esc` anulează |
 | Consistență și standarde | aceleași denumiri ale modurilor în butoane, confirmări și starea afișată |
 | Prevenirea erorilor | schimbarea modului cere confirmare explicită; în modul manual se alege doar faza verde – galbenul și roșul de siguranță se aplică automat |
 | Recunoaștere în loc de reamintire | fazele manuale sunt afișate cu numele lor complet; legenda culorilor cozilor e implicită (albastru < 8, galben < 18, roșu ≥ 18 vehicule) |
@@ -1042,7 +1047,11 @@ asistent poartă linia `Co-Authored-By: Claude …` în istoricul Git.
 **Contribuția autorului.** Niunin Matei-Gabriel a definit tema, cerințele și principiile proiectului (replica
 fidelă a rețelei reale, toți participanții la trafic, cererea calibrată pe cameră, lucrul pe borne, lucrul local),
 a coordonat și a direcționat lucrul, a luat deciziile de ansamblu, a pus la dispoziție echipamentul și
-permisiunile și a verificat rezultatele.
+permisiunile și a verificat rezultatele. Ideile și corecturile-cheie au venit de la autor (§ 12.2): zonele de pe
+cameră desenate de el însuși (inclusiv observația că marcajul de staționare interzisă fusese confundat cu o
+trecere), verificarea rețelei în Street View, auditul numărării („ești sigur că numeri corect?”), calcularea
+cererii doar din intrări, testul cu participanți indisciplinați și organizarea documentației într-un singur
+document.
 
 Deciziile de proiectare, rezultatele experimentale și sursele au fost verificate prin rularea efectivă a
 codului; afirmațiile despre lumea reală sunt susținute de sursele de mai jos.
