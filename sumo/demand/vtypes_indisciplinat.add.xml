@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Participanți indisciplinați (testul de robustețe, docs/DOCUMENTATIE.md § 9.12): aceleași tipuri ca în
+     vtypes.add.xml, cu parametrii modelului de intersecție și de schimbare a benzii din SUMO:
+     jmIgnoreKeepClearTime – intră în intersecție deși nu o pot elibera (blochează) după 1 s de așteptare;
+     jmDriveAfterRedTime / jmDriveAfterYellowTime – trec pe roșu în primele 2 s, respectiv pe galben târziu;
+     impatience, lcAssertive, lcCooperative, lcSpeedGain, lcImpatience – nerăbdare și schimbări agresive de bandă;
+     pietonii: jmDriveAfterRedTime – traversează pe roșu în primele 5 s; jmIgnoreFoeProb – ignoră uneori vehiculele. -->
+<additional>
+  <vType id="passenger" vClass="passenger" length="4.6" accel="2.6" decel="4.5" sigma="0.6" maxSpeed="16.7" color="200,200,200"
+         impatience="0.5" jmIgnoreKeepClearTime="1" jmDriveAfterRedTime="2" jmDriveAfterYellowTime="2"
+         lcAssertive="1.5" lcCooperative="0.5" lcSpeedGain="2" lcImpatience="0.5" />
+  <vType id="bus" vClass="bus" length="12" accel="1.2" decel="4.0" sigma="0.5" maxSpeed="14" color="0,120,255" guiShape="bus"
+         impatience="0.3" jmIgnoreKeepClearTime="2" jmDriveAfterRedTime="1" lcAssertive="1.3" />
+  <vType id="truck" vClass="truck" length="9" accel="1.3" decel="4.0" sigma="0.6" maxSpeed="14" color="160,100,40" guiShape="truck"
+         impatience="0.4" jmIgnoreKeepClearTime="1" jmDriveAfterRedTime="2" jmDriveAfterYellowTime="2" lcAssertive="1.5" />
+  <vType id="motorcycle" vClass="motorcycle" length="2.2" accel="3.5" decel="6" sigma="0.6" maxSpeed="16.7" color="255,200,0" guiShape="motorcycle"
+         impatience="0.7" jmIgnoreKeepClearTime="0.5" jmDriveAfterRedTime="3" jmDriveAfterYellowTime="3"
+         lcAssertive="2" lcCooperative="0.3" lcSpeedGain="3" lcImpatience="0.7" />
+  <vType id="bicycle" vClass="bicycle" length="1.8" accel="1.2" decel="3" sigma="0.6" maxSpeed="6" color="0,200,0" guiShape="bicycle"
+         impatience="0.5" jmDriveAfterRedTime="3" />
+  <vType id="pieton" vClass="pedestrian" length="0.3" width="0.5" maxSpeed="1.4" speedDev="0.15" color="255,90,90" guiShape="pedestrian"
+         jmDriveAfterRedTime="5" jmIgnoreFoeProb="0.1" jmIgnoreFoeSpeed="2" />
+</additional>

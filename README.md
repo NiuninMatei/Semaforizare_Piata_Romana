@@ -36,7 +36,8 @@ Autor: **Niunin Matei-Gabriel**.
 4. **Dashboard de dispecerat** pentru operatorul uman: imaginea analizată, cozile pe brațe, faza curentă și preluarea
    controlului (AI / plan fix / Max-Pressure / manual) cu confirmare.
 
-> **Pentru evaluare:** ghidul pas cu pas de instalare, rulare și verificare este în [GHID_PROFESOR.md](GHID_PROFESOR.md).
+> **Ghidul de utilizare** (instalare, rulare, verificare, demonstrație) este în [GHID.md](GHID.md); povestea proiectului –
+> provocările, ocolișurile și deciziile, de la ciornă până la rezultatul final – este în [JURNAL.md](JURNAL.md).
 
 ## Rezultate pe date reale (pe scurt)
 
