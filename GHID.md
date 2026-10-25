@@ -79,7 +79,7 @@ Evaluarea completă (`scripts\5_evalueaza.bat`, 5 seed-uri × toate scenariile �
 
 ## 5b. Demonstrația live (scenariul de prezentare, ~20 de minute)
 
-Folosit la repetiția susținerii din 22.10.2026 (observațiile și ce s-a făcut: `docs/OBSERVATII_EVALUARE.md`).
+Corecturile făcute după verificarea live a sistemului: `docs/OBSERVATII_EVALUARE.md`.
 Pornire: `scripts\PORNESTE_TOT.bat` (camera, geamănul SUMO-GUI, dispeceratul în browser), apoi câte o fereastră
 pe ecran, în ordinea în care circulă datele:
 
