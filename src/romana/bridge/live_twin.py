@@ -31,6 +31,9 @@ SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă 
 # programul pe tipuri de trafic (docs/DOCUMENTATIE.md § 9.6): sub PRAG_LEJER veh/h intrați în piață → agentul AI,
 # între praguri → planul de referință, peste PRAG_GREU → planul cu ciclu lung (verde N–S, E–V, pietoni, s)
 PRAG_LEJER, PRAG_GREU = 1300, 2000
+# varianta programului: "realist" (implicit; ales pe validare cu participanți indisciplinați, § 9.4) sau
+# "marginea_sus" (participanți disciplinați: E9 / E3 / planul 46/48/12, § 9.2)
+VARIANTA_PROGRAM = "realist"
 PLAN_LUNG = (46, 48, 12)
 MODEL_PRANZ = MODELS_DIR / "ppo_romana_zn3.zip"   # agentul E3, cel mai bun la trafic moderat (prânz)
 MODEL_LEJER = MODELS_DIR / "ppo_romana_lejer.zip"  # agentul E9, specialistul de trafic lejer (§ 9.10)
@@ -212,8 +215,13 @@ def main(argv=None) -> None:
             if mode == "program":
                 # programul pe tipuri de trafic (§ 9.6), după debitul măsurat de cameră la intrările pieței
                 tot = debit
-                sub = (("ai_lejer" if rl_lejer is not None else "ai" if rl is not None else "fix") if tot < PRAG_LEJER else
-                       ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
+                if VARIANTA_PROGRAM == "realist":
+                    # participanți reali, indisciplinați (§ 9.4): agentul oficial la trafic lejer, E3 la moderat și greu
+                    sub = (("ai" if rl is not None else "fix") if tot < PRAG_LEJER else
+                           "ai_pranz" if rl_pranz is not None else "fix")
+                else:   # "marginea_sus": participanți disciplinați, cererea = media intrări/ieșiri (§ 9.2)
+                    sub = (("ai_lejer" if rl_lejer is not None else "ai" if rl is not None else "fix") if tot < PRAG_LEJER else
+                           ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
             efectiv = sub or mode
             if t % 5 == 0:
                 if efectiv == "plan_lung":

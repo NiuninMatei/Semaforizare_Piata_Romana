@@ -1,0 +1,22 @@
+{
+  "scor_mediu_procent": {
+    "ACTUATED": 2.67,
+    "PLAN_46_48_12": 22.2,
+    "ppo_romana": -5.01,
+    "ppo_romana_lejer": -3.18,
+    "ppo_romana_zn3": -13.39
+  },
+  "ales": "ppo_romana_zn3",
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ],
+  "scenarii": [
+    "indisciplinat_zi_2026-10-21_pranz",
+    "indisciplinat_zi_2026-10-21_varf",
+    "indisciplinat_zi_2026-10-22_varf",
+    "indisciplinat_zi_2026-10-22_linistit",
+    "indisciplinat_zi_2026-10-22_dimineata"
+  ]
+}

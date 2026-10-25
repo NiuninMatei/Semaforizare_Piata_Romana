@@ -613,14 +613,14 @@ Niciun agent AI, aplicat singur pe toate tipurile de trafic, nu bate în mod rob
 greu) se folosește strategia care a fost cea mai bună pe datele de validare, iar la performanță practic egală se
 preferă strategia mai simplă. Toate componentele sunt implementabile pe automatul existent (se schimbă doar
 programul semaforului). Programul este implementat în geamănul digital și în dispecerat (modul „Program pe tipuri
-de trafic”, `bridge/live_twin.py`), cu comutare automată după debitul măsurat de cameră – varianta pentru marginea de
-sus a cererii, care comută după media intrărilor și ieșirilor măsurate, la 1 300 și 2 000 veh/h (aceeași măsură ca
-scenariile acelei calibrări).
+de trafic”, `bridge/live_twin.py`), cu comutare automată după debitul măsurat de cameră (media intrărilor și
+ieșirilor, la 1 300 și 2 000 veh/h); varianta implicită este „programul realist” (§ 9.4).
 
 | Calibrarea cererii | Trafic lejer | Trafic moderat (prânz) | Trafic greu (vârf, dimineață) |
 |---|---|---|---|
 | marginea de sus (media intrări/ieșiri) | agentul E9 (`ppo_romana_lejer`) | agentul E3 (`ppo_romana_zn3`) | plan fix 46/48/12 s |
 | marginea de jos (doar intrări) | actuated* (egal cu agentul oficial, mai simplu) | agentul E3 | planul fix actual (toate alternativele egale cu el) |
+| **condiții reale: participanți indisciplinați** (§ 9.4) – „program realist” | agentul oficial (`ppo_romana`) | agentul E3 | agentul E3 |
 
 \* Programul actuated presupune detectarea vehiculelor la intrări (bucle inductive sau camera, ca în acest proiect).
 
@@ -665,8 +665,10 @@ antrenare sau la alegere.
   și în dimineața de duminică (−4…−8%), fiind la vârful foarte mare egali cu planul fix sau mai slabi (agentul
   oficial −2,0% în medie, E3 −0,4%, E9 −0,3%).
 
-Concluzie: agenții AI se adaptează la o zi nouă, în timp ce planurile fixe reglate pe zilele lucrătoare (46/48/12)
-nu se potrivesc vârfului de duminică – planurile fixe trebuie reglate pe tipuri de zile, agentul nu.
+Concluzie: programul pe tipuri de trafic rămâne mai bun decât planul fix și pe o zi nouă, pentru ambele calibrări.
+Planul fix 46/48/12, reglat pe vârfurile din zilele lucrătoare, nu se potrivește vârfului de duminică, iar agenții
+AI generalizează bine la volume apropiate de cele de antrenare (marginea de sus), dar nu la un vârf mult mai mare
+decât cele văzute la antrenare (marginea de jos) – un argument pentru reantrenarea periodică pe date noi.
 
 ### 9.4 Robustețea la participanți indisciplinați
 
@@ -691,7 +693,19 @@ intersecție nesaturată (seed-urile 1–5). Față de planul fix, în aceleași
 planul fix**, în special la vârf (până la −28%), deși au fost antrenați cu participanți disciplinați: observă cozile
 reale și se adaptează din mers când intersecția se blochează, ceea ce un plan fix nu poate face. Programul pe
 tipuri de trafic ales pentru marginea de jos (care păstrează planul fix la vârf) câștigă aici doar −1,5%
-(nesemnificativ) – pentru condițiile reale, varianta cu agenții AI și la trafic greu este preferabilă.
+(nesemnificativ). De aceea, pentru condițiile reale s-a ales pe validare (seed-urile 11–15 ale acelorași scenarii cu
+participanți indisciplinați, `docs/rezultate/validare_indisciplinat.csv`) un **„program realist”**: agentul oficial
+la trafic lejer (−13,3% pe validare), agentul E3 la trafic moderat (−3,5%) și greu (−19,4%; planul 46/48/12 iese
+aici +22%). Pe seed-urile de test 1–10:
+
+| Program realist față de | Diferență medie | p (t / Wilcoxon) | Mai bun în |
+|---|---|---|---|
+| planul fix actual | **−16,0%** (noaptea −14,1%, prânz −3,1%, vârfuri −14,8% / −28,0%, dimineața −20,0%) | 0,00001 / 0,000002 | **42 / 50** |
+| actuated | **−18,4%** | <0,000001 / <0,000001 | 46 / 50 |
+
+Programul realist este varianta implicită a modului „Program pe tipuri de trafic” din geamănul live
+(`VARIANTA_PROGRAM = "realist"` în `bridge/live_twin.py`; varianta pentru participanți disciplinați rămâne
+disponibilă ca `"marginea_sus"`).
 
 *Notă de verificare:* prima rulare a testului a dat rezultate identice cu scenariile normale – funcția care pornește
 simularea înlocuia tipurile de participanți din scenariu cu cele standard (`control/env.py`, corectat pe
@@ -730,11 +744,13 @@ administratorul drumului.
 
 ### 9.7 Concluzie
 
-1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Combinată cu planuri
-   clasice într-un program pe tipuri de trafic, reduce timpul pierdut de toți participanții cu ≈3–7% față de
-   programul actual, semnificativ statistic, fără nicio lucrare pe stradă.
-2. **Un singur agent AI nu bate un plan fix bine reglat la vârf**, dar e cel mai bun la trafic lejer și moderat și
-   se adaptează la zile noi (weekend), unde planurile fixe reglate pe alte zile pierd.
+1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Într-un program pe tipuri
+   de trafic reduce timpul pierdut de toți participanții față de programul actual cu ≈3–7% când participanții
+   respectă regulile și cu **≈16%** când nu le respectă (cazul real din București), semnificativ statistic, fără
+   nicio lucrare pe stradă.
+2. **Când participanții respectă regulile, un singur agent AI nu bate un plan fix bine reglat la vârf**, dar e
+   printre cele mai bune strategii la trafic lejer și moderat; pe o zi nouă generalizează la volume apropiate de
+   cele de antrenare, iar pentru situații foarte diferite are nevoie de reantrenare pe date noi.
 3. **Calitatea datelor contează cel mai mult**: corectarea zonelor și a felului de numărare a schimbat rezultatul
    mai mult decât orice algoritm; incertitudinea măsurării cererii se reflectă într-un interval, nu într-un număr.
 4. **Cu participanți indisciplinați, ca în București, avantajul AI crește mult**: specialiștii E3 și E9 reduc timpul
@@ -852,9 +868,9 @@ Pornire: `scripts\PORNESTE_TOT.bat`, apoi câte o fereastră pe ecran, în ordin
 | 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` | aceeași oră reală cu planul fix, Max-Pressure și agentul AI |
 | 5. Rezultate și limite | capitolele 9 și 10 | evaluarea oficială și limitările declarate |
 
-**Strategia recomandată** este „Program pe tipuri de trafic” (§ 9.2): comută automat, după debitul măsurat de
-cameră la intrările pieței, între specialistul AI pentru trafic lejer, specialistul AI pentru trafic moderat și
-planul fix cu ciclu lung pentru trafic greu; dispeceratul arată în fiecare moment ce componentă conduce semaforul.
+**Strategia recomandată** este „Program pe tipuri de trafic” (§ 9.2, § 9.4): comută automat, după debitul măsurat
+de cameră, între agentul AI oficial (trafic lejer) și agentul E3 (trafic moderat și greu) – varianta aleasă pentru
+participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare moment ce componentă conduce semaforul.
 
 ### 11.6 Unde se găsesc lucrurile
 
