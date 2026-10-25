@@ -1,6 +1,6 @@
 # Instrucțiuni pentru Claude – proiectul „Semaforizare Piața Romană”
 
-Acest fișier este citit automat de Claude Code la deschiderea proiectului. Conține regulile
+Acest fișier (`.claude/CLAUDE.md`) este citit automat de Claude Code la deschiderea proiectului; nu face parte din documentație (singura documentație: `docs/DOCUMENTATIE.md`). Conține regulile
 autorului și starea de predare a lucrului (actualizați secțiunea „Stare curentă” la fiecare bornă).
 
 ## Regulile autorului (Niunin Matei-Gabriel)

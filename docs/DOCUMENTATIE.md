@@ -737,7 +737,7 @@ antrenată, măsuri de infrastructură sau de gestionare a cererii.
 
 ### 9.5 Reevaluarea pe datele renumărate cu zonele corectate (23.10.2026)
 
-După verificarea live a sistemului de către autor (`docs/OBSERVATII_EVALUARE.md`), zonele camerei au fost redesenate de autor,
+După verificarea live a sistemului de către autor (§ 12.2), zonele camerei au fost redesenate de autor,
 cele două zile au fost renumărate (virajele urmărite complet: 2 800 → 4 995) și cele 10 scenarii regenerate.
 Agentul oficial (antrenat pe scenariile vechi) a fost reevaluat pe scenariile noi, nevăzute la antrenare:
 3 strategii × 10 scenarii × 3 seed-uri = 90 de simulări (`outputs/eval/rezultate.csv`, `docs/rezultate/`).
@@ -944,7 +944,7 @@ fixe trebuie reglate pe tipuri de zile, în timp ce agentul se adaptează – un
   rezultatelor.
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine și parțial ascunse.
   *Redus pe 22–23.10:* zonele au fost redesenate după observațiile autorului de la verificarea live
-  (`docs/OBSERVATII_EVALUARE.md`) și apoi înlocuite cu decupajele desenate de autor pe capturi ale camerei
+  (§ 12.2) și apoi înlocuite cu decupajele desenate de autor pe capturi ale camerei
   (§ 4.3); după renumărare, virajele urmărite complet au crescut de la 2 800 la 4 995 (≈21% din intrări, față
   de ≈11%), deci matricea O–D se sprijină mai mult pe viraje observate.
 * **Două zile de date** (o zi lucrătoare de miercuri după-amiaza și seara, joi noaptea și dimineața), în
@@ -972,50 +972,224 @@ Lucrări viitoare: recompensă cu prioritate pentru transportul public, ponderat
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
 de date; compararea planului fix de referință cu programul real, dacă poate fi obținut de la operator.
 
-## 11. Ghid de instalare și rulare
+## 11. Ghid de utilizare
 
-**Cerințe:** Windows 10/11, Python 3.11–3.13, ~3 GB spațiu, conexiune la internet pentru fluxul camerei.
-SUMO poate fi instalarea oficială existentă (cu `SUMO_HOME` setat) sau pachetul `eclipse-sumo` din
-`requirements.txt`. GPU-ul NVIDIA este opțional.
+Capitolul se adresează oricărui cititor – profesor, student, inginer de trafic sau curios – care vrea să
+instaleze, să ruleze sau să verifice proiectul.
 
-| Script (`scripts\`) | Ce face |
+### 11.1 Cerințe
+
+| | |
 |---|---|
-| `0_instalare.bat` | creează `.venv` și instalează dependențele |
-| `1_construieste_retea.bat` | regenerează rețeaua SUMO din OSM |
-| `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele; `q` = oprire); scrie numărătorile |
-| `2b_calibrare_zone.bat` | redesenarea zonelor pe un cadru live |
-| `3_genereaza_cerere.bat` | scenariu SUMO din numărători, ex.: `--nume dimineata --de-la "2026-10-21 07:30" --pana-la "2026-10-21 08:30"` |
-| `4_antreneaza_ai.bat` | antrenare PPO (`--coridor` pentru piață + 4 vecini, `--pasi N`) |
-| `5_evalueaza.bat` | evaluare comparativă, actualizează `docs/rezultate/` |
-| `6_geaman_digital.bat` | SUMO-GUI alimentat live de cameră |
-| `7_dashboard.bat` | dispeceratul web |
-| `8_simulare_gui.bat` | rulează un scenariu în SUMO-GUI cu agentul AI |
-| `PORNESTE_TOT.bat` | viziune + geamăn digital + dashboard, în trei ferestre |
+| Sistem | Windows 10/11 (testat pe Windows 11, laptop Lenovo V15 G4, i5-13420H, 16 GB RAM, fără GPU NVIDIA) |
+| Python | 3.11–3.13 (testat 3.12) |
+| SUMO | 1.28 – instalarea oficială (https://sumo.dlr.de, cu `SUMO_HOME` setat) **sau** pachetul `eclipse-sumo` din `requirements.txt` |
+| Spațiu | ~4 GB (mediul Python + modele) |
+| Internet | pentru fluxul camerei și instalare |
+| Opțional | placă grafică Intel (OpenVINO, implicit) sau NVIDIA (`runtime: "pytorch"`, `--device 0`) pentru viziune |
 
-Flux tipic pentru o zi de date: rulați `2_viziune_live.bat` în intervalul dorit (ex. 07:30–09:30), apoi
-`3_genereaza_cerere.bat` cu acel interval, `4_antreneaza_ai.bat`, `5_evalueaza.bat`.
+### 11.2 Instalare (o singură dată)
 
-## 12. Jurnalul bornelor
+```bat
+git clone https://github.com/NiuninMatei/Semaforizare_Piata_Romana.git
+cd Semaforizare_Piata_Romana
+scripts\0_instalare.bat
+```
 
-| Bornă | Data | Conținut | Asistent |
+Scriptul creează mediul virtual `.venv` și instalează dependențele; toate celelalte scripturi din `scripts\`
+activează automat acest mediu.
+
+### 11.3 Verificarea rapidă (fără cameră, ~10 minute)
+
+Numărătorile, jurnalul de traiectorii, scenariile și modelele antrenate sunt incluse în repository, deci
+rezultatele se pot reproduce fără a colecta date noi.
+
+| Pas | Comandă | Ce trebuie să se vadă |
+|---|---|---|
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (10 teste: numărarea O–D, pietoni, sensul de mers, renumărarea) |
+| Simulare vizuală | `scripts\8_simulare_gui.bat` | SUMO-GUI cu ora de vârf din 21.10.2026 și agentul AI la semaforul pieței |
+| Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu planul fix |
+| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | aceeași oră reală cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
+| Evaluare scurtă | `.venv\Scripts\python -m romana.control.evaluate --seeds 1 --procese 4 --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg` | tabelul din `docs\rezultate\rezultate.md` regenerat |
+
+### 11.4 Rularea completă, pas cu pas
+
+| # | Script (`scripts\`) | Ce face | Durată |
 |---|---|---|---|
-| Ciornă | 18.10.2026 | scenariu `osmWebWizard` cu trafic aleator, script YOLOv8 cu 3 linii, PPO 2000 pași | modulul AI Google (Chrome) |
-| B0 | 20.10.2026 | audit al ciornei (erori de sintaxă, `hash()` nedeterminist, fără galben, scenariu în blocaj), restructurare | Claude (Anthropic) |
-| B1 | 20.10.2026 | rețea SUMO reproductibilă din OSM, 6 semafoare identificate geografic | Claude |
-| B2 | 20.10.2026 | viziune: HLS, YOLO11 + ByteTrack, 10 zone calibrate pe traiectorii reale, matrice O–D | Claude |
-| B3 | 20.10.2026 | estimare Furness + routeSampler, scenarii; diagnosticarea blocajului inelului și nodul agregat | Claude |
-| B4 | 20–21.10.2026 | mediu RL, PPO (piață și coridor), Webster / actuated / Max-Pressure, evaluare | Claude |
-| B5 | 20.10.2026 | geamăn digital live, dispecerat web, MQTT, scripturi Windows | Claude |
-| B6 | 20–21.10.2026 | documentația de față | Claude |
-| B7 | 21–22.10.2026 | viziune pe lumină de zi: căutarea camerelor publice pentru intersecțiile conexe, OpenVINO pe GPU Intel (~5 cadre/s), jurnal anonim de traiectorii și renumărare, sensul de mers pe zone, reunirea fragmentelor, zone recalibrate din câmpul de mișcare; colectare continuă 21.10 11:45 – 22.10 11:00 (zi, seară, noapte, vârf de dimineață) | Claude |
-| B8 | 21.10.2026 | replica fidelă a rețelei (16 semafoare fizice într-un controler, grupuri de semnal, treceri, trotuare, benzi STB); toți participanții: pietoni și bicicliști în cerere, cameră, geamăn digital, recompensă și evaluare; liniile de bază corectate pe rețeaua nouă (plan fix de referință, Webster, actuated, Max-Pressure); antrenare paralelă; reantrenare și evaluare | Claude |
-| B9 | 21–22.10.2026 | scenariile din date reale (10, din două zile), echilibrarea intrări/ieșiri, corectarea zonelor Dacia vest și a rutelor (bulevardele brațelor), agenții PPO pe date reale (v1–v3 și experimente, selecție pe seed-uri de validare), plafonul planurilor fixe și localizarea întârzierilor, test de generalizare pe ziua nevăzută, coridorul cu 4 vecini (fără Bd. Dacia × Str. Polonă, sens unic de ieșire), agentul final antrenat pe ambele zile, ghidul de utilizare (GHID.md) | Claude |
-| B9 (cont.) | 22.10.2026 | verificarea live a sistemului de către autor (observațiile O1–O9 în `docs/OBSERVATII_EVALUARE.md`): zonele camerei redesenate, 7 treceri, redare fluentă a camerei (tampon de 8 s), flux MJPEG în dispecerat, pași de 0,2 s în SUMO, `9_demo_comparatie.bat` | Claude, autorul |
-| B9 (cont.) | 23.10.2026 | zonele = decupajele desenate de autor (SIFT, scara fixă), renumărarea celor două zile (viraje complete 2 800 → 4 995), cele 10 scenarii regenerate, reevaluarea agentului (§ 9.5), verificarea rețelei cu Street View | Claude, autorul |
-| B9 (cont.) | 24.10.2026 | observațiile O10–O12; experimentele E2–E3; grila de planuri fixe; programul pe tipuri de trafic implementat în geamăn și dispecerat; evaluarea completă (350 de simulări, § 9.7) | Claude |
-| B9 (cont.) | 25.10.2026 | experimentele E4–E9 (agent general de la zero, specialiști pe tipuri de trafic, validare cu 5 seed-uri), statistica pe 10 seed-uri: programul final −6,9% față de planul fix (p = 0,0003), −3,2% față de actuated (§ 9.8–9.10); date de duminică pentru testul de generalizare | Claude |
+| 1 | `1_construieste_retea.bat` | regenerează rețeaua SUMO din extrasul OSM (`data\osm`) | ~2 min |
+| 2 | `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele, `q` = oprire); scrie `data\counts` și `data\trajectories` | cât se dorește (o zi întreagă pentru un profil complet) |
+| 2b | `2b_calibrare_zone.bat` | redesenarea zonelor dacă operatorul mută camera | ~5 min |
+| 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără ziua din jurnalul de traiectorii (după o recalibrare a zonelor) | ~5 min |
+| 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf, dimineața, prânzul și ora liniștită și construiește scenariile SUMO | ~5 min |
+| 3 | `3_genereaza_cerere.bat --nume X --de-la "..." --pana-la "..."` | un scenariu pe o fereastră aleasă manual | ~1 min |
+| 4 | `4_antreneaza_ai.bat --pasi 500000 --medii 8 --scenarii sumo\scenarios\zi_*.sumocfg` | antrenarea unui agent PPO (opțiuni: `--continua`, `--lr`, `--bc-plan`, `--coridor`) | 1–3 h pe laptopul de test |
+| 5 | `5_evalueaza.bat` | evaluarea comparativă (opțiuni: `--seeds`, `--seed-start`, `--planuri 46,48,12`, `--adauga`); actualizează `docs\rezultate\` | ~1 h |
+| 6 | `6_geaman_digital.bat` | SUMO-GUI alimentat **live** de cameră, semafor condus de strategia aleasă în dispecerat | continuu |
+| 7 | `7_dashboard.bat` | dispeceratul web la http://localhost:8050 | continuu |
+| – | `PORNESTE_TOT.bat` | 2 + 6 + 7 în trei ferestre: sistemul complet în timp real | continuu |
 
-Fiecare bornă corespunde unui commit cu prefixul „Borna N” în istoricul GitHub.
+### 11.5 Demonstrația live (~20 de minute)
+
+Pornire: `scripts\PORNESTE_TOT.bat`, apoi câte o fereastră pe ecran, în ordinea în care circulă datele:
+
+| Pas | Fereastra | Ce se arată |
+|---|---|---|
+| 1. Ochii sistemului | „Piata Romana – viziune artificiala” | detecțiile YOLO11 + ByteTrack, zonele de intrare/ieșire/trecere, debitele pe brațe (imaginea redată fluent, cu 8 s întârziere) |
+| 2. Geamănul digital | SUMO-GUI | rețeaua fidelă OSM, cele 16 semafoare ca un controler, traficul generat din debitele camerei, în timp real |
+| 3. Omul în buclă | dispeceratul, http://localhost:8050 | camera ca flux video, faza curentă în cuvinte, cozile pe brațe; orice mod de control („Agent AI”, „Plan fix”, „Max-Pressure”, „Manual”, „Program pe tipuri de trafic”) se aplică după „Confirm” |
+| 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` | aceeași oră reală cu planul fix, Max-Pressure și agentul AI |
+| 5. Rezultate și limite | capitolele 9 și 10 | evaluarea oficială și limitările declarate |
+
+**Strategia recomandată** este „Program pe tipuri de trafic” (§ 9.2): comută automat, după debitul măsurat de
+cameră la intrările pieței, între specialistul AI pentru trafic lejer, specialistul AI pentru trafic moderat și
+planul fix cu ciclu lung pentru trafic greu; dispeceratul arată în fiecare moment ce componentă conduce semaforul.
+
+### 11.6 Unde se găsesc lucrurile
+
+| Director / fișier | Conținut |
+|---|---|
+| `docs/DOCUMENTATIE.md` | documentația (acest document) |
+| `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`) |
+| `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, geamănul digital live |
+| `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
+| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea |
+| `src/romana/dashboard/` | dispeceratul web |
+| `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
+| `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectorii anonime – fără imagini) |
+| `sumo/scenarios/zi_*` | scenariile din date reale; `referinta_*` = scenariile ipotetice inițiale |
+| `models/` | agenții antrenați (`.zip` Stable-Baselines3 + `.npz` pentru rulare fără PyTorch) |
+| `docs/rezultate/` | datele brute ale evaluărilor (tabele CSV, grafice, tabelul detaliat generat automat) – anexa A |
+| `docs/img/` | imaginile din documentație |
+| `legacy/google_ai_draft/` | ciorna inițială, păstrată cu raportul de audit |
+| `README.md` | prezentarea scurtă afișată pe pagina GitHub a proiectului |
+| `.claude/CLAUDE.md` | instrucțiunile și starea de lucru pentru asistentul Claude Code (nu fac parte din documentație) |
+
+### 11.7 Probleme frecvente
+
+| Simptom | Cauză / soluție |
+|---|---|
+| `SUMO nu a fost găsit` | setați `SUMO_HOME` sau rulați `pip install eclipse-sumo==1.28.0` în `.venv` |
+| `DLL load failed ... _libsumo` | PYTHONPATH-ul instalatorului SUMO umbrește pachetul pip; proiectul îl ocolește automat (`control/env.py`). Dacă persistă: `set ROMANA_USE_TRACI=1` (mai lent) |
+| viziunea are sub 2 cadre/s | fără GPU, verificați `runtime: "openvino"` în `config/camera.json`; cu GPU NVIDIA: `runtime: "pytorch"`, `--device 0` |
+| `Cannot use optimization (scipy not installed)` | `pip install scipy` în `.venv` |
+| camera nu răspunde | fluxul public poate fi temporar indisponibil; geamănul digital trece automat pe profilul de referință și afișează asta |
+
+## 12. Jurnalul proiectului
+
+Povestea construirii proiectului: ce s-a încercat, ce nu a mers, ce s-a corectat și de ce. Istoricul exact al
+modificărilor este în commit-urile „Borna N: …” de pe GitHub.
+
+**Echipa.** Autor și coordonator: Niunin Matei-Gabriel – a stabilit obiectivele și regulile (rețea fidelă, toți
+participanții, date reale, doar programul semaforului se schimbă), a verificat pe teren și în imagini, a corectat
+greșelile și a venit cu ideile-cheie. Implementarea: asistentul AI Claude (Anthropic), prin Claude Code, rulând local
+pe laptopul autorului. Ciorna inițială (până la 18.10.2026): modulul AI Google (capitolul 13).
+
+### 12.1 Etapele proiectului
+
+**Etapa 0 – de la ciornă la un proiect serios (până la 20.10.2026).** Ciorna inițială avea o rețea „agregată”
+(piața ca un singur nod), trafic aleatoriu și un agent fără verificare; a fost auditată, păstrată în `legacy/`, iar
+proiectul a fost restructurat pe borne (§ 12.3). Regula de bază, stabilită de autor: **nu se schimbă nimic din
+infrastructură** – doar felul în care semafoarele existente răspund traficului.
+
+**Etapa 1 – rețeaua fidelă și toți participanții (noaptea de 20–21.10).** Replica fidelă din OpenStreetMap: 16
+semafoare fizice într-un singur controler, grupuri de semnal, treceri, trotuare, benzi STB. Provocări: importul
+trecerilor din OSM bloca `netconvert` (trecerile au fost reconstruite geometric); inelul pieței se bloca singur
+(diagnostic: ieșirile primeau roșu – acum au verde permanent); liniile de bază aveau defecte (actuated cu faze
+greșite, Webster cu chei vechi, Max-Pressure care bloca inelul prin faze fără dozare) – toate reparate. Cel mai
+instructiv: **agentul care trișa** – agentul pentru coridor ținea vehiculele în afara rețelei, ca să nu apară în
+cozi; vehiculele care așteaptă să intre contează acum în recompensă ca unele oprite.
+
+**Etapa 2 – ochii sistemului (21.10).** În zona modelată există o singură cameră publică (Piața Romană), deci
+intersecțiile vecine sunt simulate din datele ei. Detecția rula cu 0,9 cadre/s pe procesor; mutată pe placa grafică
+Intel prin OpenVINO: ~5–6 cadre/s. Numărările absurde (întoarceri false „Magheru → Magheru”, mașini de pe inel
+numărate ca intrări pe Dacia vest) au dus la regula de numărare pe traiectoria întreagă (§ 4.3). Rutele porneau de
+la linia de oprire și blocau intrarea în simulare – acum pornesc de la capătul bulevardelor. Logistic: git nu avea
+credențiale în linia de comandă (push-ul se face prin GitHub Desktop), iar laptopul rula în mod de economisire.
+
+**Etapa 3 – primele rezultate pe date reale (22.10).** Două zile de trafic real, 10 scenarii, 300 de simulări:
+agentul AI −4,6% față de planul fix. Corecturile autorului: strada se numește Calea Dorobanți; intersecția
+Dacia × Polonă e sens unic de ieșire, deci nu intră în coridor. Experimentele cu agentul care vede cozile din
+amonte, cu imitația unui plan fix, cu orizontul lung și cu coordonarea a 4 vecini (+35%) au fost negative.
+Diagnostic important: 68% din întârzierea la vârf vine din coada de pe Bd. Dacia vest, dincolo de piață.
+
+**Etapa 4 – sistemul rulat live, cap-coadă (seara de 22.10).** Rularea completă (camera, geamănul, dispeceratul) a
+scos la iveală defecte reale (§ 12.2, P1–P5, O8): oprirea viziunii la citiri simultane, revenirea pe date de rezervă
+la fiecare 15 minute, imaginea care mergea 2 s și stătea 4 s, dispeceratul cu 1 cadru/s, vehiculele care „săreau”
+în SUMO. Privind imaginea analizată, autorul a observat că zonele erau desenate greșit – cea mai memorabilă
+greșeală: **marcajul de staționare interzisă confundat cu trecerea de pietoni de pe Magheru**.
+
+**Etapa 5 – datele corectate răstoarnă rezultatul (23.10).** Autorul a desenat el însuși zonele pe capturi ale
+camerei; localizarea lor automată (potrivire SIFT, scara 3288/1920 dedusă din potrivirile sigure) a pornit după o
+eroare de citire a fondului transparent. Renumărarea a crescut virajele urmărite complet de la 2 800 la 4 995. Pe
+scenariile corecte, agentul care dădea −4,6% a ajuns la **+5,2%** – rezultatul frumos era construit pe date greșite,
+iar acest lucru a fost raportat ca atare. O greșeală a asistentului, corectată de autor: o singură bandă „văzută” în
+Street View pe Dacia est (în realitate două pe sens, iar rețeaua era corectă).
+
+**Etapa 6 – specialiști în loc de un agent universal (24–25.10).** Reantrenarea scurtă (E2) a înrăutățit agentul; cu
+pași de învățare de 10 ori mai mici (E3) a devenit cel mai bun la prânz. Ideea care a deblocat proiectul: un
+**program pe tipuri de trafic** – agentul AI acolo unde e cel mai bun, un plan fix bine reglat la vârf. Agentul de
+la zero cu 1 milion de pași (E4) nu a fost mai bun; specialiștii pentru trafic greu (E5–E7) au ajuns cel mult la
+nivelul celui mai bun plan fix; specialistul pentru trafic lejer (E9) a fost puțin, dar sigur, mai bun. Diferențele
+de 1–2 puncte își schimbau semnul între seed-urile de validare și cele de test – de aici validarea cu 5 seed-uri,
+stabilită dinainte, și testele statistice pe perechi. Lucrul s-a făcut în condiții reale: dintr-o cafenea cu prize
+până la plecarea autobuzului, cu opriri pentru masă și cu procesorul limitat cât autorul avea nevoie de el.
+
+**Etapa 7 – „ești sigur că numeri corect?” (25.10).** Întrebarea autorului a dus la un audit al numărării: camera
+număra 1,6 ieșiri pentru fiecare intrare, pentru că pe inelul din fundal vehiculele mici sunt pierdute de detector
+oriunde, iar o mașină pierdută în dreptul ieșirii Catargiu părea „ieșită”. Calibrarea pe conservarea vehiculelor a
+arătat că ieșirile spre Dacia vest și Căderea Bastiliei nu pot fi deosebite de pierderi. **Ideea autorului:**
+semaforul controlează doar intrările, deci volumele se iau doar din intrări (§ 5.1). Tot de la autor: testul cu
+participanți indisciplinați (§ 9.4) – realitatea străzilor din București.
+
+### 12.2 Observațiile autorului și corecturile
+
+| # | Observație / problemă | Ce s-a făcut |
+|---|---|---|
+| O1 | Zona trecerii de pe Magheru era desenată pe marcajul de staționare interzisă din fața chioșcului | mutată pe zebra reală; ulterior toate zonele au fost înlocuite cu cele desenate de autor (23.10) |
+| O2–O7 | Zonele Magheru (prea late), Mendeleev (prea sus), Dacia vest (suprapuse), Catargiu (prea jos, prindea inelul), Căderea Bastiliei (prea jos), Dacia est (deasupra intrării reale); lipseau 5 treceri | redesenate pe 22.10, apoi înlocuite (23.10) cu decupajele desenate de autor pe capturi ale camerei, localizate automat (§ 4.3) |
+| O8 | Mișcarea din dispecerat și din SUMO era sacadată | flux video continuu (MJPEG) în dispecerat; pași de simulare de 0,2 s |
+| O9 | Comparația măsurată nu arăta bicicliștii și pietonii | `9_demo_comparatie.bat` afișează numărul și așteptarea lor |
+| O10 | Trecerea de pe Căderea Bastiliei trebuie să fie deasupra ieșirii | mutată deasupra zonei de ieșire |
+| O11 | Și Mendeleev este sens unic, nu doar Căderea Bastiliei | corectat în documentație (rețeaua era corectă) |
+| O12 | Dacia are 2 benzi pe sens, fără parcare; doar Mendeleev și Căderea Bastiliei au parcare | concluzia greșită retrasă; rețeaua era corectă |
+| O13 | Numărarea ieșirilor e de încredere? | audit: ieșirile îndepărtate sunt supranumărate (§ 4.3) → volumele doar din intrări |
+| O14 | Participanții din București sunt indisciplinați | testul de robustețe cu participanți indisciplinați (§ 9.4) |
+| O15 | Prea multe documente | o singură documentație (acest document); README scurt pentru pagina GitHub |
+| P1 | Viziunea se oprea când dispeceratul citea imaginea | scriere atomică, citiri simultane tolerate |
+| P2 | Geamănul revenea pe date de rezervă la începutul fiecărui interval de 15 min | păstrează ultimele debite bune ale camerei |
+| P3 | Imaginea camerei mergea 2 s și stătea 4 s (camera trimite bucăți de 6 s) | tampon de redare de 8 s: cadre la 0,17 s, fără pauze |
+| P4 | Fereastra camerei tăia imaginea | fereastră redimensionabilă |
+| P5 | SUMO-GUI pornea cu toată rețeaua | vederea pornește centrată pe piață |
+| P6 | Programul live comuta după intrările camerei, iar pragurile erau pe altă unitate | comutarea pe aceeași măsură ca scenariile (§ 9.2) |
+
+### 12.3 Bornele
+
+| Bornă | Data | Conținut |
+|---|---|---|
+| Ciornă | 18.10.2026 | scenariu `osmWebWizard` cu trafic aleator, script YOLOv8 cu 3 linii, PPO 2000 pași (modulul AI Google) |
+| B0 | 20.10.2026 | audit al ciornei (erori de sintaxă, `hash()` nedeterminist, fără galben, scenariu în blocaj), restructurare |
+| B1 | 20.10.2026 | rețea SUMO reproductibilă din OSM, semafoarele identificate geografic |
+| B2 | 20.10.2026 | viziune: HLS, YOLO11 + ByteTrack, zone, matrice O–D |
+| B3 | 20.10.2026 | estimare Furness + routeSampler, scenarii |
+| B4 | 20–21.10.2026 | mediu RL, PPO (piață și coridor), Webster / actuated / Max-Pressure, evaluare |
+| B5 | 20.10.2026 | geamăn digital live, dispecerat web, MQTT, scripturi Windows |
+| B6 | 20–21.10.2026 | documentația |
+| B7 | 21–22.10.2026 | viziune pe lumină de zi, OpenVINO, jurnal de traiectorii și renumărare, colectare continuă de două zile |
+| B8 | 21.10.2026 | replica fidelă a rețelei, toți participanții (pietoni, bicicliști), liniile de bază corectate |
+| B9 | 21–25.10.2026 | scenariile din date reale, agenții pe date reale, verificarea live, zonele desenate de autor, renumărarea, specialiștii și programul pe tipuri de trafic, evaluarea statistică, ziua de weekend, cererea din intrări, testul de robustețe |
+
+### 12.4 Ce am învățat
+
+1. **Datele bune contează mai mult decât algoritmul.** Cea mai mare schimbare de rezultat nu a venit din AI, ci din
+   corectarea zonelor de pe cameră și a felului în care se numără.
+2. **Un rezultat bun trebuie să supraviețuiască verificării.** −4,6% a devenit +5,2% când datele au fost corectate;
+   rezultatul a fost raportat, iar soluția a fost căutată mai departe.
+3. **AI-ul e util acolo unde e potrivit.** Un singur agent nu bate un plan fix bine reglat la vârf; combinat cu
+   planuri clasice aduce un câștig semnificativ și se adaptează la zile noi, lucru pe care un plan fix nu-l face.
+4. **Rezultatele negative sunt rezultate.** Coridorul, agentul universal, specialiștii nereușiți au îngustat drumul
+   spre soluția bună și sunt documentate.
+5. **Ochiul omului rămâne indispensabil.** Marcajul confundat cu o trecere, banda „lipsă” de pe Dacia, ideea de a
+   număra doar intrările – toate au venit de la autor.
 
 ## 13. Asistență generativă
 
