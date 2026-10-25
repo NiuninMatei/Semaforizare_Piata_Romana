@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-10-25 11:34:48.617678 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<configuration>
+    <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate_bicycle.rou.xml"/>
+    <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-25_dimineata\viraje_bicycle.xml"/>
+    <output-file value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-25_dimineata\bicycle.rou.xml"/>
+    <mismatch-output value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-25_dimineata\mismatch_bicycle.xml"/>
+    <prefix value="bicycle_"/>
+    <attributes value="type=&quot;bicycle&quot; departLane=&quot;best&quot;"/>
+    <turn-max-gap value="25"/>
+    <optimize value="full"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+<!-- begin="1800.0" end="2700.0" -->
+    <vehicle id="bicycle_1800_0" depart="2314.80" type="bicycle" departLane="best">
+        <route edges="-125420125#2 -125420125#1 -417612252#4 23770777#1 23770777#2 23770777#3 23770777#4 23770777#5 23770777#6 669726792 23770795#0 448266581#1 448266581#2 668307642#1 130848152#1 130848152#2 778823271 23781801 241212606 668307633#0 668307633#1 668307633#2 182932595#0 -1059582465"/>
+    </vehicle>
+    <vehicle id="bicycle_1800_1" depart="2491.70" type="bicycle" departLane="best">
+        <route edges="-1124824843 -205981087#0 205981089#0 205981089#1 205981089#2 205981089#3 -231435896 -778823268#2 -778823268#0 778823266 778823265 448792279#0 448792279#1 448266583 23781801 241212606 668307633#0 668307633#1 668307633#2 668307633#3 668307630 4045775#0 4045775#1 667696381#0 667696381#1 668307628#0 668307628#1 23647335#1 23647335#2 23647335#3 26991957#0 26991957#1 178030044#0 178030044#1 812564669"/>
+    </vehicle>
+</routes>

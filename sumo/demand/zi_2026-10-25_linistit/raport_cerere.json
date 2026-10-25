@@ -1,0 +1,41 @@
+{
+  "tipuri": {
+    "bus": {
+      "viraje_tinta": 58,
+      "GEH<5_%": 100.0
+    },
+    "passenger": {
+      "viraje_tinta": 446,
+      "GEH<5_%": 87.5
+    },
+    "truck": {
+      "viraje_tinta": 9,
+      "GEH<5_%": 100.0
+    }
+  },
+  "vehicule_fond": 77,
+  "pietoni": 183,
+  "sumocfg": "sumo\\scenarios\\zi_2026-10-25_linistit.sumocfg",
+  "rezumat_od": {
+    "vehicule_total": 513,
+    "durata_s": 3600,
+    "od_vehicule": {
+      "catargiu>magheru": 4,
+      "catargiu>mendeleev": 1,
+      "dacia_est>caderea_bastiliei": 1,
+      "dacia_est>catargiu": 14,
+      "dacia_est>dacia_vest": 13,
+      "dacia_est>magheru": 58,
+      "dacia_est>mendeleev": 10,
+      "dacia_vest>catargiu": 5,
+      "dacia_vest>magheru": 12,
+      "dacia_vest>mendeleev": 2,
+      "magheru>caderea_bastiliei": 9,
+      "magheru>catargiu": 254,
+      "magheru>dacia_est": 74,
+      "magheru>dacia_vest": 19,
+      "magheru>magheru": 28,
+      "magheru>mendeleev": 8
+    }
+  }
+}
