@@ -55,15 +55,15 @@ pe laptopul autorului (fără placă video dedicată). Ciorna inițială (până
   orizontul mai lung, coordonarea cu 4 vecini (+35%). Diagnostic important: **68% din întârzierea la vârf** vine din
   coada de pe Bd. Dacia vest, dincolo de piață – un plafon fizic pe care niciun semafor nu-l poate depăși complet.
 
-## Etapa 4 – repetiția susținerii: autorul în rolul profesorului (seara de 22.10)
+## Etapa 4 – sistemul rulat live, cap-coadă (seara de 22.10)
 
-* Pregătind demonstrația live au ieșit la iveală defecte reale: viziunea se oprea când dispeceratul citea imaginea;
-  geamănul revenea pe date de rezervă la fiecare 15 minute; imaginea camerei mergea 2 s și stătea 4 s (camera
-  trimite bucăți de câte 6 s → tampon de redare de 8 s); dispeceratul arăta 1 cadru/s (→ flux video continuu);
-  vehiculele din SUMO „săreau” (→ pași de 0,2 s).
-* **Observațiile „profesorului” (O1–O9)** au fost dure și corecte: zonele de pe cameră erau desenate greșit – cea mai
-  memorabilă, **marcajul de staționare interzisă confundat cu trecerea de pietoni de pe Magheru**. Toate cele 7 zone
-  redesenate, 7 treceri în loc de 2.
+* Rulând tot sistemul live (camera, geamănul SUMO, dispeceratul) au ieșit la iveală defecte reale: viziunea se oprea
+  când dispeceratul citea imaginea; geamănul revenea pe date de rezervă la fiecare 15 minute; imaginea camerei mergea
+  2 s și stătea 4 s (camera trimite bucăți de câte 6 s → tampon de redare de 8 s); dispeceratul arăta 1 cadru/s
+  (→ flux video continuu); vehiculele din SUMO „săreau” (→ pași de 0,2 s).
+* Privind imaginea analizată, autorul a observat că zonele de pe cameră erau desenate greșit – cea mai memorabilă
+  greșeală: **marcajul de staționare interzisă confundat cu trecerea de pietoni de pe Magheru**. Toate zonele au fost
+  redesenate, cu 7 treceri în loc de 2.
 
 ## Etapa 5 – datele corectate răstoarnă rezultatul (23.10)
 

@@ -1,11 +1,8 @@
-# Observații de la evaluarea prin demonstrație (22.10.2026, seara)
+# Observațiile autorului și corecturile făcute (22–25.10.2026)
 
-Demonstrație live, cap-coadă, a sistemului, în format de susținere: autorul în rolul profesorului
-coordonator, Claude în rolul studentului care prezintă. Fiecare observație este notată aici cu ce s-a
-făcut pentru ea (rezolvat / planificat), ca să rămână în istoricul proiectului.
-
-Pașii demonstrației: 1 – camera și viziunea artificială; 2 – geamănul digital SUMO; 3 – dispeceratul și
-preluarea controlului; 4 – comparația măsurată (`scripts\9_demo_comparatie.bat`); 5 – rezultate și limite.
+Observațiile autorului la verificarea live a sistemului (camera, geamănul SUMO, dispeceratul) și la
+verificarea datelor, fiecare cu ce s-a făcut pentru ea (rezolvat / planificat), ca să rămână în istoricul
+proiectului. Povestea pe scurt: [`JURNAL.md`](../JURNAL.md).
 
 ## Observațiile din 24.10.2026
 
@@ -39,7 +36,7 @@ capturi Google Street View ale fiecărui braț (`C:\Users\Matei\Pictures\Screens
 | P4 | Fereastra camerei tăia imaginea când era micșorată | fereastră redimensionabilă, imagine scalată |
 | P5 | SUMO-GUI pornea cu toată rețeaua, piața greu de găsit | vederea pornește centrată pe piață |
 
-## Observațiile profesorului
+## Observațiile de la verificarea live (22.10.2026)
 
 | # | Observație | Ce s-a făcut |
 |---|---|---|
