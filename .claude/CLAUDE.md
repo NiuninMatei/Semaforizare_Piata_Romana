@@ -36,7 +36,23 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (22.10.2026, 16:10) – Bornele 7 și 9 încheiate
+## Stare curentă (25.10.2026, ~14:40) – documentație unică, rezultate pe două calibrări, test de indisciplină
+
+- **Singura documentație: `docs/DOCUMENTATIE.md`** (+ `docs/DOCUMENTATIE.pdf`, `python -m romana.doc_pdf`); GHID.md,
+  JURNAL.md, OBSERVATII_EVALUARE.md au fost integrate (cap. 11 ghid, cap. 12 jurnal); README = prezentare scurtă;
+  acest fișier mutat în `.claude/` (cererea autorului: un singur document mare, cu capitole și subcapitole).
+- Cererea: `echilibrare: "doar_intrari"` (implicit, marginea de jos; ideea autorului – semaforul controlează intrările);
+  marginea de sus = „medie” (scenariile din istoricul git). Auditul numărării: ieșiri/intrări = 1,6; ieșirile
+  îndepărtate nu se pot deosebi de vehiculele pierdute (§ 4.3).
+- Rezultate (cap. 9): programul pe tipuri de trafic – marginea de sus −6,9% (p = 0,0003; E9 / E3 / plan 46/48/12),
+  marginea de jos −2,9% (actuated / E3 / plan fix actual; ales pe validare 11–15); duminica 25.10: −5,2% / −4,5%;
+  **participanți indisciplinați** (`vtypes_indisciplinat.add.xml`, `indisciplinat_*.sumocfg`): E3 −14,1% (p = 0,00001; 40/50),
+  E9 −9,9% (p = 0,003) față de planul fix pe 10 seed-uri, până la −28% la vârf.
+- Defect corectat: `control/env.py` ignora tipurile de participanți din scenariu (primul test de indisciplină invalid).
+- Geamănul live: modul „program” = varianta pentru marginea de sus (debit echilibrat, praguri 1 300 / 2 000 veh/h).
+- Pași posibili: reantrenarea agenților pe scenariile „doar intrări” și cu participanți indisciplinați; adnotarea a
+  2–3 minute de video pentru a fixa nivelul cererii între cele două margini.
+## Stare anterioară (22.10.2026, 16:10) – Bornele 7 și 9 încheiate
 
 - Date reale: 21.10 11:45 – 22.10 11:00 (traiectorii + numărători în data/), 10 scenarii `zi_2026-10-2*`.
 - Agentul oficial = `models/ppo_romana` (v1, antrenat pe 21.10, ales pe seed-uri de validare 11–13 față de doi

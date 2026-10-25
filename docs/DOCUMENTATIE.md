@@ -675,21 +675,20 @@ aceleași scenarii (marginea de jos) cu tipurile de participanți din `sumo/dema
 vehicule care blochează intersecția după 1 s de așteptare, trec pe roșu în primele 2 s și pe galben târziu,
 schimbă banda agresiv; pietoni care traversează pe roșu în primele 5 s și ignoră uneori vehiculele.
 
-5 scenarii (prânzul și vârful din 21.10, dimineața, noaptea și vârful din 22.10) × 5 seed-uri de test
-(`docs/rezultate/robustete_indisciplinat.csv`). Indisciplina schimbă mult traficul: cu planul fix, timpul pierdut
-crește la vârfuri cu +31% (21.10) și +16% (22.10) și cu +7% dimineața – intersecția blocată și trecerile pe roșu
-strică ritmul fazelor – și scade cu ≈15% la prânz și noaptea, când trecerile pe roșu „câștigă” timp într-o
-intersecție nesaturată. Față de planul fix, în aceleași condiții:
+5 scenarii (prânzul și vârful din 21.10, dimineața, noaptea și vârful din 22.10) × 10 seed-uri de test
+(`docs/rezultate/robustete_indisciplinat*.csv`). Indisciplina schimbă mult traficul: cu planul fix, timpul
+pierdut crește la vârfuri cu +31% (21.10) și +16% (22.10) și cu +7% dimineața – intersecția blocată și trecerile
+pe roșu strică ritmul fazelor – și scade cu ≈15% la prânz și noaptea, când trecerile pe roșu „câștigă” timp într-o
+intersecție nesaturată (seed-urile 1–5). Față de planul fix, în aceleași condiții:
 
 | Strategie | Medie | Vârf 21.10 | Vârf 22.10 | Dimineața | Prânz | Noaptea | Mai bun în | p (t / Wilcoxon) |
 |---|---|---|---|---|---|---|---|---|
-| **Agent E3** | **−12,8%** | −23,1% | −27,3% | −20,5% | +1,8% | −2,7% | 19 / 25 | 0,003 / 0,003 |
-| **Agent E9** | **−11,6%** | −16,6% | −20,5% | −20,5% | −2,9% | −7,8% | 20 / 25 | 0,013 / 0,007 |
-| Agent oficial | +1,4% | −6,3% | +5,2% | +2,0% | +13,9% | −14,2% | 14 / 25 | 0,67 (nesemnif.) |
-| Actuated | +6,4% | −12,7% | +16,2% | −7,3% | +35,9% | −9,7% | 13 / 25 | 0,56 (nesemnif.) |
-
+| **Agent E3** | **−14,1%** | −14,8% | −28,0% | −20,0% | −3,1% | −4,6% | 40 / 50 | 0,00001 / <0,00001 |
+| **Agent E9** | **−9,9%** | −6,9% | −24,8% | −6,4% | −4,1% | −7,3% | 37 / 50 | 0,003 / 0,002 |
+| Agent oficial | −0,1% | +5,2% | −11,0% | +3,5% | +15,7% | −14,1% | 30 / 50 | 0,99 (nesemnif.) |
+| Actuated | +6,4% | +0,4% | +4,0% | +7,4% | +30,6% | −10,6% | 25 / 50 | 0,23 (nesemnif.) |
 **Cu participanți indisciplinați – situația reală din București – specialiștii AI sunt mult mai buni decât
-planul fix**, în special la vârf (−17…−27%), deși au fost antrenați cu participanți disciplinați: observă cozile
+planul fix**, în special la vârf (până la −28%), deși au fost antrenați cu participanți disciplinați: observă cozile
 reale și se adaptează din mers când intersecția se blochează, ceea ce un plan fix nu poate face. Programul pe
 tipuri de trafic ales pentru marginea de jos (care păstrează planul fix la vârf) câștigă aici doar −1,5%
 (nesemnificativ) – pentru condițiile reale, varianta cu agenții AI și la trafic greu este preferabilă.
@@ -739,7 +738,7 @@ administratorul drumului.
 3. **Calitatea datelor contează cel mai mult**: corectarea zonelor și a felului de numărare a schimbat rezultatul
    mai mult decât orice algoritm; incertitudinea măsurării cererii se reflectă într-un interval, nu într-un număr.
 4. **Cu participanți indisciplinați, ca în București, avantajul AI crește mult**: specialiștii E3 și E9 reduc timpul
-   pierdut cu ≈12–13% față de planul fix (până la −27% la vârf), semnificativ statistic, pentru că se adaptează la
+   pierdut cu ≈10–14% față de planul fix (până la −28% la vârf), semnificativ statistic, pentru că se adaptează la
    blocaje pe care un plan fix nu le poate anticipa.
 5. **La vârf există o limită fizică** (coada de pe Dacia vest), care cere măsuri dincolo de semafor.
 
@@ -955,7 +954,7 @@ semaforul controlează doar intrările, deci volumele se iau doar din intrări (
 participanți indisciplinați (§ 9.4) – realitatea străzilor din București. Prima rulare a testului a dat rezultate
 identice cu cele normale, ceea ce a dus la descoperirea unui defect (simularea ignora tipurile de participanți din
 scenariu); după corectare, testul a dat cel mai puternic argument pentru AI: cu participanți indisciplinați,
-specialiștii AI au redus timpul pierdut cu ≈12–13% față de planul fix, până la −27% la vârf.
+specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, până la −28% la vârf.
 
 ### 12.2 Observațiile autorului și corecturile
 
