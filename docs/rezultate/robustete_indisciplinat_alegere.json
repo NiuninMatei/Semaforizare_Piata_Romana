@@ -1,9 +1,9 @@
 {
   "scor_mediu_procent": {
-    "ACTUATED": 1.72,
-    "ppo_romana": 2.64,
-    "ppo_romana_lejer": 0.06,
-    "ppo_romana_zn3": -0.95
+    "ACTUATED": 4.5,
+    "ppo_romana": 0.12,
+    "ppo_romana_lejer": -13.64,
+    "ppo_romana_zn3": -14.33
   },
   "ales": "ppo_romana_zn3",
   "seeduri_validare": [
