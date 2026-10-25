@@ -716,6 +716,13 @@ Programul realist este varianta implicită a modului „Program pe tipuri de tra
 (`VARIANTA_PROGRAM = "realist"` în `bridge/live_twin.py`; varianta pentru participanți disciplinați rămâne
 disponibilă ca `"marginea_sus"`).
 
+**Programul realist pe duminică** (zi nevăzută, participanți indisciplinați, 5 scenarii × 5 seed-uri,
+`docs/rezultate/robustete_indisciplinat_duminica.csv`): −4,3% față de planul fix (mai bun în 19 din 25, dar
+nesemnificativ: p = 0,37) – câștigă la trafic lejer și dimineața (−9…−10%), dar la vârful foarte mare de duminică
+(≈3 500–4 200 veh/h, peste orice scenariu de antrenare) agentul E3 pierde ușor (+8,7% la vârful ×1,2). Agentul
+oficial singur a fost aici cel mai bun (−9,1% în medie, −11,6% la vârf). Concluzia: pentru tipare de trafic mult
+diferite de cele de antrenare, agenții trebuie reantrenați pe date noi (§ 10).
+
 *Notă de verificare:* prima rulare a testului a dat rezultate identice cu scenariile normale – funcția care pornește
 simularea înlocuia tipurile de participanți din scenariu cu cele standard (`control/env.py`, corectat pe
 25.10.2026); rezultatele de mai sus sunt din rularea corectată, iar rezultatele scenariilor normale nu sunt
