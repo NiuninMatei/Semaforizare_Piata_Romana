@@ -1,0 +1,18 @@
+{
+  "scor_mediu_procent": {
+    "PLAN_46_48_12": 7.16,
+    "ppo_romana_moderat": 17.08,
+    "ppo_romana_moderat_mij": 11.78,
+    "ppo_romana_zn3": 9.04
+  },
+  "ales": "PLAN_46_48_12",
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ],
+  "scenarii": [
+    "zi_2026-10-21_pranz",
+    "zi_2026-10-22_dimineata"
+  ]
+}

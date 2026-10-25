@@ -1,0 +1,18 @@
+{
+  "scor_mediu_procent": {
+    "ppo_romana": -8.56,
+    "ppo_romana_lejer": -9.18
+  },
+  "ales": "ppo_romana_lejer",
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ],
+  "scenarii": [
+    "zi_2026-10-21_linistit",
+    "zi_2026-10-21_linistit_x0_8",
+    "zi_2026-10-22_linistit",
+    "zi_2026-10-22_linistit_x0_8"
+  ]
+}
