@@ -17,43 +17,43 @@
       ],
       "od_veh_h": [
         [
-          18.4,
-          191.4,
-          34.4,
-          43.4,
-          15.6,
-          10.2
+          1.1,
+          32.0,
+          113.8,
+          7.1,
+          0.7,
+          5.3
         ],
         [
-          5.4,
+          1.8,
           0.1,
-          0.0,
           0.6,
-          1.5,
-          0.2
+          0.6,
+          0.4,
+          0.5
         ],
         [
-          50.9,
-          17.7,
-          0.1,
-          36.1,
-          25.9,
-          2.5
+          13.6,
+          13.6,
+          2.0,
+          27.2,
+          5.4,
+          6.1
         ],
         [
-          8.6,
-          3.0,
-          0.3,
-          0.5,
-          2.7,
-          0.6
+          1.6,
+          1.6,
+          3.2,
+          0.2,
+          0.4,
+          1.0
         ]
       ],
       "intrari_veh_h": {
-        "magheru": 313.3,
-        "catargiu": 7.8,
-        "dacia_est": 133.2,
-        "dacia_vest": 15.7
+        "magheru": 160.0,
+        "catargiu": 4.0,
+        "dacia_est": 68.0,
+        "dacia_vest": 8.0
       },
       "iesiri_veh_h": {
         "magheru": 124.0,
@@ -94,12 +94,12 @@
       ],
       "od_veh_h": [
         [
-          33.6,
-          274.7,
-          64.2,
-          28.2,
-          5.5,
-          11.5
+          1.1,
+          32.2,
+          185.8,
+          7.1,
+          0.7,
+          41.1
         ],
         [
           0.0,
@@ -110,27 +110,27 @@
           0.0
         ],
         [
-          49.8,
-          13.6,
-          0.1,
-          12.5,
-          4.9,
-          0.2
+          10.4,
+          10.4,
+          1.6,
+          20.8,
+          4.2,
+          4.7
         ],
         [
-          22.6,
-          6.2,
-          0.5,
-          0.4,
-          1.4,
-          0.1
+          4.0,
+          4.0,
+          8.0,
+          0.6,
+          1.0,
+          2.4
         ]
       ],
       "intrari_veh_h": {
-        "magheru": 417.8,
+        "magheru": 268.0,
         "catargiu": 0.0,
-        "dacia_est": 81.1,
-        "dacia_vest": 31.2
+        "dacia_est": 52.0,
+        "dacia_vest": 20.0
       },
       "iesiri_veh_h": {
         "magheru": 144.0,
@@ -171,43 +171,43 @@
       ],
       "od_veh_h": [
         [
-          8.8,
-          328.9,
-          109.5,
-          3.7,
-          5.0,
-          15.2
-        ],
-        [
-          11.5,
+          0.9,
+          42.6,
+          310.1,
+          6.1,
           0.6,
-          0.1,
-          0.2,
-          2.2,
-          0.2
+          19.8
         ],
         [
-          72.1,
-          16.5,
-          0.1,
-          2.6,
-          7.1,
-          0.7
+          5.4,
+          0.4,
+          1.8,
+          1.8,
+          1.2,
+          1.4
         ],
         [
-          11.5,
-          9.3,
-          0.8,
-          0.1,
-          2.5,
-          0.6
+          37.3,
+          10.7,
+          1.6,
+          21.3,
+          4.3,
+          4.8
+        ],
+        [
+          4.0,
+          4.0,
+          8.0,
+          0.6,
+          1.0,
+          2.4
         ]
       ],
       "intrari_veh_h": {
-        "magheru": 471.1,
-        "catargiu": 14.9,
-        "dacia_est": 99.2,
-        "dacia_vest": 24.8
+        "magheru": 380.0,
+        "catargiu": 12.0,
+        "dacia_est": 80.0,
+        "dacia_vest": 20.0
       },
       "iesiri_veh_h": {
         "magheru": 124.0,
@@ -247,12 +247,12 @@
       ],
       "od_veh_h": [
         [
-          50.6,
-          221.3,
-          88.3,
-          0.0,
-          5.5,
-          0.0
+          0.9,
+          26.8,
+          229.3,
+          6.0,
+          0.6,
+          4.5
         ],
         [
           0.0,
@@ -263,27 +263,27 @@
           0.0
         ],
         [
-          58.5,
-          8.5,
+          10.4,
+          10.4,
+          1.6,
+          20.8,
+          4.2,
+          4.7
+        ],
+        [
+          0.8,
+          0.8,
+          1.6,
           0.1,
-          0.0,
-          3.8,
-          0.0
-        ],
-        [
-          4.5,
-          0.7,
-          0.1,
-          0.0,
           0.2,
-          0.0
+          0.5
         ]
       ],
       "intrari_veh_h": {
-        "magheru": 365.6,
+        "magheru": 268.0,
         "catargiu": 0.0,
-        "dacia_est": 70.9,
-        "dacia_vest": 5.5
+        "dacia_est": 52.0,
+        "dacia_vest": 4.0
       },
       "iesiri_veh_h": {
         "magheru": 144.0,
@@ -309,25 +309,29 @@
     }
   ],
   "rezumat": {
-    "vehicule_total": 513,
+    "vehicule_total": 349,
     "durata_s": 3600,
     "od_vehicule": {
-      "catargiu>magheru": 4,
-      "catargiu>mendeleev": 1,
-      "dacia_est>caderea_bastiliei": 1,
-      "dacia_est>catargiu": 14,
-      "dacia_est>dacia_vest": 13,
-      "dacia_est>magheru": 58,
-      "dacia_est>mendeleev": 10,
-      "dacia_vest>catargiu": 5,
-      "dacia_vest>magheru": 12,
-      "dacia_vest>mendeleev": 2,
-      "magheru>caderea_bastiliei": 9,
-      "magheru>catargiu": 254,
-      "magheru>dacia_est": 74,
-      "magheru>dacia_vest": 19,
-      "magheru>magheru": 28,
-      "magheru>mendeleev": 8
+      "catargiu>dacia_est": 1,
+      "catargiu>dacia_vest": 1,
+      "catargiu>magheru": 2,
+      "dacia_est>caderea_bastiliei": 5,
+      "dacia_est>catargiu": 11,
+      "dacia_est>dacia_est": 2,
+      "dacia_est>dacia_vest": 23,
+      "dacia_est>magheru": 18,
+      "dacia_est>mendeleev": 5,
+      "dacia_vest>caderea_bastiliei": 2,
+      "dacia_vest>catargiu": 3,
+      "dacia_vest>dacia_est": 5,
+      "dacia_vest>magheru": 3,
+      "dacia_vest>mendeleev": 1,
+      "magheru>caderea_bastiliei": 18,
+      "magheru>catargiu": 33,
+      "magheru>dacia_est": 210,
+      "magheru>dacia_vest": 7,
+      "magheru>magheru": 1,
+      "magheru>mendeleev": 1
     }
   }
 }
