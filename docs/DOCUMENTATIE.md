@@ -161,9 +161,9 @@ poligoane – banda de intrare spre piață și banda de ieșire – iar pentru 
 (10 zone în total, `config/camera.json`, coordonate normalizate 0–1, independente de rezoluție).
 
 ![Zonele de numărare pe imaginea camerei](img/zone_camera.jpg)
-*Zonele de numărare finale (verde = intrare, portocaliu = ieșire, mov = străzi cu sens unic de ieșire, roșu =
-treceri de pietoni); săgețile albe arată sensul de mers cerut în fiecare zonă. Imagine: © WebcamRomania.ro,
-captură din 21.10.2026, 11:18, persoane estompate automat; folosită în scop de citare academică.*
+*Zonele de numărare finale, desenate de autor (verde = intrare, portocaliu = ieșire, mov = străzi cu sens unic
+de ieșire, roșu = treceri de pietoni). Imagine: © WebcamRomania.ro, captură din 23.10.2026, 12:42; folosită în
+scop de citare academică.*
 
 ![Câmpul de mișcare al vehiculelor](img/flux_traiectorii.jpg)
 *Câmpul de mișcare calculat din ≈119.000 de traiectorii ale zilei de 21.10 (direcția medie pe celule; galben =
@@ -171,11 +171,12 @@ spre partea de jos a imaginii, mov = spre partea de sus): se văd inelul circula
 de pe Magheru (stânga jos, spre dreapta) și Dacia est (dreapta, în sus), ieșirile spre Catargiu și Căderea
 Bastiliei (sus). Imagine de fundal: © WebcamRomania.ro, persoane estompate.*
 
-Poziția zonelor nu a fost aleasă „din ochi”: s-au înregistrat 3 minute de flux, s-au urmărit vehiculele cu
-YOLO11 + ByteTrack (256 de traiectorii) și s-au suprapus traiectoriile pe imagine, cu punctele de început și de
-sfârșit marcate; zonele s-au pus acolo unde traiectoriile intră și ies din cadru. **Calibrarea actuală este
-preliminară (imagini de noapte)**; rafinarea pe lumină de zi este planificată în Borna 7. Dacă operatorul mută
-camera, zonele se redesenează interactiv cu `scripts\2b_calibrare_zone.bat`.
+**Zonele finale sunt desenate de autor** (23–24.10.2026): 16 decupaje pe capturi ale camerei (10 zone de
+vehicule, 6 treceri), localizate automat în cadrul de 3288 px prin potrivire de puncte caracteristice (SIFT) cu
+scara fixă 3288/1920 (capturi pe un ecran de 1920 px) și vot pe translație; două zone cu prea puține repere au
+fost poziționate manual, cu forma și mărimea decupajului. Ele înlocuiesc calibrările anterioare (din
+traiectoriile primelor ore și redesenarea din 22.10, § 12.2). Dacă operatorul mută camera, zonele se
+redesenează cu `scripts\2b_calibrare_zone.bat`, iar `recount` reface numărătorile din jurnal.
 
 Regula de numărare (`classify()` în `vision/od_counter.py`), aplicată pe traiectoria întreagă la închiderea ei:
 
@@ -210,6 +211,17 @@ direcție compatibilă (≈12% din fragmente sunt reunite). Chiar și așa, doar
 de la intrare până la ieșire – matricea O–D se sprijină deci în principal pe totalurile pe brațe (§ 5.1).
 
 Se agregă pe intervale de 15 minute, separat pe tipuri de vehicule, în `data/counts/numaratori_AAAA-LL-ZZ.csv`.
+
+**Auditul numărării (25.10.2026).** Camera numără în medie **1,6 ieșiri pentru fiecare intrare**, deși fizic
+fiecare vehicul care intră iese. Harta capetelor de traiectorie arată cauza: pe inelul din fundal vehiculele sunt
+atât de mici încât detectorul le pierde oriunde, iar un vehicul pierdut în dreptul unei ieșiri îndepărtate pare
+„ieșit” pe ea. S-a încercat corectarea regulii pe criteriul conservării vehiculelor (cadre minime în zonă,
+înaintare minimă pe stradă, prag relativ la lungimea zonei – `Params.capat_min_*`, rezultatele în
+`docs/rezultate/calibrare_conservare*.csv`): orice prag care aduce raportul ieșiri/intrări la ~1 elimină aproape
+complet ieșirile reale spre Dacia vest și Căderea Bastiliei, deci acolo ieșirile **nu pot fi deosebite** de
+vehiculele pierdute cu această cameră. Concluzie: ieșirile de pe brațele îndepărtate nu sunt o măsurătoare de
+încredere; regula rămâne neschimbată (pragurile noi sunt dezactivate), iar consecința pentru cerere e tratată în
+§ 5.1. Pe brațele apropiate (Magheru, Dacia est) și pe trecerea mare de pe Dacia est numărarea e coerentă.
 
 **Jurnalul anonim de traiectorii și renumărarea.** Pe lângă numărători, modulul salvează în
 `data/trajectories/traiectorii_AAAA-LL-ZZ.jsonl.gz` fiecare traiectorie închisă: clasa obiectului și pozițiile
@@ -275,9 +287,23 @@ est – vehiculele apar deja parțial în zonă, în spatele chioșcului și al 
 ieșirile** spre străzile parțial ascunse (un vehicul pierdut lângă o stradă pare că a ieșit pe ea). O
 comparație cu numărarea pe linii de control (*screen lines*) a dat erori de sens opus (≈745 intrări și ≈1.330
 ieșiri pe oră), deci adevărul este între cele două metode. În lipsa unei numărători manuale de referință,
-ambele sume sunt tratate ca măsurători ale aceluiași debit și aduse la **media** lor înainte de Furness
-(`echilibrare: "medie"` în `config/demand.json`); fiecare parte își păstrează distribuția pe brațe. Incertitudinea
-rămasă (≈±15–20%) este acoperită de scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.4).
+ambele sume au fost tratate ca măsurători ale aceluiași debit și aduse la **media** lor înainte de Furness
+(`echilibrare: "medie"`); fiecare parte își păstrează distribuția pe brațe.
+
+**Două calibrări ale cererii (25.10.2026).** Auditul numărării (§ 4.3) a arătat că ieșirile de pe brațele
+îndepărtate sunt supranumărate (vehicule pierdute de detector), iar autorul a observat că semaforul controlează
+doar intrările. De aceea s-a adăugat modul `echilibrare: "doar_intrari"` (implicit în `config/demand.json`):
+volumele vin numai din intrări, iar proporțiile de viraj din traiectoriile complete și distribuția a priori;
+ieșirile brute nu se mai folosesc. Intrările pot fi însă și ele subnumărate (vehicule ascunse de chioșc, de
+autobuze sau unele de altele în aglomerație). Cele două calibrări mărginesc astfel cererea reală:
+
+| Calibrare | Ce folosește | Vârf zile lucrătoare | Rolul în evaluare |
+|---|---|---|---|
+| **marginea de jos** – `doar_intrari` | doar intrările | ≈1 640–1 980 veh/h | scenariile actuale din `sumo/scenarios` |
+| **marginea de sus** – `medie` | media intrări / ieșiri | ≈2 400–3 000 veh/h | scenariile din 23–25.10 (istoricul git) |
+
+Rezultatele se raportează pentru ambele (§ 9.2); incertitudinea din interiorul fiecăreia este acoperită de
+scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.4).
 
 ### 5.2 De la O–D la vehicule în SUMO
 
