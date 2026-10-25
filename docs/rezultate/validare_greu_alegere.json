@@ -1,0 +1,21 @@
+{
+  "scor_mediu_procent": {
+    "ACTUATED": -0.15,
+    "PLAN_46_48_12": -4.72,
+    "ppo_romana_greu": 9.37,
+    "ppo_romana_greu_bc": -5.8
+  },
+  "ales": "ppo_romana_greu_bc",
+  "seeduri_validare": [
+    11,
+    12,
+    13
+  ],
+  "scenarii": [
+    "zi_2026-10-21_varf",
+    "zi_2026-10-21_varf_x1_2",
+    "zi_2026-10-22_varf",
+    "zi_2026-10-22_varf_x1_2",
+    "zi_2026-10-22_dimineata"
+  ]
+}
