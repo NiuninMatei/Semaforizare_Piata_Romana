@@ -6,7 +6,9 @@ stâlpi), așa că se combină trei surse de informație:
   2. numărătorile pe brațe de ieșire (→ totaluri pe coloane, U_D);
      cele două sume sunt aduse la media lor (`echilibrare: "medie"`), pentru că ambele sunt
      măsurători imperfecte ale aceluiași debit (camera subnumără intrările de la marginea cadrului
-     și supranumără ieșirile spre străzile parțial ascunse);
+     și supranumără ieșirile spre străzile parțial ascunse); cu `echilibrare: "doar_intrari"`
+     (implicit din 25.10.2026) ieșirile nu se folosesc: semaforul controlează doar intrările, iar
+     ieșirile brute de pe brațele îndepărtate sunt supranumărate (vehicule pierdute de detector);
   3. virajele complete observate (→ „sămânța” matricei, structura relativă).
 Sămânța = viraje observate + w · distribuție a priori (config/demand.json).
 Echilibrarea se face cu metoda Furness (IPF – iterative proportional fitting), încheiată
@@ -74,7 +76,11 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     seed = obs + cfg.get("pondere_prior", 2.0) * prior / hours
     use_cols = None
     measured_in, measured_out = rows.sum(), cols.sum()
-    if cols.sum() > 0 and rows.sum() > 0:
+    if cfg.get("echilibrare") == "doar_intrari":
+        # semaforul controlează doar intrările: volumele vin din intrări, proporțiile de viraj din traiectoriile
+        # complete + distribuția a priori; ieșirile brute (supranumărate pe brațele îndepărtate) nu se folosesc
+        use_cols = None
+    elif cols.sum() > 0 and rows.sum() > 0:
         # Intrările și ieșirile sunt două măsurători ale aceluiași debit (stocarea pe inel e neglijabilă
         # la 15 min). „medie”: totalul = media celor două sume, iar fiecare parte își păstrează
         # distribuția pe brațe; „intrari”: se ține de intrări (varianta inițială).

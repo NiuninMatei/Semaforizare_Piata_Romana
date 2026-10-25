@@ -1,45 +1,48 @@
 {
   "tipuri": {
     "bus": {
-      "viraje_tinta": 28,
+      "viraje_tinta": 22,
       "GEH<5_%": 100.0
     },
     "passenger": {
-      "viraje_tinta": 828,
-      "GEH<5_%": 93.75
+      "viraje_tinta": 619,
+      "GEH<5_%": 94.12
     },
     "truck": {
-      "viraje_tinta": 18,
+      "viraje_tinta": 13,
       "GEH<5_%": 100.0
     }
   },
-  "vehicule_fond": 130,
+  "vehicule_fond": 97,
   "pietoni": 247,
   "sumocfg": "sumo\\scenarios\\zi_2026-10-21_linistit.sumocfg",
   "rezumat_od": {
-    "vehicule_total": 864,
+    "vehicule_total": 649,
     "durata_s": 3600,
     "od_vehicule": {
+      "catargiu>caderea_bastiliei": 1,
+      "catargiu>dacia_est": 1,
       "catargiu>dacia_vest": 1,
-      "catargiu>magheru": 5,
-      "catargiu>mendeleev": 2,
-      "dacia_est>caderea_bastiliei": 14,
-      "dacia_est>catargiu": 83,
-      "dacia_est>dacia_vest": 25,
-      "dacia_est>magheru": 35,
-      "dacia_est>mendeleev": 13,
-      "dacia_vest>caderea_bastiliei": 12,
-      "dacia_vest>catargiu": 85,
-      "dacia_vest>dacia_est": 7,
-      "dacia_vest>dacia_vest": 4,
-      "dacia_vest>magheru": 96,
-      "dacia_vest>mendeleev": 37,
-      "magheru>caderea_bastiliei": 12,
-      "magheru>catargiu": 273,
-      "magheru>dacia_est": 132,
-      "magheru>dacia_vest": 18,
-      "magheru>magheru": 4,
-      "magheru>mendeleev": 5
+      "catargiu>magheru": 3,
+      "catargiu>mendeleev": 1,
+      "dacia_est>caderea_bastiliei": 21,
+      "dacia_est>catargiu": 51,
+      "dacia_est>dacia_est": 2,
+      "dacia_est>dacia_vest": 27,
+      "dacia_est>magheru": 21,
+      "dacia_est>mendeleev": 5,
+      "dacia_vest>caderea_bastiliei": 16,
+      "dacia_vest>catargiu": 39,
+      "dacia_vest>dacia_est": 38,
+      "dacia_vest>dacia_vest": 2,
+      "dacia_vest>magheru": 55,
+      "dacia_vest>mendeleev": 30,
+      "magheru>caderea_bastiliei": 7,
+      "magheru>catargiu": 47,
+      "magheru>dacia_est": 274,
+      "magheru>dacia_vest": 5,
+      "magheru>magheru": 1,
+      "magheru>mendeleev": 1
     }
   }
 }
