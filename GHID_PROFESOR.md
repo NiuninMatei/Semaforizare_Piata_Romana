@@ -89,6 +89,12 @@ pe ecran, în ordinea în care circulă datele:
 | 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | aceeași oră reală cu planul fix, Max-Pressure și agentul AI, pe categorii (vehicule, bicicliști, pietoni, CO₂) |
 | 5. Rezultate și limite | `docs/DOCUMENTATIE.md` § 9–10 | evaluarea oficială și limitările declarate |
 
+**Strategia recomandată – „Program pe tipuri de trafic”** (butonul cu același nume din dispecerat): comută
+automat după debitul măsurat de cameră – sub 1 300 veh/h agentul E9 (`models/ppo_romana_lejer`), între 1 300 și
+2 000 agentul E3 (`models/ppo_romana_zn3`), peste 2 000 planul fix 46/48/12 s. Dispeceratul arată în fiecare
+moment ce componentă conduce semaforul. Pe 10 seed-uri de test: −6,9% timp pierdut față de planul fix actual
+(p = 0,0003; mai bun în 79 din 100 de rulări) și −3,2% față de actuated (§ 9.10).
+
 ## 6. Unde se găsesc lucrurile
 
 | Director / fișier | Conținut |
