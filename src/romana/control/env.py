@@ -65,10 +65,16 @@ except ImportError:
 def start_sumo(sumocfg: Path, seed: int, gui: bool = False, extra: list[str] | None = None, label=None):
     from romana.common import sumo_binary
 
+    # tipurile de participanți vin din scenariu (ex. vtypes_indisciplinat.add.xml la testul de robustețe);
+    # --additional-files din linia de comandă înlocuiește lista din .sumocfg, deci o reluăm explicit
+    import xml.etree.ElementTree as ET
+    add = ET.parse(sumocfg).getroot().find("input/additional-files")
+    vtypes = [str(sumocfg.parent / a) for a in add.get("value").split(",")] if add is not None else \
+        [str(sumocfg.parent / "../demand/vtypes.add.xml")]
     cmd = [sumo_binary("sumo-gui" if gui else "sumo"), "-c", str(sumocfg), "--seed", str(seed),
            "--no-step-log", "true", "--no-warnings", "true", "--duration-log.disable", "true",
            "--time-to-teleport", "300", "--additional-files",
-           f"{sumocfg.parent / '../demand/vtypes.add.xml'},{NET_DIR / 'tls_actuated.add.xml'}"]
+           ",".join(vtypes + [str(NET_DIR / "tls_actuated.add.xml")])]
     if gui:
         cmd += ["--start", "--delay", "50"]
     cmd += extra or []
