@@ -54,8 +54,9 @@ datele vechi) câștigă doar la trafic lejer și moderat (până la −16,8%), 
 trafic (agentul AI la trafic lejer, agentul E3 la prânz, planul cu ciclu lung 46/48/12 s la vârf), ales pe
 validare, este cea mai bună strategie pe datele noi: **−8,5%** în evaluarea completă (350 de simulări, 7 strategii,
 5 seed-uri, § 9.7), față de actuated −3,2%, agentul E3 −1,4%, Webster −1,3%, agentul oficial +2,8% și
-Max-Pressure +9,6%. Diferența e **semnificativă statistic** față de planul fix (p = 0,002; mai bun în 41 din 50 de
-rulări) și față de actuated (p = 0,02) – § 9.9. Coordonarea învățată cu vecinii a dat un rezultat negativ – detalii și explicații în [docs/DOCUMENTATIE.md § 9](docs/DOCUMENTATIE.md#9-rezultate).
+Max-Pressure +9,6%. Programul final (agentul E9 la trafic lejer, E3 la moderat, planul 46/48/12 la greu),
+evaluat pe 10 seed-uri, dă **−6,9% față de planul fix actual** (p = 0,0003; mai bun în 79 din 100 de rulări) și
+−3,2% față de actuated (p = 0,04) – § 9.9–9.10. Coordonarea învățată cu vecinii a dat un rezultat negativ – detalii și explicații în [docs/DOCUMENTATIE.md § 9](docs/DOCUMENTATIE.md#9-rezultate).
 
 ## Pornire rapidă (Windows)
 
