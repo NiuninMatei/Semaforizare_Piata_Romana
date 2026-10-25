@@ -238,6 +238,7 @@ def main(argv=None) -> None:
     ap.add_argument("--scenarii", nargs="*", default=None)
     ap.add_argument("--model", nargs="*", default=None, help="modele PPO (.zip) de evaluat")
     ap.add_argument("--seeds", type=int, default=5)
+    ap.add_argument("--seed-start", type=int, default=1, help="primul seed (ex. 6 cu --seeds 5 → seed-urile 6–10)")
     ap.add_argument("--strategii", nargs="*", default=None,
                     help="filtru: fix_referinta fix_webster actuated max_pressure rl_ppo rl_ppo_coridor")
     ap.add_argument("--procese", type=int, default=1, help="simulări în paralel (procese separate)")
@@ -256,7 +257,7 @@ def main(argv=None) -> None:
     models = [Path(m) for m in (args.model if args.model is not None else sorted(glob.glob(str(ROOT / "models/ppo_*.zip"))))]
     plans = [tuple(float(v) for v in p.split(",")) for p in args.planuri]
     tasks = [(sc, c.name, seed) for sc in scen for c in make_controllers(sc, models, plans)
-             if not args.strategii or c.name in args.strategii for seed in range(1, args.seeds + 1)]
+             if not args.strategii or c.name in args.strategii for seed in range(args.seed_start, args.seed_start + args.seeds)]
 
     def show(r):
         print(f"{r['scenariu']:22s} {r['strategie']:15s} seed={r['seed']}  așteptare={r['asteptare_medie_s']:.1f}s  "
