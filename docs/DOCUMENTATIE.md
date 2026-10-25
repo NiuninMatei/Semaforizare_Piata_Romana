@@ -839,6 +839,7 @@ rezultatele se pot reproduce fără a colecta date noi.
 | 6 | `6_geaman_digital.bat` | SUMO-GUI alimentat **live** de cameră, semafor condus de strategia aleasă în dispecerat | continuu |
 | 7 | `7_dashboard.bat` | dispeceratul web la http://localhost:8050 | continuu |
 | – | `PORNESTE_TOT.bat` | 2 + 6 + 7 în trei ferestre: sistemul complet în timp real | continuu |
+| 10 | `10_documentatie_pdf.bat` | exportă documentația în PDF cu pagini numerotate (`docs\DOCUMENTATIE.pdf`) | ~1 min |
 
 ### 11.5 Demonstrația live (~20 de minute)
 
@@ -860,7 +861,7 @@ planul fix cu ciclu lung pentru trafic greu; dispeceratul arată în fiecare mom
 
 | Director / fișier | Conținut |
 |---|---|
-| `docs/DOCUMENTATIE.md` | documentația (acest document) |
+| `docs/DOCUMENTATIE.md` | documentația (acest document); `docs/DOCUMENTATIE.pdf` – aceeași, cu pagini numerotate (`scripts\10_documentatie_pdf.bat`) |
 | `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`) |
 | `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
@@ -951,7 +952,10 @@ număra 1,6 ieșiri pentru fiecare intrare, pentru că pe inelul din fundal vehi
 oriunde, iar o mașină pierdută în dreptul ieșirii Catargiu părea „ieșită”. Calibrarea pe conservarea vehiculelor a
 arătat că ieșirile spre Dacia vest și Căderea Bastiliei nu pot fi deosebite de pierderi. **Ideea autorului:**
 semaforul controlează doar intrările, deci volumele se iau doar din intrări (§ 5.1). Tot de la autor: testul cu
-participanți indisciplinați (§ 9.4) – realitatea străzilor din București.
+participanți indisciplinați (§ 9.4) – realitatea străzilor din București. Prima rulare a testului a dat rezultate
+identice cu cele normale, ceea ce a dus la descoperirea unui defect (simularea ignora tipurile de participanți din
+scenariu); după corectare, testul a dat cel mai puternic argument pentru AI: cu participanți indisciplinați,
+specialiștii AI au redus timpul pierdut cu ≈12–13% față de planul fix, până la −27% la vârf.
 
 ### 12.2 Observațiile autorului și corecturile
 
