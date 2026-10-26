@@ -16,7 +16,6 @@
   <interval id="i2700" begin="2700" end="3600">
     <edgeRelation from="448266581#1" to="668307633#2" count="3" />
     <edgeRelation from="1320256482" to="44499684#2" count="3" />
-    <edgeRelation from="232079775#2" to="668307633#2" count="1" />
     <edgeRelation from="232079775#2" to="125445934#0" count="1" />
   </interval>
 </data>

@@ -5,7 +5,7 @@
       "GEH<5_%": 100.0
     },
     "bus": {
-      "viraje_tinta": 108,
+      "viraje_tinta": 102,
       "GEH<5_%": 100.0
     },
     "motorcycle": {
@@ -13,42 +13,42 @@
       "GEH<5_%": 100.0
     },
     "passenger": {
-      "viraje_tinta": 2936,
+      "viraje_tinta": 2817,
       "GEH<5_%": 90.48
     },
     "truck": {
-      "viraje_tinta": 71,
+      "viraje_tinta": 69,
       "GEH<5_%": 100.0
     }
   },
-  "vehicule_fond": 471,
+  "vehicule_fond": 453,
   "pietoni": 3107,
   "sumocfg": "sumo\\scenarios\\zi_2026-10-21_varf_x1_2.sumocfg",
   "rezumat_od": {
-    "vehicule_total": 3140,
+    "vehicule_total": 3017,
     "durata_s": 3600,
     "od_vehicule": {
-      "catargiu>caderea_bastiliei": 21,
+      "catargiu>caderea_bastiliei": 22,
       "catargiu>catargiu": 5,
-      "catargiu>dacia_est": 55,
-      "catargiu>dacia_vest": 43,
-      "catargiu>magheru": 193,
-      "catargiu>mendeleev": 17,
-      "dacia_est>caderea_bastiliei": 157,
-      "dacia_est>catargiu": 248,
+      "catargiu>dacia_est": 58,
+      "catargiu>dacia_vest": 46,
+      "catargiu>magheru": 204,
+      "catargiu>mendeleev": 18,
+      "dacia_est>caderea_bastiliei": 147,
+      "dacia_est>catargiu": 232,
       "dacia_est>dacia_est": 2,
-      "dacia_est>dacia_vest": 47,
-      "dacia_est>magheru": 15,
+      "dacia_est>dacia_vest": 44,
+      "dacia_est>magheru": 14,
       "dacia_est>mendeleev": 6,
-      "dacia_vest>caderea_bastiliei": 15,
-      "dacia_vest>catargiu": 123,
-      "dacia_vest>dacia_est": 1237,
+      "dacia_vest>caderea_bastiliei": 14,
+      "dacia_vest>catargiu": 115,
+      "dacia_vest>dacia_est": 1155,
       "dacia_vest>dacia_vest": 1,
-      "dacia_vest>magheru": 54,
-      "dacia_vest>mendeleev": 7,
+      "dacia_vest>magheru": 51,
+      "dacia_vest>mendeleev": 6,
       "magheru>caderea_bastiliei": 10,
-      "magheru>catargiu": 126,
-      "magheru>dacia_est": 741,
+      "magheru>catargiu": 124,
+      "magheru>dacia_est": 728,
       "magheru>dacia_vest": 8,
       "magheru>magheru": 1,
       "magheru>mendeleev": 7

@@ -5,7 +5,7 @@
     <edgeRelation from="448266581#1" to="668307633#2" count="1" />
     <edgeRelation from="448266581#1" to="119238380#1" count="1" />
     <edgeRelation from="448266581#1" to="119238385#0" count="1" />
-    <edgeRelation from="1320256482" to="44499684#2" count="1" />
+    <edgeRelation from="1320256482" to="44499684#2" count="2" />
   </interval>
   <interval id="i900" begin="900" end="1800">
     <edgeRelation from="448266581#1" to="668307633#2" count="1" />
@@ -21,5 +21,6 @@
   <interval id="i2700" begin="2700" end="3600">
     <edgeRelation from="448266581#1" to="668307633#2" count="1" />
     <edgeRelation from="448266581#1" to="119238385#0" count="1" />
+    <edgeRelation from="1320256482" to="44499684#2" count="1" />
   </interval>
 </data>

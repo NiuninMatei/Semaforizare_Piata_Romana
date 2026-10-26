@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
 
-<!-- generated on 2026-10-26 21:01:58.036175 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<!-- generated on 2026-10-26 21:24:29.470704 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
 <configuration>
     <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate.rou.xml"/>
     <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-25_linistit_x0_8\viraje_truck.xml"/>

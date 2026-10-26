@@ -166,18 +166,47 @@ Camera vede cele șase brațe ale pieței, de la stânga la dreapta: Bd. Magheru
 (ieșire), Bd. Dacia vest (centru-stânga), Bd. Lascăr Catargiu (centru-dreapta), Str. Căderea Bastiliei (ieșire,
 lângă clădirea ASE) și Bd. Dacia est (extremă dreapta). Pentru fiecare braț cu dublu sens s-au definit **două**
 poligoane – banda de intrare spre piață și banda de ieșire – iar pentru străzile cu sens unic doar zona de ieșire
-(10 zone de vehicule, plus 6 zone de trecere pentru pietoni, § 4.4; `config/camera.json`, coordonate normalizate
-0–1, independente de rezoluție).
+(10 zone de vehicule, plus zonele de trecere pentru pietoni, § 4.4; `config/camera.json`, coordonate normalizate
+0–1, independente de rezoluție). Ieșirile servesc doar la direcții (proporțiile de viraj), nu la volume (§ 5.1).
 
 *Figurile zonelor de numărare și ale câmpului de mișcare al vehiculelor se refac ca scheme proprii, pe fond
 neutru, fără imagini ale camerei.*
 
-**Zonele finale sunt desenate de autor** (23–24.10.2026): 16 decupaje pe capturi ale camerei (10 zone de
+**Zonele desenate de autor** (23–24.10.2026, folosite până la recalibrarea din 26.10, de mai jos): 16 decupaje pe capturi ale camerei (10 zone de
 vehicule, 6 treceri), localizate automat în cadrul de 3288 px prin potrivire de puncte caracteristice (SIFT) cu
 scara fixă 3288/1920 (capturi pe un ecran de 1920 px) și vot pe translație; două zone cu prea puține repere au
 fost poziționate manual, cu forma și mărimea decupajului. Ele înlocuiesc calibrările anterioare (din
 traiectoriile primelor ore și redesenarea din 22.10, § 12.2). Dacă operatorul mută camera, zonele se
 redesenează cu `scripts\2b_calibrare_zone.bat`, iar `recount` reface numărătorile din jurnal.
+
+**Recalibrarea pe o numărătoare de referință (26.10.2026).** La cererea autorului, toate zonele au fost reanalizate
+de la zero și alese pe măsurători, nu pe aspect:
+
+* *Numărătoarea de referință.* Două clipuri de câte 3 minute (26.10, 11:58 și 12:19; stocate doar local și șterse
+  după adnotare) au fost adnotate cadru cu cadru, pe foi de contact la 0,5 s: pe fiecare țintă (intrările de pe cele
+  4 brațe, zebrele) și pe fiecare bucată de 30 s au numărat **doi adnotatori independenți**, cu un al treilea ca
+  arbitru la diferențe peste max(2; 15%). Aceleași clipuri au fost trecute prin lanțul live (YOLO11s, 1600 px,
+  6 cadre/s), deci referința și numărarea automată văd exact aceleași cadre (clipurile au mici salturi de câteva
+  secunde, aceleași pentru ambele). Adnotatorii au corectat și o greșeală de țintă: intrările dinspre Lascăr
+  Catargiu coboară pe carosabilul din stânga spațiului verde și virează pe după monument.
+* *Calibrarea camerei pe rețea.* Prin corespondențe imagine ↔ rețeaua OSM (capetele zebrelor, liniile de oprire) s-a
+  potrivit o omografie a planului străzii: în fundal eroarea e de ≈14 px (sub ≈1 m); în prim-planul de lângă cameră
+  niciun model plan unic nu se potrivește (distorsiunea obiectivului, OSM decalat local), așa că acolo zonele s-au
+  desenat pe marcajele reale, pe un fundal median din 90 de cadre (fără vehicule), verificate pe câmpul de mișcare.
+  Tot atunci s-a constatat că zona cu dungi din stânga-jos (unde parchează uneori o mașină) este o **zonă hașurată,
+  nu o trecere de pietoni** – nu se numără pietoni acolo.
+* *Rezultat* (cât din referință prinde numărarea automată, clipul 1 / clipul 2): **Dacia vest** 27% / 29% cu zona
+  veche → **92% / 70%** cu zona nouă (mașinile care ies din bulevard spre cameră, după linia de oprire; zona veche
+  prindea puțin din ele); **Magheru** 84% / 96% și **Dacia est** 105% / 116% – zonele existente erau deja bune și au
+  rămas; **Lascăr Catargiu** 32% / 55% – limita e detectorul (vehicule mici, departe), nu zona. La 2560 px detectorul
+  ar prinde 95% pe Catargiu și pe Magheru (clipul 1), dar procesează doar ≈2,3 cadre/s pe placa grafică integrată
+  a laptopului, față de ≈4,4 la 1600 px – insuficient pentru urmărirea live; e o recomandare pentru un hardware cu
+  GPU dedicat.
+* *Factorii de corecție a detecției* (referință / automat, pe ambele clipuri; interval de încredere 90% prin
+  bootstrap pe bucăți): Magheru **1,09** [1,02; 1,16], Dacia est **0,88** [0,57; 1,05], Dacia vest **1,12**
+  [0,70; 1,42], Lascăr Catargiu **2,52** [2,06; 3,00] (`factor_corectie_detectie` în `config/demand.json`). Ei
+  înlocuiesc presupunerea de dinainte (cererea între „doar intrări” și „media intrări / ieșiri”, § 5.1) cu o
+  calibrare măsurată. Limita: două clipuri de 3 minute de la prânz – factorii trebuie confirmați pe alte ore.
 
 Regula de numărare (`classify()` în `vision/od_counter.py`), aplicată pe traiectoria întreagă la închiderea ei:
 
@@ -239,16 +268,22 @@ folosite la plasarea zonelor.
 
 ### 4.4 Pietoni și bicicliști
 
-În simulare intră toți participanții observabili pe cameră. Autorul a desenat 6 zone cu rolul `trecere`
-(`config/camera.json`): Magheru, Mendeleev, Dacia vest, Lascăr Catargiu, Căderea Bastiliei și trecerea dublă de pe
-Dacia est. În practică, pietonii sunt detectați de încredere doar pe trecerile din prim-plan (Magheru, la marginea
+În simulare intră toți participanții observabili pe cameră. Zonele cu rolul `trecere` (`config/camera.json`, refăcute
+pe 26.10.2026) acoperă zebra de pe Magheru, cele două zebre ale trecerii duble de pe Dacia est (peste ieșire și peste
+intrare, cu refugiul dintre ele) și, proiectate din rețeaua OSM, trecerile din fundal (Mendeleev, Dacia vest, Lascăr
+Catargiu, Căderea Bastiliei). În practică, pietonii sunt detectați de încredere doar pe trecerile din prim-plan (Magheru, la marginea
 cadrului și parțial ascunsă de chioșc, și mai ales Dacia est): pe trecerile îndepărtate persoanele sunt prea mici
 în imagine pentru detector.
 
-* **Pietoni.** Persoanele detectate sunt urmărite cu același ByteTrack. Un pieton este numărat **o singură dată
-  pe fiecare trecere** pe care a fost văzut în cel puțin 2 cadre și pe care s-a deplasat cel puțin 4% din
-  lățimea cadrului (punctul de contact cu solul în zona trecerii) – cine doar așteaptă la bordură nu contează;
-  în CSV apar ca rânduri `pietoni` (braț, trecere). Debitul măsurat se extrapolează la toată piața cu
+* **Pietoni.** Persoanele detectate sunt urmărite cu același ByteTrack. De la 26.10.2026 fiecare trecere are
+  zebra reală (poligon + axa de la o bordură la cealaltă) și câte o **zonă de așteptare** la fiecare bordură
+  (ideea autorului, restrânsă la proximitatea zebrei, ca să nu fie numărați trecătorii de pe trotuar). Un pieton
+  este numărat **o singură dată pe fiecare trecere**, dacă (a) a înaintat pe axa zebrei cel puțin 30% din lungimea
+  ei (cine merge pe lângă zebră nu contează) sau (b) a așteptat la bordură între 5 și 120 s (cererea pentru faza de
+  pietoni, inclusiv cei pe care detectorul îi pierde apoi printre vehicule; staționarea mai lungă – stația de
+  autobuz, chioșcul – și obiectele statice sunt excluse). Pragul de 5 s a fost ales pe numărătoarea de referință
+  (§ 4.3): cu el, trecerile de pe Dacia est ies la 95–110% din referință, față de 20–60% fără zonele de așteptare
+  (eșantion mic: 2–3 bucăți de 30 s pe zebră). În CSV apar ca rânduri `pietoni` (braț, trecere). Debitul măsurat se extrapolează la toată piața cu
   `factor_extrapolare_pietoni` = 2,5 din `config/demand.json` (ipoteză declarată: pietonii sunt detectați de
   încredere pe ≈2 din cele ≈7 treceri semaforizate).
 * **Bicicliști și motocicliști.** Bicicleta (clasa 1) este numărată ca vehicul pe zonele de intrare/ieșire, ca
@@ -339,6 +374,13 @@ autobuze sau unele de altele în aglomerație). Cele două calibrări mărginesc
 Rezultatele se raportează pentru ambele (§ 9.2); incertitudinea din interiorul fiecăreia este acoperită de
 scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.4).
 
+**Cererea calibrată pe numărătoarea de referință (26.10.2026).** Numărătoarea de referință (§ 4.3) a măsurat cât
+din intrările reale prinde camera pe fiecare braț. Cu zonele refăcute, intrările numărate se înmulțesc cu factorii
+de corecție măsurați (Magheru 1,09; Dacia est 0,88; Dacia vest 1,12; Lascăr Catargiu 2,52), iar ieșirile servesc
+doar la proporțiile de viraj (`echilibrare: "doar_intrari"`). Vârful zilelor lucrătoare iese ≈2 520–2 560 veh/h prin
+piață – aproape de fosta margine de sus (≈2 400–2 510) și mult peste marginea de jos (≈1 640): cererea reală era
+mai aproape de marginea de sus. Scenariile actuale din `sumo/scenarios` folosesc această calibrare (§ 5.4).
+
 ### 5.2 De la O–D la vehicule în SUMO
 
 1. Se generează un set mare de **rute candidate realiste**: drumuri minime de la marginea rețelei
@@ -379,30 +421,33 @@ cu vârful la prânz.
 
 `python -m romana.bridge.scenarii_zi --zi AAAA-LL-ZZ` alege automat ferestrele (ora de vârf, ora cea mai liniștită
 și, dacă nu se suprapun cu vârful, dimineața 07:30–08:30 și prânzul 12:00–13:00) și construiește scenariile, plus
-sensibilitățile vârf ×1,2 și liniștit ×0,8. Cu zonele finale (§ 4.3), datele renumărate și cererea calculată doar
-din intrări (marginea de jos, § 5.1), scenariile actuale sunt:
+sensibilitățile vârf ×1,2 și liniștit ×0,8. Cu zonele și regulile din 26.10.2026 (§ 4.3, § 4.4), datele renumărate
+și cererea calibrată (§ 5.1), scenariile actuale sunt (pentru comparație, aceleași ferestre cu calibrările
+anterioare):
 
-| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Marginea de sus* |
-|---|---|---|---|---|---|
-| `zi_2026-10-21_pranz` (miercuri) | 12:00–13:00 | 1 194 | 179 | 3 152 | ≈1 780 |
-| `zi_2026-10-21_varf` | 17:15–18:15 | 1 636 | 245 | 3 205 | ≈2 510 |
-| `zi_2026-10-21_varf_x1_2` | vârf × 1,2 | 1 963 | 294 | 3 205 | ≈3 020 |
-| `zi_2026-10-21_linistit` | 23:00–00:00 | 649 | 97 | 247 | ≈860 |
-| `zi_2026-10-21_linistit_x0_8` | liniștit × 0,8 | 519 | 78 | 247 | ≈690 |
-| `zi_2026-10-22_dimineata` (joi) | 07:30–08:30 | 1 534 | 230 | 3 027 | ≈2 220 |
-| `zi_2026-10-22_varf` | 09:45–10:45 | 1 646 | 247 | 2 869 | ≈2 400 |
-| `zi_2026-10-22_varf_x1_2` | vârf × 1,2 | 1 975 | 296 | 2 869 | ≈2 880 |
-| `zi_2026-10-22_linistit` | 02:30–03:30 | 162 | 24 | 20 | ≈300 |
-| `zi_2026-10-22_linistit_x0_8` | liniștit × 0,8 | 130 | 19 | 20 | ≈240 |
-| `zi_2026-10-25_dimineata` (duminică) | 07:30–08:30 | 704 | 106 | 450 | – |
-| `zi_2026-10-25_varf` | 11:45–12:45 | 3 483 | 522 | 1 963 | – |
-| `zi_2026-10-25_varf_x1_2` | vârf × 1,2 | 4 180 | 627 | 1 963 | – |
-| `zi_2026-10-25_linistit` | 05:15–06:15 | 349 | 52 | 183 | – |
-| `zi_2026-10-25_linistit_x0_8` | liniștit × 0,8 | 279 | 42 | 183 | – |
+| Scenariu | Fereastra | Vehicule prin piață (veh/h) | Fond | Pietoni/h | Marginea de jos | Marginea de sus |
+|---|---|---|---|---|---|---|
+| `zi_2026-10-21_pranz` (miercuri) | 12:00–13:00 | 1 948 | 292 | 3 059 | 1 194 | ≈1 780 |
+| `zi_2026-10-21_varf` | 17:15–18:15 | 2 515 | 377 | 3 107 | 1 636 | ≈2 510 |
+| `zi_2026-10-21_varf_x1_2` | vârf × 1,2 | 3 017 | 453 | 3 107 | 1 963 | ≈3 020 |
+| `zi_2026-10-21_linistit` | 23:00–00:00 | 766 | 115 | 376 | 649 | ≈860 |
+| `zi_2026-10-21_linistit_x0_8` | liniștit × 0,8 | 613 | 92 | 376 | 519 | ≈690 |
+| `zi_2026-10-22_dimineata` (joi) | 07:30–08:30 | 2 209 | 331 | 2 826 | 1 534 | ≈2 220 |
+| `zi_2026-10-22_varf` | 09:45–10:45 | 2 556 | 383 | 2 829 | 1 646 | ≈2 400 |
+| `zi_2026-10-22_varf_x1_2` | vârf × 1,2 | 3 067 | 460 | 2 829 | 1 975 | ≈2 880 |
+| `zi_2026-10-22_linistit` | 02:30–03:30 | 165 | 25 | 32 | 162 | ≈300 |
+| `zi_2026-10-22_linistit_x0_8` | liniștit × 0,8 | 132 | 20 | 32 | 130 | ≈240 |
+| `zi_2026-10-25_dimineata` (duminică) | 07:30–08:30 | 854 | 128 | 574 | 704 | – |
+| `zi_2026-10-25_pranz` | 12:00–13:00 | 3 911 | 587 | 2 536 | – | – |
+| `zi_2026-10-25_varf` | 15:30–16:30 | 4 683 | 702 | 2 775 | – | – |
+| `zi_2026-10-25_varf_x1_2` | vârf × 1,2 | 5 620 | 843 | 2 775 | – | – |
+| `zi_2026-10-25_linistit` | 05:15–06:15 | 387 | 58 | 232 | 349 | – |
+| `zi_2026-10-25_linistit_x0_8` | liniștit × 0,8 | 309 | 46 | 232 | 279 | – |
 
-\* Vehiculele prin piață cu calibrarea „medie” (media intrări/ieșiri), folosită până la 25.10 (scenariile se
-regăsesc în istoricul git); pentru duminică, scenariile cu această calibrare au fost construite din datele de
-până la 11:30 (§ 9.3). Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
+Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor se regăsesc în istoricul git); pe
+duminică, datele complete (până la 17:00) mută vârful la 15:30–16:30, iar fereastra de prânz devine scenariu separat.
+Rezultatele din § 9.1–9.7 au fost obținute pe calibrările anterioare (marginile de jos și de sus); reevaluarea pe
+cererea calibrată este în § 9.8. Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
 GEH < 5 pentru ≈94% din relațiile autoturismelor și 100% din cele ale celorlalte tipuri. Agenții au fost
 antrenați pe scenariile din zilele lucrătoare; duminica servește doar ca test de generalizare.
 
@@ -810,6 +855,33 @@ administratorul drumului.
    blocaje pe care un plan fix nu le poate anticipa.
 5. **La vârf există o limită fizică** (coada de pe Dacia vest), care cere măsuri dincolo de semafor.
 
+### 9.8 Reevaluarea pe cererea calibrată (26.10.2026)
+
+Cu zonele refăcute și cererea calibrată pe numărătoarea de referință (§ 4.3, § 5.1), cele 10 scenarii de zi
+lucrătoare au volume apropiate de fosta margine de sus. Agenții **nu au fost reantrenați** pe ele (au fost antrenați
+pe calibrările anterioare). Strategiile au fost reevaluate pe seed-urile de test 1–5 (50 de perechi scenariu × seed;
+`docs/rezultate/calibrat_indisciplinat.csv`, `calibrat_normal.csv`); programele pe tipuri de trafic folosesc benzile
+din § 9.2 (trafic lejer = scenariile liniștite, moderat = prânzul din 21.10, greu = restul):
+
+| Față de planul fix (participanți indisciplinați) | Diferență medie | Mai bun în | p (t / Wilcoxon) |
+|---|---|---|---|
+| Programul realist (oficial la lejer, E3 la moderat și greu) | −6,2% | 36 / 50 | 0,46 / 0,10 |
+| Agentul oficial singur | −5,6% | 37 / 50 | 0,45 / 0,07 |
+| Agentul E9 singur | −3,5% | 31 / 50 | 0,12 / 0,03 |
+| Agentul E3 singur | −0,7% | 26 / 50 | 0,48 / 0,34 |
+| Actuated | +7,4% | 20 / 50 | <0,001 / <0,001 |
+| Planul 46/48/12 | +12,0% | 7 / 50 | <0,001 / <0,001 |
+
+Față de actuated, programul realist câștigă **−11,7%** (mai bun în 44 din 50, p < 0,001). Față de planul fix, câștigul
+de −6,2% nu mai este semnificativ: în 9 din 10 scenarii programul e mai bun (−2…−16%), dar la vârful ×1,2 din 22.10
+(≈3 070 veh/h, peste orice volum de antrenare) agentul E3 pierde +26,5%. Cu participanți disciplinați, programul realist dă −1,3% față de planul fix (mai bun în 36
+din 50, nesemnificativ: p = 0,57 / 0,25) și −4,3% față de actuated (nesemnificativ), iar agenții singuri ies între
+−0,6% și +3,6% față de planul fix; și aici vârfurile ×1,2 sunt punctul slab (programul pierde +12% și +24%).
+
+**Concluzia reevaluării:** pe cererea măsurată corect, avantajul AI se păstrează față de actuated și în majoritatea
+situațiilor față de planul fix, dar e mai mic decât pe calibrările anterioare, iar la volumele cele mai mari agenții
+trebuie **reantrenați pe scenariile calibrate** (pasul următor, § 10).
+
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării – cererea reală este cunoscută doar ca interval.** Auditul numărării (§ 4.3) a arătat că
@@ -1068,7 +1140,7 @@ specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, p�
 | B6 | 20–21.10.2026 | documentația |
 | B7 | 21–22.10.2026 | viziune pe lumină de zi, OpenVINO, jurnal de traiectorii și renumărare, colectare continuă de două zile |
 | B8 | 21.10.2026 | replica fidelă a rețelei, toți participanții (pietoni, bicicliști), liniile de bază corectate |
-| B9 | 21–25.10.2026 | scenariile din date reale, agenții pe date reale, verificarea live, zonele desenate de autor, renumărarea, specialiștii și programul pe tipuri de trafic, evaluarea statistică, ziua de weekend, cererea din intrări, testul de robustețe |
+| B9 | 21–26.10.2026 | scenariile din date reale, agenții pe date reale, verificarea live, zonele desenate de autor, renumărarea, specialiștii și programul pe tipuri de trafic, evaluarea statistică, ziua de weekend, cererea din intrări, testul de robustețe, licențele și curățarea istoricului, zonele refăcute pe numărătoarea de referință și cererea calibrată |
 
 ### 12.4 Ce am învățat
 
@@ -1326,7 +1398,7 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^gpl-faq]: Free Software Foundation, „Frequently Asked Questions about the GNU Licenses”, „In what cases is the output of a GPL program covered by the GPL too?”, https://www.gnu.org/licenses/gpl-faq.html#WhatCaseIsOutputGPL.
 [^pytorch]: A. Paszke et al., „PyTorch: An Imperative Style, High-Performance Deep Learning Library”, NeurIPS 2019; https://github.com/pytorch/pytorch, versiunea 2.14 (licență BSD-3-Clause; expresia din metadatele pachetului: Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT).
 [^pydata]: C. R. Harris et al., „Array programming with NumPy”, *Nature* 585:357–362, 2020, doi:10.1038/s41586-020-2649-2 (BSD-3-Clause); pandas, https://pandas.pydata.org (BSD-3-Clause); P. Virtanen et al., „SciPy 1.0”, *Nature Methods* 17:261–272, 2020, doi:10.1038/s41592-019-0686-2 (BSD-3-Clause); J. D. Hunter, „Matplotlib: A 2D Graphics Environment”, *Computing in Science & Engineering* 9(3):90–95, 2007, doi:10.1109/MCSE.2007.55 (Matplotlib License, de tip PSF, https://matplotlib.org/stable/project/license.html).
-[^markdown-py]: Python-Markdown 3.7, https://github.com/Python-Markdown/markdown (BSD-3-Clause).
+[^markdown-py]: Python-Markdown 3.8.1, https://github.com/Python-Markdown/markdown (BSD-3-Clause).
 [^python]: Python Software Foundation, *Python 3.12*, https://docs.python.org/3/license.html (PSF-2.0).
 [^streetview]: Google, Street View (Google Maps), consultat pe 23.10.2026 doar pentru verificarea vizuală a rețelei. Termeni: Google Maps/Google Earth Additional Terms of Service, https://www.google.com/help/terms_maps/. Din Street View nu s-a preluat nicio informație în rețeaua OSM/SUMO și nu se publică nicio captură.
 [^windy]: Windy.com, Webcams, https://www.windy.com/webcams, consultat 21.10.2026; nefolosit (afișează aceeași cameră Webcam România).

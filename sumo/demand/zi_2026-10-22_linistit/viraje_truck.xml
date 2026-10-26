@@ -2,9 +2,7 @@
 <!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
 <data>
   <interval id="i0" begin="0" end="900" />
-  <interval id="i900" begin="900" end="1800">
-    <edgeRelation from="232079775#2" to="778823268#2" count="1" />
-  </interval>
+  <interval id="i900" begin="900" end="1800" />
   <interval id="i1800" begin="1800" end="2700" />
   <interval id="i2700" begin="2700" end="3600">
     <edgeRelation from="448266581#1" to="119238385#0" count="1" />

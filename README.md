@@ -46,7 +46,7 @@ seed-urile de test 1–10 (1–5 unde se precizează; § 9.1); seed-ul schimbă 
 Camera numără mai multe ieșiri decât intrări, de aceea rezultatele sunt date pentru două calibrări ale cererii:
 marginea „de jos” (doar intrările) și cea „de sus” (media intrări/ieșiri) (§ 5.1). Numărătoarea de referință din 26.10
 (două clipuri de 3 minute adnotate cadru cu cadru, § 4.3) arată că cererea reală era mai aproape de marginea de sus:
-vârful zilelor lucrătoare ≈2 620 veh/h, față de ≈2 400–2 510 (marginea de sus) și ≈1 640 (marginea de jos).
+vârful zilelor lucrătoare ≈2 520–2 560 veh/h, față de ≈2 400–2 510 (marginea de sus) și ≈1 640 (marginea de jos).
 Rezultatele nu au fost încă refăcute pe această calibrare.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
@@ -60,7 +60,7 @@ Rezultatele nu au fost încă refăcute pe această calibrare.
 
 Câștigul depinde de nivelul real al cererii și de disciplina participanților: de la nesemnificativ (marginea de jos) la
 ≈7% (marginea de sus) și ≈16% cu indisciplina ipotetică. Scenariile `zi_*` și `indisciplinat_*` din arbore folosesc,
-din 26.10, cererea calibrată pe numărătoarea de referință (vârful zilelor lucrătoare ≈2 620 veh/h, § 5.1, § 5.4), nu
+din 26.10, cererea calibrată pe numărătoarea de referință (vârful zilelor lucrătoare ≈2 520–2 560 veh/h, § 5.1, § 5.4), nu
 cele pe care s-au obținut cifrele de mai sus. Pentru a le reproduce:
 - marginea de jos: `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json`;
 - marginea de sus: `git checkout 7a79502 -- sumo/scenarios sumo/demand config/demand.json`;
@@ -107,7 +107,7 @@ scripts\0_instalare.bat
 |---|---|
 | Doar dacă `pip` a afișat erori (scriptul scrie „Instalare terminata.” chiar și atunci), de regulă pe Python 3.14+ (`0_instalare.bat` creează `.venv` cu `py -3`, cel mai nou Python 3 al lansatorului, sau cu `python` din PATH): mediul refăcut pe 3.12 | `py -3.12 -m venv --clear .venv`, apoi `.venv\Scripts\python -m pip install -r requirements.txt` |
 | Prânzul din 21.10 (scenariul din arbore, cu cererea calibrată din 26.10, încă neevaluată în § 9) cu planul fix, Max-Pressure și agentul oficial, seed-urile 1–5 (câteva minute; scrie doar în `outputs/demo`) | `scripts\9_demo_comparatie.bat` |
-| Agentul E3 la vârful din 22.10 cu participanți indisciplinați (E3 apare în coloana „Agent AI (PPO)”). Scenariul din arbore are cererea calibrată din 26.10 (≈2 630 veh/h, § 5.4), pe care E3 nu a fost reevaluat. Cifra publicată (§ 9.4: −28,0% pe 10 seed-uri; pe seed-urile 1–5, ≈ −27% ca raport al mediilor, cum o afișează demonstrația) e la marginea de jos: se reproduce după `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json` (revenire: `git checkout HEAD -- sumo config/demand.json`) | `scripts\9_demo_comparatie.bat --scenariu sumo\scenarios\indisciplinat_zi_2026-10-22_varf.sumocfg --model models\ppo_romana_zn3.zip` |
+| Agentul E3 la vârful din 22.10 cu participanți indisciplinați (E3 apare în coloana „Agent AI (PPO)”). Scenariul din arbore are cererea calibrată din 26.10 (≈2 560 veh/h, § 5.4), pe care E3 nu a fost reevaluat. Cifra publicată (§ 9.4: −28,0% pe 10 seed-uri; pe seed-urile 1–5, ≈ −27% ca raport al mediilor, cum o afișează demonstrația) e la marginea de jos: se reproduce după `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json` (revenire: `git checkout HEAD -- sumo config/demand.json`) | `scripts\9_demo_comparatie.bat --scenariu sumo\scenarios\indisciplinat_zi_2026-10-22_varf.sumocfg --model models\ppo_romana_zn3.zip` |
 | SUMO-GUI: vârful din 21.10 cu agentul oficial, apoi cu planul fix | `scripts\8_simulare_gui.bat`, apoi `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` |
 | Cele 10 teste automate ale numărării | `set PYTHONPATH=src`, apoi `.venv\Scripts\python -m unittest discover tests` (PowerShell: `$env:PYTHONPATH="src"`) |
 | O evaluare scurtă. **Atenție:** evaluarea rescrie `docs/rezultate/rezultate_brute.csv`, `rezultate.md` și graficul (refacere: `git checkout -- docs/rezultate`). Fără `--scenarii`, evaluarea ia toate cele 35 de fișiere din `sumo/scenarios` și se oprește imediat cu `FileNotFoundError` la scenariile `indisciplinat_*` (nu au `od_estimat.json`, cerut de planul Webster; folosesc rutele scenariilor `zi_*`); dați întotdeauna explicit scenariile `zi_*` / `referinta_*`, ca în comanda alăturată (cu toate cele 19 strategii – 4 clasice + 15 modele: 19 × 5 = 95 de simulări pe scenariu) | `scripts\5_evalueaza.bat --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategii fix_referinta rl_ppo --model models\ppo_romana.zip --seeds 1` |
