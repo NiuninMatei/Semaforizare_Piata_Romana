@@ -47,3 +47,19 @@ Fișierele de ieșire ale simulării (`tripinfos.xml`, `edgeData.xml`, `stats.xm
 3. Zona importată (~5,2 × 2,5 km, cu pietoni) este mult prea mare pentru antrenare rapidă.
 
 Toate aceste puncte sunt tratate în noua arhitectură descrisă în `docs/`.
+
+## Licență
+
+Ciorna se păstrează neschimbată.
+
+* Codul ciornei (`traffic_vision.py`, `intelligent_traffic.py`) și modelul `ai_semafor_romana.zip`:
+  © 2026 Niunin Matei-Gabriel, GNU AGPL v3 sau ulterioară (`LICENSE` din rădăcină).
+* `build.bat`, `run.bat` și `output.add.xml` sunt generate automat de `osmWebWizard.py` (Eclipse SUMO 1.28.0);
+  pentru ele nu se revendică drepturi de autor; în măsura în care ar exista, autorul renunță la ele
+  (CC0-1.0, `LICENSES/CC0-1.0.txt`, `REUSE.toml`).
+* Scenariul `osm.*` / `osm_*` este derivat din OpenStreetMap: © OpenStreetMap contributors, ODbL 1.0
+  (https://opendatacommons.org/licenses/odbl/1-0/, https://www.openstreetmap.org/copyright).
+* Ponderile `yolov8n.pt` rămase în istoricul git: Ultralytics, AGPL-3.0.
+* Acest README: CC BY 4.0.
+
+Detalii: fișierul `NOTICE` din rădăcină și documentația, § 14.1.

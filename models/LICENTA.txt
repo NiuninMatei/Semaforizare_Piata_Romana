@@ -1,0 +1,24 @@
+LICENȚA MODELELOR DIN ACEST DIRECTOR (models/)
+==============================================
+
+Agenții PPO antrenați (*.zip Stable-Baselines3, *.npz, *.json):
+© 2026 Niunin Matei-Gabriel – GNU Affero General Public License v3 sau ulterioară
+(AGPL-3.0-or-later), textul din fișierul LICENSE. Licența este alegerea autorului (aceeași ca a
+codului care încarcă modelele); nicio sursă nu o impune.
+
+Fișierele .zip/.npz sunt ele însele forma preferată pentru modificare (sursa) a modelelor. Codul de
+antrenare (src/romana/control/train.py, AGPL) și scenariile (sumo/scenarios/, ODbL 1.0) sunt
+publicate separat, fiecare sub licența sa, și nu sunt relicențiate prin AGPL.
+
+Modelele au fost antrenate în simulări SUMO pe o rețea derivată din OpenStreetMap
+(sumo/scenarios/, listate în fișierele *.json; versiunile exacte sunt în istoricul git).
+Conține informații din OpenStreetMap (https://www.openstreetmap.org), disponibile sub
+Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/.
+© OpenStreetMap contributors – https://www.openstreetmap.org/copyright
+
+Nu sunt modele Ultralytics. Detectorul YOLO11 (AGPL-3.0, Ultralytics) nu este inclus.
+
+SECURITATE: fișierele *.zip conțin obiecte Python serializate cu pickle. Încărcați-le numai
+dintr-o sursă de încredere (acest depozit), nu din copii modificate de terți.
+
+Detalii: fișierul NOTICE și docs/DOCUMENTATIE.md, cap. 14.
