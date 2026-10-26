@@ -1,0 +1,116 @@
+Corespondența identificatorilor de commit înainte și după curățarea istoricului din 26.10.2026
+==============================================================================================
+
+Pe 26.10.2026 au fost eliminate din tot istoricul depozitului, din motive de drepturi de autor și de protecție a
+datelor (GDPR), doar următoarele fișiere: capturile camerei Webcam România (docs/img/zone_camera.jpg,
+docs/img/flux_traiectorii.jpg, docs/img/dashboard.png), versiunile vechi ale PDF-ului documentației (care le
+conțineau) și versiunile vechi ale jurnalelor de traiectorii (care conțineau și traiectoriile individuale ale
+pietonilor). Restul conținutului fiecărui commit, mesajele, autorii și datele au rămas neschimbate; s-au schimbat
+doar identificatorii (hash-urile). Detalii: docs/DOCUMENTATIE.md, § 12 (post-scriptum).
+
+data              vechi    nou      mesaj
+2026-10-18 17:33  dc021a4  dc021a4  Initial commit
+2026-10-18 19:50  7bf0f4b  7bf0f4b  Import hartă Piața Romană - Piața Universității - Piața Victoriei - Intersecție bld. Dacia Calea Dorobanți - Intersecție bld. Dacia Calea Victoriei
+2026-10-18 21:06  b08798c  b08798c  Create intelligent_traffic.py
+2026-10-18 21:33  c33f9ce  c33f9ce  Create settings.json
+2026-10-19 00:13  91d3671  91d3671  Antrenare inițială reușită PPO și salvare model antrenat
+2026-10-19 02:43  993d733  993d733  Model vizualizare Piața Romană
+2026-10-19 22:28  edd5fe7  edd5fe7  Update traffic_vision.py
+2026-10-20 23:04  cdf1444  2de3b4f  Borna 0: audit ciornă Google AI, mutare în legacy/, curățare fișiere generate
+2026-10-20 23:08  5f5669e  23d7e5a  Borna 1: rețea SUMO Piața Romană + 5 intersecții conexe, generată reproductibil din OSM
+2026-10-20 23:20  e784526  1562133  Borna 2: modul de viziune artificială – cameră live → numărători origine–destinație
+2026-10-20 23:38  74564d7  ed8cb2d  Borna 3: puntea cameră → SUMO și remodelarea pieței ca nod agregat
+2026-10-20 23:46  81b4112  71b9ec7  Borna 4–5: control (RL, Webster, actuated, Max-Pressure), geamăn digital live, dashboard operator
+2026-10-20 23:50  d724339  6f8a071  Borna 6: documentația proiectului în limba română, README, bibliografie cu licențe
+2026-10-21 00:28  14b5971  49997c7  Borna 4: agenți PPO antrenați (Piața Romană și coridor 6 semafoare), cerere regenerată (GEH<5 100%)
+2026-10-21 00:30  7fdaae3  297b04e  Geamăn digital: regenerează automat rutele candidate lipsă; libsumo în dependențe
+2026-10-21 00:33  aebf075  9287d02  Agentul RL rulează și fără PyTorch: politica PPO exportată în NumPy (verificată identic cu SB3)
+2026-10-21 01:16  68c53ce  9365550  Borna 8 (în lucru): replică fidelă a rețelei reale + pietoni și bicicliști
+2026-10-21 01:36  7aa59f7  2bb709d  Borna 8: numărarea pietonilor pe trecerile vizibile pe cameră
+2026-10-21 01:43  c4417ca  f45fdca  Borna 8: strategiile de referință aduse pe rețeaua fidelă; libsumo funcțional
+2026-10-21 01:47  c55f4ac  d950192  Borna 8: geamănul digital și dashboard-ul pe rețeaua fidelă, cu pietoni și bicicliști
+2026-10-21 02:04  eb51fef  3e399e7  Borna 8: evaluare pe categorii de participanți; agentul RL alege fazele planului real
+2026-10-21 02:10  52790bd  34541dc  Borna 8: documentația actualizată pentru replica fidelă și toți participanții
+2026-10-21 02:12  7804a7b  15e410f  Borna 8: evaluare în paralel (--procese), afișarea pierderii de timp a pietonilor
+2026-10-21 02:14  5c47df7  385ea9d  Teste unitare pentru numărarea O–D și a pietonilor (unittest, detecții sintetice)
+2026-10-21 02:36  f25f65b  f879536  train.py: --continua – continuarea antrenării unui model existent
+2026-10-21 02:37  300860e  a13c9dc  evaluate.py: mediana așteptării, --adauga (combină rulări) și --doar-raport
+2026-10-21 03:27  7df72ff  318a225  Documentația: recompensa corectată și lecția despre exploatarea recompensei (§ 7)
+2026-10-21 03:27  e47fe6a  62aa941  Recompensa RL: vehiculele blocate la intrarea în rețea contează cât un vehicul oprit
+2026-10-21 04:43  a9b667b  4d7d335  Borna 8: agentul PPO al pieței reantrenat pe replica fidelă (500k pași) + evaluare
+2026-10-21 05:27  f7360c2  2286adc  Borna 8: § 9 Rezultate completat, agentul coridor reantrenat și evaluat, starea predată
+2026-10-21 12:00  3d73683  1d1a32f  Borna 7: viziune pe lumină de zi – OpenVINO pe GPU Intel, jurnal anonim de traiectorii, renumărare
+2026-10-21 12:03  93db32d  30d41da  Borna 7: documentația – camerele căutate pentru intersecțiile conexe, OpenVINO, regula de numărare, jurnalul de traiectorii
+2026-10-21 13:13  d3eccba  0b116ca  Borna 7: zone recalibrate pe datele de zi, sensul de mers, reunirea fragmentelor, echilibrarea intrări/ieșiri
+2026-10-21 13:19  92a10ec  85887dd  Borna 7: fazele vecinilor curățate pentru agentul coridor; documentația calibrării de zi
+2026-10-21 15:45  127fd0c  e53f75f  Declarația de asistență generativă completată: contribuția lui Claude în § 13, în bibliografie și în README
+2026-10-21 18:40  75bf140  b7c7ed8  Borna 9: scenarii_zi – scenariile SUMO ale unei zile reale, generate automat din numărători
+2026-10-21 21:04  57568b2  82eca90  Borna 9: prima zi de date reale (21.10.2026, 11:45–21:01) și scenariile SUMO construite din ea
+2026-10-21 21:08  e9e23b1  a845bf9  Documentația: § 5.4 – scenariile din prima zi de date reale (profilul zilei, ferestrele, compoziția)
+2026-10-21 21:41  4aa82d5  1619a30  Borna 9: zonele Dacia vest corectate, rutele pornesc pe bulevardele brațelor; scenariile din date reale refăcute
+2026-10-21 21:45  107be72  55d087e  GHID_PROFESOR.md: ghidul de instalare, rulare și verificare pentru evaluare; scripturi noi
+2026-10-21 21:49  db14fda  c0cb8cc  Observația RL extinsă opțional: cozile din amonte de intrări și vehiculele neintroduse (--obs-amonte)
+2026-10-21 22:19  f66e8a3  c29947b  CLAUDE.md: starea predată la 21.10, 22:30 (Borna 7 făcută, Borna 9 în lucru) și pașii următori
+2026-10-21 23:52  a7159e4  eec9cab  Borna 9: agentul PPO antrenat pe datele reale (v1) + evaluare; v2 cu cozile din amonte în recompensă
+2026-10-22 00:25  b6e1af0  271f0fd  Date: ziua de 21.10.2026 completă (11:45–24:00) și renumărată cu zonele finale; § 7.1 varianta v2
+2026-10-22 02:56  f55efc8  5750bc6  Borna 9: agentul v2 (cozi în amonte) evaluat; preantrenare prin imitație a celui mai bun plan fix
+2026-10-22 04:55  7fb0d73  cae8246  Borna 9: § 9 Rezultate rescris pe datele reale; agentul v3 (imitație + PPO) evaluat – experiment negativ
+2026-10-22 10:02  e043dec  0430219  Rezultate auxiliare: căutarea planului fix la vârf și selecția modelelor pe seed-urile de validare
+2026-10-22 10:38  9735472  8009500  Coridorul: piața + cei 4 vecini care o alimentează (fără Bd. Dacia × Str. Polonă); „Calea Dorobanți”
+2026-10-22 11:03  ece38f3  8176be5  Borna 9: a doua zi de date reale (22.10.2026, 00:00–11:00) – noaptea și vârful de dimineață
+2026-10-22 11:05  dd86d61  6d3987b  Documentația: § 5.4 – a doua zi de date (22.10, noaptea și vârful de dimineață), 10 scenarii din date reale
+2026-10-22 11:54  455e2d8  ab2c7ed  Generalizare: agentul v1 (antrenat doar pe 21.10) evaluat pe ziua nevăzută de 22.10
+2026-10-22 12:21  4189e7b  f8f1a5b  Documentația: imaginile zonelor finale (cadru de zi) și câmpul de mișcare al vehiculelor
+2026-10-22 13:55  43af612  cdea37f  Documentația: jurnalul bornelor (B7, B9) și limitările actualizate după datele reale
+2026-10-22 15:15  9bda831  84e5868  Borna 9: alegerea agentului final pe seed-uri de validare – v1 rămâne agentul oficial
+2026-10-22 16:02  016dac8  f1c0150  Borna 9 încheiată: evaluarea finală pe cele 10 scenarii reale; § 9 Rezultate, README și CLAUDE.md finale
+2026-10-22 19:09  baa2cd6  d5afaab  Borna 9: demonstrația live – redare fluentă a camerei, bucla live robustă, demo de comparație
+2026-10-22 19:11  00b9dbb  26372ef  Borna 9: starea demonstrației live în CLAUDE.md; datele camerei din seara de 22.10
+2026-10-22 21:18  b6d3b49  ae9bbcf  Borna 9: zonele camerei recalibrate după observațiile profesorului (evaluarea prin demonstrație)
+2026-10-22 21:37  a23dee1  2617243  Borna 9: mișcare fluentă în dispecerat și în SUMO; renumărarea cu zonele noi documentată
+2026-10-22 21:48  29c92af  6dea856  Borna 9: evaluarea prin demonstrație – observația O9 și starea de predare în CLAUDE.md
+2026-10-22 21:48  f4e7df6  a9591c0  Borna 9: demo de comparație – și numărul de bicicliști și pietoni, așteptarea lor la treceri
+2026-10-22 21:54  375af24  749a274  Borna 9: datele camerei din seara de 22.10 (zone vechi până la 21:16, zone recalibrate după)
+2026-10-23 12:50  9687ccf  5e2aed6  Borna 9: zonele camerei din decupajele autorului; datele renumărate și scenariile regenerate
+2026-10-23 12:52  c3fbc57  a7a48e5  Borna 9: verificarea rețelei față de Street View, limitările actualizate, scenariul demonstrației
+2026-10-23 13:02  4af55ba  7699e92  Borna 9: reevaluarea agentului pe scenariile din datele renumărate (§ 9.5)
+2026-10-24 09:21  16ccbe8  8714cf5  Borna 9: observațiile din 24.10 – trecerea Căderea Bastiliei deasupra ieșirii; rețeaua confirmată
+2026-10-24 09:49  18b636b  77f4c40  Borna 9: experimentul E2 – reantrenarea pe scenariile noi (rezultat negativ, documentat)
+2026-10-24 10:03  5b505c1  f8a1484  Borna 9: cel mai bun plan fix pe datele noi și programul pe tipuri de trafic (§ 9.6)
+2026-10-24 10:05  1783cb7  89ad226  Borna 9: modul „Program pe tipuri de trafic” în geamănul live și în dispecerat
+2026-10-24 10:08  0ad8fd0  22ceac4  Borna 9: train.py – --lr se aplică și la --continua (fine-tuning cu rată de învățare mai mică)
+2026-10-24 10:29  5b93c7b  b602e1f  Borna 9: experimentul E3 – fine-tuning cu rată de învățare mică; programul pe tipuri de trafic −8,1%
+2026-10-24 10:31  83e8d8b  fbc5cc1  Borna 9: programul pe tipuri de trafic folosește agentul E3 pentru traficul moderat
+2026-10-24 12:13  fe5e77c  6db4704  Borna 9: limitarea numărării reformulată; pornită antrenarea completă a agentului pe datele noi
+2026-10-24 13:58  0863329  0b9a417  Borna 9: evaluate.py --planuri (planuri fixe date prin durate); validările din 24.10 salvate
+2026-10-24 14:19  3207e29  5e5e7e4  Borna 9: evaluarea completă pe datele noi (350 de simulări) – programul pe tipuri de trafic −8,5%
+2026-10-24 14:20  ca02546  86d08a9  Borna 9: README – rezultatul evaluării complete pe datele noi (programul pe tipuri de trafic −8,5%)
+2026-10-25 03:13  712c2f6  54d24b5  Borna 9: experimentul E4 – agentul antrenat de la zero pe datele noi (1 000 000 de pași)
+2026-10-25 05:32  a60e96e  7e7d866  Borna 9: experimentele E5–E6 – specialiști pentru trafic greu (§ 9.8)
+2026-10-25 08:20  afa8799  e9365c7  Borna 9: experimentul E7 și semnificația statistică a rezultatelor (§ 9.8–9.9)
+2026-10-25 10:24  5628099  fb7445b  Borna 9: README – programul final pe 10 seed-uri (−6,9% față de planul fix, p = 0,0003)
+2026-10-25 10:24  6e7e827  1a1c972  Borna 9: E8–E9, programul final pe tipuri de trafic pe 10 seed-uri: −6,9% față de planul fix (p = 0,0003)
+2026-10-25 10:25  becd9e7  079f3e3  Borna 9: jurnalul bornelor (22–25.10) și strategia recomandată în GHID_PROFESOR.md
+2026-10-25 10:27  760fec6  44dad4c  Borna 9: programul pe tipuri de trafic comută după debitul echilibrat (intrări + ieșiri) / 2
+2026-10-25 11:22  d25a214  2b38b20  Borna 9: tabelul evaluării completat la 10 seed-uri pentru toate strategiile (§ 9.10)
+2026-10-25 12:12  76777d3  7a79502  Borna 9: testul de generalizare pe duminică 25.10 (zi de weekend nevăzută) – § 9.11
+2026-10-25 12:48  00db1ce  4cd2819  Borna 9: GHID.md pentru orice cititor, JURNAL.md cu povestea proiectului; cererea doar din intrări
+2026-10-25 12:55  0d86b6f  4d9898f  Borna 9: jurnalul și documentele fără „repetiția susținerii” (observația autorului)
+2026-10-25 13:17  84cc270  9bc3eb4  Borna 9: o singură documentație – ghidul și jurnalul integrate în docs/DOCUMENTATIE.md
+2026-10-25 13:19  f981295  2456134  Borna 9: documentația – zonele finale și auditul numărării (§ 4.3), cele două calibrări ale cererii (§ 5.1)
+2026-10-25 13:56  c6c4cdd  7e83645  Borna 9: capitolul 9 rescris unitar; § 5.4 cu scenariile actuale; validarea pentru marginea de jos
+2026-10-25 14:16  0bc5071  d20860d  Borna 9: env.py folosește tipurile de participanți din scenariu; duminica (marginea de jos) și limitările
+2026-10-25 14:27  6301c3a  027b1ea  Borna 9: testul cu participanți indisciplinați (§ 9.4) – specialiștii AI −12,8% / −11,6% față de planul fix
+2026-10-25 14:34  2a52704  08449df  Borna 9: documentația și în PDF, cu pagini numerotate (33 de pagini)
+2026-10-25 14:43  b6ee113  61afb90  Borna 9: testul de indisciplină pe 10 seed-uri – agentul E3 −14,1% față de planul fix (p = 0,00001)
+2026-10-25 15:01  9d941fb  a9c4d8c  Borna 9: „programul realist” pentru participanți indisciplinați – −16,0% față de planul fix (p = 0,00001)
+2026-10-25 15:04  4f56768  9ca2c8e  Borna 9: verificarea documentației – afirmațiile depășite corectate
+2026-10-25 15:05  6418117  d1588cc  Borna 9: anexa A cu fișierele de rezultate; rezultatele brute pentru marginea de sus publicate
+2026-10-25 15:19  ba596ac  efab161  Borna 9: marginea de jos pe 10 seed-uri – programul −1,5% (corectat de la −2,9% pe 5 seed-uri)
+2026-10-25 15:31  813fb62  23f386a  Borna 9: programul realist pe duminică (participanți indisciplinați) – −4,3%, nesemnificativ
+2026-10-25 17:00  776f055  e4124cd  Borna 9: datele finale de duminică 25.10 (colectare oprită la 17:00) și starea de lucru
+2026-10-26 10:07  e96f49e  4fa372e  Borna 9: E10 – reantrenarea E3 pe participanți indisciplinați (negativă, −6,6% vs −13,4% pe validare)
+2026-10-26 10:20  5b12701  67575ac  Borna 9: programul realist pe duminică pe 10 seed-uri – −4,4% (40/50, Wilcoxon p = 0,035)
+2026-10-26 14:17  c9ff855  694890c  Borna 9: E11 – agent nou de la zero pe participanți disciplinați + indisciplinați (negativ, −6,9% vs −13,4% al E3 pe validare)
+2026-10-26 16:16  4d5350a  c3355ea  Borna 9: jurnalul publicat doar cu vehiculele; regula nouă pentru pietoni și reunirea live a traiectoriilor
+2026-10-26 16:16  959d251  66bf7ba  Licențe: AGPL-3.0-or-later pentru cod, ODbL 1.0 pentru datele OSM și derivate, CC BY 4.0 pentru documentație; scoase capturile camerei

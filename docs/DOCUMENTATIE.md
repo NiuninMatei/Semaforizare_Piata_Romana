@@ -270,9 +270,8 @@ EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate:
 * se publică doar numărători agregate și jurnalul de traiectorii al vehiculelor (inclusiv biciclete și
   motociclete): clasa obiectului, momentul de început `t0` și pozițiile normalizate ale punctului de contact cu
   solul, fără imagini și fără identificatori (date pseudonimizate); traiectoriile individuale ale pietonilor rămân
-  doar în jurnalul local (`data/trajectories_brute/`, nepublicat) și nu mai sunt incluse în versiunea curentă a
-  depozitului; versiunile din istoricul git dinainte de 26.10.2026 le conțin încă și se elimină numai prin
-  rescrierea istoricului.
+  doar în jurnalul local (`data/trajectories_brute/`, nepublicat); versiunile vechi ale jurnalelor publicate, care
+  le conțineau, au fost eliminate din tot istoricul depozitului pe 26.10.2026 (§ 12.5).
 
 Riscul de reidentificare nu este nul: o traiectorie individualizează un obiect în timp și spațiu și ar putea fi
 legată, în principiu, de alte imagini ale aceleiași camere – cu atât mai mult cu cât momentul de început `t0` este
@@ -1084,6 +1083,27 @@ specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, p�
 5. **Ochiul omului rămâne indispensabil.** Marcajul confundat cu o trecere, banda „lipsă” de pe Dacia, ideea de a
    număra doar intrările – toate au venit de la autor.
 
+### 12.5 Post-scriptum: curățarea istoricului depozitului (26.10.2026)
+
+După ce depozitul a devenit public, un audit de licențe și de protecție a datelor (§ 14.1) a constatat trei
+nereguli în fișierele publicate anterior: (1) capturi ale camerei Webcam România, ale căror drepturi aparțin
+operatorului camerei (toate drepturile rezervate), incluse în `docs/img/` și în PDF-ul documentației; (2) una dintre
+ele, cu persoane neestompate; (3) jurnalele de traiectorii care conțineau și traiectoriile individuale ale
+pietonilor (date pseudonimizate, nu anonime). Măsurile, în ordine:
+
+* capturile au fost scoase din versiunea curentă, iar jurnalele publicate păstrează doar traiectoriile vehiculelor
+  (pietonii apar numai agregat, în `data/counts`);
+* aceleași fișiere au fost eliminate din **tot istoricul** depozitului (`git filter-repo`): capturile, versiunile
+  vechi ale PDF-ului care le conțineau și versiunile vechi ale jurnalelor de traiectorii. Restul conținutului
+  fiecărui commit (codul, textul documentației, datele de vehicule, mesajele, autorii, datele) a rămas neschimbat;
+  s-au schimbat doar identificatorii commit-urilor. Corespondența vechi → nou a celor 105 commit-uri este în
+  `docs/corespondenta_commituri.txt`, ca istoricul urmărit de coordonator să rămână verificabil;
+* PDF-ul actual (fără imagini ale camerei) și jurnalele curente (doar vehicule) au fost readăugate într-un commit
+  nou; o copie a istoricului original este păstrată doar local de autor, nepublicată;
+* autorul cere în scris, prin e-mail, acordul Webcam România pentru analiza fluxului și pentru eventuale capturi
+  estompate (§ 14.1); până la răspuns nu se publică nicio imagine a camerei, iar în caz de refuz analiza fluxului se
+  oprește.
+
 ## 13. Asistență generativă
 
 Conform cerințelor de integritate academică, se declară folosirea asistenților generativi:
@@ -1194,18 +1214,16 @@ de reproducere: art. 35 alin. (3) din Legea nr. 8/1996[^legea8], care transpune 
 organizațiile de cercetare și instituțiile de patrimoniu cultural, iar art. 36^2 nu se aplică dacă titularul
 și-a rezervat drepturile prin mijloace care pot fi citite automat. Fișierul `robots.txt` al site-ului
 webcamromania.ro exclude listele de redare HLS (`.m3u8`), deci această excepție este incertă. Din acest motiv
-este necesar acordul scris al titularului, pe care autorul îl va solicita prin formularul de contact al Webcam
-România („Termeni și condiții”, secțiunea 12); până la obținerea lui, utilizarea rămâne strict academică, iar
-imaginile nu sunt redistribuite. Versiunea curentă a depozitului și PDF-ul curent nu conțin cadre ale camerei: figurile
-care le foloseau au fost scoase și se refac ca scheme proprii, pe fond neutru. Versiunile mai vechi din istoricul
-git nu sunt acoperite de licențele proiectului și se elimină la cererea titularului.
+este necesar acordul scris al titularului, pe care autorul îl solicită în scris, prin e-mail (cererea din 26.10.2026); până
+la obținerea lui, utilizarea rămâne strict academică, iar imaginile nu sunt redistribuite. Depozitul și PDF-ul nu
+conțin cadre ale camerei: figurile care le foloseau au fost scoase (se refac ca scheme proprii, pe fond neutru), iar
+capturile publicate anterior au fost eliminate și din tot istoricul depozitului (§ 12.5).
 
 **Datele de trafic.** Numărătorile și traiectoriile sunt informații factuale, iar „simplele fapte și date” nu
 sunt protejate (art. 9 lit. f) din Legea nr. 8/1996). Licența ODbL se acordă asupra lor în măsura în care există
 drepturi de autor sau drepturi sui generis asupra bazei de date. Ele nu reproduc nicio imagine. Traiectoriile
-sunt fără imagini și fără identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu mai sunt
-incluse în versiunea curentă, ci doar numărătorile agregate; versiunile din istoricul git dinainte de 26.10.2026 le
-conțin încă și se elimină numai prin rescrierea istoricului (§ 4.5). Ieșirea unui program sub licență GNU nu este acoperită de
+sunt fără imagini și fără identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu sunt
+publicate, ci doar numărătorile agregate (§ 4.5, § 12.5). Ieșirea unui program sub licență GNU nu este acoperită de
 licența programului decât dacă reproduce părți din el[^gpl-faq], deci datele nu devin AGPL din cauza YOLO11.
 
 **Conținutul realizat cu asistenți generativi** (cap. 13). Termenii Anthropic îi cedează utilizatorului toate
