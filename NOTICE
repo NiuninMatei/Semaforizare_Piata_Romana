@@ -157,7 +157,7 @@ Componentă (versiunea testată) – licență – sursă:
   (Blinker: MIT) – https://flask.palletsprojects.com
 - Eclipse Paho MQTT Python 2.1.0 – EPL-2.0 OR EDL-1.0 (BSD-3-Clause); proiectul folosește opțiunea
   EDL-1.0 / BSD-3-Clause – https://github.com/eclipse-paho/paho.mqtt.python
-- Python-Markdown 3.7 – BSD-3-Clause – https://github.com/Python-Markdown/markdown
+- Python-Markdown 3.8.1 – BSD-3-Clause – https://github.com/Python-Markdown/markdown
 - pyproj 3.8.0 (instalat, neimportat în src/) – MIT – https://github.com/pyproj4/pyproj
 - httpx 0.28.1 – BSD-3-Clause – https://github.com/encode/httpx
 - nvidia-ml-py 13.615.71 – BSD – https://pypi.org/project/nvidia-ml-py/
