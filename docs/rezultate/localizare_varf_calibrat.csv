@@ -1,0 +1,45 @@
+scenariu,categorie,detaliu,veh_h,pondere
+zi_2026-10-21_varf,neintroduse,,593.38,0.7908
+zi_2026-10-21_varf,zona pietei,,81.47,0.1086
+zi_2026-10-21_varf,la alte semafoare,,39.96,0.0533
+zi_2026-10-21_varf,alte muchii,,35.55,0.0474
+zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | vest | -231435896,586.02,0.781
+zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | est | 232079775#0,6.61,0.0088
+zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | vest | -778823268#0,0.55,0.0007
+zi_2026-10-21_varf,neintroduse,Piața Victoriei | vest | 178060182,0.12,0.0002
+zi_2026-10-21_varf,neintroduse,Bulevardul General Gheorghe Magheru | est | 119241030#1,0.07,0.0001
+zi_2026-10-21_varf,neintroduse,Calea Victoriei | vest | 1165343128#0,0.01,0.0
+zi_2026-10-22_varf,neintroduse,,409.19,0.698
+zi_2026-10-22_varf,zona pietei,,94.52,0.1612
+zi_2026-10-22_varf,la alte semafoare,,42.83,0.0731
+zi_2026-10-22_varf,alte muchii,,39.73,0.0678
+zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | vest | -231435896,350.67,0.5981
+zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | vest | -125496883#1,31.17,0.0532
+zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | est | 232079775#0,19.03,0.0325
+zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | vest | -778823268#0,5.12,0.0087
+zi_2026-10-22_varf,neintroduse,Bulevardul General Gheorghe Magheru | est | 119241030#1,2.59,0.0044
+zi_2026-10-22_varf,neintroduse,Piața Victoriei | vest | 178060182,0.6,0.001
+zi_2026-10-22_varf,neintroduse,Calea Victoriei | vest | 1165343128#0,0.01,0.0
+zi_2026-10-22_varf,neintroduse,Strada C. A. Rosetti | vest | 180685590#0,0.0,0.0
+indisciplinat_zi_2026-10-21_varf,neintroduse,,676.91,0.7122
+indisciplinat_zi_2026-10-21_varf,zona pietei,,125.84,0.1324
+indisciplinat_zi_2026-10-21_varf,alte muchii,,93.63,0.0985
+indisciplinat_zi_2026-10-21_varf,la alte semafoare,,54.12,0.0569
+indisciplinat_zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | vest | -231435896,577.05,0.6071
+indisciplinat_zi_2026-10-21_varf,neintroduse,Bulevardul General Gheorghe Magheru | est | 119241030#1,64.13,0.0675
+indisciplinat_zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | vest | -125496883#1,27.04,0.0284
+indisciplinat_zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | est | 232079775#0,4.82,0.0051
+indisciplinat_zi_2026-10-21_varf,neintroduse,Bulevardul Dacia | vest | -778823268#0,3.78,0.004
+indisciplinat_zi_2026-10-21_varf,neintroduse,Piața Victoriei | vest | 178060182,0.09,0.0001
+indisciplinat_zi_2026-10-21_varf,neintroduse,Calea Victoriei | vest | 1165343128#0,0.01,0.0
+indisciplinat_zi_2026-10-22_varf,neintroduse,,395.28,0.5832
+indisciplinat_zi_2026-10-22_varf,zona pietei,,120.91,0.1784
+indisciplinat_zi_2026-10-22_varf,alte muchii,,99.55,0.1469
+indisciplinat_zi_2026-10-22_varf,la alte semafoare,,61.99,0.0915
+indisciplinat_zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | vest | -231435896,330.81,0.4881
+indisciplinat_zi_2026-10-22_varf,neintroduse,Bulevardul General Gheorghe Magheru | est | 119241030#1,43.04,0.0635
+indisciplinat_zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | est | 232079775#0,12.19,0.018
+indisciplinat_zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | vest | -778823268#0,4.96,0.0073
+indisciplinat_zi_2026-10-22_varf,neintroduse,Bulevardul Dacia | vest | -125496883#1,3.74,0.0055
+indisciplinat_zi_2026-10-22_varf,neintroduse,Piața Victoriei | vest | 178060182,0.53,0.0008
+indisciplinat_zi_2026-10-22_varf,neintroduse,Calea Victoriei | vest | 1165343128#0,0.01,0.0

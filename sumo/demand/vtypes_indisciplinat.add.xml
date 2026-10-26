@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Participanți indisciplinați (testul de robustețe, docs/DOCUMENTATIE.md § 9.12): aceleași tipuri ca în
+<!-- Participanți indisciplinați (testul de robustețe, docs/DOCUMENTATIE.md § 9.4): aceleași tipuri ca în
      vtypes.add.xml, cu parametrii modelului de intersecție și de schimbare a benzii din SUMO:
      jmIgnoreKeepClearTime – intră în intersecție deși nu o pot elibera (blochează) după 1 s de așteptare;
      jmDriveAfterRedTime / jmDriveAfterYellowTime – trec pe roșu în primele 2 s, respectiv pe galben târziu;
