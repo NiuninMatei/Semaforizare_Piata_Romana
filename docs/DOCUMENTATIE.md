@@ -334,6 +334,37 @@ depune plângere la Autoritatea Națională de Supraveghere a Prelucrării Datel
 https://www.dataprotection.ro). Informarea individuală a trecătorilor este imposibilă (art. 14 alin. (5) lit. b)
 GDPR), de aceea informarea este publicată aici.
 
+### 4.6 Calitatea înregistrării: urmărirea sacadată din 21–22.10
+
+Pe 27.10.2026, ziua de luni 26.10 a ieșit, la aceleași ore, cu de până la trei ori mai multe intrări numărate decât
+miercuri 21.10 (pe Magheru 1 484/h față de 481/h, orele 10–17), deși camera nu s-a mișcat: hărțile de ocupare ale
+traiectoriilor din cele patru zile se suprapun fără nicio deplasare (corelație 0,91–0,96), iar codul și parametrii
+detecției (YOLO11s, 1600 px, OpenVINO) sunt aceiași. Diferența este în continuitatea urmăririi, măsurată direct în
+jurnalele de traiectorii (`romana.vision.calitate`, `docs/rezultate/calitate_inregistrare.csv`; pe jurnalele publicate
+din `data/trajectories/` ies practic aceleași cifre):
+
+| Perioada | Goluri > 1 s între punctele unei traiectorii | Densitate (puncte pe secundă de traiectorie) |
+|---|---|---|
+| miercuri 21.10, 11:45–21:00 | 12–17% | 1,0–1,5 |
+| noaptea 21–22.10, 21:00–06:00 | 5–10% | 2,1–2,9 |
+| joi 22.10, 07:00–19:00 | 11–22% | 0,8–1,4 |
+| joi 22.10, de la 20:00 | 2–3% | 3,7–4,5 |
+| duminică 25.10 și luni 26.10 | 1–6% | 2,4–5,2 |
+
+Un vehicul oprit la semafor este detectat în fiecare cadru, deci densitatea nu scade din cauza aglomerației, ci doar
+a înregistrării. Schimbarea coincide cu tamponul de redare de 8 s pentru fluxul HLS, introdus pe 22.10 seara pentru
+demonstrația live (§ 12.2, P3: „imaginea camerei mergea 2 s și stătea 4 s”, pentru că fluxul vine în bucăți de 6 s):
+înainte, și analiza primea cadrele în rafale, cu opriri, iar urmărirea avea goluri în care vehiculele „săreau” peste
+zonele mici de numărare. Problema a fost văzută atunci doar ca una de afișare. **Consecințe:** (1) zilele lucrătoare 21–22.10
+(ziua) sunt subnumărate, cu un factor necunoscut și diferit pe brațe; factorii de corecție din § 4.3, măsurați pe
+26.10, corespund înregistrării continue și nu se aplică acelor zile; (2) prima zi lucrătoare înregistrată continuu este
+**luni 26.10**, chiar ziua numărătorii de referință: vârful ei calibrat are ≈5 000 de vehicule/h prin piață
+(§ 5.4), iar numărătoarea de referință de la 16:00 dă ≈6 200 de vehicule/h (Magheru ≈3 070, Lascăr Catargiu ≈1 450,
+Dacia vest ≈1 050, Dacia est ≈650) – de aproximativ două ori vârfurile din 21–22.10 (≈2 500 de vehicule/h); (3)
+duminica 25.10, înregistrată continuu, părea „mai aglomerată” decât zilele lucrătoare (4 683 de vehicule/h la vârf) –
+un semnal care ar fi trebuit să atragă atenția mai devreme. Pentru o colectare nouă: `romana.vision.calitate` pe
+jurnalul zilei, înainte de orice scenariu.
+
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
 Aceasta este piesa care asigură că agentul se antrenează pe **trafic real**, nu pe trafic aleatoriu.
@@ -446,6 +477,16 @@ anterioare):
 | `zi_2026-10-25_varf_x1_2` | vârf × 1,2 | 5 620 | 843 | 2 775 | – | – |
 | `zi_2026-10-25_linistit` | 05:15–06:15 | 387 | 58 | 232 | 349 | – |
 | `zi_2026-10-25_linistit_x0_8` | liniștit × 0,8 | 309 | 46 | 232 | 279 | – |
+| `zi_2026-10-26_pranz` (luni) | 12:00–13:00 | 3 381 | 507 | 3 902 | – | – |
+| `zi_2026-10-26_varf` | 15:00–16:00 | 5 009 | 751 | 5 707 | – | – |
+| `zi_2026-10-26_varf_x1_2` | vârf × 1,2 | 6 010 | 902 | 5 707 | – | – |
+| `zi_2026-10-26_seara` | 17:30–18:30 | 3 357 | 504 | 4 670 | – | – |
+| `zi_2026-10-26_linistit` | 21:30–22:30 | 1 004 | 151 | 870 | – | – |
+| `zi_2026-10-26_linistit_x0_8` | liniștit × 0,8 | 803 | 120 | 870 | – | – |
+
+Luni 26.10 (colectată de la 09:11, deci fără vârful de dimineață) este prima zi lucrătoare înregistrată cu urmărire
+continuă (§ 4.6); zilele 21–22.10 sunt subnumărate, iar vârfurile lor (≈2 500 de vehicule/h) sunt aproximativ
+jumătate din cel de luni (≈5 000) și din numărătoarea de referință de la 16:00 (≈6 200).
 
 Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor se regăsesc în istoricul git, la
 commiturile `e1d0f77` și `7a79502`, § 11.8); pe
@@ -558,6 +599,36 @@ de aceea strategiile adaptive aleg implicit doar dintre fazele 0–2.
 
 Intersecțiile vecine păstrează programele `actuated` generate (realist: sistemul BTMS funcționează adaptiv), cu
 excepția variantei „coridor”, în care sunt conduse de agent.
+
+### 6.4 Capacitatea geamănului, verificată pe debitul observat (27.10)
+
+Geometria poate fi fidelă, iar geamănul tot să nu poată trece traficul real: capacitatea depinde și de cât de strâns
+circulă șoferii. Verificarea s-a făcut pe luni 26.10, prima zi lucrătoare înregistrată continuu (§ 4.6): vârful
+calibrat (`zi_2026-10-26_varf`, 15:00–16:00, ≈5 000 de vehicule/h prin piață) și vârful ×1,2 (≈6 000 de vehicule/h,
+apropiat de numărătoarea de referință de la 16:00, ≈6 200). Cu parametrii impliciți SUMO pentru șoferi (modelul
+Krauss: timpul de reacție `tau` = 1,0 s, distanța minimă 2,5 m, imperfecțiunea `sigma` = 0,5), geamănul **se
+blochează**: din 5 681 de vehicule ale vârfului rămân 2 121 neintroduse, iar pe intrarea Magheru trec 436 de vehicule
+pe oră, față de ≈3 070 numărate pe cameră. Baleiajul parametrilor (planul fix, seed 1):
+
+| Șoferi (`tau` / distanța minimă / `sigma`) | Vârful de luni: neintroduse la final | Vârful ×1,2: neintroduse la final |
+|---|---|---|
+| 1,0 s / 2,5 m / 0,5 (implicit) | 2 121 (blocaj) | 3 135 (blocaj) |
+| 1,0 s / 2,5 m / 0 | 1 771 (blocaj) | – |
+| 1,0 s / 2,0 m / 0,5 | 2 051 (blocaj) | – |
+| 0,9 s / 2,5 m / 0,5 | 588 | – |
+| 0,9 s / 2,0 m / 0,5 | 473 | 1 000 |
+| **0,8 s / 2,5 m / 0,5** | **15** | – |
+| 0,8 s / 2,0 m / 0,5 | 19 | 19 |
+| 0,8 s / 2,0 m / 0,3 | 10 | 19 |
+
+Parametrul decisiv este timpul de reacție: cu **`tau` = 0,8 s** (o singură modificare față de valoarea implicită,
+în intervalul folosit uzual la calibrarea SUMO pe trafic urban), geamănul servește tot vârful de luni și vârful ×1,2,
+fără blocaje; distanța minimă și imperfecțiunea contează puțin. Calibrarea este în `sumo/demand/vtypes_capacitate.add.xml`
+(și `vtypes_capacitate_indisciplinat.add.xml`), cu scenariile `capacitate_zi_*` și `capacitate_indisciplinat_zi_*`
+(`romana.bridge.indisciplinat --vtypes … --prefix …`). Rezultatele din § 9.1–9.8 sunt obținute cu parametrii impliciți,
+pe cererea din 21–22.10, care era subnumărată (§ 4.6) – adică pe un geamăn cu capacitate de aproximativ jumătate din
+cea reală, încărcat cu aproximativ jumătate din cererea reală. Gradul de saturare era, astfel, comparabil cu cel
+real, dar valorile absolute nu. Evaluarea pe ziua de luni cu capacitatea calibrată este în § 9.9.
 
 ## 7. Controlul inteligent al semafoarelor
 
@@ -1099,6 +1170,9 @@ cu `--procese N` (implicit 4).
 |---|---|---|
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
 | `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
+| `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2*.jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
+| `capacitate_baleiaj.csv` (§ 6.4) | arborele curent | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` |
+| scenariile `capacitate_*` (§ 6.4) | arborele curent | `romana.bridge.indisciplinat --scenarii "sumo\scenarios\zi_2026-10-2[56]_*.sumocfg" --vtypes vtypes_capacitate.add.xml --prefix capacitate_` și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix capacitate_indisciplinat_` |
 | `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
@@ -1211,7 +1285,7 @@ specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, p�
 | O15 | Prea multe documente | o singură documentație (acest document); README scurt pentru pagina GitHub |
 | P1 | Viziunea se oprea când dispeceratul citea imaginea | scriere atomică, citiri simultane tolerate |
 | P2 | Geamănul revenea pe date de rezervă la începutul fiecărui interval de 15 min | păstrează ultimele debite bune ale camerei |
-| P3 | Imaginea camerei mergea 2 s și stătea 4 s (camera trimite bucăți de 6 s) | tampon de redare de 8 s: cadre la 0,17 s, fără pauze |
+| P3 | Imaginea camerei mergea 2 s și stătea 4 s (camera trimite bucăți de 6 s) | tampon de redare de 8 s: cadre la 0,17 s, fără pauze; abia pe 27.10 s-a văzut că opririle afectaseră și numărarea din 21–22.10 (§ 4.6) |
 | P4 | Fereastra camerei tăia imaginea | fereastră redimensionabilă |
 | P5 | SUMO-GUI pornea cu toată rețeaua | vederea pornește centrată pe piață |
 | P6 | Programul live comuta după intrările camerei, iar pragurile erau pe altă unitate | comutarea pe aceeași măsură ca scenariile (§ 9.2) |
@@ -1520,6 +1594,8 @@ reface, celelalte da.
 | `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) | `8176be5`, cu codul de atunci | `romana.control.evaluate` din acel commit |
 | `scenarii_referinta/` | evaluarea pe scenariile ipotetice inițiale (`referinta_*`) | `a845bf9`, cu codul de atunci | `romana.control.evaluate` din acel commit |
 | `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
+| `calitate_inregistrare.csv` | continuitatea urmăririi pe ore și zile (§ 4.6): traiectorii, goluri > 1 s, densitatea punctelor | – | `romana.vision.calitate` |
+| `capacitate_baleiaj.csv` | capacitatea geamănului pe vârful de luni și ×1,2 pentru variante ale parametrilor de șofer (§ 6.4): vehicule introduse, neintroduse, intrări pe brațe | arborele curent | `romana.control.capacitate` |
 | `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent | `romana.control.localizare` |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3, E9 și planul fix, pe 5 scenarii de zi lucrătoare | `e1d0f77` | `romana.control.validare --seeds 1-5` / `--seeds 6-10`, `--fara-alegere` (comanda completă: § 11.8) |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3 și planul fix | `e1d0f77` (cele 5 scenarii de duminică de atunci, fără `pranz`) | la fel |
