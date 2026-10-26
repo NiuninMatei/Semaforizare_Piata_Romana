@@ -836,9 +836,22 @@ teste statistice.
 
 ### 9.6 Limita fizică la vârf
 
-Analiza localizării întârzierilor (datele din 21–22.10, marginea de sus) arată că, la vârf, **68% din timpul
-pierdut** se acumulează în coada de pe Bd. Dacia vest, care se întinde dincolo de zona pieței, și doar ≈24% în
-piață propriu-zisă; nici cel mai bun plan fix posibil nu câștigă mai mult de ≈5% la vârf. Niciun program de
+Analiza localizării întârzierilor pe cererea calibrată (§ 9.8; vârfurile din 21 și 22.10, planul fix actual, seed
+1, `romana.control.localizare`, § 11.8) împarte timpul vehiculelor oprite sau care așteaptă să intre în rețea astfel:
+
+| Vârful | Coada de intrare pe Bd. Dacia vest | Zona pieței (intrări + ≈250 m amonte) | La alte semafoare și pe alte străzi | Coada de intrare pe Dacia est / Magheru |
+|---|---|---|---|---|
+| 21.10, participanți disciplinați | **78%** | 11% | 10% | 1% / 0% |
+| 22.10, participanți disciplinați | **66%** | 16% | 14% | 3% / 0,4% |
+| 21.10, participanți indisciplinați | **64%** | 13% | 16% | 0,5% / 7% |
+| 22.10, participanți indisciplinați | **50%** | 18% | 24% | 2% / 6% |
+
+Așadar, la vârf, **jumătate până la trei sferturi din timpul pierdut** este coada vehiculelor de pe Bd. Dacia dinspre
+Calea Victoriei care nici nu încap în rețea – coada se întinde dincolo de zona modelată – și doar 11–18% sunt opriri
+în piață propriu-zisă (`docs/rezultate/localizare_varf_calibrat.csv`). Pe calibrarea anterioară (22.10, zonele
+inițiale) ponderea era 68%, cu ≈24% în piață: cu zona nouă a camerei, Dacia vest e numărat aproape complet (§ 4.3),
+iar coada lui a crescut. Grila de planuri fixe (datele din 21–22.10) arăta că nici cel mai bun plan fix posibil nu
+câștigă mai mult de ≈5% la vârf. Niciun program de
 semafor nu poate elimina complet această coadă: decongestionarea serioasă a vârfului cere intervenții pe
 capacitatea acelui braț sau pe cerere (transport public, rute alternative) – o informație utilă pentru
 administratorul drumului.
@@ -1016,7 +1029,7 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`) și calibrarea camerei pe rețea (`calibrare_camera.py`) |
 | `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați (`indisciplinat.py`), geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
-| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`) și statisticile pe perechi (`analiza.py`) |
+| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`) statisticile pe perechi (`analiza.py`) și localizarea întârzierilor la vârf (`localizare.py`) |
 | `src/romana/dashboard/` | dispeceratul web |
 | `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
 | `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectoriile vehiculelor, fără imagini și fără identificatori – pseudonimizate); licența în `data/LICENTA.txt`; jurnalul complet, cu pietoni, rămâne local în `data/trajectories_brute/` (exclus din Git) |
@@ -1086,6 +1099,7 @@ cu `--procese N` (implicit 4).
 |---|---|---|
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
 | `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
+| `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
 | `validare_indisciplinat.csv` + `_alegere.json` (alegerea programului realist, § 9.4) | `e1d0f77` | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 11-15 --out outputs\validare\validare_indisciplinat.csv --compara docs\rezultate\validare_indisciplinat.csv` (alegerea, scrisă în `outputs\validare\validare_indisciplinat_alegere.json`, se compară cu cea publicată) |
@@ -1146,7 +1160,8 @@ credențiale în linia de comandă (push-ul se face prin GitHub Desktop), iar la
 agentul AI −4,6% față de planul fix. Corecturile autorului: strada se numește Calea Dorobanți; intersecția
 Dacia × Polonă e sens unic de ieșire, deci nu intră în coridor. Experimentele cu agentul care vede cozile din
 amonte, cu imitația unui plan fix, cu orizontul lung și cu coordonarea a 4 vecini (+35%) au fost negative.
-Diagnostic important: 68% din întârzierea la vârf vine din coada de pe Bd. Dacia vest, dincolo de piață.
+Diagnostic important: 68% din întârzierea la vârf vine din coada de pe Bd. Dacia vest, dincolo de piață (refăcut pe
+27.10, pe cererea calibrată: 50–78%, § 9.6).
 
 **Etapa 4 – sistemul rulat live, cap-coadă (seara de 22.10).** Rularea completă (camera, geamănul, dispeceratul) a
 scos la iveală defecte reale (§ 12.2, P1–P5, O8): oprirea viziunii la citiri simultane, revenirea pe date de rezervă
@@ -1505,6 +1520,7 @@ reface, celelalte da.
 | `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) | `8176be5`, cu codul de atunci | `romana.control.evaluate` din acel commit |
 | `scenarii_referinta/` | evaluarea pe scenariile ipotetice inițiale (`referinta_*`) | `a845bf9`, cu codul de atunci | `romana.control.evaluate` din acel commit |
 | `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
+| `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent | `romana.control.localizare` |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3, E9 și planul fix, pe 5 scenarii de zi lucrătoare | `e1d0f77` | `romana.control.validare --seeds 1-5` / `--seeds 6-10`, `--fara-alegere` (comanda completă: § 11.8) |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3 și planul fix | `e1d0f77` (cele 5 scenarii de duminică de atunci, fără `pranz`) | la fel |
 | `validare_indisciplinat.csv` + `_alegere.json` | validarea din care s-a ales programul realist (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |

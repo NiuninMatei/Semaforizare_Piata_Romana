@@ -87,9 +87,9 @@ pe seed-urile de test 1–5, p = 0,32; § 9.2, § 9.5). În geamănul live comut
   −4,9…−6,5% (§ 9.3); cu participanți indisciplinați, E3 singur dă −14,1%, până la −28,0% la vârf (§ 9.4).
 - Agentul oficial dădea −4,6% cu zonele inițiale ale camerei și +5,2% pe datele renumărate; agentul pentru piață plus
   4 vecini a dat +35,4% (22.10, zonele inițiale; date brute în commitul `f1c0150`) (§ 9.5).
-- La vârf, 68% din timpul pierdut era al vehiculelor care nu încăpeau în rețea (coada de pe Bd. Dacia dinspre Calea
-  Victoriei): o limită de capacitate pe care semaforul nu o elimină. Analiza e din 22.10 (datele din 21.10, zonele
-  inițiale, marginea de sus) și nu a fost refăcută pe datele renumărate (§ 9.6).
+- La vârf, pe cererea calibrată, 50–78% din timpul pierdut este al vehiculelor care nici nu încap în rețea (coada de
+  pe Bd. Dacia dinspre Calea Victoriei) și doar 11–18% sunt opriri în piață: o limită de capacitate pe care semaforul
+  nu o elimină (§ 9.6, `romana.control.localizare`).
 
 ## Cum se rulează (Windows)
 
@@ -125,7 +125,7 @@ previzualizarea estompată, suprascrisă continuu (§ 4.5, § 14.1). Pașii comp
 
 | Cale | Ce conține |
 |---|---|
-| `src/romana/` | `vision/` (detecție, urmărire, numărare O–D, renumărare, numărătoarea de referință `referinta.py`, calibrarea camerei pe rețea `calibrare_camera.py`), `bridge/` (estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați `indisciplinat.py`, geamănul live), `network/` (rețeaua din OSM), `control/` (controlerul sigur de semafor, mediul RL, PPO, liniile de bază, evaluarea, validarea pe seed-uri `validare.py`, statisticile pe perechi `analiza.py`, demonstrația, SUMO-GUI, exportul NumPy), `dashboard/` (dispeceratul), `iot/` (gol; MQTT opțional în `vision/run_vision.py --mqtt`), `common.py`, `atribuire_osm.py`, `doc_pdf.py` |
+| `src/romana/` | `vision/` (detecție, urmărire, numărare O–D, renumărare, numărătoarea de referință `referinta.py`, calibrarea camerei pe rețea `calibrare_camera.py`), `bridge/` (estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați `indisciplinat.py`, geamănul live), `network/` (rețeaua din OSM), `control/` (controlerul sigur de semafor, mediul RL, PPO, liniile de bază, evaluarea, validarea pe seed-uri `validare.py`, statisticile pe perechi `analiza.py`, localizarea întârzierilor la vârf `localizare.py`, demonstrația, SUMO-GUI, exportul NumPy), `dashboard/` (dispeceratul), `iot/` (gol; MQTT opțional în `vision/run_vision.py --mqtt`), `common.py`, `atribuire_osm.py`, `doc_pdf.py` |
 | `config/` | `camera.json` (fluxul, detectorul, zonele), `network.json` (semafoarele, grupurile de semnal, fazele), `demand.json` (cererea și calibrarea ei) |
 | `data/` | `counts/` (numărători la 15 min; pietonii doar aici, agregat), `trajectories/` (traiectoriile vehiculelor, fără imagini și identificatori), `osm/` (extrasul OpenStreetMap) |
 | `sumo/` | `net/` (rețeaua), `demand/` (un dosar pentru fiecare scenariu `zi_*` și `referinta_*` – scenariile `indisciplinat_*` folosesc aceleași dosare `zi_*`, cu `vtypes_indisciplinat.add.xml` –, plus `vtypes.add.xml` și `zi_*_rezumat.json`; unele dosare păstrează fișiere vechi – contează doar ce listează `.sumocfg`), `scenarios/` (`zi_*` = date reale, cu cererea calibrată din 26.10, § 5.4; `indisciplinat_*` = testul de robustețe, pe rutele scenariilor `zi_*`; `referinta_*` = scenariile ipotetice inițiale; scenariile marginilor de jos și de sus, pe care s-au obținut rezultatele, sunt în istoricul git, la `e1d0f77` / `7a79502`) |
@@ -200,4 +200,5 @@ adnotatori independenți, § 4.3), iar cererea a fost calibrată cu factori de c
 scenariile din `sumo/scenarios` au fost refăcute cu cererea calibrată (§ 5.4), iar strategiile au fost reevaluate pe
 ele pe seed-urile 1–5, fără reantrenarea agenților (§ 9.8). Cifrele din tabelul de rezultate provin din calibrările anterioare (datele din 21, 22 și 25.10.2026,
 numărate cu zonele desenate de autor pe 23–24.10; scenariile lor sunt în commiturile `e1d0f77` și `7a79502`);
-rezultatul coridorului și analiza de 68% sunt din 22.10, cu zonele inițiale.
+rezultatul coridorului este din 22.10, cu zonele inițiale; analiza localizării întârzierilor la vârf (§ 9.6) a fost
+refăcută pe cererea calibrată.
