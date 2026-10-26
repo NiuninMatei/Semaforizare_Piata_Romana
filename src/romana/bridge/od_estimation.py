@@ -59,7 +59,11 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     """OD (veh/h) pentru un interval de numărare."""
     arms = list(cfg["brate"])
     origins = [a for a in arms if cfg["brate"][a]["intrare"]]
-    corr = cfg.get("factor_corectie_detectie", 1.0)
+    # factorul de corecție a detecției: un număr pentru toate brațele sau, măsurat pe numărătoarea de referință,
+    # câte unul pe fiecare braț de intrare (raportul referință / numărătoarea automată)
+    corr_cfg = cfg.get("factor_corectie_detectie", 1.0)
+    corr_in = np.array([corr_cfg.get(o, 1.0) if isinstance(corr_cfg, dict) else corr_cfg for o in origins], dtype=float)
+    corr = float(np.mean(corr_in))
     def get(tip, o=None, d=None):
         m = sub["tip"] == tip
         if o:
@@ -68,7 +72,8 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
             m &= sub["destinatie"] == d
         return float(sub.loc[m, "numar"].sum())
 
-    rows = np.array([get("intrare", o) for o in origins], dtype=float) * corr / hours
+    raw_in = np.array([get("intrare", o) for o in origins], dtype=float)
+    rows = raw_in * corr_in / hours
     cols = np.array([get("iesire", "", d) for d in arms], dtype=float) * corr / hours
     obs = np.array([[get("viraj", o, d) for d in arms] for o in origins], dtype=float) / hours
     prior = np.array([[cfg["prior_destinatii"].get(o, {}).get(d, 0.0) for d in arms] for o in origins])
@@ -101,7 +106,7 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
             "pondere_clase": {k: round(v, 3) for k, v in shares.items()},
             "viraje_complete": int(complete), "pietoni_h": round(ped, 1),
             "intrari_masurate_veh_h": round(float(measured_in), 1), "iesiri_masurate_veh_h": round(float(measured_out), 1),
-            "intrari_numarate": int(measured_in * hours / corr)}
+            "intrari_numarate": int(raw_in.sum())}
 
 
 def estimate(df: pd.DataFrame, cfg: dict) -> list[dict]:
