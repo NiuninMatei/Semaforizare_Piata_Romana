@@ -57,6 +57,18 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - 26.10: E10 (E3 reantrenat pe participanți indisciplinați) negativ (−6,6% vs −13,4% pe validare). Colectarea de
   luni 26.10 pornită la 09:11 (`run_vision` fără fereastră, jurnal în outputs/logs) → seara `recount` +
   `scenarii_zi --zi 2026-10-26` + test pe ziua nouă (zi lucrătoare nevăzută).
+- **26.10, 17:10 – oprit pentru limita de utilizare (reluare după 19:00).** Făcute și publicate: E10/E11 negative;
+  licențe (AGPL cod, ODbL date, CC BY doc), capturile camerei scoase; istoricul rescris (filter-repo, copie locală în
+  C:\Users\Matei\Documents\Semaforizare_copie_istoric_original, harta în docs/corespondenta_commituri.txt); jurnalul
+  publicat doar cu vehicule (brut local în data/trajectories_brute). Autorul: trimite e-mailul Webcam România (ciornă
+  în Gmail) și cererea GitHub Support (refs/pull/1/head).
+- **Zonele noi – în lucru** (scratchpad\zone_noi): clipuri cadre\, cadre2\, cadre3\ (16:00) + offline_clip*\ (lanțul
+  live pe clip); variante S0 (actuale), S1–S4 (prim-plan desenat + fundal proiectat cu model_departe), S3w3/5/8
+  (regula pietonilor); numărătoarea de referință (workflow-uri oprite, de reluat cu resumeFromRunId:
+  wf_8b88bf65-ea9 clip1, wf_200b60da-663 clip2, wf_23fcd6ad-446 / wf_1545bf0c-1fc Catargiu corectat) – scor cu
+  scor_gt.py. Parțial: S0 prinde Magheru 0,84, Dacia est ~1,0, Dacia vest ~0,25 (detecția în fundal); zona hașurată
+  din stânga-jos NU e trecere. Test în curs: offline_clip1_2560 (imgsz 2560). Apoi: factori de corecție pe braț,
+  renumărare, scenarii, reevaluare, documentație, README (scratchpad\organizare\README_propus.md).
 - Pași posibili: reantrenarea agenților pe scenariile „doar intrări” și cu participanți indisciplinați; adnotarea a
   2–3 minute de video pentru a fixa nivelul cererii între cele două margini.
 ## Stare anterioară (22.10.2026, 16:10) – Bornele 7 și 9 încheiate
