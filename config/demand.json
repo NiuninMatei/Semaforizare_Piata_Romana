@@ -62,8 +62,8 @@
     }
   },
   "pondere_prior": 2.0,
-  "factor_corectie_detectie": 1.0,
-  "_factor_corectie_detectie": "Raportul numărătoare manuală / numărătoare automată (validare pe ~15 min). 1.0 = fără corecție.",
+  "factor_corectie_detectie": {"magheru": 1.11, "dacia_est": 0.94, "dacia_vest": 1.2, "catargiu": 2.38},
+  "_factor_corectie_detectie": "Pe fiecare braț de intrare: numărătoarea de referință / numărătoarea automată, măsurate pe două clipuri de 3 min din 26.10.2026 (adnotate cadru cu cadru de câte doi adnotatori independenți, cu arbitraj; zonele din config/camera.json). Intervale de încredere 90% (bootstrap pe bucăți de 30 s): Magheru [1,04; 1,19], Dacia est [0,70; 1,10], Dacia vest [0,70; 1,68], Catargiu [1,83; 2,86] – Catargiu e subnumărat de detector (vehicule mici, în fundal). Un singur număr (ex. 1.0) aplică același factor tuturor brațelor. Vezi docs/DOCUMENTATIE.md, § 4.3.",
   "fond_fractiune": 0.15,
   "_fond_fractiune": "Traficul de pe străzile conexe care NU trece prin Piața Romană (nemonitorizat video), ca fracțiune din volumul observat. Ipoteză explicită, documentată; 0 = doar trafic observat.",
   "profil_referinta": {

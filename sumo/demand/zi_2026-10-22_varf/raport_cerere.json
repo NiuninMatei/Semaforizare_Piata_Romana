@@ -1,49 +1,49 @@
 {
   "tipuri": {
     "bus": {
-      "viraje_tinta": 109,
+      "viraje_tinta": 123,
       "GEH<5_%": 100.0
     },
     "passenger": {
-      "viraje_tinta": 1438,
+      "viraje_tinta": 2347,
       "GEH<5_%": 90.0
     },
     "truck": {
-      "viraje_tinta": 105,
+      "viraje_tinta": 160,
       "GEH<5_%": 100.0
     }
   },
-  "vehicule_fond": 247,
-  "pietoni": 2869,
+  "vehicule_fond": 395,
+  "pietoni": 2829,
   "sumocfg": "sumo\\scenarios\\zi_2026-10-22_varf.sumocfg",
   "rezumat_od": {
-    "vehicule_total": 1646,
+    "vehicule_total": 2631,
     "durata_s": 3600,
     "od_vehicule": {
-      "catargiu>caderea_bastiliei": 9,
-      "catargiu>catargiu": 2,
-      "catargiu>dacia_est": 90,
-      "catargiu>dacia_vest": 48,
-      "catargiu>magheru": 138,
-      "catargiu>mendeleev": 7,
-      "dacia_est>caderea_bastiliei": 160,
-      "dacia_est>catargiu": 174,
+      "catargiu>caderea_bastiliei": 24,
+      "catargiu>catargiu": 6,
+      "catargiu>dacia_est": 166,
+      "catargiu>dacia_vest": 61,
+      "catargiu>magheru": 219,
+      "catargiu>mendeleev": 20,
+      "dacia_est>caderea_bastiliei": 150,
+      "dacia_est>catargiu": 163,
       "dacia_est>dacia_est": 3,
-      "dacia_est>dacia_vest": 37,
-      "dacia_est>magheru": 18,
+      "dacia_est>dacia_vest": 35,
+      "dacia_est>magheru": 17,
       "dacia_est>mendeleev": 7,
-      "dacia_vest>caderea_bastiliei": 12,
-      "dacia_vest>catargiu": 47,
-      "dacia_vest>dacia_est": 79,
+      "dacia_vest>caderea_bastiliei": 25,
+      "dacia_vest>catargiu": 235,
+      "dacia_vest>dacia_est": 568,
       "dacia_vest>dacia_vest": 1,
-      "dacia_vest>magheru": 93,
-      "dacia_vest>mendeleev": 33,
-      "magheru>caderea_bastiliei": 9,
-      "magheru>catargiu": 133,
-      "magheru>dacia_est": 507,
-      "magheru>dacia_vest": 11,
+      "dacia_vest>magheru": 173,
+      "dacia_vest>mendeleev": 2,
+      "magheru>caderea_bastiliei": 10,
+      "magheru>catargiu": 146,
+      "magheru>dacia_est": 559,
+      "magheru>dacia_vest": 12,
       "magheru>magheru": 1,
-      "magheru>mendeleev": 27
+      "magheru>mendeleev": 29
     }
   }
 }

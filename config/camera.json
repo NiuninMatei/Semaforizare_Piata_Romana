@@ -22,7 +22,7 @@
     0.38,
     1.0
   ],
-  "calibrare": "23.10.2026: zonele sunt chiar decupajele desenate de autor pe capturi ale camerei (C:\\Users\\Matei\\Pictures\\Screenshots, 1920 px), localizate automat în cadrul de 3288 px prin SIFT cu scara fixă 3288/1920 și vot pe translație; 'Dacia vest in' și 'Căderea Bastiliei trecere' (o singură potrivire) poziționate manual, cu forma și mărimea decupajului – de verificat; 24.10.2026: trecere_caderea_bastiliei mutată deasupra lui caderea_bastiliei_out (ordinea logică cerută de autor)",
+  "calibrare": "23.10.2026: zonele sunt chiar decupajele desenate de autor pe capturi ale camerei (C:\\Users\\Matei\\Pictures\\Screenshots, 1920 px), localizate automat în cadrul de 3288 px prin SIFT cu scara fixă 3288/1920 și vot pe translație; 'Dacia vest in' și 'Căderea Bastiliei trecere' (o singură potrivire) poziționate manual, cu forma și mărimea decupajului – de verificat; 24.10.2026: trecere_caderea_bastiliei mutată deasupra lui caderea_bastiliei_out (ordinea logică cerută de autor); 26.10.2026: zonele refăcute și alese pe numărătoarea de referință – Dacia vest (zonă nouă, după linia de oprire), Catargiu (proiectată din rețeaua OSM), trecerile de pietoni noi (zebrele reale + zonele de așteptare de la borduri; zona hașurată din stânga-jos nu e trecere), Magheru și Dacia est păstrate (erau deja corecte)",
   "brate": {
     "magheru": "Bd. Gh. Magheru (sud) – dublu sens",
     "mendeleev": "Str. D. I. Mendeleev – sens unic, doar ieșire din piață",
@@ -181,50 +181,34 @@
       "id": "dacia_vest_in",
       "arm": "dacia_vest",
       "rol": "intrare",
-      "poligon": [
-        [
-          0.421,
-          0.436
-        ],
-        [
-          0.367,
-          0.405
-        ],
-        [
-          0.361,
-          0.406
-        ],
-        [
-          0.364,
-          0.424
-        ],
-        [
-          0.348,
-          0.418
-        ],
-        [
-          0.311,
-          0.425
-        ],
-        [
-          0.29,
-          0.451
-        ],
-        [
-          0.305,
-          0.443
-        ]
-      ],
       "culoare": [
         0,
         255,
         0
       ],
-      "capat_traiectorie": true,
       "sens": [
-        0,
-        1
-      ]
+        0.2,
+        1.0
+      ],
+      "poligon": [
+        [
+          0.285,
+          0.425
+        ],
+        [
+          0.405,
+          0.425
+        ],
+        [
+          0.42,
+          0.5
+        ],
+        [
+          0.27,
+          0.5
+        ]
+      ],
+      "_sursa": "vehiculele care ies din Bd. Dacia vest spre cameră, după linia de oprire (aleasă pe numărătoarea de referință)"
     },
     {
       "id": "dacia_vest_out",
@@ -279,54 +263,34 @@
       "id": "catargiu_in",
       "arm": "catargiu",
       "rol": "intrare",
-      "poligon": [
-        [
-          0.594,
-          0.404
-        ],
-        [
-          0.556,
-          0.393
-        ],
-        [
-          0.525,
-          0.41
-        ],
-        [
-          0.515,
-          0.427
-        ],
-        [
-          0.52,
-          0.436
-        ],
-        [
-          0.533,
-          0.445
-        ],
-        [
-          0.547,
-          0.447
-        ],
-        [
-          0.563,
-          0.439
-        ],
-        [
-          0.575,
-          0.416
-        ]
-      ],
       "culoare": [
         0,
         255,
         0
       ],
-      "capat_traiectorie": true,
       "sens": [
-        -0.3,
-        1
-      ]
+        -0.938,
+        0.346
+      ],
+      "poligon": [
+        [
+          0.5268,
+          0.4173
+        ],
+        [
+          0.5748,
+          0.4205
+        ],
+        [
+          0.5845,
+          0.4108
+        ],
+        [
+          0.5432,
+          0.4086
+        ]
+      ],
+      "_sursa": "muchia 1320256482, ultimii metri ai benzilor"
     },
     {
       "id": "catargiu_out",
@@ -527,300 +491,835 @@
       ]
     },
     {
-      "id": "trecere_magheru",
-      "arm": "magheru",
-      "rol": "trecere",
-      "poligon": [
-        [
-          0.063,
-          0.513
-        ],
-        [
-          0.036,
-          0.522
-        ],
-        [
-          -0.0,
-          0.521
-        ],
-        [
-          0.0,
-          0.649
-        ],
-        [
-          0.008,
-          0.652
-        ],
-        [
-          0.018,
-          0.642
-        ],
-        [
-          0.022,
-          0.63
-        ],
-        [
-          0.018,
-          0.625
-        ],
-        [
-          0.028,
-          0.607
-        ],
-        [
-          0.063,
-          0.596
-        ]
-      ],
-      "culoare": [
-        90,
-        90,
-        255
-      ]
-    },
-    {
-      "id": "trecere_mendeleev",
-      "arm": "mendeleev",
-      "rol": "trecere",
-      "poligon": [
-        [
-          0.049,
-          0.483
-        ],
-        [
-          0.054,
-          0.49
-        ],
-        [
-          0.095,
-          0.492
-        ],
-        [
-          0.105,
-          0.481
-        ],
-        [
-          0.107,
-          0.469
-        ],
-        [
-          0.105,
-          0.462
-        ],
-        [
-          0.092,
-          0.45
-        ],
-        [
-          0.074,
-          0.443
-        ],
-        [
-          0.066,
-          0.449
-        ],
-        [
-          0.061,
-          0.461
-        ],
-        [
-          0.054,
-          0.467
-        ]
-      ],
-      "culoare": [
-        90,
-        90,
-        255
-      ]
-    },
-    {
-      "id": "trecere_dacia_vest",
-      "arm": "dacia_vest",
-      "rol": "trecere",
-      "poligon": [
-        [
-          0.429,
-          0.426
-        ],
-        [
-          0.429,
-          0.418
-        ],
-        [
-          0.423,
-          0.406
-        ],
-        [
-          0.415,
-          0.402
-        ],
-        [
-          0.351,
-          0.415
-        ],
-        [
-          0.353,
-          0.426
-        ],
-        [
-          0.363,
-          0.433
-        ],
-        [
-          0.37,
-          0.433
-        ],
-        [
-          0.391,
-          0.42
-        ],
-        [
-          0.419,
-          0.429
-        ]
-      ],
-      "culoare": [
-        90,
-        90,
-        255
-      ]
-    },
-    {
-      "id": "trecere_catargiu",
-      "arm": "catargiu",
-      "rol": "trecere",
-      "poligon": [
-        [
-          0.53,
-          0.411
-        ],
-        [
-          0.576,
-          0.43
-        ],
-        [
-          0.665,
-          0.433
-        ],
-        [
-          0.667,
-          0.428
-        ],
-        [
-          0.66,
-          0.409
-        ],
-        [
-          0.64,
-          0.403
-        ],
-        [
-          0.541,
-          0.399
-        ]
-      ],
-      "culoare": [
-        90,
-        90,
-        255
-      ]
-    },
-    {
-      "id": "trecere_caderea_bastiliei",
-      "arm": "caderea_bastiliei",
-      "rol": "trecere",
-      "poligon": [
-        [
-          0.754,
-          0.425
-        ],
-        [
-          0.755,
-          0.43
-        ],
-        [
-          0.773,
-          0.44
-        ],
-        [
-          0.799,
-          0.439
-        ],
-        [
-          0.805,
-          0.431
-        ],
-        [
-          0.782,
-          0.418
-        ],
-        [
-          0.77,
-          0.418
-        ]
-      ],
-      "culoare": [
-        90,
-        90,
-        255
-      ]
-    },
-    {
-      "id": "trecere_dacia_est",
+      "id": "trecere_dacia_est_iesire",
       "arm": "dacia_est",
       "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
       "poligon": [
         [
-          0.999,
-          0.687
-        ],
-        [
-          0.94,
-          0.634
-        ],
-        [
-          0.902,
-          0.645
+          0.615,
+          0.932
         ],
         [
           0.8,
-          0.767
+          0.796
         ],
         [
-          0.48,
-          0.927
+          0.957,
+          0.872
         ],
         [
-          0.672,
-          0.998
+          0.905,
+          1.0
         ],
         [
-          0.998,
-          0.998
-        ],
-        [
-          0.999,
-          0.891
-        ],
-        [
-          0.92,
-          0.797
-        ],
-        [
-          0.94,
-          0.76
-        ],
-        [
-          0.997,
-          0.777
+          0.685,
+          1.0
         ]
       ],
+      "axa": [
+        0.65,
+        0.97,
+        0.93,
+        0.835
+      ],
+      "asteptare": [
+        [
+          [
+            0.575,
+            0.955
+          ],
+          [
+            0.645,
+            0.975
+          ],
+          [
+            0.675,
+            1.0
+          ],
+          [
+            0.575,
+            1.0
+          ]
+        ],
+        [
+          [
+            0.925,
+            0.79
+          ],
+          [
+            0.965,
+            0.765
+          ],
+          [
+            1.0,
+            0.77
+          ],
+          [
+            1.0,
+            0.88
+          ],
+          [
+            0.96,
+            0.88
+          ],
+          [
+            0.93,
+            0.85
+          ]
+        ]
+      ],
+      "_sursa": "zebra mare peste benzile de ieșire spre Dacia est (marcajul real, fundal median din 90 de cadre)"
+    },
+    {
+      "id": "trecere_dacia_est_intrare",
+      "arm": "dacia_est",
+      "rol": "trecere",
       "culoare": [
-        90,
-        90,
-        255
-      ]
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.853,
+          0.745
+        ],
+        [
+          0.942,
+          0.655
+        ],
+        [
+          1.0,
+          0.665
+        ],
+        [
+          1.0,
+          0.71
+        ],
+        [
+          0.925,
+          0.79
+        ],
+        [
+          0.9,
+          0.795
+        ]
+      ],
+      "axa": [
+        0.905,
+        0.79,
+        0.975,
+        0.66
+      ],
+      "asteptare": [
+        [
+          [
+            0.925,
+            0.79
+          ],
+          [
+            0.965,
+            0.765
+          ],
+          [
+            1.0,
+            0.77
+          ],
+          [
+            1.0,
+            0.88
+          ],
+          [
+            0.96,
+            0.88
+          ],
+          [
+            0.93,
+            0.85
+          ]
+        ],
+        [
+          [
+            0.94,
+            0.645
+          ],
+          [
+            0.955,
+            0.6
+          ],
+          [
+            1.0,
+            0.6
+          ],
+          [
+            1.0,
+            0.66
+          ]
+        ]
+      ],
+      "_sursa": "zebra peste benzile de intrare dinspre Dacia est, între refugiu și trotuarul din dreapta"
+    },
+    {
+      "id": "trecere_magheru",
+      "arm": "magheru",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.0,
+          0.515
+        ],
+        [
+          0.055,
+          0.52
+        ],
+        [
+          0.065,
+          0.635
+        ],
+        [
+          0.0,
+          0.64
+        ]
+      ],
+      "axa": [
+        0.03,
+        0.52,
+        0.03,
+        0.64
+      ],
+      "asteptare": [
+        [
+          [
+            0.0,
+            0.485
+          ],
+          [
+            0.05,
+            0.49
+          ],
+          [
+            0.055,
+            0.515
+          ],
+          [
+            0.0,
+            0.515
+          ]
+        ],
+        [
+          [
+            0.0,
+            0.64
+          ],
+          [
+            0.065,
+            0.635
+          ],
+          [
+            0.07,
+            0.68
+          ],
+          [
+            0.0,
+            0.69
+          ]
+        ]
+      ],
+      "_sursa": "zebra peste Bd. Magheru, la marginea stângă a cadrului"
+    },
+    {
+      "id": "trecere_mendeleev_1",
+      "arm": "mendeleev",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.1466,
+          0.467
+        ],
+        [
+          0.1807,
+          0.4681
+        ],
+        [
+          0.2019,
+          0.4573
+        ],
+        [
+          0.1703,
+          0.4562
+        ]
+      ],
+      "axa": [
+        0.1636,
+        0.4682,
+        0.1871,
+        0.4571
+      ],
+      "asteptare": [
+        [
+          [
+            0.1253,
+            0.4724
+          ],
+          [
+            0.1788,
+            0.4735
+          ],
+          [
+            0.1873,
+            0.4692
+          ],
+          [
+            0.1356,
+            0.4681
+          ]
+        ],
+        [
+          [
+            0.1655,
+            0.4551
+          ],
+          [
+            0.2117,
+            0.4562
+          ],
+          [
+            0.2178,
+            0.453
+          ],
+          [
+            0.1727,
+            0.4519
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :10110208017_c0 (lățime 4.0 m) peste 125445934#0"
+    },
+    {
+      "id": "trecere_mendeleev_2",
+      "arm": "mendeleev",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.188,
+          0.4681
+        ],
+        [
+          0.2214,
+          0.4692
+        ],
+        [
+          0.2409,
+          0.4584
+        ],
+        [
+          0.2105,
+          0.4573
+        ]
+      ],
+      "axa": [
+        0.2263,
+        0.4582,
+        0.2045,
+        0.4694
+      ],
+      "asteptare": [
+        [
+          [
+            0.2044,
+            0.4562
+          ],
+          [
+            0.25,
+            0.4573
+          ],
+          [
+            0.2561,
+            0.4541
+          ],
+          [
+            0.2117,
+            0.453
+          ]
+        ],
+        [
+          [
+            0.1673,
+            0.4735
+          ],
+          [
+            0.2196,
+            0.4757
+          ],
+          [
+            0.2281,
+            0.4703
+          ],
+          [
+            0.177,
+            0.4692
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :1393299292_c0 (lățime 4.0 m) peste 125445934#0"
+    },
+    {
+      "id": "trecere_dacia_vest_1",
+      "arm": "dacia_vest",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.3905,
+          0.4227
+        ],
+        [
+          0.4094,
+          0.4249
+        ],
+        [
+          0.4276,
+          0.4216
+        ],
+        [
+          0.4088,
+          0.4195
+        ]
+      ],
+      "axa": [
+        0.3985,
+        0.4247,
+        0.4201,
+        0.4213
+      ],
+      "asteptare": [
+        [
+          [
+            0.3765,
+            0.4238
+          ],
+          [
+            0.3966,
+            0.427
+          ],
+          [
+            0.4094,
+            0.4259
+          ],
+          [
+            0.3893,
+            0.4227
+          ]
+        ],
+        [
+          [
+            0.4094,
+            0.4195
+          ],
+          [
+            0.4288,
+            0.4227
+          ],
+          [
+            0.4404,
+            0.4205
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :6264801635_c0 (lățime 4.0 m) peste 778823267"
+    },
+    {
+      "id": "trecere_dacia_vest_2",
+      "arm": "dacia_vest",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.3765,
+          0.427
+        ],
+        [
+          0.4112,
+          0.427
+        ],
+        [
+          0.4118,
+          0.4238
+        ],
+        [
+          0.3777,
+          0.4238
+        ]
+      ],
+      "axa": [
+        0.3774,
+        0.4257,
+        0.4118,
+        0.4263
+      ],
+      "asteptare": [
+        [
+          [
+            0.3601,
+            0.427
+          ],
+          [
+            0.3741,
+            0.4281
+          ],
+          [
+            0.3765,
+            0.4227
+          ],
+          [
+            0.3637,
+            0.4227
+          ]
+        ],
+        [
+          [
+            0.413,
+            0.4238
+          ],
+          [
+            0.413,
+            0.4281
+          ],
+          [
+            0.427,
+            0.4281
+          ],
+          [
+            0.4264,
+            0.4238
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :6264801635_c1 (lățime 4.0 m) peste 778823266"
+    },
+    {
+      "id": "trecere_caderea_bastiliei_1",
+      "arm": "caderea_bastiliei",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.75,
+          0.4465
+        ],
+        [
+          0.7944,
+          0.4541
+        ],
+        [
+          0.809,
+          0.4508
+        ],
+        [
+          0.7658,
+          0.4443
+        ]
+      ],
+      "axa": [
+        0.8036,
+        0.4531,
+        0.7565,
+        0.446
+      ],
+      "asteptare": [
+        [
+          [
+            0.7962,
+            0.4551
+          ],
+          [
+            0.8187,
+            0.4584
+          ],
+          [
+            0.8345,
+            0.4541
+          ],
+          [
+            0.8127,
+            0.4508
+          ]
+        ],
+        [
+          [
+            0.7281,
+            0.4443
+          ],
+          [
+            0.7476,
+            0.4465
+          ],
+          [
+            0.7634,
+            0.4432
+          ],
+          [
+            0.7439,
+            0.4411
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :7271693010_c0 (lățime 4.0 m) peste 119238385#0"
+    },
+    {
+      "id": "trecere_catargiu_1",
+      "arm": "catargiu",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.6046,
+          0.4216
+        ],
+        [
+          0.6569,
+          0.4259
+        ],
+        [
+          0.6557,
+          0.4227
+        ],
+        [
+          0.6131,
+          0.4195
+        ],
+        [
+          0.6052,
+          0.4195
+        ]
+      ],
+      "axa": [
+        0.6055,
+        0.4216,
+        0.6568,
+        0.4248
+      ],
+      "asteptare": [
+        [
+          [
+            0.59,
+            0.4216
+          ],
+          [
+            0.6034,
+            0.4227
+          ],
+          [
+            0.604,
+            0.4195
+          ],
+          [
+            0.5918,
+            0.4184
+          ]
+        ],
+        [
+          [
+            0.6575,
+            0.4227
+          ],
+          [
+            0.6588,
+            0.4259
+          ],
+          [
+            0.6734,
+            0.427
+          ],
+          [
+            0.6709,
+            0.4238
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :7993656105_c0 (lățime 4.0 m) peste 668307633#1"
+    },
+    {
+      "id": "trecere_dacia_vest_3",
+      "arm": "dacia_vest",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.4227,
+          0.4195
+        ],
+        [
+          0.4167,
+          0.4162
+        ],
+        [
+          0.3571,
+          0.4184
+        ],
+        [
+          0.3613,
+          0.4216
+        ]
+      ],
+      "axa": [
+        0.3597,
+        0.4203,
+        0.4196,
+        0.4182
+      ],
+      "asteptare": [
+        [
+          [
+            0.3418,
+            0.4184
+          ],
+          [
+            0.3485,
+            0.4227
+          ],
+          [
+            0.3619,
+            0.4216
+          ],
+          [
+            0.3552,
+            0.4184
+          ]
+        ],
+        [
+          [
+            0.4155,
+            0.4162
+          ],
+          [
+            0.4252,
+            0.4195
+          ],
+          [
+            0.4373,
+            0.4195
+          ],
+          [
+            0.4276,
+            0.4151
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :cluster_10110207608_7278067023_c0 (lățime 4.0 m) peste -778823268#0,778823268#0"
+    },
+    {
+      "id": "trecere_catargiu_2",
+      "arm": "catargiu",
+      "rol": "trecere",
+      "culoare": [
+        255,
+        120,
+        0
+      ],
+      "poligon": [
+        [
+          0.5292,
+          0.4162
+        ],
+        [
+          0.5681,
+          0.4195
+        ],
+        [
+          0.5779,
+          0.4173
+        ],
+        [
+          0.5408,
+          0.4141
+        ]
+      ],
+      "axa": [
+        0.5316,
+        0.4159,
+        0.577,
+        0.4189
+      ],
+      "asteptare": [
+        [
+          [
+            0.5152,
+            0.4162
+          ],
+          [
+            0.5274,
+            0.4173
+          ],
+          [
+            0.5328,
+            0.4141
+          ],
+          [
+            0.5213,
+            0.413
+          ]
+        ],
+        [
+          [
+            0.576,
+            0.4205
+          ],
+          [
+            0.5888,
+            0.4205
+          ],
+          [
+            0.5918,
+            0.4173
+          ],
+          [
+            0.5797,
+            0.4173
+          ]
+        ]
+      ],
+      "_sursa": "trecerea :cluster_257679805_3262378125_7993656106_c0 (lățime 4.0 m) peste 452252352#2"
     }
   ],
   "runtime": "openvino",
@@ -828,5 +1327,13 @@
   "_runtime": "Fără GPU NVIDIA: inferență OpenVINO pe placa grafică Intel integrată (≈5 cadre/s la 1600 px față de ≈1 cu PyTorch pe procesor). runtime=pytorch și device=0 pentru GPU NVIDIA.",
   "capat_s": 1.5,
   "_capat_traiectorie": "Zonele de pe brațele îndepărtate, parțial ascunse: o intrare contează doar dacă traiectoria începe acolo, o ieșire doar dacă se termină acolo (toleranță capat_s secunde).",
-  "_sens": "Direcția de mers în imagine (dx, dy; y în jos) pe care trebuie să o aibă un vehicul în zonă: intrările spre piață, ieșirile dinspre piață. Elimină vehiculele care doar circulă pe inel prin dreptul străzii."
+  "_sens": "Direcția de mers în imagine (dx, dy; y în jos) pe care trebuie să o aibă un vehicul în zonă: intrările spre piață, ieșirile dinspre piață. Elimină vehiculele care doar circulă pe inel prin dreptul străzii.",
+  "parametri_numarare": {
+    "ped_asteptare_s": 5,
+    "ped_asteptare_max_s": 120,
+    "ped_deplasare_min": 0.01,
+    "ped_traversare_fractie": 0.3,
+    "reunire_s": 2.0
+  },
+  "_parametri_numarare": "Regulile de numărare alese pe numărătoarea de referință (26.10.2026, două clipuri de 3 min adnotate de câte doi adnotatori independenți): pieton numărat dacă traversează zebra pe axă (≥30% din lungime) sau așteaptă la bordură 5–120 s; traiectoriile întrerupte de ocluzii se reunesc live dacă golul e sub 2 s (ca la renumărare)."
 }
