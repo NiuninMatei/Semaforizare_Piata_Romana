@@ -1,0 +1,32 @@
+LICENȚA DATELOR DIN ACEST DIRECTOR (data/)
+==========================================
+
+Aceste date NU sunt acoperite de licența de cod din fișierul LICENSE (GNU AGPL v3).
+
+1. data/osm/  –  extras din baza de date OpenStreetMap
+   Licență: Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/
+            (text integral: LICENSES/ODbL-1.0.txt)
+   © OpenStreetMap contributors – https://www.openstreetmap.org/copyright
+   Extras prin Overpass API (osmWebWizard.py, Eclipse SUMO 1.28.0) pe 18.10.2026.
+   Nota ODbL din fișier se păstrează intactă. Orice bază de date derivată din acest extras
+   se poate publica numai sub ODbL 1.0 (share-alike).
+
+2. data/counts/ și data/trajectories/  –  date proprii ale proiectului
+   © 2026 Niunin Matei-Gabriel
+   Licență: Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/
+            (text integral: LICENSES/ODbL-1.0.txt), acordată în măsura în care asupra acestor
+            date există drepturi de autor sau drepturi sui generis asupra bazei de date;
+            faptele în sine nu sunt protejate (Legea nr. 8/1996, art. 9 lit. f)).
+   Au fost derivate automat (YOLO11 + ByteTrack) din fluxul public al camerei Piața Romană
+   difuzat de Webcam România, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/.
+   Drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România
+   declară că nu deține drepturi asupra fluxurilor.
+   Datele NU conțin imagini, video, numere de înmatriculare sau ID-uri de urmărire. Traiectoriile
+   (doar ale vehiculelor) sunt fără imagini și fără identificatori (pseudonimizate); traiectoriile
+   individuale ale pietonilor nu mai sunt incluse în versiunea curentă, ci doar numărătorile agregate;
+   versiunile din istoricul git dinainte de 26.10.2026 le conțin încă. O licență deschisă nu face
+   publicabile datele personale: confidențialitatea este tratată în docs/DOCUMENTATIE.md, § 4.5.
+   Limitări de calitate: docs/DOCUMENTATIE.md, § 4.3 și § 10.
+   Proiectul nu este afiliat cu Webcam România sau cu operatorul camerei.
+
+Detalii: fișierul NOTICE și docs/DOCUMENTATIE.md, cap. 14.

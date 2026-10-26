@@ -25,6 +25,7 @@ import math
 import subprocess
 import xml.etree.ElementTree as ET
 
+from romana.atribuire_osm import adauga_notificare_osm
 from romana.common import NET_DIR, ROOT, load_json, save_json, sumo_binary, sumo_home
 
 NET_FILE = NET_DIR / "romana.net.xml"
@@ -260,6 +261,9 @@ def main() -> None:
     info["id_original_netconvert"] = mapping
     write_actuated(cfg, info)
     info["rezumat"] = summary(NET_FILE, tls_ids)
+    # notificarea ODbL (§ 4.2) în baza de date derivată; la final, pentru că pașii anteriori rescriu rețeaua
+    for f in (NET_FILE, NET_DIR / "tls_actuated.add.xml"):
+        adauga_notificare_osm(f)
     save_json(info, NET_DIR / "network_info.json")
     print(f"[OK] Rețea fidelă scrisă în {NET_FILE}")
     for k, v in info["rezumat"].items():

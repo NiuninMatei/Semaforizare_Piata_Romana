@@ -147,6 +147,9 @@ def report(df: pd.DataFrame) -> None:
     order = [s for s in NAMES_RO if s in df["strategie"].unique()]
     order += sorted(s for s in df["strategie"].unique() if s not in order)
     lines = ["# Rezultate – evaluare comparativă\n",
+             "*Conține informații din OpenStreetMap (https://www.openstreetmap.org), puse la dispoziție aici sub Open "
+             "Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/. © OpenStreetMap "
+             "contributors – https://www.openstreetmap.org/copyright*\n",
              f"Medii ± abatere standard pe {df['seed'].nunique()} seed-uri SUMO. Procentele sunt față de "
              f"{NAMES_RO[BASELINE].lower()}. Mediana pe seed-uri este dată separat pentru așteptarea vehiculelor: "
              "aproape de saturație, rețeaua poate intra sau nu în blocaj în funcție de seed, iar câteva rulări "

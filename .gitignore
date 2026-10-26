@@ -186,7 +186,7 @@ cython_debug/
 outputs/
 runs/
 sumo/output/
-# capturi video brute — NU se păstrează (GDPR); doar numărători agregate
+# capturi video brute — NU se păstrează (GDPR); se versionează doar numărătorile agregate și traiectoriile pseudonimizate ale vehiculelor
 data/raw/
 *.ts
 *.mp4
@@ -197,3 +197,10 @@ sumo/demand/candidate.rou.xml
 sumo/demand/candidate_*.rou.xml
 # exporturile OpenVINO ale detectorului (regenerabile)
 models/viziune/
+
+# jurnalul complet de traiectorii (și pietonii) rămâne local; în data/trajectories se publică doar vehiculele (GDPR)
+data/trajectories_brute/
+# TEMPORAR: jurnalele BRUTE (cu pietoni) scrise încă în data/trajectories de procesul run_vision pornit cu codul vechi;
+# se mută în data/trajectories_brute, se publică prin `recount --publica`, apoi aceste rânduri se scot
+data/trajectories/traiectorii_2026-10-26.jsonl.gz
+data/trajectories/traiectorii_2026-10-27.jsonl.gz

@@ -1,5 +1,5 @@
 # Mediu testat: Python 3.11–3.13, Windows 10/11 și Linux
-eclipse-sumo==1.28.0        # simulatorul SUMO (EPL-2.0); alternativ instalarea oficială + SUMO_HOME
+eclipse-sumo==1.28.0        # simulatorul SUMO (EPL-2.0 OR GPL-2.0-or-later); alternativ instalarea oficială + SUMO_HOME
 sumolib>=1.28.0
 traci>=1.28.0
 libsumo==1.28.0             # aceeași interfață ca TraCI, mai rapidă la antrenare (fără socket)
@@ -14,6 +14,6 @@ numpy>=1.26
 pandas>=2.1
 matplotlib>=3.8
 pyproj>=3.6
-paho-mqtt>=2.0              # publicare IoT (EPL-2.0/EDL-1.0)
+paho-mqtt>=2.0              # publicare IoT (EPL-2.0 OR BSD-3-Clause/EDL-1.0)
 flask>=3.0                  # dashboard operator
 markdown==3.7

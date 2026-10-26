@@ -1,0 +1,76 @@
+# Harta „cale → licență” citibilă automat (specificația REUSE 3.x, https://reuse.software/spec/).
+# Textele licențelor: LICENSE (AGPL) și LICENSES/<identificator SPDX>.txt. Explicații: NOTICE.
+# Dacă un fișier corespunde mai multor tabele [[annotations]], se aplică ULTIMUL tabel.
+# Fișierele de cod cu antet SPDX propriu păstrează antetul (precedence = "closest").
+version = 1
+
+# A. Implicit: codul, configurările și orice alt fișier nelistat mai jos
+[[annotations]]
+path = "**"
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# B. Modelele antrenate (AGPL-3.0-or-later; lucrări produse din rețeaua derivată din OSM)
+[[annotations]]
+path = ["models/**", "legacy/google_ai_draft/ai_semafor_romana.zip"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# Fișierele ciornei generate automat de osmWebWizard.py (Eclipse SUMO 1.28.0): fără revendicare de drepturi;
+# în măsura în care ar exista, autorul renunță la ele (CC0-1.0)
+[[annotations]]
+path = [
+  "legacy/google_ai_draft/build.bat",
+  "legacy/google_ai_draft/run.bat",
+  "legacy/google_ai_draft/output.add.xml",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "NOASSERTION"
+SPDX-License-Identifier = "CC0-1.0"
+
+# E. Documentația, textele și rezultatele
+[[annotations]]
+path = [
+  "docs/**",
+  "README.md",
+  "NOTICE",
+  "legacy/google_ai_draft/README.md",
+  ".claude/CLAUDE.md",
+]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# D. Datele proprii derivate din camera publică (alegerea autorului: ODbL, ca cererea care le încorporează;
+#    acordată în măsura în care asupra datelor există drepturi de autor sau drepturi sui generis)
+[[annotations]]
+path = ["data/counts/**", "data/trajectories/**", "data/LICENTA.txt"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
+SPDX-License-Identifier = "ODbL-1.0"
+
+# C1. Extrasul OpenStreetMap (ODbL 1.0 obligatoriu; nicio contribuție a autorului)
+[[annotations]]
+path = "data/osm/**"
+precedence = "override"
+SPDX-FileCopyrightText = "OpenStreetMap contributors"
+SPDX-License-Identifier = "ODbL-1.0"
+
+# C2. Bazele de date derivate din OSM (ODbL 1.0 obligatoriu, share-alike)
+[[annotations]]
+path = [
+  "sumo/**",
+  "legacy/google_ai_draft/osm*",
+]
+precedence = "override"
+SPDX-FileCopyrightText = ["OpenStreetMap contributors", "2026 Niunin Matei-Gabriel"]
+SPDX-License-Identifier = "ODbL-1.0"
+
+# Imaginile camerei: versiunea curentă nu conține niciuna. Dacă vreo captură revine (numai cu acordul scris al
+# titularului), i se adaugă aici o adnotare cu precedence = "override",
+# SPDX-FileCopyrightText = "operatorul camerei Piața Romană (sursa: Webcam România)" și
+# SPDX-License-Identifier = "LicenseRef-Toate-drepturile-rezervate" (cu textul în LICENSES/); nu intră sub CC BY 4.0.
+
+# Notă: fișierele LICENSE și directorul LICENSES/ (textele licențelor) sunt excluse automat de specificația REUSE.

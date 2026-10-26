@@ -1,0 +1,27 @@
+LICENȚA DATELOR DIN ACEST DIRECTOR (sumo/)
+==========================================
+
+Rețeaua (sumo/net/), cererea de trafic (sumo/demand/) și scenariile (sumo/scenarios/) sunt
+baze de date DERIVATE din OpenStreetMap. Ele NU sunt acoperite de licența de cod din fișierul
+LICENSE (GNU AGPL v3), nici de licența Eclipse SUMO.
+
+Licență: Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/
+         (text integral: LICENSES/ODbL-1.0.txt)
+
+Conține informații din OpenStreetMap (https://www.openstreetmap.org), puse la dispoziție aici
+sub Open Database License (ODbL) 1.0.
+© OpenStreetMap contributors – https://www.openstreetmap.org/copyright
+Contribuțiile proiectului (grupuri de semnal, faze, calibrarea cererii): © 2026 Niunin Matei-Gabriel,
+sub aceeași licență ODbL 1.0.
+
+- Generare: sumo/net/ din data/osm/romana_bbox.osm.xml.gz, cu src/romana/network/build_network.py
+  și config/network.json (netconvert, Eclipse SUMO 1.28.0). Metoda este publicată în acest
+  depozit (ODbL § 4.6).
+- Cererea: rute pe muchiile rețelei derivate, calibrate (Furness + routeSampler.py) pe
+  numărătorile proprii din data/counts/.
+- Versiunile exacte ale scenariilor folosite pentru fiecare model sau rezultat se găsesc în
+  istoricul git al depozitului https://github.com/NiuninMatei/Semaforizare_Piata_Romana
+  (scenariile de antrenare sunt listate în models/*.json).
+- Orice bază de date derivată din aceste fișiere se poate publica numai sub ODbL 1.0.
+
+Detalii: fișierul NOTICE și docs/DOCUMENTATIE.md, cap. 14.

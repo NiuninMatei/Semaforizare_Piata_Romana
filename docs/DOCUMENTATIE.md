@@ -6,6 +6,10 @@ cu date preluate în timp real de pe camera publică Webcam România și simular
 Autor: Niunin Matei-Gabriel · Universitatea Transilvania din Brașov, Facultatea de Matematică și Informatică,
 Informatică ID, anul III · Discipline: *Interfețe om-calculator* și *Internet of Things* · Anul universitar 2026–2027
 
+Documentația: © 2026 Niunin Matei-Gabriel, CC BY 4.0 (§ 14.1) · Conține informații din OpenStreetMap,
+© OpenStreetMap contributors, ODbL 1.0 – https://www.openstreetmap.org/copyright · Cod sursă (GNU AGPL v3) și
+date: https://github.com/NiuninMatei/Semaforizare_Piata_Romana
+
 ---
 
 ## Cuprins
@@ -45,8 +49,8 @@ coordonate dintr-un centru unic, majoritatea cu automate „cu funcționare în 
 În 2026 a fost anunțat un proiect nou, bazat pe AI, pentru 92 de intersecții în prima etapă: „Vom monta 305 camere
 şi 1.500 de senzori”, cu ajustarea timpilor de semaforizare după numărul de mașini și prioritate pentru transportul
 public[^digi24-ai]. Axa Unirii – Universitate – Piața Romană – Piața Victoriei a fost chiar pilotul primului sistem
-„undă verde” din 2007[^economedia]. Infrastructura rămâne însă fragilă: în mai 2026 un incendiu la un punct trafo
-de pe Bd. Magheru 43 a lăsat nefuncționale semafoarele din zona Pieței Romane[^adevarul-incendiu] – motiv pentru
+„undă verde” din 2007[^economedia]. Infrastructura rămâne însă fragilă: pe 8 mai 2026 un incendiu la cablurile electrice
+subterane din Piața Romană a scos din funcțiune semafoarele pieței[^adevarul-incendiu] – motiv pentru
 care sistemul propus are întotdeauna un plan fix de rezervă.
 
 Proiectul arată, la scară academică, lanțul complet pe care îl presupun aceste sisteme: **senzor video →
@@ -66,7 +70,9 @@ date de trafic → model digital al intersecției → decizie automată → supr
 | R8 | Evoluție vizibilă pe GitHub, pe borne | commit + push la fiecare bornă (§ 12) |
 
 Cerințe nefuncționale: siguranță (agentul nu poate produce stări periculoase ale semaforului), confidențialitate
-(nicio imagine stocată), reproductibilitate (rețea, cerere și rezultate regenerabile din scripturi),
+(nicio înregistrare video păstrată și nicio imagine a camerei publicată; local rămân doar previzualizarea
+estompată, suprascrisă continuu, și, temporar, capturi și scurte clipuri folosite la calibrarea zonelor, șterse după
+calibrare), reproductibilitate (rețea, cerere și rezultate regenerabile din scripturi),
 rulare pe un laptop Windows fără GPU.
 
 ## 3. Arhitectura sistemului (perspectiva IoT)
@@ -102,7 +108,8 @@ flowchart LR
 ```
 
 * **Senzorul virtual.** Camera nu este a proiectului; este tratată ca un senzor public, iar „inteligența” rulează pe
-  stația locală (*edge computing*). Spre restul sistemului pleacă doar **numărători agregate** – economie de lățime de
+  stația locală (*edge computing*). Spre restul sistemului pleacă doar **numărători agregate** și traiectorii fără imagini și fără identificatori
+  (pseudonimizate) – economie de lățime de
   bandă și, mai ales, conformitate cu principiul minimizării datelor din GDPR[^gdpr].
 * **Rețea.** Modulul de viziune publică opțional pe MQTT (OASIS Standard 5.0[^mqtt]; broker recomandat Eclipse
   Mosquitto[^mosquitto]): `romana/stare/camera` (retained, QoS 1), `romana/numaratori/interval` (retained),
@@ -119,13 +126,13 @@ Fluxul `mono.m3u8` este o listă HLS de segmente `.ts` de 6 s, H.264, 3288 × 18
 păstrează doar ultimul cadru; la căderea fluxului se reconectează cu întârziere exponențială (1 s → 30 s).
 
 **Camere pentru intersecțiile conexe.** S-au căutat (21.10.2026) toate camerele publice din zona modelată:
-lista Webcam România pentru București (8 camere)[^webcam-buc], Windy Webcams, Meteoblue și listele de
-intersecții supravegheate. Rezultat:
+lista Webcam România pentru București (8 camere)[^webcam-buc], Windy Webcams[^windy], Meteoblue[^meteoblue] și
+listele de intersecții supravegheate. Rezultat:
 
 | Cameră | Ce arată | Folosită? |
 |---|---|---|
 | Webcam România – Piața Romană (HLS) | piața, toate cele 6 brațe, 2 treceri de pietoni | **da** – singura sursă video a proiectului |
-| Webcam România – Piața Victoriei (YouTube live) | pasajul Victoriei, în afara zonei modelate (dincolo de Lascăr Catargiu × Gh. Manu) | nu |
+| Webcam România – Piața Victoriei (YouTube live)[^youtube] | pasajul Victoriei, în afara zonei modelate (dincolo de Lascăr Catargiu × Gh. Manu) | nu |
 | „Calea Victoriei City Cam” (YouTube) | imagine statică a Ateneului, fără trafic | nu |
 | Windy / Meteoblue „Piața Romană” | aceeași cameră Webcam România | – |
 | Listele de „intersecții supravegheate” (Dacia × Dorobanți, Magheru × Enescu) | camere ale Poliției / PMB, fără imagine publică | nu (indisponibile) |
@@ -162,16 +169,8 @@ poligoane – banda de intrare spre piață și banda de ieșire – iar pentru 
 (10 zone de vehicule, plus 6 zone de trecere pentru pietoni, § 4.4; `config/camera.json`, coordonate normalizate
 0–1, independente de rezoluție).
 
-![Zonele de numărare pe imaginea camerei](img/zone_camera.jpg)
-*Zonele de numărare finale, desenate de autor (verde = intrare, portocaliu = ieșire, mov = străzi cu sens unic
-de ieșire, roșu = treceri de pietoni). Imagine: © WebcamRomania.ro, captură din 23.10.2026, 12:42; folosită în
-scop de citare academică.*
-
-![Câmpul de mișcare al vehiculelor](img/flux_traiectorii.jpg)
-*Câmpul de mișcare calculat din ≈119.000 de traiectorii ale zilei de 21.10 (direcția medie pe celule; galben =
-spre partea de jos a imaginii, mov = spre partea de sus): se văd inelul circulat în sens trigonometric, intrările
-de pe Magheru (stânga jos, spre dreapta) și Dacia est (dreapta, în sus), ieșirile spre Catargiu și Căderea
-Bastiliei (sus). Imagine de fundal: © WebcamRomania.ro, persoane estompate.*
+*Figurile zonelor de numărare și ale câmpului de mișcare al vehiculelor se refac ca scheme proprii, pe fond
+neutru, fără imagini ale camerei.*
 
 **Zonele finale sunt desenate de autor** (23–24.10.2026): 16 decupaje pe capturi ale camerei (10 zone de
 vehicule, 6 treceri), localizate automat în cadrul de 3288 px prin potrivire de puncte caracteristice (SIFT) cu
@@ -225,11 +224,16 @@ vehiculele pierdute cu această cameră. Concluzie: ieșirile de pe brațele în
 încredere; regula rămâne neschimbată (pragurile noi sunt dezactivate), iar consecința pentru cerere e tratată în
 § 5.1. Pe brațele apropiate (Magheru, Dacia est) și pe trecerea mare de pe Dacia est numărarea e coerentă.
 
-**Jurnalul anonim de traiectorii și renumărarea.** Pe lângă numărători, modulul salvează în
-`data/trajectories/traiectorii_AAAA-LL-ZZ.jsonl.gz` fiecare traiectorie închisă: clasa obiectului și pozițiile
-punctului de contact cu solul, în coordonate normalizate, cu timpul relativ – fără imagini, fără numere de
-înmatriculare, fără ID-ul de urmărire. Astfel zonele pot fi recalibrate **după** colectare, iar
-`python -m romana.vision.recount` reface numărătorile din jurnal (testat: rezultat identic cu numărarea live).
+**Jurnalul de traiectorii și renumărarea.** Pe lângă numărători, modulul salvează local, în
+`data/trajectories_brute/traiectorii_AAAA-LL-ZZ.jsonl.gz` (exclus din Git), fiecare traiectorie închisă: clasa
+obiectului, momentul de început `t0` (timp Unix, la 0,01 s) și pozițiile punctului de contact cu solul, în coordonate
+normalizate, cu timpul relativ față de `t0` – fără imagini, fără numere de înmatriculare, fără ID-ul de urmărire.
+Astfel zonele pot fi recalibrate **după** colectare, iar `python -m romana.vision.recount` reface numărătorile din
+jurnalul local (testat: rezultat identic cu numărarea live). În depozit, `data/trajectories/` conține doar ieșirea
+comenzii `python -m romana.vision.recount --publica`: traiectoriile vehiculelor (inclusiv biciclete și motociclete),
+cu fragmentele deja reunite, fără pietoni, în același format. Pe acest jurnal publicat, renumărarea vehiculelor
+reproduce exact renumărarea din jurnalul complet (verificat pe 22.10: 10 726 de intrări, 2 238 de viraje, 0 din 53
+de intervale diferite); pietonii apar doar în numărătorile agregate din `data/counts/`.
 Tot din jurnal se desenează câmpul de mișcare al vehiculelor și capetele traiectoriilor (`recount --flux`),
 folosite la plasarea zonelor.
 
@@ -255,15 +259,43 @@ cadrului și parțial ascunsă de chioșc, și mai ales Dacia est): pe trecerile
 ### 4.5 Confidențialitate
 
 Imaginile pot conține persoane și numere de înmatriculare, deci prelucrarea intră sub GDPR[^gdpr] și sub ghidul
-EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate: prelucrare exclusiv în memorie; nicio
-înregistrare video sau decupaj salvat; fără citirea numerelor de înmatriculare; ID-urile de urmărire sunt
-temporare și uitate la închiderea traiectoriei; persoanele sunt estompate în previzualizarea pentru dashboard
-(redusă la 960 px și suprascrisă continuu); se publică doar numărători agregate și jurnalul de traiectorii
-anonime (clasă + poziții normalizate ale punctului de contact cu solul, fără imagini sau identificatori), din
-care nu se poate reconstitui nicio imagine și nicio persoană. Fișierele `.ts`/`.mp4` sunt
-excluse din Git (`.gitignore`). Fluxul este public, iar utilizarea este strict academică; pagina operatorului
-menționează „Toate drepturile rezervate”[^webcam], de aceea imaginile nu sunt redistribuite, iar pentru o
-utilizare dincolo de proiectul academic se recomandă acordul scris al Webcam România.
+EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate:
+
+* cadrele se prelucrează în memorie; modulul de viziune nu salvează nicio înregistrare video. Singura imagine
+  scrisă pe disc în funcționarea normală este previzualizarea pentru dispecerat (persoanele estompate, redusă la
+  960 px, suprascrisă continuu și afișată doar local). Pentru calibrarea zonelor s-au folosit, temporar, capturi
+  și scurte clipuri ale camerei, păstrate local și șterse după calibrare; niciuna nu este publicată;
+* numerele de înmatriculare nu se citesc;
+* ID-urile de urmărire sunt temporare și se uită la închiderea traiectoriei;
+* se publică doar numărători agregate și jurnalul de traiectorii al vehiculelor (inclusiv biciclete și
+  motociclete): clasa obiectului, momentul de început `t0` și pozițiile normalizate ale punctului de contact cu
+  solul, fără imagini și fără identificatori (date pseudonimizate); traiectoriile individuale ale pietonilor rămân
+  doar în jurnalul local (`data/trajectories_brute/`, nepublicat) și nu mai sunt incluse în versiunea curentă a
+  depozitului; versiunile din istoricul git dinainte de 26.10.2026 le conțin încă și se elimină numai prin
+  rescrierea istoricului.
+
+Riscul de reidentificare nu este nul: o traiectorie individualizează un obiect în timp și spațiu și ar putea fi
+legată, în principiu, de alte imagini ale aceleiași camere – cu atât mai mult cu cât momentul de început `t0` este
+păstrat, deocamdată, la precizia de 0,01 s. De aceea traiectoriile nu sunt numite anonime, iar
+licența deschisă a datelor (§ 14.1) nu ar face publicabile date personale. Fișierele `.ts`/`.mp4` sunt excluse
+din Git (`.gitignore`). Versiunea curentă a depozitului și PDF-ul nu conțin cadre ale camerei. Fluxul este
+public, iar utilizarea este strict academică. Drepturile asupra imaginilor aparțin operatorului camerei
+(§ 14.1)[^webcam], de aceea imaginile nu sunt redistribuite; pentru o utilizare dincolo de proiectul academic
+este necesar acordul scris al titularului.
+
+**Informarea persoanelor vizate (art. 14 GDPR).** Operatorul este autorul proiectului, Niunin Matei-Gabriel;
+contact: pagina de *Issues* a depozitului, https://github.com/NiuninMatei/Semaforizare_Piata_Romana/issues.
+Scopul: cercetarea academică privind semaforizarea adaptivă a Pieței Romane. Temeiul: interesul legitim (art. 6
+alin. (1) lit. f) GDPR), cu garanțiile pentru cercetarea științifică (art. 89 GDPR; art. 8 din Legea nr.
+190/2018). Datele: pozițiile și traiectoriile participanților la trafic, extrase automat din fluxul public al
+camerei Piața Romană; cadrele video nu se păstrează. Destinatari: publicul – numărătorile agregate și
+traiectoriile vehiculelor sunt publicate deschis în depozitul GitHub. Stocarea: jurnalul local complet se
+păstrează pe durata proiectului și a evaluării academice, apoi se șterge; datele publicate rămân în depozit.
+Persoanele vizate au drepturile prevăzute de art. 15–18 și 21 GDPR; pentru art. 15–18, în limitele art. 11
+(operatorul nu le poate identifica fără informații suplimentare furnizate chiar de ele). Există și dreptul de a
+depune plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (ANSPDCP,
+https://www.dataprotection.ro). Informarea individuală a trecătorilor este imposibilă (art. 14 alin. (5) lit. b)
+GDPR), de aceea informarea este publicată aici.
 
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
@@ -576,7 +608,7 @@ măresc valorile absolute.
 framework). Principiul de proiectare: **automatizarea propune, omul supervizează** – operatorul vede ce vede
 algoritmul și poate prelua oricând controlul.
 
-![Dashboard](img/dashboard.png)
+*Captura dispeceratului se reface ca figură proprie, fără imaginea camerei.*
 
 | Euristică Nielsen[^nielsen] | Aplicare în dashboard |
 |---|---|
@@ -592,7 +624,7 @@ algoritmul și poate prelua oricând controlul.
 Sunt respectate și regulile lui Shneiderman[^shneiderman] privind feedback-ul informativ, închiderea dialogului
 (confirmare → stare actualizată) și controlul intern al utilizatorului. Accesibilitate: contrast ridicat,
 focalizare vizibilă de la tastatură, etichete ARIA pentru schemă și grafic, `prefers-reduced-motion` respectat,
-aranjare pe o coloană sub 900 px. Atribuirile cerute (OSM, Webcam România, SUMO) apar permanent în subsol.
+aranjare pe o coloană sub 900 px. Atribuirile cerute (OSM, Webcam România, SUMO) și linkul la codul sursă (AGPL-3.0) apar permanent în subsol.
 
 ## 9. Rezultate
 
@@ -801,7 +833,7 @@ administratorul drumului.
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
 * **Trecerile de pietoni** sunt reconstruite de `netconvert` (`--crossings.guess`), nu importate direct din OSM
-  (crash în netconvert 1.28). *Verificat pe 23.10* cu capturile din cameră și din Google Street View: rețeaua
+  (crash în netconvert 1.28). *Verificat pe 23.10* cu capturile din cameră și din Google Street View[^streetview]: rețeaua
   are treceri pe toate brațele pieței (Magheru 12, Lascăr Catargiu 6, Dacia 34, Mendeleev 9, Căderea Bastiliei 13
   segmente de trecere); Str. Mendeleev și Str. Căderea Bastiliei sunt sens unic de ieșire din piață, ca în
   rețea; Magheru are 4 benzi spre piață și 3 dinspre piață, iar Bd. Dacia (vest și est) câte 2 benzi pe sens,
@@ -814,7 +846,14 @@ administratorul drumului.
 * **Intersecțiile vecine** nu au cameră; traficul lor propriu este o fracțiune declarată (15%).
 * **Transfer în realitate.** O politică antrenată în simulare nu se aplică direct pe un automat real; ar fi
   nevoie de validare în buclă închisă cu operatorul (rolul dispeceratului) și de integrare cu sistemul BTMS.
-* **Licențe.** Ultralytics YOLO este AGPL-3.0: publicarea proiectului impune publicarea întregului cod.
+* **Licențe.** Codul este distribuit sub GNU AGPL v3 sau ulterioară: licență obligatorie pentru modulul de
+  viziune, care folosește Ultralytics YOLO11 (AGPL-3.0, inclusiv ponderile), și aleasă pentru tot codul în
+  conformitate cu cerința Ultralytics. Orice redistribuire trebuie să ofere codul sursă complet (AGPL § 6), iar o
+  versiune modificată pusă la dispoziția utilizatorilor prin rețea trebuie să le ofere codul ei sursă (AGPL § 13).
+  O integrare cu sursă închisă (de exemplu într-un automat comercial sau în BTMS) ar cere atât licența Enterprise
+  Ultralytics (sau înlocuirea detectorului), cât și o licență separată de la autor pentru codul proiectului.
+  Datele derivate din OSM rămân sub ODbL 1.0 (§ 14.1). Pentru folosirea fluxului camerei dincolo de scopul
+  academic este necesar acordul scris al titularului drepturilor.
 
 Lucrări viitoare: recompensă cu prioritate pentru transportul public, ponderată cu numărul de călători
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
@@ -865,9 +904,9 @@ rezultatele se pot reproduce fără a colecta date noi.
 | # | Script (`scripts\`) | Ce face | Durată |
 |---|---|---|---|
 | 1 | `1_construieste_retea.bat` | regenerează rețeaua SUMO din extrasul OSM (`data\osm`) | ~2 min |
-| 2 | `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele, `q` = oprire); scrie `data\counts` și `data\trajectories` | cât se dorește (o zi întreagă pentru un profil complet) |
+| 2 | `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele, `q` = oprire); scrie `data\counts` și jurnalul local `data\trajectories_brute` (versiunea publicabilă, doar vehiculele: `recount --publica`) | cât se dorește (o zi întreagă pentru un profil complet) |
 | 2b | `2b_calibrare_zone.bat` | redesenarea zonelor dacă operatorul mută camera | ~5 min |
-| 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără ziua din jurnalul de traiectorii (după o recalibrare a zonelor) | ~5 min |
+| 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără ziua din jurnalul local de traiectorii (după o recalibrare a zonelor); pe o clonă fără `data\trajectories_brute` se renumără doar vehiculele din jurnalul publicat – folosiți atunci `--out` cu alt director, ca pietonii din `data\counts` să nu se piardă | ~5 min |
 | 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf, dimineața, prânzul și ora liniștită și construiește scenariile SUMO | ~5 min |
 | 3 | `3_genereaza_cerere.bat --nume X --de-la "..." --pana-la "..."` | un scenariu pe o fereastră aleasă manual | ~1 min |
 | 4 | `4_antreneaza_ai.bat --pasi 500000 --medii 8 --scenarii sumo\scenarios\zi_*.sumocfg` | antrenarea unui agent PPO (opțiuni: `--continua`, `--lr`, `--bc-plan`, `--coridor`) | 1–3 h pe laptopul de test |
@@ -904,13 +943,15 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea |
 | `src/romana/dashboard/` | dispeceratul web |
 | `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
-| `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectorii anonime – fără imagini) |
+| `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectoriile vehiculelor, fără imagini și fără identificatori – pseudonimizate); licența în `data/LICENTA.txt`; jurnalul complet, cu pietoni, rămâne local în `data/trajectories_brute/` (exclus din Git) |
 | `sumo/scenarios/zi_*` | scenariile din date reale; `referinta_*` = scenariile ipotetice inițiale |
 | `models/` | agenții antrenați (`.zip` Stable-Baselines3 + `.npz` pentru rulare fără PyTorch) |
 | `docs/rezultate/` | datele brute ale evaluărilor (tabele CSV, grafice, tabelul detaliat generat automat) – anexa A |
-| `docs/img/` | imaginile din documentație |
+| `docs/img/` | figurile proprii (scheme pe fond neutru, fără imagini ale camerei); directorul se creează la refacerea figurilor |
 | `legacy/google_ai_draft/` | ciorna inițială, păstrată cu raportul de audit |
 | `README.md` | prezentarea scurtă afișată pe pagina GitHub a proiectului |
+| `LICENSE`, `LICENSES/` | textele licențelor: GNU AGPL v3 (codul și modelele), ODbL 1.0 (datele), CC BY 4.0 (documentația) |
+| `NOTICE`, `REUSE.toml`, `*/LICENTA.txt` | atribuirile terților, harta „cale → licență” și notele de licență din `data/`, `sumo/`, `models/` (§ 14.1) |
 | `.claude/CLAUDE.md` | instrucțiunile și starea de lucru pentru asistentul Claude Code (nu fac parte din documentație) |
 
 ### 11.7 Probleme frecvente
@@ -1074,54 +1115,170 @@ codului; afirmațiile despre lumea reală sunt susținute de sursele de mai jos.
 
 ## 14. Bibliografie și licențe
 
-Fiecare sursă este citată în text printr-o notă de subsol. Lista de mai jos indică și licența / termenii de
+### 14.1 Licențele proiectului și drepturile de autor
+
+Proiectul este public pe GitHub și are **mai multe licențe, pe părți**, pentru că sursele folosite impun
+regimuri diferite. Programul care folosește biblioteca de viziune Ultralytics se distribuie numai sub GNU AGPL
+v3[^ultralytics-licenta]. Datele OpenStreetMap cer ca orice bază de date derivată din ele să rămână sub ODbL
+1.0[^osm]. Imaginile camerei nu pot fi licențiate deloc de proiect, pentru că drepturile asupra lor nu aparțin
+autorului[^webcam-termeni]. Regula de bază: drepturile autorilor surselor primează; acolo unde o licență este
+ambiguă, s-a ales varianta sigură.
+
+| Partea proiectului | Căi | Licență | De ce |
+|---|---|---|---|
+| Codul sursă, scripturile, testele, configurările | `src/`, `scripts/`, `tests/`, `config/`, `requirements.txt`; codul ciornei din `legacy/` | GNU AGPL v3 sau ulterioară (`AGPL-3.0-or-later`)[^agpl] | obligatorie pentru modulul de viziune, care folosește Ultralytics YOLO11 (AGPL-3.0); extinsă la tot codul, ca variantă sigură, conform cerinței Ultralytics de licențiere a întregului proiect |
+| Modelele antrenate | `models/` | AGPL-3.0-or-later | alegerea autorului: aceeași licență ca a codului care le încarcă; atribuire OSM, pentru că au fost antrenate pe rețeaua derivată[^osmf-atribuire] |
+| Extrasul OSM, rețeaua, cererea, scenariile | `data/osm/`, `sumo/`, `legacy/google_ai_draft/osm*` | ODbL 1.0 | impusă de OpenStreetMap: sunt baze de date derivate, cu share-alike |
+| Numărătorile și traiectoriile | `data/counts/`, `data/trajectories/` | ODbL 1.0, în măsura în care asupra lor există drepturi | alegerea autorului: aceeași licență ca a cererii care încorporează numărătorile; faptele în sine nu sunt protejate |
+| Documentația, rezultatele, figurile proprii | `docs/`, `README.md`, `NOTICE` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
+
+Textele integrale se află în `LICENSE` (AGPL), `LICENSES/ODbL-1.0.txt` și `LICENSES/CC-BY-4.0.txt`. Atribuirile
+terților și harta detaliată „cale → licență” sunt în fișierele `NOTICE` și `REUSE.toml`. În `data/`, `sumo/` și
+`models/` există câte o notă de licență, `LICENTA.txt`.
+
+**De ce AGPL.** Ultralytics distribuie sub AGPL-3.0 atât biblioteca, cât și ponderile YOLO11 preantrenate. Tot
+sub AGPL-3.0 este și trackerul ByteTrack folosit, care este implementarea din Ultralytics[^yolo11][^bytetrack].
+Programul combinat cu Ultralytics – modulul de viziune – se distribuie deci numai sub AGPL-3.0. Celelalte module
+(cererea, rețeaua, controlul, dispeceratul) nu importă Ultralytics și comunică cu viziunea doar prin fișiere; ele
+ar putea purta și o licență compatibilă (MIT, Apache-2.0, GPL-3.0). S-a ales totuși AGPL-3.0-or-later pentru tot
+codul: este conformă poziției Ultralytics („Open-source your entire project under AGPL-3.0”), coerentă și cea mai
+sigură. AGPL nu permite restricții suplimentare, de tipul „doar uz academic” sau „necomercial” (§ 7 și § 10).
+Ultralytics își declară licența ca „AGPL-3.0” în fișierul de licență, ca „AGPLv3 or later” în metadatele
+pachetului și ca „AGPL-3.0-only” în dependența sa `ultralytics-platform`. Formula „AGPL-3.0-or-later” rămâne
+compatibilă cu toate aceste variante și este cea recomandată de textul licenței. Celelalte componente sunt
+compatibile:
+
+* Eclipse SUMO: codul proiectului este un client TraCI/`libsumo`, pe care licența SUMO îl exclude din lucrările
+  derivate; la distribuirea unui pachet combinat cu SUMO se folosește opțiunea GPL-2.0-or-later a licenței
+  sale duble[^sumo];
+* clientul MQTT Paho, prin opțiunea EDL-1.0 (BSD-3-Clause)[^mosquitto];
+* OpenCV și OpenVINO, sub Apache-2.0[^opencv][^openvino];
+* PyTorch, sub o combinație de licențe permisive (BSD-3-Clause, Apache-2.0, BSD-2-Clause, BSL-1.0, MIT)[^pytorch];
+* NumPy, pandas, SciPy, Flask și Python-Markdown, sub licențe de tip BSD; Matplotlib, sub licența Matplotlib,
+  de tip PSF[^pydata][^flask][^markdown-py];
+* Stable-Baselines3 și Gymnasium, sub MIT[^sb3];
+* FFmpeg, sub LGPL[^ffmpeg];
+* Python, sub licența PSF[^python].
+
+Dispeceratul ascultă doar pe calculatorul local. Subsolul lui are totuși un link la codul sursă, ca cerința
+AGPL § 13 (oferirea sursei unei versiuni modificate folosite prin rețea) să fie îndeplinită și dacă va fi expus
+vreodată. AGPL permite și folosirea comercială, cu condiția publicării sursei. O integrare cu sursă închisă, de
+exemplu într-un automat comercial sau în BTMS, ar cere licența Enterprise Ultralytics (sau înlocuirea
+detectorului) și o licență separată de la autor pentru codul proiectului.
+
+**Datele OpenStreetMap.** Extrasul din `data/osm/` și tot ce este derivat din el (rețeaua, rutele, scenariile)
+se distribuie numai sub ODbL 1.0, cu notificarea pusă în directoare (`sumo/LICENTA.txt`, `data/LICENTA.txt`), în
+`NOTICE` și în această documentație, iar ca comentariu XML în fișierele generate de `build_network.py` și
+`build_demand.py` începând cu următoarea regenerare (ODbL § 4.2). Rezultatele, graficele și modelele sunt *lucrări
+produse* și poartă notificarea cerută de ODbL § 4.3 (prin această documentație, prin `NOTICE`, prin
+`models/LICENTA.txt` și, pentru tabelele generate, în capul fișierelor `docs/rezultate/**/rezultate.md`):
+„Conține informații din OpenStreetMap (https://www.openstreetmap.org), puse la dispoziție aici sub Open
+Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/. © OpenStreetMap contributors –
+https://www.openstreetmap.org/copyright”. Cerința de a oferi baza derivată sau metoda (§ 4.6) este îndeplinită
+prin `sumo/net/`, `sumo/demand/`, `sumo/scenarios/`, `src/romana/network/build_network.py` și
+`config/network.json`; versiunile exacte ale scenariilor folosite pentru fiecare model sau rezultat se găsesc în
+istoricul git al depozitului https://github.com/NiuninMatei/Semaforizare_Piata_Romana (scenariile de antrenare
+sunt listate în `models/*.json`). Rețeaua nu a fost modificată cu informații din surse Google: Street View a
+servit doar la verificarea vizuală (§ 10).
+
+**Imaginile camerei.** Sursa: fluxul public Webcam România (webcamromania.ro)[^webcam]. Drepturile asupra
+imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi
+asupra fluxurilor[^webcam-termeni]. Proiectul analizează fluxul în memorie; pentru previzualizarea locală se
+suprascrie continuu un singur cadru estompat. Capturile și scurtele clipuri folosite la desenarea zonelor nu sunt
+acte provizorii: sunt copii păstrate local, numai pe durata calibrării, nepublicate, și se șterg după încheierea ei.
+Temeiul principal invocat este excepția pentru actele provizorii
+de reproducere: art. 35 alin. (3) din Legea nr. 8/1996[^legea8], care transpune art. 5 alin. (1) din Directiva
+2001/29/CE[^infosoc] și se aplică și drepturilor conexe, prin art. 120; numărătorile rezultate sunt simple fapte
+(art. 9 lit. f)). Subsidiar s-ar putea invoca excepțiile pentru extragerea de text și de date (art. 36^1 și
+36^2, care transpun art. 3–4 din Directiva (UE) 2019/790[^dsm]), cu două rezerve: art. 36^1 privește doar
+organizațiile de cercetare și instituțiile de patrimoniu cultural, iar art. 36^2 nu se aplică dacă titularul
+și-a rezervat drepturile prin mijloace care pot fi citite automat. Fișierul `robots.txt` al site-ului
+webcamromania.ro exclude listele de redare HLS (`.m3u8`), deci această excepție este incertă. Din acest motiv
+este necesar acordul scris al titularului, pe care autorul îl va solicita prin formularul de contact al Webcam
+România („Termeni și condiții”, secțiunea 12); până la obținerea lui, utilizarea rămâne strict academică, iar
+imaginile nu sunt redistribuite. Versiunea curentă a depozitului și PDF-ul curent nu conțin cadre ale camerei: figurile
+care le foloseau au fost scoase și se refac ca scheme proprii, pe fond neutru. Versiunile mai vechi din istoricul
+git nu sunt acoperite de licențele proiectului și se elimină la cererea titularului.
+
+**Datele de trafic.** Numărătorile și traiectoriile sunt informații factuale, iar „simplele fapte și date” nu
+sunt protejate (art. 9 lit. f) din Legea nr. 8/1996). Licența ODbL se acordă asupra lor în măsura în care există
+drepturi de autor sau drepturi sui generis asupra bazei de date. Ele nu reproduc nicio imagine. Traiectoriile
+sunt fără imagini și fără identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu mai sunt
+incluse în versiunea curentă, ci doar numărătorile agregate; versiunile din istoricul git dinainte de 26.10.2026 le
+conțin încă și se elimină numai prin rescrierea istoricului (§ 4.5). Ieșirea unui program sub licență GNU nu este acoperită de
+licența programului decât dacă reproduce părți din el[^gpl-faq], deci datele nu devin AGPL din cauza YOLO11.
+
+**Conținutul realizat cu asistenți generativi** (cap. 13). Termenii Anthropic îi cedează utilizatorului toate
+drepturile Anthropic asupra rezultatelor, dacă astfel de drepturi există[^claude]. Pentru ciornă, termenii Google
+precizează că Google nu revendică proprietatea asupra conținutului generat[^google-ai]. Licențele de mai sus se
+aplică în măsura în care asupra acestui conținut există drepturi de autor.
+
+**Ce nu acoperă licențele proiectului:**
+
+* citatele din surse terțe (presă, pagina și termenii Webcam România, termenii Ultralytics, Anthropic și Google,
+  ghidurile OSMF), preluate cu indicarea sursei (art. 35 din Legea nr. 8/1996);
+* imaginile camerei din versiunile mai vechi aflate în istoricul git (drepturile aparțin operatorului camerei);
+* mărcile menționate;
+* subseturile de fonturi Microsoft încorporate în PDF (licența lor permite încorporarea);
+* bibliotecile terțe, care rămân sub licențele lor (§ 14.2) și nu sunt incluse în depozit.
+
+### 14.2 Resursele folosite și licențele lor
+
+Fiecare sursă este citată în text printr-o notă de subsol. Tabelul de mai jos indică licența sau termenii de
 utilizare ai resurselor folosite efectiv în proiect.
 
 | Resursă folosită | Licență / termeni |
 |---|---|
-| Claude (Anthropic), model Claude Opus 5.5, prin Claude Code – asistent AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic; conținutul generat aparține utilizatorului, cu obligația declarării folosirii AI[^claude] |
-| Modulul AI Google din Chrome – ciorna inițială (`legacy/`) | Termenii Google[^google-ai] |
-| Date OpenStreetMap (rețeaua rutieră) | ODbL 1.0 – „© OpenStreetMap contributors”[^osm] |
-| Eclipse SUMO 1.28.0 (simulator, `sumolib`, `traci`, `libsumo`, `routeSampler`) | EPL-2.0[^sumo] |
-| Ultralytics YOLO11 | AGPL-3.0[^yolo11] |
-| Ponderi preantrenate pe COCO | adnotări COCO CC BY 4.0[^coco] |
-| ByteTrack (implementarea din Ultralytics) | MIT[^bytetrack] |
-| Stable-Baselines3, Gymnasium, sumo-rl | MIT[^sb3][^sumorl] |
+| Claude (Anthropic), model Claude Opus 5.5, prin Claude Code – asistent AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic: drepturile Anthropic asupra rezultatelor, dacă există, sunt cedate utilizatorului; folosirea AI trebuie atribuită (§ 13)[^claude] |
+| Modulul AI Google din Chrome – ciorna inițială (`legacy/`) | Termenii Google; Google nu revendică proprietatea asupra conținutului generat[^google-ai] |
+| Date OpenStreetMap (extrasul, rețeaua rutieră, rutele) | ODbL 1.0 – „© OpenStreetMap contributors”; bazele derivate tot sub ODbL 1.0[^osm][^osmf-atribuire] |
+| Eclipse SUMO 1.28.0 (simulator, `sumolib`, `traci`, `libsumo`, `routeSampler`) | EPL-2.0 OR GPL-2.0-or-later; codul proiectului este client TraCI, iar pentru un pachet combinat se folosește opțiunea GPL-2.0-or-later[^sumo] |
+| Ultralytics YOLO11 (`ultralytics` 8.4.183, cu dependența `ultralytics-platform` 0.1.90) și ponderile YOLO11 preantrenate | AGPL-3.0 pentru cod și ponderi (`ultralytics-platform`: AGPL-3.0-only) sau licență Enterprise[^yolo11][^ultralytics-licenta] |
+| Setul COCO (pe care au fost antrenate ponderile) | adnotări © COCO Consortium, CC BY 4.0; imagini conform Flickr Terms of Use; setul nu este redistribuit[^coco] |
+| ByteTrack: implementarea din Ultralytics (folosită) / codul original (nefolosit direct) | AGPL-3.0 / MIT[^bytetrack] |
+| Stable-Baselines3, Gymnasium | MIT[^sb3] |
+| sumo-rl – model de proiectare pentru mediul RL (instalat, neimportat) | MIT[^sumorl] |
+| PyTorch | BSD-3-Clause, cu componente Apache-2.0, BSD-2-Clause, BSL-1.0 și MIT[^pytorch] |
+| NumPy, pandas, SciPy, Matplotlib | BSD-3-Clause; Matplotlib License (de tip PSF)[^pydata] |
 | OpenCV | Apache-2.0[^opencv] |
 | Intel OpenVINO (inferența YOLO pe placa grafică Intel) | Apache-2.0[^openvino] |
-| FFmpeg (prin OpenCV) | LGPL-2.1+[^ffmpeg] |
+| FFmpeg (prin OpenCV) | LGPL-2.1-or-later[^ffmpeg] |
 | Flask | BSD-3-Clause[^flask] |
-| Eclipse Paho MQTT / Mosquitto | EPL-2.0 / EDL-1.0[^mosquitto] |
-| Fluxul video Webcam România | © WebcamRomania.ro, toate drepturile rezervate; folosit doar pentru analiză în memorie, în scop academic[^webcam] |
-| Fonturi Barlow (dashboard, Google Fonts) | SIL Open Font License 1.1[^barlow] |
+| Python-Markdown (exportul PDF) | BSD-3-Clause[^markdown-py] |
+| Eclipse Paho MQTT (client) / Mosquitto (broker opțional, neinclus) | EPL-2.0 OR EDL-1.0 (BSD-3-Clause); proiectul folosește opțiunea EDL-1.0[^mosquitto] |
+| Fluxul video al camerei Piața Romană (sursa: Webcam România) | drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor; analizat în memorie, în scop academic; nicio imagine din cameră nu este publicată în versiunea curentă a proiectului[^webcam][^webcam-termeni] |
+| Google Street View (doar verificarea vizuală a rețelei, § 10) | Termenii suplimentari Google Maps / Google Earth; nicio informație preluată, nicio captură publicată[^streetview] |
+| Fonturile Barlow și Barlow Semi Condensed (dispecerat, Google Fonts) | SIL Open Font License 1.1; legate, nu incluse[^barlow] |
+| Python 3.12 | PSF-2.0[^python] |
+| Licențele proiectului (§ 14.1) | GNU AGPL v3[^agpl]; ODbL 1.0[^osm]; CC BY 4.0[^ccby] |
 
-[^wiki-romana]: Wikipedia, „Piața Romană” și „Piața Romană metro station”, https://en.wikipedia.org/wiki/Pia%C8%9Ba_Roman%C4%83, accesat 20.10.2026. Licență CC BY-SA 4.0.
-[^webcam]: Webcam România, „Webcam Piața Romană București – Live din Centrul Capitalei”, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/, accesat 20.10.2026. Flux: https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8. © 2016–2026 WebcamRomania.ro, toate drepturile rezervate.
+[^wiki-romana]: Wikipedia, „Piața Romană” și „Piața Romană metro station”, https://en.wikipedia.org/wiki/Pia%C8%9Ba_Roman%C4%83, accesat 20.10.2026. Licență CC BY-SA 4.0. Folosită doar pentru fapte; nu s-a preluat text.
+[^webcam]: Webcam România, „Webcam Piața Romană București – Live din Centrul Capitalei”, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/, accesat 20.10.2026. Flux: https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8. Pagina: © 2016–2026 WebcamRomania.ro. Fluxul: drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor („Termeni și condiții”, secțiunile 2 și 4). Fluxul este analizat doar în memorie; proiectul nu publică imagini din cameră.
 [^tomtom]: TomTom, „Bucharest traffic report – TomTom Traffic Index 2025”, https://www.tomtom.com/traffic-index/city/bucharest/, publicat ianuarie 2026. © TomTom, citare cu atribuire.
 [^pmb-tomtom]: Primăria Municipiului București, „București, pe locul 20 în lume din punct de vedere al traficului…”, https://www.bucuresti.ro/articole/bucuresti-pe-locul-20-in-lume-din-punct-de-vedere-al-traficului-care-este-viteza-medie-cu-care-se-circula-in-oras-1751, 2026.
 [^btms-267]: Business24, „București: extinderea sistemului de trafic – rețea centralizată de intersecții”, https://business24.ro/trafic-inteligent/bucuresti-extindere-sistem-trafic-retea-centralizata-intersectii-1670366, 6.10.2026; B365, https://b365.ro/pmb-anunta-extinderea-sistemului-de-semaforizare-inteligenta-dar-nu-se-spune-si-ce-presupune-aminteste-ca-e-implementat-deja-in-267-de-intersectii-din-bucuresti-622733/. Drepturi rezervate (presă).
 [^buletin-btms]: Buletin de București, „Sistemul de semaforizare inteligentă din București se extinde: patru noi intersecții integrate în BTMS”, https://buletin.de/bucuresti/sistemul-de-semaforizare-inteligenta-din-bucuresti-se-extinde-patru-noi-intersectii-integrate-in-btms-anul-acesta/, 2026; HCL PMB nr. 187/2026.
-[^digi24-ai]: Digi24, „Bucureștiul face primul pas către semaforizarea inteligentă: PMB modernizează aproape 100 de intersecții cu ajutorul AI”, https://www.digi24.ro/digieconomic/consumer/bucurestiul-face-primul-pas-catre-semaforizarea-inteligenta-pmb-modernizeaza-aproape-100-de-intersectii-cu-ajutorul-ai-101141, 2026; declarație PMB citată de Stiripesurse/Capital.ro, 14.05.2026.
-[^economedia]: Economedia, despre pilotul „undă verde” din 2007 pe axa Unirii – Universitate – Romană – Victoriei („fluența circulației crescând cu 30%”), https://economedia.ro, accesat 20.10.2026.
-[^adevarul-incendiu]: Adevărul, despre incendiul de la punctul trafo de pe Bd. Magheru 43 care a afectat semafoarele din zona Piața Romană, 8.05.2026, https://adevarul.ro.
+[^digi24-ai]: Citatul aparține Primăriei Municipiului București (anunț instituțional, fără vorbitor numit), preluat de Digi24, „Peste 90 de intersecții și treceri de pietoni din București vor avea semaforizare inteligentă. Anunțul făcut de Primăria Capitalei”, 14.05.2026, editor A.P., https://www.digi24.ro/stiri/actualitate/social/peste-90-de-intersectii-si-treceri-de-pietoni-din-bucuresti-vor-avea-semaforizare-inteligenta-anuntul-facut-de-primaria-capitalei-3770033, accesat 26.10.2026; vezi și Digi24, „Bucureștiul face primul pas către semaforizarea inteligentă: PMB modernizează aproape 100 de intersecții cu ajutorul AI”, https://www.digi24.ro/digieconomic/consumer/bucurestiul-face-primul-pas-catre-semaforizarea-inteligenta-pmb-modernizeaza-aproape-100-de-intersectii-cu-ajutorul-ai-101141, 2026; declarație PMB citată și de Stiripesurse/Capital.ro, 14.05.2026. Drepturi rezervate (presă).
+[^economedia]: M. Podaru, „Explicații pentru ambuteiajele din București…” (despre sistemul „undă verde”, început ca proiect pilot în 2007 pe axa Unirii – Universitate – Romană – Victoriei, „după implementare fluența circulației crescând cu 30%”), Economedia, 10.05.2022, https://economedia.ro/explicatii-pentru-ambuteiajele-din-bucuresti-doar-260-de-intersectii-semaforizate-din-cele-440-sunt-si-integrate-in-sistemul-inteligent-cu-unda-verde-modernizarea-semafoarelor-ar-costa-50-de-mil.html, accesat 26.10.2026. Drepturi rezervate (presă).
+[^adevarul-incendiu]: Digi24, „Incendiu în Piața Romană: semafoare scoase din funcțiune într-una dintre cele mai aglomerate intersecții din Capitală”, 8.05.2026, editor Ș.A., https://www.digi24.ro/stiri/actualitate/incendiu-in-piata-romana-semafoare-scoase-din-functiune-intr-una-dintre-cele-mai-aglomerate-intersectii-din-capitala-3761469, accesat 26.10.2026 (primele informații: focul ar fi izbucnit la cablurile electrice subterane); același eveniment relatat și de Adevărul, 8.05.2026. Drepturi rezervate (presă).
 [^gdpr]: Regulamentul (UE) 2016/679 (GDPR), https://eur-lex.europa.eu/eli/reg/2016/679/oj; Legea nr. 190/2018. Reutilizare EUR-Lex conform Deciziei 2011/833/UE.
 [^edpb]: European Data Protection Board, *Guidelines 3/2019 on processing of personal data through video devices*, v2.0, 2020, https://edpb.europa.eu.
 [^itu-y2060]: ITU-T, Recomandarea Y.2060 *Overview of the Internet of things*, 2012, https://www.itu.int/rec/T-REC-Y.2060-201206-I.
 [^mqtt]: OASIS, *MQTT Version 5.0*, OASIS Standard, 7.03.2019, https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html.
-[^mosquitto]: R. A. Light, „Mosquitto: server and client implementation of the MQTT protocol”, *Journal of Open Source Software* 2(13):265, 2017, doi:10.21105/joss.00265, https://mosquitto.org. Licență EPL-2.0 / EDL-1.0; clientul Eclipse Paho Python: EPL-2.0 / EDL-1.0.
-[^webcam-buc]: Webcam România, „Webcam Live Municipiul București”, https://webcamromania.ro/webcam-live/municipiul-bucuresti/; pagina Piața Victoriei, https://webcamromania.ro/webcam-orase/webcam-piata-victoriei-bucuresti/, accesate 21.10.2026. © WebcamRomania.ro.
+[^mosquitto]: R. A. Light, „Mosquitto: server and client implementation of the MQTT protocol”, *Journal of Open Source Software* 2(13):265, 2017, doi:10.21105/joss.00265, https://mosquitto.org. Licență EPL-2.0 OR EDL-1.0. Clientul Eclipse Paho MQTT Python 2.1.0, https://github.com/eclipse-paho/paho.mqtt.python: EPL-2.0 OR EDL-1.0 (textul EDL-1.0 este BSD-3-Clause, https://www.eclipse.org/org/documents/edl-v10.php); proiectul folosește opțiunea EDL-1.0, compatibilă cu AGPL-3.0.
+[^webcam-buc]: Webcam România, „Webcam Live Municipiul București”, https://webcamromania.ro/webcam-live/municipiul-bucuresti/; pagina Piața Victoriei, https://webcamromania.ro/webcam-orase/webcam-piata-victoriei-bucuresti/, accesate 21.10.2026. Paginile: © WebcamRomania.ro; fluxurile video aparțin operatorilor camerelor.
 [^openvino]: Intel, *OpenVINO Toolkit* 2026.4, https://docs.openvino.ai, licență Apache-2.0; exportul din Ultralytics: https://docs.ultralytics.com/integrations/openvino/.
 [^opencv]: G. Bradski, „The OpenCV Library”, *Dr. Dobb's Journal of Software Tools*, 2000; https://opencv.org/license/ (Apache-2.0 de la versiunea 4.5.0).
-[^ffmpeg]: FFmpeg, https://ffmpeg.org/legal.html (LGPL-2.1+ / GPL în funcție de compilare).
-[^yolo11]: G. Jocher, J. Qiu, *Ultralytics YOLO11*, v11.0.0, 2024, https://github.com/ultralytics/ultralytics, https://docs.ultralytics.com/models/yolo11. Licență AGPL-3.0 sau Enterprise.
-[^coco]: T.-Y. Lin et al., „Microsoft COCO: Common Objects in Context”, ECCV 2014, doi:10.1007/978-3-319-10602-1_48, https://cocodataset.org. Adnotări CC BY 4.0.
-[^bytetrack]: Y. Zhang et al., „ByteTrack: Multi-Object Tracking by Associating Every Detection Box”, ECCV 2022, LNCS 13682, pp. 1–21, doi:10.1007/978-3-031-20047-2_1, https://github.com/FoundationVision/ByteTrack (MIT).
+[^ffmpeg]: FFmpeg, https://ffmpeg.org/legal.html. Roțile `opencv-python` includ FFmpeg sub LGPL-2.1-or-later (https://github.com/opencv/opencv-python#licensing); varianta GPL apare doar la compilarea cu componente GPL.
+[^yolo11]: G. Jocher, J. Qiu, *Ultralytics YOLO11*, v11.0.0, 2024, https://github.com/ultralytics/ultralytics, https://docs.ultralytics.com/models/yolo11. Licență AGPL-3.0 sau Enterprise, pentru cod și pentru ponderile preantrenate („All Ultralytics YOLO trained models fall under the AGPL-3.0 License by default”). Versiunea folosită: `ultralytics` 8.4.183; dependența `ultralytics-platform` 0.1.90 (https://github.com/ultralytics/sdk) este declarată AGPL-3.0-only.
+[^coco]: T.-Y. Lin et al., „Microsoft COCO: Common Objects in Context”, ECCV 2014, doi:10.1007/978-3-319-10602-1_48, https://cocodataset.org; termeni: https://cocodataset.org/#termsofuse. Adnotări © COCO Consortium, CC BY 4.0; imaginile aparțin autorilor lor (Flickr Terms of Use). Setul nu este redistribuit de proiect; ponderile antrenate pe el sunt ale Ultralytics, sub AGPL-3.0 (nota YOLO11).
+[^bytetrack]: Y. Zhang et al., „ByteTrack: Multi-Object Tracking by Associating Every Detection Box”, ECCV 2022, LNCS 13682, pp. 1–21, doi:10.1007/978-3-031-20047-2_1. Codul original: https://github.com/FoundationVision/ByteTrack (MIT, © 2021 Yifu Zhang), nefolosit direct. Implementarea folosită: Ultralytics, `ultralytics/trackers/byte_tracker.py` și `bytetrack.yaml`, AGPL-3.0.
 [^botsort]: N. Aharon, R. Orfaig, B.-Z. Bobrovsky, „BoT-SORT: Robust Associations Multi-Pedestrian Tracking”, arXiv:2206.14651, 2022.
 [^ortuzar]: J. de D. Ortúzar, L. G. Willumsen, *Modelling Transport*, ed. a 4-a, Wiley, 2011, cap. 5 (metoda Furness / IPF); K. P. Furness, „Time function iteration”, *Traffic Engineering and Control* 7(7), 1965.
 [^sumo-turns]: Eclipse SUMO Documentation, „Turns – routeSampler.py”, https://sumo.dlr.de/docs/Tools/Turns.html și „Routes from Observation Points”, https://sumo.dlr.de/docs/Demand/Routes_from_Observation_Points.html, accesat 20.10.2026.
 [^wizard]: Wizard Media, „Măsurători trafic outdoor București”, https://www.wizard-media.ro/panouri-2013/pag/masuratori-trafic-outdoor-bucuresti/, 2011/2012 – estimare neoficială, folosită doar ca ordin de mărime.
-[^osm]: OpenStreetMap Foundation, „Copyright and License”, https://www.openstreetmap.org/copyright; Open Data Commons, *Open Database License (ODbL) v1.0*, https://opendatacommons.org/licenses/odbl/1-0/. Date © OpenStreetMap contributors; rețeaua `.net.xml` derivată este distribuită tot sub ODbL.
-[^sumo]: P. A. Lopez, M. Behrisch, L. Bieker-Walz, J. Erdmann, Y.-P. Flötteröd, R. Hilbrich, L. Lücken, J. Rummel, P. Wagner, E. Wießner, „Microscopic Traffic Simulation using SUMO”, *21st IEEE ITSC*, 2018, pp. 2575–2582, doi:10.1109/ITSC.2018.8569938. Eclipse SUMO 1.28.0, doi:10.5281/zenodo.23219601, https://sumo.dlr.de, licență EPL-2.0.
+[^osm]: OpenStreetMap Foundation, „Copyright and License”, https://www.openstreetmap.org/copyright; Open Data Commons, *Open Database License (ODbL) v1.0*, https://opendatacommons.org/licenses/odbl/1-0/ (textul în `LICENSES/ODbL-1.0.txt`). Date © OpenStreetMap contributors. Extrasul din `data/osm/` și bazele de date derivate din el (rețeaua `sumo/net/`, rutele din `sumo/demand/`, scenariile din `sumo/scenarios/`, scenariul ciornei din `legacy/`) sunt distribuite sub ODbL 1.0. Rezultatele, graficele și modelele sunt lucrări produse (ODbL § 4.3).
+[^sumo]: P. A. Lopez, M. Behrisch, L. Bieker-Walz, J. Erdmann, Y.-P. Flötteröd, R. Hilbrich, L. Lücken, J. Rummel, P. Wagner, E. Wießner, „Microscopic Traffic Simulation using SUMO”, *21st IEEE ITSC*, 2018, pp. 2575–2582, doi:10.1109/ITSC.2018.8569938. Eclipse SUMO 1.28.0, doi:10.5281/zenodo.23219601, https://sumo.dlr.de, licență EPL-2.0 OR GPL-2.0-or-later (licența secundară desemnată, https://github.com/eclipse-sumo/sumo/blob/main/NOTICE.md). Același NOTICE.md exclude aplicațiile client TraCI din lucrările derivate; pentru distribuirea unui pachet combinat cu SUMO se folosește opțiunea GPL-2.0-or-later, compatibilă cu AGPL-3.0.
 [^ppo]: J. Schulman, F. Wolski, P. Dhariwal, A. Radford, O. Klimov, „Proximal Policy Optimization Algorithms”, arXiv:1707.06347, 2017.
 [^sb3]: A. Raffin, A. Hill, A. Gleave, A. Kanervisto, M. Ernestus, N. Dormann, „Stable-Baselines3: Reliable Reinforcement Learning Implementations”, *JMLR* 22(268):1–8, 2021, https://jmlr.org/papers/v22/20-1364.html. Cod MIT; Gymnasium (Farama Foundation), MIT.
 [^dqn]: V. Mnih et al., „Human-level control through deep reinforcement learning”, *Nature* 518:529–533, 2015, doi:10.1038/nature14236.
@@ -1137,9 +1294,26 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^nielsen]: J. Nielsen, R. Molich, „Heuristic evaluation of user interfaces”, CHI '90, doi:10.1145/97243.97281; J. Nielsen, „Enhancing the explanatory power of usability heuristics”, CHI '94, doi:10.1145/191666.191729; https://www.nngroup.com/articles/ten-usability-heuristics/.
 [^shneiderman]: B. Shneiderman, C. Plaisant, M. Cohen, S. Jacobs, N. Elmqvist, N. Diakopoulos, *Designing the User Interface*, ed. a 6-a, Pearson, 2016; https://www.cs.umd.edu/users/ben/goldenrules.html.
 [^flask]: Pallets, *Flask*, https://flask.palletsprojects.com (BSD-3-Clause).
-[^barlow]: J. Tribby, *Barlow* (familie de fonturi), Google Fonts, https://fonts.google.com/specimen/Barlow (SIL OFL 1.1).
-[^google-ai]: Google, modulul de asistență AI integrat în browserul Chrome, folosit pentru ciorna proiectului până la 18.10.2026.
-[^claude]: Anthropic, *Claude* (model Claude Opus 5.5, ID `claude-opus-5-5`), asistent AI generativ, rulat prin *Claude Code* (aplicația desktop Claude), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni de utilizare: https://www.anthropic.com/legal. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13).
+[^barlow]: J. Tribby, *Barlow* și *Barlow Semi Condensed* (familii de fonturi), Google Fonts, https://fonts.google.com/specimen/Barlow (SIL OFL 1.1, https://openfontlicense.org). Sunt legate din Google Fonts, nu incluse în depozit.
+[^google-ai]: Google, modulul de asistență AI integrat în browserul Chrome, folosit pentru ciorna proiectului până la 18.10.2026. Termenii Google, https://policies.google.com/terms, secțiunea „Your content”: „Some of our services allow you to generate original content. Google won't claim ownership over that content.”
+[^claude]: Anthropic, *Claude* (model Claude Opus 5.5, ID `claude-opus-5-5`), asistent AI generativ, rulat prin *Claude Code* (aplicația desktop Claude), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni: Consumer Terms, § 4 („we assign to you all our right, title, and interest (if any) in Outputs”), https://www.anthropic.com/legal/consumer-terms; Usage Policy, care interzice predarea lucrărilor asistate de AI fără permisiune sau atribuire („Plagiarize or submit AI-assisted work without proper permission or attribution”), https://www.anthropic.com/legal/aup; accesate 26.10.2026. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13).
+[^agpl]: Free Software Foundation, *GNU Affero General Public License*, versiunea 3, 19.11.2007, https://www.gnu.org/licenses/agpl-3.0.html; textul integral în `LICENSE`.
+[^ccby]: Creative Commons, *Attribution 4.0 International (CC BY 4.0)*, https://creativecommons.org/licenses/by/4.0/legalcode; textul în `LICENSES/CC-BY-4.0.txt`.
+[^ultralytics-licenta]: Ultralytics, „Ultralytics Licensing”, https://www.ultralytics.com/license, accesat 26.10.2026: „Open-source your entire project under AGPL-3.0” sau licența Enterprise, pentru folosirile care nu respectă AGPL-3.0.
+[^osmf-atribuire]: OpenStreetMap Foundation, *Attribution Guidelines*, 2021, https://osmfoundation.org/wiki/Licence/Attribution_Guidelines (atribuirea în baze de date, în publicații tipărite și PDF, pentru modele de învățare automată).
+[^webcam-termeni]: Webcam România, „Termeni și condiții”, actualizați în mai 2026, https://webcamromania.ro/termeni-si-conditii/, accesat 26.10.2026. Secțiunea 2: site-ul nu deține drepturi asupra fluxurilor video transmise, care aparțin operatorilor camerelor. Secțiunea 4: „Fluxurile video aparțin proprietarilor originali”; reproducerea conținutului site-ului fără acordul scris al administratorului nu este permisă, iar citările scurte cu link către sursă sunt permise doar în condițiile uzanței jurnalistice. Secțiunea 12: contactul se face prin formularul de contact.
+[^legea8]: Legea nr. 8/1996 privind dreptul de autor și drepturile conexe, republicată, forma consolidată la 01.05.2022 (inclusiv modificările aduse de Legea nr. 69/2022): art. 9 lit. f), art. 35, art. 36^1, art. 36^2, art. 120; https://legislatie.just.ro/Public/DetaliiDocumentAfis/259087.
+[^infosoc]: Directiva 2001/29/CE privind armonizarea anumitor aspecte ale dreptului de autor și drepturilor conexe în societatea informațională, art. 5 alin. (1), https://eur-lex.europa.eu/eli/dir/2001/29/oj. Reutilizare EUR-Lex conform Deciziei 2011/833/UE.
+[^dsm]: Directiva (UE) 2019/790 privind dreptul de autor și drepturile conexe pe piața unică digitală, art. 3–4, https://eur-lex.europa.eu/eli/dir/2019/790/oj. Reutilizare EUR-Lex conform Deciziei 2011/833/UE.
+[^gpl-faq]: Free Software Foundation, „Frequently Asked Questions about the GNU Licenses”, „In what cases is the output of a GPL program covered by the GPL too?”, https://www.gnu.org/licenses/gpl-faq.html#WhatCaseIsOutputGPL.
+[^pytorch]: A. Paszke et al., „PyTorch: An Imperative Style, High-Performance Deep Learning Library”, NeurIPS 2019; https://github.com/pytorch/pytorch, versiunea 2.14 (licență BSD-3-Clause; expresia din metadatele pachetului: Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT).
+[^pydata]: C. R. Harris et al., „Array programming with NumPy”, *Nature* 585:357–362, 2020, doi:10.1038/s41586-020-2649-2 (BSD-3-Clause); pandas, https://pandas.pydata.org (BSD-3-Clause); P. Virtanen et al., „SciPy 1.0”, *Nature Methods* 17:261–272, 2020, doi:10.1038/s41592-019-0686-2 (BSD-3-Clause); J. D. Hunter, „Matplotlib: A 2D Graphics Environment”, *Computing in Science & Engineering* 9(3):90–95, 2007, doi:10.1109/MCSE.2007.55 (Matplotlib License, de tip PSF, https://matplotlib.org/stable/project/license.html).
+[^markdown-py]: Python-Markdown 3.7, https://github.com/Python-Markdown/markdown (BSD-3-Clause).
+[^python]: Python Software Foundation, *Python 3.12*, https://docs.python.org/3/license.html (PSF-2.0).
+[^streetview]: Google, Street View (Google Maps), consultat pe 23.10.2026 doar pentru verificarea vizuală a rețelei. Termeni: Google Maps/Google Earth Additional Terms of Service, https://www.google.com/help/terms_maps/. Din Street View nu s-a preluat nicio informație în rețeaua OSM/SUMO și nu se publică nicio captură.
+[^windy]: Windy.com, Webcams, https://www.windy.com/webcams, consultat 21.10.2026; nefolosit (afișează aceeași cameră Webcam România).
+[^meteoblue]: meteoblue, webcam-uri, https://www.meteoblue.com, consultat 21.10.2026; nefolosit (afișează aceeași cameră Webcam România).
+[^youtube]: YouTube, transmisiile „Webcam România – Piața Victoriei” și „Calea Victoriei City Cam”, consultate 21.10.2026; nefolosite. Termeni: https://www.youtube.com/t/terms.
 
 ## Anexa A. Fișierele de rezultate (`docs/rezultate/`)
 
