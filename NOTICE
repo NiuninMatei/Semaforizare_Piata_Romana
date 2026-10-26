@@ -52,8 +52,10 @@ Excluse din oricare dintre licențele de mai sus (rămân ale titularilor lor):
   și Google, ghidurile OSMF), preluate cu indicarea sursei (art. 35 din Legea nr. 8/1996);
 - subseturile de fonturi Microsoft încorporate în docs/DOCUMENTATIE.pdf;
 - mărcile comerciale menționate;
-- orice imagine din camera Piața Romană din versiunile mai vechi aflate în istoricul git: drepturile
-  aparțin operatorului camerei; aceste versiuni se elimină la cererea titularului.
+- orice imagine din camera Piața Romană: drepturile aparțin operatorului camerei. Capturile publicate
+  anterior au fost eliminate din tot istoricul depozitului pe 26.10.2026 (docs/DOCUMENTATIE.md, § 12.5;
+  docs/corespondenta_commituri.txt); eventualele copii păstrate de terți nu sunt acoperite de licențele
+  proiectului.
 
 Fără garanție: vezi AGPL-3.0 §15–16, ODbL 1.0 §7–8 și CC BY 4.0 §5.
 
@@ -180,9 +182,9 @@ https://webcamromania.ro/termeni-si-conditii/).
 Fluxul este analizat în memorie; pentru previzualizarea locală se suprascrie continuu un singur cadru
 estompat; capturile și clipurile de calibrare se păstrează local, temporar, și nu se publică.
 Numărătorile sunt fapte agregate. Traiectoriile (doar ale vehiculelor) sunt fără imagini și fără
-identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu mai sunt incluse în
-versiunea curentă, ci doar numărătorile agregate; versiunile din istoricul git dinainte de 26.10.2026
-le conțin încă și se elimină numai prin rescrierea istoricului. Versiunea curentă a depozitului nu conține imagini sau video din cameră. Proiectul nu este
+identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu sunt publicate, ci doar
+numărătorile agregate (versiunile vechi care le conțineau au fost eliminate din istoric pe 26.10.2026).
+Depozitul nu conține imagini sau video din cameră. Proiectul nu este
 afiliat cu Webcam România sau cu operatorul camerei și nu este susținut de aceștia.
 
 

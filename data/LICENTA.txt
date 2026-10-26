@@ -23,8 +23,8 @@ Aceste date NU sunt acoperite de licența de cod din fișierul LICENSE (GNU AGPL
    declară că nu deține drepturi asupra fluxurilor.
    Datele NU conțin imagini, video, numere de înmatriculare sau ID-uri de urmărire. Traiectoriile
    (doar ale vehiculelor) sunt fără imagini și fără identificatori (pseudonimizate); traiectoriile
-   individuale ale pietonilor nu mai sunt incluse în versiunea curentă, ci doar numărătorile agregate;
-   versiunile din istoricul git dinainte de 26.10.2026 le conțin încă. O licență deschisă nu face
+   individuale ale pietonilor nu sunt publicate, ci doar numărătorile agregate (versiunile vechi care
+   le conțineau au fost eliminate din istoricul depozitului pe 26.10.2026). O licență deschisă nu face
    publicabile datele personale: confidențialitatea este tratată în docs/DOCUMENTATIE.md, § 4.5.
    Limitări de calitate: docs/DOCUMENTATIE.md, § 4.3 și § 10.
    Proiectul nu este afiliat cu Webcam România sau cu operatorul camerei.
