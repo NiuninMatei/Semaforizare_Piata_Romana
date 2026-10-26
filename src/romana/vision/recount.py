@@ -1,14 +1,17 @@
 """Renumărarea din jurnalul de traiectorii, cu zonele curente din config/camera.json.
 
-Modulul de viziune salvează, pe lângă numărători, traiectoriile anonime (clasă + punctele de
-contact cu solul, normalizate). Astfel zonele pot fi recalibrate după colectare, iar
-numărătorile se refac fără a mai avea nevoie de imagini (care nu se păstrează – GDPR).
+Modulul de viziune salvează, pe lângă numărători, traiectoriile fără imagini și fără identificatori
+persistenți (clasă + punctele de contact cu solul, normalizate) în jurnalul local data/trajectories_brute
+(nepublicat). Astfel zonele pot fi recalibrate după colectare, iar numărătorile se refac fără a mai avea
+nevoie de imagini. În data/trajectories se publică doar traiectoriile vehiculelor, deja reunite (`--publica`);
+din ele se refac numărătorile de vehicule (cele de pietoni există doar agregat, în data/counts).
 
 Exemple:
-  python -m romana.vision.recount                                   # toate zilele din data/trajectories
+  python -m romana.vision.recount                                   # toate zilele (jurnalul local, altfel cel publicat)
   python -m romana.vision.recount --zi 2026-10-21 --interval 900
   python -m romana.vision.recount --zi 2026-10-21 --directii        # verificarea sensului de mers pe zone
   python -m romana.vision.recount --flux cadru.jpg                   # câmpul de mișcare, pentru calibrarea zonelor
+  python -m romana.vision.recount --zi 2026-10-26 --publica          # jurnalul publicabil (doar vehicule)
 """
 from __future__ import annotations
 
@@ -21,7 +24,7 @@ from pathlib import Path
 
 import numpy as np
 
-from romana.common import COUNTS_DIR, TRAJ_DIR, load_json
+from romana.common import COUNTS_DIR, TRAJ_DIR, TRAJ_RAW_DIR, load_json
 from romana.vision.od_counter import PEDESTRIAN, ODCounter, Params, classify, load_zones, write_csv
 
 
@@ -138,6 +141,24 @@ def recount(files: list[Path], zones, interval_s: int, out_dir: Path, params: Pa
     return recs
 
 
+def publish(src: Path, dst: Path) -> None:
+    """Jurnalul publicabil al unei zile: traiectoriile reunite ale vehiculelor (fără pietoni – aceștia apar în
+    date doar agregat, ca numărători pe treceri), în același format ca jurnalul local."""
+    tracks = stitch([(vt, pts) for _, vt, pts in read_trajectories([src])])
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    n = 0
+    with gzip.open(dst, "wt", encoding="utf-8") as f:
+        for vt, pts in sorted(tracks, key=lambda r: r[1][0][0]):
+            if vt == PEDESTRIAN:
+                continue
+            t0 = pts[0][0]
+            f.write(json.dumps({"t0": round(t0, 2), "tip": vt,
+                                "p": [[round(t - t0, 2), round(x, 4), round(y, 4)] for t, x, y in pts]},
+                               separators=(",", ":")) + "\n")
+            n += 1
+    print(f"[publicare] {src.name}: {n} traiectorii de vehicule → {dst}")
+
+
 def directions(files: list[Path], zones, center=(0.55, 0.52)) -> None:
     """Pentru fiecare zonă de vehicule: câte traiectorii se apropie / se îndepărtează de centrul pieței."""
     stats = defaultdict(lambda: [0, 0])
@@ -214,12 +235,31 @@ def main(argv=None) -> None:
     ap.add_argument("--directii", action="store_true", help="doar verificarea sensului de mers pe zone")
     ap.add_argument("--flux", metavar="IMAGINE.jpg",
                     help="desenează câmpul de mișcare și capetele traiectoriilor peste un cadru (fișier .jpg)")
+    ap.add_argument("--publica", action="store_true",
+                    help="scrie jurnalul publicabil în data/trajectories: doar vehiculele, traiectorii deja reunite")
+    ap.add_argument("--fara-reunire", action="store_true",
+                    help="nu reuni fragmentele (implicit pentru jurnalul publicat, care e deja reunit)")
     args = ap.parse_args(argv)
-    files = sorted(TRAJ_DIR.glob("traiectorii_*.jsonl.gz"))
+    # pentru fiecare zi: jurnalul complet (local) are prioritate; fără el, jurnalul publicat (doar vehicule, deja reunit)
+    days = sorted({f.name for d in (TRAJ_RAW_DIR, TRAJ_DIR) for f in d.glob("traiectorii_*.jsonl.gz")})
     if args.zi:
-        files = [f for f in files if any(d in f.name for d in args.zi)]
-    if not files:
-        raise SystemExit(f"Nu există jurnale de traiectorii în {TRAJ_DIR}.")
+        days = [n for n in days if any(d in n for d in args.zi)]
+    raw = [TRAJ_RAW_DIR / n for n in days if (TRAJ_RAW_DIR / n).exists()]
+    pub = [TRAJ_DIR / n for n in days if not (TRAJ_RAW_DIR / n).exists()]
+    if not raw and not pub:
+        raise SystemExit(f"Nu există jurnale de traiectorii în {TRAJ_RAW_DIR} sau {TRAJ_DIR}.")
+    if args.publica:                      # doar din jurnalul complet: cel publicat e deja reunit și fără pietoni
+        if not raw:
+            raise SystemExit(f"--publica cere jurnalul local din {TRAJ_RAW_DIR}.")
+        for f in raw:
+            publish(f, TRAJ_DIR / f.name)
+        return
+    if raw and pub:
+        raise SystemExit("Zilele cerute amestecă jurnale locale și publicate; renumărați-le separat (--zi).")
+    if pub and Path(args.out).resolve() == COUNTS_DIR.resolve():
+        raise SystemExit("Jurnalul publicat nu conține pietonii: renumărarea lui ar suprascrie data/counts fără pietoni. "
+                         "Dați un alt dosar cu --out (numărătorile de vehicule trebuie să coincidă cu cele din data/counts).")
+    files = raw or pub
     zones = load_zones(cam)
     if args.directii:
         directions(files, zones)
@@ -231,7 +271,11 @@ def main(argv=None) -> None:
         flow_image(files, zones, bg, Path(args.flux).with_name(Path(args.flux).stem + "_flux.jpg"))
         return
     p = Params(capat_s=cam.get("capat_s", 1.5))
-    recs = recount(files, zones, args.interval, Path(args.out), p)
+    for k, v in cam.get("parametri_numarare", {}).items():
+        setattr(p, k, v)
+    recs = recount(files, zones, args.interval, Path(args.out), p, do_stitch=bool(raw) and not args.fara_reunire)
+    if pub:
+        print("[renumărare] din jurnalul publicat: doar vehiculele (pietonii sunt agregați în data/counts)")
     n_in = sum(sum(r["in"].values()) for r in recs)
     n_od = sum(sum(r["od"].values()) for r in recs)
     n_p = sum(sum(r["pietoni"].values()) for r in recs)

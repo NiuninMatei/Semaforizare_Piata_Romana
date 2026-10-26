@@ -25,7 +25,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from romana.common import COUNTS_DIR, OUTPUT_DIR, TRAJ_DIR, load_json
+from romana.common import COUNTS_DIR, OUTPUT_DIR, TRAJ_RAW_DIR, load_json
 from romana.vision.od_counter import PERSON, VEHICLE_CLASSES, ODCounter, is_rider, load_zones
 from romana.vision.stream import FrameSource
 
@@ -134,7 +134,7 @@ def main(argv=None) -> None:
     ap.add_argument("--mqtt", default=None, help="gazdă broker MQTT (ex. localhost)")
     ap.add_argument("--out", default=str(COUNTS_DIR))
     ap.add_argument("--fara-traiectorii", action="store_true",
-                    help="nu salva jurnalul anonim de traiectorii (data/trajectories) pentru renumărare")
+                    help="nu salva jurnalul local de traiectorii (data/trajectories_brute) pentru renumărare")
     args = ap.parse_args(argv)
 
     zones = load_zones(cam)
@@ -150,7 +150,9 @@ def main(argv=None) -> None:
     clock = time.time if src.is_live else (lambda: sim_time[0])
     counter = ODCounter(zones, interval_s=args.interval, lost_after_frames=lost_frames,
                         out_dir=Path(args.out), clock=clock, capat_s=cam.get("capat_s", 1.5),
-                        traj_dir=None if args.fara_traiectorii else TRAJ_DIR)
+                        traj_dir=None if args.fara_traiectorii else TRAJ_RAW_DIR)
+    for k, v in cam.get("parametri_numarare", {}).items():   # regulile de numărare din camera.json
+        setattr(counter.p, k, v)
     mqtt = MqttOut(args.mqtt) if args.mqtt else None
     LIVE_DIR.mkdir(parents=True, exist_ok=True)
     t_end = time.time() + args.minutes * 60 if args.minutes else None

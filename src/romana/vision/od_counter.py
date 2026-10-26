@@ -21,15 +21,23 @@ fiind folosită live și la renumărarea din jurnalul de traiectorii (`vision/re
     provin doar din distribuția a priori, ~3%).
 O traiectorie completă produce o mișcare de viraj (origine → destinație); traiectoriile
 fragmentate (ocluzii, vehicule pierdute) contribuie doar la numărătorile pe braț.
-Un pieton este numărat o singură dată pe fiecare trecere pe care a fost văzut în cel puțin
-`min_crossing_frames` cadre și pe care s-a deplasat cel puțin `min_crossing_move` (fracțiune
-din lățimea cadrului) – cine doar așteaptă la bordură nu este numărat. Persoanele de pe
-biciclete/motociclete sunt excluse înainte, în `run_vision`, ca să nu fie numărate de două ori.
+Un pieton este numărat o singură dată pe fiecare trecere, dacă (a) a traversat-o: a fost văzut
+pe zebră în cel puțin `min_crossing_frames` cadre și a înaintat pe axa trecerii (`axa`, de la o
+bordură la cealaltă) cel puțin `ped_traversare_fractie` din lungimea ei (fără axă: o deplasare de
+`min_crossing_move` din lățimea cadrului) – cine merge pe lângă zebră nu contează; sau (b) a
+așteptat la una din bordurile ei (zonele `asteptare`) între `ped_asteptare_s` și
+`ped_asteptare_max_s` secunde – cererea pentru faza de pietoni, inclusiv cei pe care detectorul
+îi pierde apoi pe zebră, printre vehicule. Obiectele statice confundate cu persoane și cei care
+stau pe loc (stația de autobuz, chioșcul) sunt excluși prin limita de timp și prin deplasarea
+minimă a traiectoriei (`ped_deplasare_min`). Persoanele de pe biciclete/motociclete sunt excluse
+înainte, în `run_vision`, ca să nu fie numărate de două ori.
 
-Confidențialitate: nu se păstrează imagini. Jurnalul de traiectorii (opțional) conține doar
-clasa obiectului și pozițiile punctului de contact cu solul, în coordonate normalizate, cu
-timpul relativ – fără imagini, fără numere de înmatriculare, fără identificatori persistenți
-(ID-ul de urmărire este temporar și nu se salvează).
+Confidențialitate: nu se înregistrează video. Jurnalul de traiectorii (opțional, local, în
+data/trajectories_brute) conține doar clasa obiectului, momentul de început și pozițiile punctului de
+contact cu solul, în coordonate normalizate – fără imagini, fără numere de înmatriculare, fără
+identificatori persistenți (ID-ul de urmărire este temporar și nu se salvează). Traiectoriile sunt
+pseudonimizate, nu anonime; de aceea se publică doar cele ale vehiculelor (`recount --publica`), iar
+pietonii apar în datele publice numai agregat.
 """
 from __future__ import annotations
 
@@ -60,9 +68,12 @@ class Zone:
     color: tuple = (0, 255, 0)
     capat: bool = False          # contează doar la începutul (intrare) / sfârșitul (ieșire) traiectoriei
     sens: tuple | None = None    # direcția de mers cerută în imagine (dx, dy); ±60°
+    asteptare: list = field(default_factory=list)   # trecere: zonele de așteptare de la borduri (poligoane Nx2)
+    axa: tuple | None = None     # trecere: axa de la o bordură la cealaltă (x0, y0, x1, y1), normalizată
     _poly_px: np.ndarray | None = None
     _size: tuple | None = None
     _poly_f: np.ndarray | None = None
+    _wait_f: list | None = None
 
     def poly_px(self, w: int, h: int) -> np.ndarray:
         if self._size != (w, h):
@@ -77,6 +88,11 @@ class Zone:
         if self._poly_f is None:
             self._poly_f = self.poly_norm.astype(np.float32)
         return cv2.pointPolygonTest(self._poly_f, (float(x), float(y)), False) >= 0
+
+    def in_waiting_area(self, x: float, y: float) -> bool:
+        if self._wait_f is None:
+            self._wait_f = [np.asarray(p, np.float32) for p in self.asteptare]
+        return any(cv2.pointPolygonTest(p, (float(x), float(y)), False) >= 0 for p in self._wait_f)
 
 
 def is_rider(person_box, vehicle_boxes, margin: float = 0.25) -> bool:
@@ -95,7 +111,9 @@ def load_zones(cam_cfg: dict) -> list[Zone]:
     for z in cam_cfg["zones"]:
         zones.append(Zone(z["id"], z["arm"], z["rol"], np.array(z["poligon"], dtype=float),
                           tuple(z.get("culoare", (0, 255, 0))), bool(z.get("capat_traiectorie", False)),
-                          tuple(z["sens"]) if z.get("sens") else None))
+                          tuple(z["sens"]) if z.get("sens") else None,
+                          [np.array(p, dtype=float) for p in z.get("asteptare", [])],
+                          tuple(z["axa"]) if z.get("axa") else None))
     return zones
 
 
@@ -127,6 +145,14 @@ class Params:
     capat_min_cadre: int = 0
     capat_min_deplasare: float = 0.0    # fracțiune din lățimea cadrului, proiectată pe sensul zonei
     capat_min_fractie: float = 0.0      # fracțiune din lungimea zonei în sensul străzii (independentă de perspectivă)
+    # pietoni (vezi docstring-ul modulului): traversare pe axa trecerii sau așteptare la bordură
+    ped_traversare_fractie: float = 0.3  # fracțiune din lungimea axei (dacă trecerea are `axa`)
+    ped_asteptare_s: float = 0.0         # 0 = așteptarea nu se numără (comportamentul vechi)
+    ped_asteptare_max_s: float = 120.0
+    ped_deplasare_min: float = 0.01      # deplasarea minimă a întregii traiectorii (fracțiune din lățime)
+    # live: o traiectorie pierdută (ocluzie) e lipită de urmașa ei încă activă, ca în `recount.stitch`
+    reunire_s: float = 0.0               # golul maxim în secunde (0 = fără reunire live)
+    reunire_raza: float = 0.02
 
 
 def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
@@ -137,14 +163,27 @@ def classify(vtype: str, pts: list, zones: list[Zone], p: Params) -> dict:
     pentru pietoni."""
     if vtype == PEDESTRIAN:
         out = []
+        xs, ys = [x for _, x, _ in pts], [y * p.aspect for _, _, y in pts]
+        span = ((max(xs) - min(xs)) ** 2 + (max(ys) - min(ys)) ** 2) ** 0.5
         for z in zones:
             if z.role != "trecere":
                 continue
             inside = [(x, y * p.aspect) for _, x, y in pts if z.contains_norm(x, y)]
+            crossed = False
             if len(inside) >= p.min_crossing_frames:
                 (x0, y0), (x1, y1) = inside[0], inside[-1]
-                if ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5 >= p.min_crossing_move:
-                    out.append((z.arm, z.id))
+                if z.axa:
+                    ax, ay = z.axa[2] - z.axa[0], (z.axa[3] - z.axa[1]) * p.aspect
+                    n = (ax * ax + ay * ay) ** 0.5
+                    crossed = n > 0 and abs((x1 - x0) * ax + (y1 - y0) * ay) / n >= p.ped_traversare_fractie * n
+                else:
+                    crossed = ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5 >= p.min_crossing_move
+            waited = False
+            if not crossed and p.ped_asteptare_s > 0 and z.asteptare and span >= p.ped_deplasare_min:
+                tw = [t for t, x, y in pts if z.in_waiting_area(x, y)]
+                waited = len(tw) >= 2 and p.ped_asteptare_s <= tw[-1] - tw[0] <= p.ped_asteptare_max_s
+            if crossed or waited:
+                out.append((z.arm, z.id))
         return {"treceri": out}
     t_first, t_last = pts[0][0], pts[-1][0]
     first, last = {}, {}                       # zonă -> primul / ultimul moment în zonă
@@ -280,9 +319,40 @@ class ODCounter:
             self._close_interval(now)
         return events
 
+    def _successor(self, st: TrackState) -> TrackState | None:
+        """Traiectoria activă care continuă `st` după o ocluzie (aceleași criterii ca `recount.stitch`)."""
+        te, xe, ye = st.pts[-1]
+        seg = [q for q in st.pts if q[0] >= te - 1.0]
+        dt0 = seg[-1][0] - seg[0][0]
+        ve = np.array([seg[-1][1] - seg[0][1], seg[-1][2] - seg[0][2]]) / dt0 if dt0 > 1e-3 else np.zeros(2)
+        ped = st.vtype == PEDESTRIAN
+        best, best_cost = None, None
+        for o in self.tracks.values():
+            ts, xs, ys = o.pts[0]
+            dt = ts - te
+            if not (0 < dt <= self.p.reunire_s) or (o.vtype == PEDESTRIAN) != ped:
+                continue
+            pred = np.array([xe, ye]) + ve * dt
+            d = np.hypot(xs - pred[0], (ys - pred[1]) * self.p.aspect)
+            r = self.p.reunire_raza * (0.5 if ped else 1.0) + 0.3 * np.hypot(ve[0] * dt, ve[1] * dt * self.p.aspect)
+            if d > r:
+                continue
+            cost = d / r + dt / self.p.reunire_s
+            if best is None or cost < best_cost:
+                best, best_cost = o, cost
+        return best
+
     def _finalize(self, st: TrackState) -> dict | None:
         if len(st.pts) < self.p.min_track_frames:
             return None
+        if self.p.reunire_s > 0:
+            nxt = self._successor(st)
+            if nxt is not None:                  # clasificarea se face o singură dată, pe traiectoria lipită
+                nxt.pts = st.pts + nxt.pts
+                nxt.cls_votes.update(st.cls_votes)
+                nxt.first_seen = st.first_seen
+                nxt.origin = nxt.origin or st.origin
+                return None
         vt = st.cls_votes.most_common(1)[0][0]
         if self.traj_dir is not None:
             log_trajectory(self.traj_dir, vt, st.pts)
@@ -353,7 +423,8 @@ def write_csv(rec: dict, out_dir: Path) -> None:
 
 
 def log_trajectory(traj_dir: Path, vtype: str, pts: list) -> None:
-    """Jurnal anonim: clasa + punctele de contact cu solul (normalizate) + timpul relativ."""
+    """Jurnalul local (fără imagini, fără identificatori persistenți): clasa, momentul de început și punctele de
+    contact cu solul (normalizate), cu timpul relativ la început. Nu se publică; vezi `recount --publica`."""
     traj_dir.mkdir(parents=True, exist_ok=True)
     t0 = pts[0][0]
     day = time.strftime("%Y-%m-%d", time.localtime(t0))
