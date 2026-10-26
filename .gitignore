@@ -202,5 +202,4 @@ models/viziune/
 data/trajectories_brute/
 # TEMPORAR: jurnalele BRUTE (cu pietoni) scrise încă în data/trajectories de procesul run_vision pornit cu codul vechi;
 # se mută în data/trajectories_brute, se publică prin `recount --publica`, apoi aceste rânduri se scot
-data/trajectories/traiectorii_2026-10-26.jsonl.gz
 data/trajectories/traiectorii_2026-10-27.jsonl.gz

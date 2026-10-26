@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+
+<!-- generated on 2026-10-27 00:35:01.622918 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<configuration>
+    <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate.rou.xml"/>
+    <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-26_pranz\viraje_passenger.xml"/>
+    <output-file value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-26_pranz\passenger.rou.xml"/>
+    <mismatch-output value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-26_pranz\mismatch_passenger.xml"/>
+    <prefix value="passenger_"/>
+    <attributes value="type=&quot;passenger&quot; departLane=&quot;best&quot;"/>
+    <turn-max-gap value="25"/>
+    <optimize value="full"/>
+</configuration>
+-->
+
+<data>
+    <interval id="deficit" begin="0.0" end="900.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="120" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238380#1" measuredCount="142" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="778823268#2" measuredCount="8" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="125445934#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238385#0" measuredCount="8" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="44499684#2" measuredCount="181" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238380#1" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="778823268#2" measuredCount="20" deficit="20" GEH="12.65"/>
+        <edgeRelation from="1320256482" to="125445934#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238385#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="44499684#2" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="668307633#2" measuredCount="43" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="778823268#2" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="125445934#0" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="119238385#0" measuredCount="47" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="44499684#2" measuredCount="19" deficit="19" GEH="12.33"/>
+        <edgeRelation from="-778823268#2" to="668307633#2" measuredCount="57" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238380#1" measuredCount="150" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238385#0" measuredCount="6" deficit="0" GEH="0.00"/>
+    </interval>
+    <interval id="deficit" begin="900.0" end="1800.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="62" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238380#1" measuredCount="147" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="778823268#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238385#0" measuredCount="6" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="44499684#2" measuredCount="83" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238380#1" measuredCount="27" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="778823268#2" measuredCount="6" deficit="6" GEH="6.93"/>
+        <edgeRelation from="1320256482" to="125445934#0" measuredCount="4" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238385#0" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="44499684#2" measuredCount="2" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="668307633#2" measuredCount="43" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="778823268#2" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="119238385#0" measuredCount="32" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="44499684#2" measuredCount="16" deficit="16" GEH="11.31"/>
+        <edgeRelation from="-778823268#2" to="668307633#2" measuredCount="37" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238380#1" measuredCount="126" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="778823268#2" measuredCount="1" deficit="1" GEH="2.83"/>
+        <edgeRelation from="-778823268#2" to="119238385#0" measuredCount="11" deficit="0" GEH="0.00"/>
+    </interval>
+    <interval id="deficit" begin="1800.0" end="2700.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="104" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238380#1" measuredCount="171" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="778823268#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="125445934#0" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238385#0" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="44499684#2" measuredCount="182" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238380#1" measuredCount="6" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="778823268#2" measuredCount="5" deficit="5" GEH="6.32"/>
+        <edgeRelation from="1320256482" to="125445934#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238385#0" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="44499684#2" measuredCount="5" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="668307633#2" measuredCount="60" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="778823268#2" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="119238385#0" measuredCount="40" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="44499684#2" measuredCount="18" deficit="18" GEH="12.00"/>
+        <edgeRelation from="-778823268#2" to="668307633#2" measuredCount="35" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238380#1" measuredCount="172" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="125445934#0" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238385#0" measuredCount="4" deficit="0" GEH="0.00"/>
+    </interval>
+    <interval id="deficit" begin="2700.0" end="3600.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="128" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238380#1" measuredCount="167" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="778823268#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="125445934#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238385#0" measuredCount="6" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="44499684#2" measuredCount="170" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238380#1" measuredCount="19" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="778823268#2" measuredCount="4" deficit="4" GEH="5.66"/>
+        <edgeRelation from="1320256482" to="125445934#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="1320256482" to="119238385#0" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="44499684#2" measuredCount="12" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="668307633#2" measuredCount="36" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="778823268#2" measuredCount="3" deficit="0" GEH="0.00"/>
+        <edgeRelation from="232079775#2" to="119238385#0" measuredCount="22" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="44499684#2" measuredCount="21" deficit="21" GEH="12.96"/>
+        <edgeRelation from="-778823268#2" to="668307633#2" measuredCount="52" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238380#1" measuredCount="137" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238385#0" measuredCount="10" deficit="0" GEH="0.00"/>
+    </interval>
+</data>

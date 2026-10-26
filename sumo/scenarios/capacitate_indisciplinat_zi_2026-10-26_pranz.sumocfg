@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+<configuration>
+  <input>
+    <net-file value="../net/romana.net.xml" />
+    <route-files value="../demand/zi_2026-10-26_pranz/bicycle.rou.xml,../demand/zi_2026-10-26_pranz/bus.rou.xml,../demand/zi_2026-10-26_pranz/motorcycle.rou.xml,../demand/zi_2026-10-26_pranz/passenger.rou.xml,../demand/zi_2026-10-26_pranz/truck.rou.xml,../demand/zi_2026-10-26_pranz/fond.rou.xml,../demand/zi_2026-10-26_pranz/pietoni.rou.xml" />
+    <additional-files value="../demand/vtypes_capacitate_indisciplinat.add.xml" />
+  </input>
+  <time>
+    <begin value="0" />
+    <end value="4500" />
+  </time>
+  <processing>
+    <time-to-teleport value="300" />
+    <ignore-route-errors value="true" />
+  </processing>
+  <report>
+    <no-step-log value="true" />
+    <duration-log.statistics value="true" />
+  </report>
+  <gui_only>
+    <gui-settings-file value="../net/view.xml" />
+  </gui_only>
+</configuration>
