@@ -16,4 +16,4 @@ matplotlib>=3.8
 pyproj>=3.6
 paho-mqtt>=2.0              # publicare IoT (EPL-2.0 OR BSD-3-Clause/EDL-1.0)
 flask>=3.0                  # dashboard operator
-markdown==3.7
+markdown==3.8.1
