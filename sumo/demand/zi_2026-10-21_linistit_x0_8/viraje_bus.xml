@@ -8,7 +8,6 @@
     <edgeRelation from="232079775#2" to="668307633#2" count="1" />
     <edgeRelation from="-778823268#2" to="668307633#2" count="1" />
     <edgeRelation from="-778823268#2" to="119238380#1" count="1" />
-    <edgeRelation from="-778823268#2" to="119238385#0" count="1" />
   </interval>
   <interval id="i900" begin="900" end="1800">
     <edgeRelation from="448266581#1" to="119238380#1" count="1" />
