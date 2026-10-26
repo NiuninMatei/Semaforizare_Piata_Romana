@@ -69,6 +69,11 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   scor_gt.py. Parțial: S0 prinde Magheru 0,84, Dacia est ~1,0, Dacia vest ~0,25 (detecția în fundal); zona hașurată
   din stânga-jos NU e trecere. Test în curs: offline_clip1_2560 (imgsz 2560). Apoi: factori de corecție pe braț,
   renumărare, scenarii, reevaluare, documentație, README (scratchpad\organizare\README_propus.md).
+  17:50: rulează local (fără consum de limită) zone_noi\ruleaza_offline.bat: clipurile 1–3 la imgsz 2560 + clipul 3
+  la 1600 (jurnale log_c*.txt); 2560 = ~808 s / clip (≈1,3 cadre/s – prea lent pentru live fără alt hardware).
+  Atenție: viziune_offline.py trebuie să seteze și rv.TRAJ_RAW_DIR (corectat); fișierul amestecat de reluări a fost
+  mutat în zone_noi\reluari_amestecate_2026-10-26.jsonl.gz (nu sunt date live). E-mail Webcam România trimis de autor;
+  tichet GitHub Support #4909163 deschis.
 - Pași posibili: reantrenarea agenților pe scenariile „doar intrări” și cu participanți indisciplinați; adnotarea a
   2–3 minute de video pentru a fixa nivelul cererii între cele două margini.
 ## Stare anterioară (22.10.2026, 16:10) – Bornele 7 și 9 încheiate
