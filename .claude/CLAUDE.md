@@ -74,6 +74,15 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   Atenție: viziune_offline.py trebuie să seteze și rv.TRAJ_RAW_DIR (corectat); fișierul amestecat de reluări a fost
   mutat în zone_noi\reluari_amestecate_2026-10-26.jsonl.gz (nu sunt date live). E-mail Webcam România trimis de autor;
   tichet GitHub Support #4909163 deschis.
+- **26.10, 22:40 – făcute și publicate:** zonele refăcute (numărătoarea de referință, § 4.3), factorii de corecție pe braț
+  (demand.json), zilele 21/22/25 renumărate, scenariile recalibrate, reevaluarea (§ 9.8: programul realist −6,2% vs fix cu
+  indisciplinați, nesemnificativ; −11,7% vs actuated; punct slab: vârfurile ×1,2), README nou. Clipurile și imaginile
+  camerei din scratchpad au fost șterse. **Peste noapte:** scratchpad\noapte.py (local) – E12 (E3 continuat) și E13
+  (oficial continuat) pe scenariile calibrate, validare 11–15, test 1–5, raport în scratchpad\raport_noapte.md, commit
+  local (de împins). Workflow „reproductibilitate” (module validare/analiza/indisciplinat/referinta/calibrare_camera +
+  § 11) – de verificat și comis. Colectarea live rulează încă (fișierul zilei 26 în data/trajectories – de mutat în
+  trajectories_brute și publicat cu recount --publica după oprire). Buget: limita săptămânală trebuie să ajungă până
+  vineri 30.10, 08:00 (memoria buget-tokeni).
 - Pași posibili: reantrenarea agenților pe scenariile „doar intrări” și cu participanți indisciplinați; adnotarea a
   2–3 minute de video pentru a fixa nivelul cererii între cele două margini.
 ## Stare anterioară (22.10.2026, 16:10) – Bornele 7 și 9 încheiate

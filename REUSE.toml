@@ -44,9 +44,10 @@ SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
 SPDX-License-Identifier = "CC-BY-4.0"
 
 # D. Datele proprii derivate din camera publică (alegerea autorului: ODbL, ca cererea care le încorporează;
-#    acordată în măsura în care asupra datelor există drepturi de autor sau drepturi sui generis)
+#    acordată în măsura în care asupra datelor există drepturi de autor sau drepturi sui generis); tot aici,
+#    traiectoriile vehiculelor din cele două clipuri ale numărătorii de referință (26.10.2026)
 [[annotations]]
-path = ["data/counts/**", "data/trajectories/**", "data/LICENTA.txt"]
+path = ["data/counts/**", "data/trajectories/**", "data/LICENTA.txt", "docs/rezultate/referinta/clip*/traiectorii/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
 SPDX-License-Identifier = "ODbL-1.0"
