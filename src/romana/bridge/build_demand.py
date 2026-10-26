@@ -26,6 +26,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from romana.atribuire_osm import adauga_notificare_osm
 from romana.bridge.od_estimation import estimate, load_counts, reference_profile, summarize
 from romana.common import (COUNTS_DIR, DEMAND_DIR, NET_DIR, ROOT, SUMO_DIR, load_json, save_json,
                            sumo_binary, sumo_tools)
@@ -339,6 +340,9 @@ def main(argv=None) -> None:
     if report["pietoni"]:
         route_files.append(pf)
     sumocfg = write_sumocfg(args.nume, route_files, dur)
+    # notificarea ODbL (§ 4.2) în fișierele derivate din rețeaua OSM: rute, viraje, abateri, scenariul
+    for f in [*sorted(out_dir.glob("*.xml")), sumocfg]:
+        adauga_notificare_osm(f)
     report["sumocfg"] = str(sumocfg.relative_to(ROOT))
     report["rezumat_od"] = summarize(recs)
     save_json(report, out_dir / "raport_cerere.json")

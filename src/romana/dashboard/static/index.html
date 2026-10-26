@@ -49,6 +49,7 @@ button:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
 canvas{width:100%;height:150px;display:block}
 .col{display:flex;flex-direction:column;gap:18px;min-width:0}
 footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1500px;margin:auto}
+footer a{color:inherit;text-decoration:underline}
 @media (max-width:900px){main{grid-template-columns:1fr;padding:12px 16px}header{padding:12px 16px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .bara{transition:width .6s ease}
@@ -110,7 +111,7 @@ footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1500px;ma
     </section>
   </div>
 </main>
-<footer>Imagini: © WebcamRomania.ro, prelucrate doar în memorie, persoanele estompate. Hartă și rețea: © OpenStreetMap contributors, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0).</footer>
+<footer>Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, persoanele estompate, afișată doar local. Hartă și rețea: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0 OR GPL-2.0-or-later). <a href="https://github.com/NiuninMatei/Semaforizare_Piata_Romana">Cod sursă</a> (GNU AGPL v3).</footer>
 <script>
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
 const MOD={ai:"Agent AI (PPO)",fix:"Plan fix (N–S / E–V / pietoni)",max_pressure:"Max-Pressure",manual:"Manual",program:"Program pe tipuri de trafic",plan_lung:"plan cu ciclu lung 46/48/12 s",ai_pranz:"agentul E3, trafic moderat",ai_lejer:"agentul E9, trafic lejer"};

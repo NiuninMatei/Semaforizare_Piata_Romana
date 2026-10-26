@@ -1,0 +1,206 @@
+NOTICE – drepturi de autor, licențe și atribuiri
+================================================
+
+Semaforizare Piața Romană – Copyright (C) 2026 Niunin Matei-Gabriel
+Cod sursă: https://github.com/NiuninMatei/Semaforizare_Piata_Romana
+
+Proiectul are MAI MULTE LICENȚE, PE CĂI, pentru că sursele folosite impun regimuri diferite.
+Licența din fișierul LICENSE (GNU AGPL v3) se aplică NUMAI părților marcate mai jos cu
+AGPL-3.0-or-later. Harta citibilă automat a acelorași reguli se găsește în REUSE.toml, iar textele
+integrale ale licențelor în LICENSE și în directorul LICENSES/. Motivarea: docs/DOCUMENTATIE.md, § 14.1.
+
+
+1. LICENȚELE PROIECTULUI, PE CĂI
+--------------------------------
+
+a) Codul: src/**, scripts/**, tests/**, config/**, requirements.txt, .gitignore, .gitattributes,
+   .vscode/**; codul ciornei legacy/google_ai_draft/*.py
+   Licență: GNU Affero General Public License v3 sau ulterioară (AGPL-3.0-or-later) – LICENSE.
+   AGPL-3.0 este obligatorie pentru modulul de viziune (src/romana/vision/), care folosește Ultralytics
+   YOLO11 (AGPL-3.0). Celelalte module nu importă Ultralytics; autorul a ales totuși aceeași licență
+   pentru tot codul, ca variantă sigură, conform cerinței Ultralytics de licențiere a întregului proiect.
+   .gitignore conține șablonul github/gitignore (CC0-1.0).
+
+b) Modelele antrenate: models/**, legacy/google_ai_draft/ai_semafor_romana.zip
+   Licență: AGPL-3.0-or-later (alegerea autorului) – LICENSE; plus notificarea OpenStreetMap (§ 2).
+   Fișierele .zip/.npz sunt ele însele forma preferată pentru modificare (sursa) a modelelor. Codul de
+   antrenare (src/romana/control/train.py, AGPL) și scenariile (sumo/scenarios/, ODbL 1.0) sunt publicate
+   separat, fiecare sub licența sa, și nu sunt relicențiate prin AGPL.
+
+c) Datele OpenStreetMap și bazele de date derivate din ele: data/osm/**, sumo/net/**, sumo/demand/**,
+   sumo/scenarios/**, legacy/google_ai_draft/osm*
+   Licență: Open Database License 1.0 (ODbL-1.0), obligatorie (bază de date OSM sau derivată din ea) –
+   LICENSES/ODbL-1.0.txt, https://opendatacommons.org/licenses/odbl/1-0/
+
+d) Numărătorile și traiectoriile proprii: data/counts/**, data/trajectories/**
+   Licență: ODbL-1.0 (alegerea autorului) – LICENSES/ODbL-1.0.txt. Licența se acordă în măsura în care
+   asupra acestor date există drepturi de autor sau drepturi sui generis asupra bazei de date; faptele
+   în sine nu sunt protejate (Legea nr. 8/1996, art. 9 lit. f)).
+
+e) Documentația, rezultatele și textele: docs/** (documentația, PDF-ul, rezultatele, jurnalele de
+   antrenare, figurile proprii), README.md, NOTICE, legacy/google_ai_draft/README.md, .claude/CLAUDE.md
+   Licență: Creative Commons Attribution 4.0 International (CC-BY-4.0) – LICENSES/CC-BY-4.0.txt,
+   https://creativecommons.org/licenses/by/4.0/legalcode; plus notificarea OpenStreetMap (§ 2).
+
+f) Fișierele ciornei generate automat de osmWebWizard.py (Eclipse SUMO 1.28.0):
+   legacy/google_ai_draft/build.bat, run.bat, output.add.xml. Pentru ele nu se revendică drepturi de
+   autor; în măsura în care ar exista, autorul renunță la ele (CC0-1.0 – LICENSES/CC0-1.0.txt,
+   REUSE.toml).
+
+Excluse din oricare dintre licențele de mai sus (rămân ale titularilor lor):
+- citatele din surse terțe (presă, pagina și termenii Webcam România, termenii Ultralytics, Anthropic
+  și Google, ghidurile OSMF), preluate cu indicarea sursei (art. 35 din Legea nr. 8/1996);
+- subseturile de fonturi Microsoft încorporate în docs/DOCUMENTATIE.pdf;
+- mărcile comerciale menționate;
+- orice imagine din camera Piața Romană din versiunile mai vechi aflate în istoricul git: drepturile
+  aparțin operatorului camerei; aceste versiuni se elimină la cererea titularului.
+
+Fără garanție: vezi AGPL-3.0 §15–16, ODbL 1.0 §7–8 și CC BY 4.0 §5.
+
+
+2. OPENSTREETMAP
+----------------
+
+  Conține informații din OpenStreetMap (https://www.openstreetmap.org), puse la dispoziție aici sub
+  Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/.
+  © OpenStreetMap contributors – https://www.openstreetmap.org/copyright
+
+- Baza de date (ODbL 1.0, cu notificarea de mai sus): data/osm/romana_bbox.osm.xml.gz, extras prin
+  Overpass API cu osmWebWizard.py (Eclipse SUMO 1.28.0) pe 18.10.2026, bbox 26,0637–26,1296 E /
+  44,4328–44,4551 N. Nota ODbL din fișier se păstrează intactă.
+- Baze de date derivate (ODbL 1.0, share-alike): rețeaua sumo/net/** (generată de
+  src/romana/network/build_network.py cu netconvert), cererea sumo/demand/** (rute pe muchiile OSM,
+  calibrate pe numărătorile din data/counts), scenariile sumo/scenarios/** și scenariul ciornei
+  legacy/google_ai_draft/osm*. Notificarea se află în sumo/LICENTA.txt și data/LICENTA.txt; fișierele
+  XML generate de build_network.py și build_demand.py o primesc și ca comentariu XML, începând cu
+  următoarea regenerare (ODbL §4.2 b, d).
+- Lucrări produse (ODbL §4.3, aceeași notificare): rezultatele simulărilor (docs/rezultate/**,
+  docs/antrenare/**), graficele și tabelele din documentație, modelele models/** (antrenate în
+  simulări pe rețeaua derivată) și dispeceratul (schema pieței). Tabelele generate
+  docs/rezultate/**/rezultate.md poartă notificarea și în capul fișierului.
+- ODbL §4.6: baza derivată (sumo/net/**, sumo/demand/**, sumo/scenarios/**) și metoda prin care a fost
+  obținută (src/romana/network/build_network.py, config/network.json) sunt publicate gratuit în acest
+  depozit. Versiunile exacte ale scenariilor folosite pentru fiecare model sau rezultat se găsesc în
+  istoricul git al depozitului https://github.com/NiuninMatei/Semaforizare_Piata_Romana (scenariile de
+  antrenare sunt listate în models/*.json).
+- config/network.json conține câțiva identificatori, coordonate și nume de stradă din OSM. Aceasta
+  este o parte nesubstanțială, deci nu intră sub share-alike, dar se atribuie: © OpenStreetMap
+  contributors.
+- Versiunile din istoricul git ale fișierelor osm_bbox.osm.xml.gz, osm.net.xml.gz și osm.poly.xml.gz
+  (rădăcina depozitului, commiturile 7bf0f4b–cdf1444, 18–20.10.2026) sunt date OSM sau derivate din
+  OSM: ODbL 1.0, © OpenStreetMap contributors.
+
+
+3. ULTRALYTICS YOLO11, PONDERILE YOLO, BYTETRACK ȘI COCO
+--------------------------------------------------------
+
+- Ultralytics (ultralytics 8.4.183, ultralytics-thop 2.2.3; instalate prin pip, NEINCLUSE în
+  depozit): © Ultralytics, GNU AGPL-3.0. Dependența ultralytics-platform 0.1.90 (instalată pe
+  Python ≥ 3.11) este declarată AGPL-3.0-only; formula AGPL-3.0-or-later a proiectului rămâne
+  compatibilă. Surse: https://github.com/ultralytics/ultralytics, https://github.com/ultralytics/sdk,
+  https://www.ultralytics.com/license. Proiectul folosește Ultralytics în
+  src/romana/vision/run_vision.py; programul combinat cu Ultralytics se distribuie numai sub AGPL-3.0.
+  AGPL-3.0 permite și folosirea comercială, cu condiția publicării sursei. Pentru folosiri care nu
+  respectă AGPL-3.0 (cod închis), Ultralytics oferă licența Enterprise:
+  https://www.ultralytics.com/license.
+- Ponderile YOLO11s (yolo11s.pt, preantrenate de Ultralytics pe COCO): se descarcă automat la rulare
+  și nu sunt incluse. Licența lor este AGPL-3.0 („All Ultralytics YOLO trained models fall under the
+  AGPL-3.0 License by default”). Exportul OpenVINO generat local (models/viziune/) este o lucrare
+  derivată AGPL-3.0 și nu este publicat.
+- yolov8n.pt (ponderi Ultralytics YOLOv8n) apare în ISTORICUL git (adăugat în commitul 993d733 din
+  19.10.2026, scos în cdf1444). Este redistribuit sub GNU AGPL-3.0 (textul este în LICENSE), cu
+  atribuirea Ultralytics de mai sus. Sursa: https://github.com/ultralytics/ultralytics.
+- ByteTrack: implementarea folosită este cea din Ultralytics (ultralytics/trackers/byte_tracker.py,
+  bytetrack.yaml), sub AGPL-3.0. Algoritmul aparține lui Y. Zhang et al., „ByteTrack: Multi-Object
+  Tracking by Associating Every Detection Box”, ECCV 2022. Codul original
+  (https://github.com/FoundationVision/ByteTrack, MIT, © 2021 Yifu Zhang) NU este folosit direct.
+- COCO (T.-Y. Lin et al., ECCV 2014, https://cocodataset.org): adnotările sunt © COCO Consortium,
+  CC BY 4.0; imaginile aparțin autorilor lor și sunt supuse Flickr Terms of Use. Setul nu este inclus;
+  este doar baza de antrenare a ponderilor Ultralytics.
+
+
+4. ECLIPSE SUMO
+---------------
+
+Eclipse SUMO 1.28.0 (eclipse-sumo, sumolib, traci, libsumo; netconvert și routeSampler.py rulate ca
+programe separate), https://sumo.dlr.de, https://github.com/eclipse-sumo/sumo. Licența este dublă:
+EPL-2.0 OR GPL-2.0-or-later. Codul proiectului este un client TraCI/libsumo, iar NOTICE.md al SUMO
+exclude aplicațiile client TraCI din lucrările derivate. Opțiunea GPL-2.0-or-later (→ GPL-3.0,
+compatibilă cu AGPL-3.0 prin §13) este necesară doar dacă se distribuie un pachet combinat cu SUMO.
+SUMO nu este inclus în depozit, ci se instalează prin pip sau cu instalarea oficială. Fișierele
+generate de SUMO (rețea, rute) nu sunt cod SUMO; ele sunt date derivate din OSM (§ 2). Citare:
+P. A. Lopez et al., „Microscopic Traffic Simulation using SUMO”, IEEE ITSC 2018,
+doi:10.1109/ITSC.2018.8569938.
+
+
+5. ALTE COMPONENTE FOLOSITE (neincluse; instalate din requirements.txt)
+-----------------------------------------------------------------------
+
+Componentă (versiunea testată) – licență – sursă:
+- Stable-Baselines3 2.9.0 – MIT – https://github.com/DLR-RM/stable-baselines3
+- Gymnasium 1.4.0 (Farama Foundation) – MIT – https://github.com/Farama-Foundation/Gymnasium
+- sumo-rl 1.4.5 (L. N. Alegre; instalat, neimportat în src/, model de proiectare pentru mediul RL) –
+  MIT – https://github.com/LucasAlegre/sumo-rl
+- PyTorch 2.14.1 – Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause
+  AND BSL-1.0 AND MIT (expresia din metadatele torch) – https://github.com/pytorch/pytorch
+- torchvision 0.29.1 (dependență a ultralytics) – BSD-3-Clause – https://github.com/pytorch/vision
+- Intel OpenVINO 2026.4.1 – Apache-2.0 – https://github.com/openvinotoolkit/openvino
+- OpenCV (opencv-python 5.0.0.93) – Apache-2.0 (roțile includ FFmpeg sub LGPL-2.1-or-later) –
+  https://opencv.org/license/, https://ffmpeg.org/legal.html
+- NumPy 2.5.4 – BSD-3-Clause (+ 0BSD, MIT, Zlib, CC0-1.0) – https://numpy.org/doc/stable/license.html
+- pandas 3.0.6 – BSD-3-Clause – https://github.com/pandas-dev/pandas
+- SciPy 1.18.1 (cerut de routeSampler.py) – BSD-3-Clause – https://github.com/scipy/scipy
+- Matplotlib 3.11.2 – Matplotlib License (tip PSF) – https://matplotlib.org/stable/project/license.html
+- Flask 3.1.3 (+ Werkzeug, Jinja2, Click, ItsDangerous, MarkupSafe, Blinker) – BSD-3-Clause
+  (Blinker: MIT) – https://flask.palletsprojects.com
+- Eclipse Paho MQTT Python 2.1.0 – EPL-2.0 OR EDL-1.0 (BSD-3-Clause); proiectul folosește opțiunea
+  EDL-1.0 / BSD-3-Clause – https://github.com/eclipse-paho/paho.mqtt.python
+- Python-Markdown 3.7 – BSD-3-Clause – https://github.com/Python-Markdown/markdown
+- pyproj 3.8.0 (instalat, neimportat în src/) – MIT – https://github.com/pyproj4/pyproj
+- httpx 0.28.1 – BSD-3-Clause – https://github.com/encode/httpx
+- nvidia-ml-py 13.615.71 – BSD – https://pypi.org/project/nvidia-ml-py/
+- Fonturile Barlow și Barlow Semi Condensed (J. Tribby) – SIL OFL 1.1; legate din Google Fonts,
+  neincluse – https://fonts.google.com/specimen/Barlow
+- Python 3.12 – PSF-2.0 – https://docs.python.org/3/license.html
+
+Dependențele tranzitive (lap, Pillow, PyYAML, polars, requests, certifi etc.) au licențe permisive
+(MIT, BSD, Apache-2.0, BSL-1.0), cu excepția certifi (MPL-2.0, compatibilă prin clauza „Secondary
+Licenses”) și a componentelor Ultralytics (AGPL-3.0; ultralytics-platform: AGPL-3.0-only).
+
+
+6. SURSA DATELOR DE TRAFIC: CAMERA PIAȚA ROMANĂ
+-----------------------------------------------
+
+Numărătorile (data/counts/) și jurnalul de traiectorii (data/trajectories/) au fost DERIVATE AUTOMAT
+din fluxul public al camerei Piața Romană difuzat de Webcam România:
+https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/.
+Drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România
+declară că nu deține drepturi asupra fluxurilor („Termeni și condiții”, secțiunile 2 și 4,
+https://webcamromania.ro/termeni-si-conditii/).
+Fluxul este analizat în memorie; pentru previzualizarea locală se suprascrie continuu un singur cadru
+estompat; capturile și clipurile de calibrare se păstrează local, temporar, și nu se publică.
+Numărătorile sunt fapte agregate. Traiectoriile (doar ale vehiculelor) sunt fără imagini și fără
+identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu mai sunt incluse în
+versiunea curentă, ci doar numărătorile agregate; versiunile din istoricul git dinainte de 26.10.2026
+le conțin încă și se elimină numai prin rescrierea istoricului. Versiunea curentă a depozitului nu conține imagini sau video din cameră. Proiectul nu este
+afiliat cu Webcam România sau cu operatorul camerei și nu este susținut de aceștia.
+
+
+7. ASISTENȚĂ GENERATIVĂ
+-----------------------
+
+Codul și documentația au fost realizate cu ajutorul asistenților generativi, cum se declară în cap. 13
+din docs/DOCUMENTATIE.md:
+- Claude (Anthropic), de la 20.10.2026. Termeni: https://www.anthropic.com/legal/consumer-terms (§ 4,
+  drepturile asupra rezultatelor) și https://www.anthropic.com/legal/aup.
+- Modulul AI Google din Chrome, până la 18.10.2026, pentru ciorna din legacy/. Termeni:
+  https://policies.google.com/terms.
+
+Licențele de mai sus se aplică în măsura în care asupra acestui conținut există drepturi.
+
+
+8. SECURITATE
+-------------
+
+Fișierele models/*.zip (Stable-Baselines3) conțin obiecte Python serializate cu pickle. Încărcați-le
+numai dintr-o sursă de încredere, de exemplu din acest depozit, nu din copii modificate de terți.

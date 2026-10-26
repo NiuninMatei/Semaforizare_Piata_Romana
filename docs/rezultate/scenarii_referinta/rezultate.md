@@ -1,5 +1,7 @@
 # Rezultate – evaluare comparativă
 
+*Conține informații din OpenStreetMap (https://www.openstreetmap.org), puse la dispoziție aici sub Open Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/. © OpenStreetMap contributors – https://www.openstreetmap.org/copyright*
+
 Medii ± abatere standard pe 5 seed-uri SUMO. Procentele sunt față de plan fix de referință. Mediana pe seed-uri este dată separat pentru așteptarea vehiculelor: aproape de saturație, rețeaua poate intra sau nu în blocaj în funcție de seed, iar câteva rulări blocate trag media în sus. Generat automat de `python -m romana.control.evaluate`.
 
 
