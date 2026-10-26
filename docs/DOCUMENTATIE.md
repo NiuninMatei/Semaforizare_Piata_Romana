@@ -743,6 +743,7 @@ afectate (verificat).
 | E6/E7 – specialist trafic greu pornind de la planul 46/48/12 | E7: −9,3% validare, −7,0% test | echivalent statistic cu planul 46/48/12 (p = 0,32) → se păstrează planul, mai simplu |
 | E8 – specialist trafic moderat | mai slab decât E3 | negativ |
 | E9 – specialist trafic lejer | −9,5% față de −9,0% (agentul oficial), p = 0,001 | **adoptat pentru traficul lejer** (marginea de sus) |
+| E10 – E3 reantrenat 200 000 de pași pe scenariile cu participanți indisciplinați (lr 3·10⁻⁵, 26.10) | −6,6% pe validare față de −13,4% (E3); punctele intermediare, la 25 000 de pași distanță, variază între −5,4% și +7,2% (`docs/rezultate/validare_indisciplinat_e10.csv`) | negativ: reantrenarea strică politica E3 în loc s-o îmbunătățească → E3 rămâne |
 | Grila de 11 planuri fixe (verde N–S × E–V × pietoni) | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** (marginea de sus) |
 
 Lecția metodologică: diferențele de 1–2 puncte își schimbau semnul între seed-urile de validare și cele de test,
