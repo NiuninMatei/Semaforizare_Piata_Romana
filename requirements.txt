@@ -1,4 +1,4 @@
-﻿# Mediu testat: Python 3.11–3.13, Windows 10/11 și Linux
+# Mediu testat: Python 3.12, Windows 11 (3.11–3.13 compatibile, netestate; Linux/macOS netestate)
 eclipse-sumo==1.28.0        # simulatorul SUMO (EPL-2.0 OR GPL-2.0-or-later); alternativ instalarea oficială + SUMO_HOME
 sumolib>=1.28.0
 traci>=1.28.0
