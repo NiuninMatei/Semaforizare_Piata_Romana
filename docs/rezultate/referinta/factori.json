@@ -1,0 +1,90 @@
+{
+ "V_catargiu2": {
+  "factor": 2.52,
+  "ic90": [
+   2.06,
+   3.0
+  ],
+  "bucati": 10,
+  "referinta": 121.0,
+  "automat": 48,
+  "pe_clipuri": {
+   "clip1": {
+    "referinta": 36.0,
+    "automat": 16,
+    "procent_prins": 44.4
+   },
+   "clip2": {
+    "referinta": 85.0,
+    "automat": 32,
+    "procent_prins": 37.6
+   }
+  }
+ },
+ "V_dacia_est": {
+  "factor": 0.88,
+  "ic90": [
+   0.57,
+   1.05
+  ],
+  "bucati": 10,
+  "referinta": 54.5,
+  "automat": 62,
+  "pe_clipuri": {
+   "clip1": {
+    "referinta": 20.5,
+    "automat": 20,
+    "procent_prins": 97.6
+   },
+   "clip2": {
+    "referinta": 34.0,
+    "automat": 42,
+    "procent_prins": 123.5
+   }
+  }
+ },
+ "V_dacia_vest": {
+  "factor": 1.12,
+  "ic90": [
+   0.7,
+   1.42
+  ],
+  "bucati": 11,
+  "referinta": 96.0,
+  "automat": 86,
+  "pe_clipuri": {
+   "clip1": {
+    "referinta": 63.5,
+    "automat": 57,
+    "procent_prins": 89.8
+   },
+   "clip2": {
+    "referinta": 32.5,
+    "automat": 29,
+    "procent_prins": 89.2
+   }
+  }
+ },
+ "V_magheru": {
+  "factor": 1.09,
+  "ic90": [
+   1.02,
+   1.16
+  ],
+  "bucati": 10,
+  "referinta": 255.5,
+  "automat": 235,
+  "pe_clipuri": {
+   "clip1": {
+    "referinta": 86.5,
+    "automat": 73,
+    "procent_prins": 84.4
+   },
+   "clip2": {
+    "referinta": 169.0,
+    "automat": 162,
+    "procent_prins": 95.9
+   }
+  }
+ }
+}

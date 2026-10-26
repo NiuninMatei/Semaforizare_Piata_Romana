@@ -195,18 +195,21 @@ de la zero și alese pe măsurători, nu pe aspect:
   desenat pe marcajele reale, pe un fundal median din 90 de cadre (fără vehicule), verificate pe câmpul de mișcare.
   Tot atunci s-a constatat că zona cu dungi din stânga-jos (unde parchează uneori o mașină) este o **zonă hașurată,
   nu o trecere de pietoni** – nu se numără pietoni acolo.
-* *Rezultat* (cât din referință prinde numărarea automată, clipul 1 / clipul 2): **Dacia vest** 27% / 29% cu zona
-  veche → **92% / 70%** cu zona nouă (mașinile care ies din bulevard spre cameră, după linia de oprire; zona veche
-  prindea puțin din ele); **Magheru** 84% / 96% și **Dacia est** 105% / 116% – zonele existente erau deja bune și au
-  rămas; **Lascăr Catargiu** 32% / 55% – limita e detectorul (vehicule mici, departe), nu zona. La 2560 px detectorul
-  ar prinde 95% pe Catargiu și pe Magheru (clipul 1), dar procesează doar ≈2,3 cadre/s pe placa grafică integrată
-  a laptopului, față de ≈4,4 la 1600 px – insuficient pentru urmărirea live; e o recomandare pentru un hardware cu
-  GPU dedicat.
+* *Rezultat* (cât din referință prinde numărarea automată pe bucățile adnotate, clipul 1 / clipul 2 – ieșirea
+  „prins” a comenzii `referinta factori`, § 11.8): **Dacia vest** 27% / 37% cu zona veche (zonele din commitul
+  `e1d0f77`) → **90% / 89%** cu zona nouă (mașinile care ies din bulevard spre cameră, după linia de oprire; zona
+  veche prindea puțin din ele); **Magheru** 84% / 96% și **Dacia est** 98% / 124% – zonele existente erau deja bune
+  și au rămas; **Lascăr Catargiu** 44% / 38% – limita e detectorul (vehicule mici, departe), nu zona. La 2560 px
+  detectorul prinde pe Catargiu 83% / 60% și pe Magheru 101% / 91%, dar procesează doar ≈2,3 cadre/s pe placa
+  grafică integrată a laptopului, față de ≈4,4 la 1600 px – insuficient pentru urmărirea live; e o recomandare
+  pentru un hardware cu GPU dedicat.
 * *Factorii de corecție a detecției* (referință / automat, pe ambele clipuri; interval de încredere 90% prin
   bootstrap pe bucăți): Magheru **1,09** [1,02; 1,16], Dacia est **0,88** [0,57; 1,05], Dacia vest **1,12**
   [0,70; 1,42], Lascăr Catargiu **2,52** [2,06; 3,00] (`factor_corectie_detectie` în `config/demand.json`). Ei
   înlocuiesc presupunerea de dinainte (cererea între „doar intrări” și „media intrări / ieșiri”, § 5.1) cu o
   calibrare măsurată. Limita: două clipuri de 3 minute de la prânz – factorii trebuie confirmați pe alte ore.
+  Numărătorile adnotatorilor, traiectoriile vehiculelor din clipuri (fără pietoni și fără imagini), factorii și
+  corespondențele calibrării camerei sunt publicate în `docs/rezultate/referinta/` (comenzile: § 11.8).
 
 Regula de numărare (`classify()` în `vision/od_counter.py`), aplicată pe traiectoria întreagă la închiderea ei:
 
@@ -303,7 +306,7 @@ EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate:
 * numerele de înmatriculare nu se citesc;
 * ID-urile de urmărire sunt temporare și se uită la închiderea traiectoriei;
 * se publică doar numărători agregate și jurnalul de traiectorii al vehiculelor (inclusiv biciclete și
-  motociclete): clasa obiectului, momentul de început `t0` și pozițiile normalizate ale punctului de contact cu
+  motociclete; tot așa și cele din clipurile numărătorii de referință, § 4.3): clasa obiectului, momentul de început `t0` și pozițiile normalizate ale punctului de contact cu
   solul, fără imagini și fără identificatori (date pseudonimizate); traiectoriile individuale ale pietonilor rămân
   doar în jurnalul local (`data/trajectories_brute/`, nepublicat); versiunile vechi ale jurnalelor publicate, care
   le conțineau, au fost eliminate din tot istoricul depozitului pe 26.10.2026 (§ 12.5).
@@ -444,7 +447,8 @@ anterioare):
 | `zi_2026-10-25_linistit` | 05:15–06:15 | 387 | 58 | 232 | 349 | – |
 | `zi_2026-10-25_linistit_x0_8` | liniștit × 0,8 | 309 | 46 | 232 | 279 | – |
 
-Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor se regăsesc în istoricul git); pe
+Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor se regăsesc în istoricul git, la
+commiturile `e1d0f77` și `7a79502`, § 11.8); pe
 duminică, datele complete (până la 17:00) mută vârful la 15:30–16:30, iar fereastra de prânz devine scenariu separat.
 Rezultatele din § 9.1–9.7 au fost obținute pe calibrările anterioare (marginile de jos și de sus); reevaluarea pe
 cererea calibrată este în § 9.8. Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
@@ -876,7 +880,8 @@ Față de actuated, programul realist câștigă **−11,7%** (mai bun în 44 di
 de −6,2% nu mai este semnificativ: în 9 din 10 scenarii programul e mai bun (−2…−16%), dar la vârful ×1,2 din 22.10
 (≈3 070 veh/h, peste orice volum de antrenare) agentul E3 pierde +26,5%. Cu participanți disciplinați, programul realist dă −1,3% față de planul fix (mai bun în 36
 din 50, nesemnificativ: p = 0,57 / 0,25) și −4,3% față de actuated (nesemnificativ), iar agenții singuri ies între
-−0,6% și +3,6% față de planul fix; și aici vârfurile ×1,2 sunt punctul slab (programul pierde +12% și +24%).
++1,0% și +3,6% față de planul fix (E3 −0,6% față de actuated); și aici vârfurile ×1,2 sunt punctul slab (programul
+pierde +12% și +24%).
 
 **Concluzia reevaluării:** pe cererea măsurată corect, avantajul AI se păstrează față de actuated și în majoritatea
 situațiilor față de planul fix, dar e mai mic decât pe calibrările anterioare, iar la volumele cele mai mari agenții
@@ -964,7 +969,7 @@ rezultatele se pot reproduce fără a colecta date noi.
 
 | Pas | Comandă | Ce trebuie să se vadă |
 |---|---|---|
-| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (10 teste: numărarea O–D, pietoni, sensul de mers, renumărarea) |
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (37 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei) |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | SUMO-GUI cu ora de vârf din 21.10.2026 și agentul AI la semaforul pieței |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu planul fix |
 | Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | aceeași oră reală cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
@@ -1008,16 +1013,16 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | Director / fișier | Conținut |
 |---|---|
 | `docs/DOCUMENTATIE.md` | documentația (acest document); `docs/DOCUMENTATIE.pdf` – aceeași, cu pagini numerotate (`scripts\10_documentatie_pdf.bat`) |
-| `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`) |
-| `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, geamănul digital live |
+| `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`) și calibrarea camerei pe rețea (`calibrare_camera.py`) |
+| `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați (`indisciplinat.py`), geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
-| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea |
+| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`) și statisticile pe perechi (`analiza.py`) |
 | `src/romana/dashboard/` | dispeceratul web |
 | `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
 | `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectoriile vehiculelor, fără imagini și fără identificatori – pseudonimizate); licența în `data/LICENTA.txt`; jurnalul complet, cu pietoni, rămâne local în `data/trajectories_brute/` (exclus din Git) |
 | `sumo/scenarios/zi_*` | scenariile din date reale; `referinta_*` = scenariile ipotetice inițiale |
 | `models/` | agenții antrenați (`.zip` Stable-Baselines3 + `.npz` pentru rulare fără PyTorch) |
-| `docs/rezultate/` | datele brute ale evaluărilor (tabele CSV, grafice, tabelul detaliat generat automat) – anexa A |
+| `docs/rezultate/` | datele brute ale evaluărilor (tabele CSV, grafice, tabelul detaliat generat automat) și numărătoarea de referință (`referinta/`) – anexa A |
 | `docs/img/` | figurile proprii (scheme pe fond neutru, fără imagini ale camerei); directorul se creează la refacerea figurilor |
 | `legacy/google_ai_draft/` | ciorna inițială, păstrată cu raportul de audit |
 | `README.md` | prezentarea scurtă afișată pe pagina GitHub a proiectului |
@@ -1034,6 +1039,76 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | viziunea are sub 2 cadre/s | fără GPU, verificați `runtime: "openvino"` în `config/camera.json`; cu GPU NVIDIA: `runtime: "pytorch"`, `--device 0` |
 | `Cannot use optimization (scipy not installed)` | `pip install scipy` în `.venv` |
 | camera nu răspunde | fluxul public poate fi temporar indisponibil; geamănul digital trece automat pe profilul de referință și afișează asta |
+
+### 11.8 Reproducerea rezultatelor și a calibrării
+
+Toate comenzile se dau din rădăcina depozitului, după `set PYTHONPATH=src` (în PowerShell `$env:PYTHONPATH="src"`),
+și încep cu `.venv\Scripts\python -m`. Se pot verifica trei lucruri:
+
+1. **Statisticile din capitolul 9** se calculează direct din fișierele publicate în `docs\rezultate\` (Anexa A), fără
+   nicio simulare, și dau exact cifrele din text (primul tabel).
+2. **Simulările** sunt deterministe: aceeași strategie, pe același scenariu și cu același seed, dă exact aceeași
+   pierdere de timp (verificat pe rulări din `calibrat_normal.csv`, `calibrat_indisciplinat.csv`,
+   `robustete_indisciplinat.csv` și `validare_indisciplinat.csv`). Scenariile se regenerează însă, cu aceleași nume, la
+   fiecare recalibrare a cererii, deci un fișier se reproduce numai cu **versiunea scenariilor din momentul rulării**,
+   dată în coloana „Scenariile” (aici și în Anexa A). Doar `calibrat_*.csv` corespund scenariilor din arborele curent;
+   pentru celelalte, scenariile se aduc temporar din istoricul git, ca în README – de exemplu
+   `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json`, iar după rulare
+   `git checkout HEAD -- sumo config/demand.json`. Fișierele apărute după acel commit rămân cele curente (de exemplu
+   `indisciplinat_zi_2026-10-25_pranz`), de aceea scenariile se dau explicit, fără tipare. Variantă care nu atinge
+   arborele de lucru: `git archive -o outputs\e1d0f77.tar e1d0f77 sumo`, dezarhivată cu
+   `mkdir outputs\e1d0f77` și `tar -xf outputs\e1d0f77.tar -C outputs\e1d0f77`, cu scenariile date prin cale
+   (`--scenarii outputs\e1d0f77\sumo\scenarios\<scenariu>.sumocfg`). Rulările se scriu în `outputs\validare\`, iar
+   `--compara` le compară cu fișierul publicat (rulările comune, câte sunt identice, diferența maximă);
+   `romana.control.validare` refuză să suprascrie un fișier existent din `docs\rezultate\` fără `--suprascrie`.
+   `romana.control.evaluate` scrie însă direct în `docs\rezultate\`: rezultatul se compară cu
+   `git diff --stat docs/rezultate`, apoi se reface cu `git checkout -- docs/rezultate`.
+3. **Calibrarea din § 4.3** se reface din datele publicate în `docs\rezultate\referinta\` (ultimul tabel).
+
+**Statisticile, fără simulări.** Implicit, fiecare strategie (și fiecare program) se compară cu planul fix (`FIX`) și
+cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actuated” din § 9.4 și § 9.8 cer
+`--strategii ACTUATED --referinte FIX`.
+
+| Cifrele | Comanda |
+|---|---|
+| § 9.8, participanți indisciplinați: programul realist (−6,2% / −11,7% față de actuated), agenții, planul 46/48/12 | `romana.control.analiza docs\rezultate\calibrat_indisciplinat.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --pe-scenarii` |
+| § 9.8, participanți disciplinați: programul realist (−1,3% / −4,3%), agenții (+1,0…+3,6%) | aceeași comandă, pe `docs\rezultate\calibrat_normal.csv` |
+| § 9.4, agenții față de planul fix și programul realist pe 10 seed-uri (−16,0% / −18,4%) | `romana.control.analiza docs\rezultate\robustete_indisciplinat.csv docs\rezultate\robustete_indisciplinat_6_10.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --pe-scenarii` |
+| Rândurile „Actuated” (§ 9.4: +6,4%, 25 / 50; § 9.8: +7,4%, 20 / 50) | aceleași fișiere, cu `--strategii ACTUATED --referinte FIX` |
+| § 9.4, programul realist pe duminică (−4,4%, 40 / 50; dimineața de duminică intră în banda lejeră) | `romana.control.analiza docs\rezultate\robustete_indisciplinat_duminica.csv docs\rezultate\robustete_indisciplinat_duminica_6_10.csv --benzi "lejer=*linistit*,*dimineata;moderat=*pranz*;greu" --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3` (cu benzile implicite, dimineața ar intra la „greu”: −3,7%) |
+| § 9.2, programele marginilor de sus și de jos; § 9.3, duminica | marginea de sus: `romana.control.analiza docs\rezultate\rezultate_brute_marginea_de_sus.csv --exclude "*2026-10-25*" --program SUS=lejer:rl_ppo_romana_lejer,moderat:rl_ppo_romana_zn3,greu:plan_46_48_12 --referinte fix_referinta actuated`; marginea de jos: `romana.control.analiza docs\rezultate\rezultate_brute.csv --exclude "*2026-10-25*" --program JOS=lejer:actuated,moderat:rl_ppo_romana_zn3,greu:fix_referinta --referinte fix_referinta actuated`; duminica (§ 9.3): `--scenarii "*2026-10-25*" --benzi "lejer=*linistit*,*dimineata;moderat=*pranz*;greu"` |
+| Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
+
+**Simulările.** Strategiile și seed-urile sunt exact cele din fișierul publicat; numărul de simulări în paralel se dă
+cu `--procese N` (implicit 4).
+
+| Fișierul (secțiunea) | Scenariile | Comanda |
+|---|---|---|
+| scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
+| `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
+| `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
+| `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
+| `validare_indisciplinat.csv` + `_alegere.json` (alegerea programului realist, § 9.4) | `e1d0f77` | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 11-15 --out outputs\validare\validare_indisciplinat.csv --compara docs\rezultate\validare_indisciplinat.csv` (alegerea, scrisă în `outputs\validare\validare_indisciplinat_alegere.json`, se compară cu cea publicată) |
+| `validare_intrari.csv` + `_alegere.json` (componentele marginii de jos, § 9.2) | `e1d0f77` | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_lejer.zip models\ppo_romana_zn3.zip models\ppo_romana_greu_e7_400k.zip --scenarii "zi_2026-10-2[12]_*" --seeds 11-15 --out outputs\validare\validare_intrari.csv --compara docs\rezultate\validare_intrari.csv` |
+| `rezultate_brute.csv`, `rezultate.md`, graficul (marginea de jos, § 9.2–9.3) | `e1d0f77` | `romana.control.evaluate` (`scripts\5_evalueaza.bat`), cu scenariile, strategiile, modelele și seed-urile din fișier date explicit (`--scenarii`, `--strategii`, `--model`, `--seeds`, `--seed-start`) |
+| `rezultate_brute_marginea_de_sus.csv` și validările marginii de sus din 23–25.10 (Anexa A) | `7a79502` | aceleași module: `romana.control.evaluate`, respectiv `romana.control.validare` cu strategiile, scenariile și seed-urile din fișier |
+| fișierele din 21–22.10 (Anexa A) | `1619a30`, `8176be5`, `a845bf9` | produse cu codul de atunci (înaintea corecturii din `control/env.py` și a modulului `validare`): se refac numai pe tot arborele acelui commit, într-un director separat (de exemplu `git worktree add ..\romana_8176be5 8176be5`) |
+
+**Calibrarea din § 4.3**, din datele publicate în `docs\rezultate\referinta\`:
+
+| Ce | Comanda |
+|---|---|
+| Factorii de corecție și procentele „prins” (§ 4.3) | `romana.vision.referinta factori --clip docs\rezultate\referinta\clip1\traiectorii docs\rezultate\referinta\referinta_clip1.csv --clip docs\rezultate\referinta\clip2\traiectorii docs\rezultate\referinta\referinta_clip2.csv` (aceleași valori ca în `factori.json`, cu sau fără `--fara-reunire`); la 2560 px: directoarele `clip1_2560` și `clip2_2560`; cu zonele vechi: în plus `--camera outputs\camera_e1d0f77.json`, după `git show e1d0f77:config/camera.json > outputs\camera_e1d0f77.json` (în cmd) |
+| Modelul camerei – omografia (§ 4.3) | `romana.vision.calibrare_camera potrivire docs\rezultate\referinta\corespondente_camera.json --out outputs\calibrare_camera` (dă exact `model_camera.json` și `erori_camera.csv`); zonele derivate din rețea: `romana.vision.calibrare_camera zone outputs\calibrare_camera\model.json` (într-un fișier separat de `config\camera.json`) |
+| O numărătoare de referință nouă, pe un clip nou (local) | `romana.vision.calibrare_camera repere --harta outputs\calibrare_camera\harta.png` (reperele rețelei, cu grilă de 5 m, pentru corespondențe); `romana.vision.referinta foi tinte.json clip.mp4` (foile de contact pentru adnotatori); `romana.vision.referinta viziune clip.mp4` (lanțul live pe clip, cu ieșirile în `outputs\referinta\clip\`); `romana.vision.referinta publica outputs\referinta\clip\traiectorii docs\rezultate\referinta\clip\traiectorii` (doar vehiculele); referința e un CSV `tinta,bucata,adnotator,numar` (sau `tinta,bucata,numar`, cu numărul final pe bucată) |
+
+Clipurile, foile de contact și suprapunerile conțin imagini ale camerei: rămân doar local (în `outputs\`, exclus din
+Git), numai pe durata calibrării, și se șterg după aceea (§ 4.5, § 14.1). În depozit ajung numai date fără imagini:
+numărătorile adnotatorilor, traiectoriile vehiculelor din clipuri (fără pietoni, ca la `recount --publica`), factorii
+și corespondențele calibrării (coordonate). Pe aceste fișiere, `referinta factori` dă exact factorii, intervalele și
+procentele din § 4.3 – aceleași ca pe jurnalele complete ale clipurilor –, iar `calibrare_camera potrivire` reface
+exact modelul camerei. Jurnalele complete (cu pietoni), necesare doar pentru zebrele de pe Dacia est, rămân la autor
+(`outputs\referinta\`).
 
 ## 12. Jurnalul proiectului
 
@@ -1221,8 +1296,8 @@ ambiguă, s-a ales varianta sigură.
 | Codul sursă, scripturile, testele, configurările | `src/`, `scripts/`, `tests/`, `config/`, `requirements.txt`; codul ciornei din `legacy/` | GNU AGPL v3 sau ulterioară (`AGPL-3.0-or-later`)[^agpl] | obligatorie pentru modulul de viziune, care folosește Ultralytics YOLO11 (AGPL-3.0); extinsă la tot codul, ca variantă sigură, conform cerinței Ultralytics de licențiere a întregului proiect |
 | Modelele antrenate | `models/` | AGPL-3.0-or-later | alegerea autorului: aceeași licență ca a codului care le încarcă; atribuire OSM, pentru că au fost antrenate pe rețeaua derivată[^osmf-atribuire] |
 | Extrasul OSM, rețeaua, cererea, scenariile | `data/osm/`, `sumo/`, `legacy/google_ai_draft/osm*` | ODbL 1.0 | impusă de OpenStreetMap: sunt baze de date derivate, cu share-alike |
-| Numărătorile și traiectoriile | `data/counts/`, `data/trajectories/` | ODbL 1.0, în măsura în care asupra lor există drepturi | alegerea autorului: aceeași licență ca a cererii care încorporează numărătorile; faptele în sine nu sunt protejate |
-| Documentația, rezultatele, figurile proprii | `docs/`, `README.md`, `NOTICE` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
+| Numărătorile și traiectoriile | `data/counts/`, `data/trajectories/`; traiectoriile vehiculelor din clipurile numărătorii de referință (`docs/rezultate/referinta/clip*/traiectorii/`) | ODbL 1.0, în măsura în care asupra lor există drepturi | alegerea autorului: aceeași licență ca a cererii care încorporează numărătorile; faptele în sine nu sunt protejate |
+| Documentația, rezultatele, figurile proprii | `docs/` (fără traiectoriile de mai sus), `README.md`, `NOTICE` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
 
 Textele integrale se află în `LICENSE` (AGPL), `LICENSES/ODbL-1.0.txt` și `LICENSES/CC-BY-4.0.txt`. Atribuirile
 terților și harta detaliată „cale → licență” sunt în fișierele `NOTICE` și `REUSE.toml`. În `data/`, `sumo/` și
@@ -1407,17 +1482,37 @@ utilizare ai resurselor folosite efectiv în proiect.
 
 ## Anexa A. Fișierele de rezultate (`docs/rezultate/`)
 
-Datele brute din care provin cifrele capitolului 9 (fiecare rând = o simulare: scenariu, strategie, seed și toate
-metricile din § 7.5). Se regenerează cu `scripts\5_evalueaza.bat` și scripturile de validare.
+Datele brute din care provin cifrele capitolului 9: fie rezultatele complete ale evaluării (fiecare rând = o
+simulare: scenariu, strategie, seed și toate metricile din § 7.5), fie doar indicatorul principal (`model, scenariu,
+seed, pierdere_h`). Statisticile din capitolul 9 se calculează din aceste fișiere cu `romana.control.analiza`, fără
+simulări (§ 11.8).
 
-| Fișier | Conținut |
-|---|---|
-| `rezultate_brute.csv`, `rezultate.md`, `comparatie_strategii.png` | evaluarea pe scenariile actuale (marginea de jos a cererii: zile lucrătoare și duminică, seed-urile de test), cu tabelul detaliat pe categorii de participanți și graficul |
-| `rezultate_brute_marginea_de_sus.csv` | evaluarea pe scenariile cu cererea „medie” (marginea de sus): 1 400 de simulări, zile lucrătoare cu seed-urile 1–10 și duminica dimineața |
-| `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) |
-| `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4) |
-| `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4) |
-| `validare_*.csv` (+ `*_alegere.json`) | validările pe seed-urile 11–15 (11–13 la primele), din care s-au ales agenții, planurile și componentele programului: `validare_intrari` (marginea de jos), `validare_indisciplinat` (programul realist), `validare_indisciplinat_e10` (E10), `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9`, `validare_nou_*`, `validare_e2_e3`, `validare_clasice`, `validare_finala` |
-| `grila_plan*.csv` | grilele de planuri fixe (§ 9.5) |
-| `calibrare_conservare*.csv` | încercarea de calibrare a ieșirilor pe criteriul conservării vehiculelor (§ 4.3) |
-| `candidati_*.csv`, `alegere_agent*.json` | candidații și alegerea agenților din experimentele timpurii |
+Coloana „Scenariile” dă versiunea scenariilor pe care a fost produs fișierul: „arborele curent” sau commitul din
+care se aduc temporar (`git checkout <commit> -- sumo/scenarios sumo/demand config/demand.json`, revenirea cu
+`git checkout HEAD -- sumo config/demand.json`, § 11.8). Cu scenariile din arborele curent, care au aceleași nume, dar
+cererea recalibrată pe 26.10, se obțin alte cifre. Coloana „Se reproduce cu” dă modulul care reface fișierul. Fișierele
+`validare_*`, `robustete_*` și `calibrat_*` au fost produse cu scripturile de lucru din care provine modulul
+`romana.control.validare` (publicat pe 26.10); modulul dă aceleași valori (verificat pe rulări din
+`calibrat_normal.csv`, `calibrat_indisciplinat.csv`, `robustete_indisciplinat.csv` și `validare_indisciplinat.csv`).
+Unele validări conțin și candidați sau puncte intermediare ale antrenării care nu sunt publicate în `models/`
+(`ppo_romana_final_a/b`, `ppo_romana_nou_600k/800k/900k`, `romana_ind_*`, `romana_mix_*`): rândurile lor nu se pot
+reface, celelalte da.
+
+| Fișier | Conținut | Scenariile | Se reproduce cu |
+|---|---|---|---|
+| `rezultate_brute.csv`, `rezultate.md`, `comparatie_strategii.png` | evaluarea pe scenariile din „doar intrări” (marginea de jos a cererii: zile lucrătoare și duminică, seed-urile de test), cu tabelul detaliat pe categorii de participanți și graficul | `e1d0f77` | `romana.control.evaluate` (`scripts\5_evalueaza.bat`) |
+| `rezultate_brute_marginea_de_sus.csv` | evaluarea pe scenariile cu cererea „medie” (marginea de sus): 1 400 de simulări, zile lucrătoare cu seed-urile 1–10 și duminica dimineața | `7a79502` | `romana.control.evaluate` |
+| `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) | `8176be5`, cu codul de atunci | `romana.control.evaluate` din acel commit |
+| `scenarii_referinta/` | evaluarea pe scenariile ipotetice inițiale (`referinta_*`) | `a845bf9`, cu codul de atunci | `romana.control.evaluate` din acel commit |
+| `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
+| `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3, E9 și planul fix, pe 5 scenarii de zi lucrătoare | `e1d0f77` | `romana.control.validare --seeds 1-5` / `--seeds 6-10`, `--fara-alegere` (comanda completă: § 11.8) |
+| `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3 și planul fix | `e1d0f77` (cele 5 scenarii de duminică de atunci, fără `pranz`) | la fel |
+| `validare_indisciplinat.csv` + `_alegere.json` | validarea din care s-a ales programul realist (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |
+| `validare_intrari.csv` + `_alegere.json` | validarea componentelor programului pentru marginea de jos (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |
+| `validare_indisciplinat_e10.csv`, `validare_indisciplinat_e11.csv` | validarea agenților E10 și E11 (§ 9.5), cu punctele lor intermediare | `e1d0f77` | `romana.control.validare` (punctele intermediare nu sunt publicate) |
+| `validare_zone_noi`, `validare_e2_e3`, `validare_clasice`, `validare_nou_*`, `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9` (23–25.10), fiecare cu `_alegere.json` unde există | validările pentru marginea de sus (seed-urile 11–13, apoi 11–15), din care s-au ales agenții, planurile și componentele programului; în `_alegere.json`: scorul mediu al fiecărei strategii față de planul fix, strategia aleasă, seed-urile (cele prezente în CSV) și scenariile | `7a79502` | `romana.control.validare` (seed-urile din alegeri corectate cu `--corecteaza-alegeri`; testele pe seed-urile 1–10 nu au fișier de alegere) |
+| `validare_finala.csv` | validarea din 22.10 din care s-a ales agentul oficial (seed-urile 11–13) | `8176be5`, cu codul de atunci | scripturi de lucru, în formatul lui `romana.control.validare` |
+| `grila_plan.csv`, `grila_plan_zone_noi.csv` | grilele de planuri fixe (§ 9.5) | `1619a30`, cu codul de atunci / `7a79502` | scripturi de lucru nepublicate, cu aceeași funcție de simulare (`evaluate.run_one`); o grilă se reface cu `romana.control.validare PLAN_a_b_c …` sau `romana.control.evaluate --planuri a,b,c` |
+| `calibrare_conservare*.csv` | încercarea de calibrare a ieșirilor pe criteriul conservării vehiculelor (§ 4.3) | – (renumărare, fără simulări) | script de lucru nepublicat: renumărarea (`vision/recount.py`) cu pragurile `Params.capat_min_*` din `vision/od_counter.py` |
+| `candidati_*.csv`, `alegere_agent*.json` | candidații și alegerea agenților din experimentele timpurii (`alegere_agent.json` ↔ `validare_finala.csv`, `alegere_agent_zone_noi.json` ↔ `validare_e2_e3.csv`) | `candidati_*`: `1619a30`; `alegere_agent.json`: `8176be5`, cu codul de atunci; `alegere_agent_zone_noi.json`: `7a79502` | scripturi de lucru, în același format ca `romana.control.validare` |
+| `referinta/` | numărătoarea de referință din 26.10 (§ 4.3): numărătorile adnotatorilor pe bucăți de 30 s (`referinta_clip1.csv`, `referinta_clip2.csv`: `tinta, bucata, adnotator, numar`), traiectoriile vehiculelor din cele două clipuri la 1600 px (`clip1/`, `clip2/`) și la 2560 px (`clip1_2560/`, `clip2_2560/`), fără pietoni și fără imagini (licența: ODbL 1.0, § 14.1), factorii (`factori.json`) și calibrarea camerei (`corespondente_camera.json`, `model_camera.json`, `erori_camera.csv`) | – | `romana.vision.referinta factori`, `romana.vision.calibrare_camera potrivire` (§ 11.8) |
