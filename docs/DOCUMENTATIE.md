@@ -716,12 +716,15 @@ Programul realist este varianta implicită a modului „Program pe tipuri de tra
 (`VARIANTA_PROGRAM = "realist"` în `bridge/live_twin.py`; varianta pentru participanți disciplinați rămâne
 disponibilă ca `"marginea_sus"`).
 
-**Programul realist pe duminică** (zi nevăzută, participanți indisciplinați, 5 scenarii × 5 seed-uri,
-`docs/rezultate/robustete_indisciplinat_duminica.csv`): −4,3% față de planul fix (mai bun în 19 din 25, dar
-nesemnificativ: p = 0,37) – câștigă la trafic lejer și dimineața (−9…−10%), dar la vârful foarte mare de duminică
-(≈3 500–4 200 veh/h, peste orice scenariu de antrenare) agentul E3 pierde ușor (+8,7% la vârful ×1,2). Agentul
-oficial singur a fost aici cel mai bun (−9,1% în medie, −11,6% la vârf). Concluzia: pentru tipare de trafic mult
-diferite de cele de antrenare, agenții trebuie reantrenați pe date noi (§ 10).
+**Programul realist pe duminică** (zi nevăzută, participanți indisciplinați, 5 scenarii × 10 seed-uri de test,
+`docs/rezultate/robustete_indisciplinat_duminica*.csv`; dimineața de duminică intră în banda lejeră): −4,4% față
+de planul fix, mai bun în 40 din 50 de rulări (Wilcoxon p = 0,035; testul t, sensibil la valorile extreme, nu e
+semnificativ: p = 0,53) – câștigă la trafic lejer și dimineața (−9…−10%) și la vârf (−5,8%), dar la vârful ×1,2
+(≈4 200 veh/h, peste orice scenariu de antrenare) agentul E3 pierde (+11,4%). Agentul oficial singur a fost aici
+cel mai bun (−7,9% în medie, mai bun în 44 din 50, Wilcoxon p = 0,0001; −9,7% la vârf, −2,5% la vârful ×1,2);
+față de actuated, programul realist este la egalitate (−0,7%, nesemnificativ). Concluzia: pentru tipare de trafic
+mult diferite de cele de antrenare, agenții trebuie reantrenați pe date noi (§ 10). (Pe primele 5 seed-uri
+rezultatul era −4,3%, nesemnificativ: p = 0,37.)
 
 *Notă de verificare:* prima rulare a testului a dat rezultate identice cu scenariile normale – funcția care pornește
 simularea înlocuia tipurile de participanți din scenariu cu cele standard (`control/env.py`, corectat pe
@@ -1148,7 +1151,8 @@ metricile din § 7.5). Se regenerează cu `scripts\5_evalueaza.bat` și scriptur
 | `rezultate_brute_marginea_de_sus.csv` | evaluarea pe scenariile cu cererea „medie” (marginea de sus): 1 400 de simulări, zile lucrătoare cu seed-urile 1–10 și duminica dimineața |
 | `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4) |
-| `validare_*.csv` (+ `*_alegere.json`) | validările pe seed-urile 11–15 (11–13 la primele), din care s-au ales agenții, planurile și componentele programului: `validare_intrari` (marginea de jos), `validare_indisciplinat` (programul realist), `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9`, `validare_nou_*`, `validare_e2_e3`, `validare_clasice`, `validare_finala` |
+| `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4) |
+| `validare_*.csv` (+ `*_alegere.json`) | validările pe seed-urile 11–15 (11–13 la primele), din care s-au ales agenții, planurile și componentele programului: `validare_intrari` (marginea de jos), `validare_indisciplinat` (programul realist), `validare_indisciplinat_e10` (E10), `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9`, `validare_nou_*`, `validare_e2_e3`, `validare_clasice`, `validare_finala` |
 | `grila_plan*.csv` | grilele de planuri fixe (§ 9.5) |
 | `calibrare_conservare*.csv` | încercarea de calibrare a ieșirilor pe criteriul conservării vehiculelor (§ 4.3) |
 | `candidati_*.csv`, `alegere_agent*.json` | candidații și alegerea agenților din experimentele timpurii |
