@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Participanți indisciplinați (§ 9.4) cu capacitatea calibrată (§ 6.4): aceleași tipuri ca în
-     vtypes_indisciplinat.add.xml, cu timpul de reacție al șoferilor de vehicule motorizate tau = 0,8 s. -->
+     vtypes_indisciplinat.add.xml, cu timpul de reacție al șoferilor de vehicule motorizate tau = 0,8 s.
+     Din 28.10.2026 vtypes_indisciplinat.add.xml are aceleași valori; fișierul rămâne pentru scenariile din § 9.9. -->
 <additional>
   <vType id="passenger" vClass="passenger" length="4.6" accel="2.6" decel="4.5" sigma="0.6" tau="0.8" maxSpeed="16.7" color="200,200,200"
          impatience="0.5" jmIgnoreKeepClearTime="1" jmDriveAfterRedTime="2" jmDriveAfterYellowTime="2"

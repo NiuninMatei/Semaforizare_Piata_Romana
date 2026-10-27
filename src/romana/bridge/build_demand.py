@@ -36,11 +36,13 @@ CANDIDATES = DEMAND_DIR / "candidate.rou.xml"
 VTYPES = DEMAND_DIR / "vtypes.add.xml"
 SCEN_DIR = SUMO_DIR / "scenarios"
 
+# Vehiculele motorizate au timpul de reacție tau = 0,8 s (valoarea implicită SUMO: 1,0 s): capacitatea geamănului
+# calibrată pe debitul observat (docs/DOCUMENTATIE.md § 6.4), implicită din 28.10.2026.
 VTYPE_DEFS = {
-    "passenger": dict(vClass="passenger", length="4.6", accel="2.6", decel="4.5", sigma="0.5", maxSpeed="16.7", color="200,200,200"),
-    "bus": dict(vClass="bus", length="12", accel="1.2", decel="4.0", sigma="0.4", maxSpeed="14", color="0,120,255", guiShape="bus"),
-    "truck": dict(vClass="truck", length="9", accel="1.3", decel="4.0", sigma="0.5", maxSpeed="14", color="160,100,40", guiShape="truck"),
-    "motorcycle": dict(vClass="motorcycle", length="2.2", accel="3.5", decel="6", sigma="0.5", maxSpeed="16.7", color="255,200,0", guiShape="motorcycle"),
+    "passenger": dict(vClass="passenger", length="4.6", accel="2.6", decel="4.5", sigma="0.5", tau="0.8", maxSpeed="16.7", color="200,200,200"),
+    "bus": dict(vClass="bus", length="12", accel="1.2", decel="4.0", sigma="0.4", tau="0.8", maxSpeed="14", color="0,120,255", guiShape="bus"),
+    "truck": dict(vClass="truck", length="9", accel="1.3", decel="4.0", sigma="0.5", tau="0.8", maxSpeed="14", color="160,100,40", guiShape="truck"),
+    "motorcycle": dict(vClass="motorcycle", length="2.2", accel="3.5", decel="6", sigma="0.5", tau="0.8", maxSpeed="16.7", color="255,200,0", guiShape="motorcycle"),
     "bicycle": dict(vClass="bicycle", length="1.8", accel="1.2", decel="3", sigma="0.5", maxSpeed="6", color="0,200,0", guiShape="bicycle"),
     "pieton": dict(vClass="pedestrian", length="0.3", width="0.5", maxSpeed="1.4", speedDev="0.15", color="255,90,90", guiShape="pedestrian"),
 }

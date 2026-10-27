@@ -2,7 +2,9 @@
 <!-- Capacitatea calibrată (docs/DOCUMENTATIE.md § 6.4): aceleași tipuri ca în vtypes.add.xml, cu timpul de reacție
      al șoferilor de vehicule motorizate tau = 0,8 s în loc de 1,0 s (valoarea implicită SUMO). Cu 1,0 s, geamănul se
      blochează la cererea reală de luni 26.10 (vârful calibrat ≈5 000 veh/h; numărătoarea de referință ≈6 200 veh/h);
-     cu 0,8 s servește tot vârful și vârful ×1,2. Distanța minimă și imperfecțiunea (sigma) au efect mic (baleiajul din § 6.4). -->
+     cu 0,8 s servește tot vârful și vârful ×1,2. Distanța minimă și imperfecțiunea (sigma) au efect mic (baleiajul din § 6.4).
+     Din 28.10.2026 calibrarea este implicită, iar vtypes.add.xml are aceleași valori; fișierul acesta rămâne pentru
+     scenariile capacitate_* din § 9.9 (rezultatele și validarea E14 le folosesc numele). -->
 <additional>
   <vType id="passenger" vClass="passenger" length="4.6" accel="2.6" decel="4.5" sigma="0.5" tau="0.8" maxSpeed="16.7" color="200,200,200" />
   <vType id="bus" vClass="bus" length="12" accel="1.2" decel="4.0" sigma="0.4" tau="0.8" maxSpeed="14" color="0,120,255" guiShape="bus" />
