@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (25.10.2026, ~14:40) – documentație unică, rezultate pe două calibrări, test de indisciplină
+## Stare curentă (27.10.2026, ~05:20) – documentație unică, capacitatea geamănului, testul pe ziua de luni (§ 9.9)
 
 - **Singura documentație: `docs/DOCUMENTATIE.md`** (+ `docs/DOCUMENTATIE.pdf`, `python -m romana.doc_pdf`); GHID.md,
   JURNAL.md, OBSERVATII_EVALUARE.md au fost integrate (cap. 11 ghid, cap. 12 jurnal); README = prezentare scurtă;
@@ -83,6 +83,24 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   § 11) – de verificat și comis. Colectarea live rulează încă (fișierul zilei 26 în data/trajectories – de mutat în
   trajectories_brute și publicat cu recount --publica după oprire). Buget: limita săptămânală trebuie să ajungă până
   vineri 30.10, 08:00 (memoria buget-tokeni).
+- **27.10, ~05:20 – noaptea 26–27.10, făcute:** § 4.6 (21–22.10 subnumărate: urmărire sacadată înainte de tamponul
+  HLS de 8 s; `romana.vision.calitate`); § 6.4 capacitatea geamănului (parametrii impliciți se blochează la debitul de
+  luni; `tau` = 0,8 s îl servește; `romana.control.capacitate`, `vtypes_capacitate*.add.xml`, scenariile `capacitate_*`);
+  § 9.6 localizarea pe cererea calibrată (50–78% coada Dacia vest pe geamănul implicit; cu capacitatea calibrată
+  coada dispare, rămâne una la marginea rețelei pe Calea Victoriei, nelămurită – `localizare_varf_capacitate.csv`;
+  `romana.control.localizare`); ziua 26 prelucrată
+  (scenarii `zi_2026-10-26_*`). E12 (`cand_romana_cal3_100k`) / E13 (`ppo_romana_cal`), reantrenați pe 21–22 calibrate:
+  echivalenți cu programul realist pe test (§ 9.5) → nu se adoptă. **§ 9.9, testul pe luni 26.10 cu capacitatea
+  calibrată:** E13 −9,5% / −9,7% vs fix (60/60 mai bun decât actuated), oficialul −10,0% / −5,9%, programul realist
+  −3,9% (ns) / −6,4%; E3 e veriga slabă (seara, ×1,2). **Protocol fixat:** 26.10 = validare, candidatul E13 singur,
+  test pe 27.10 (capacitatea calibrată, seed-urile 1–10, ambele comportamente; vs realist, oficial, fix, actuated);
+  E13 înlocuiește programul realist în `live_twin.py` doar dacă Wilcoxon p < 0,05 – decizia finală a autorului.
+  Capacitatea calibrată ca implicită (ar schimba toate rezultatele 9.1–9.8) = decizia autorului; deocamdată variantă.
+- **De făcut:** oprirea colectării live a zilei 27 (seara) → mutarea fișierului brut în data/trajectories_brute,
+  `recount --zi 2026-10-27 --publica`, `scenarii_zi --zi 2026-10-27`, `romana.bridge.indisciplinat` cu `--vtypes
+  vtypes_capacitate*.add.xml --prefix capacitate_*` pe `zi_2026-10-27_*`, testul E13 după protocolul din § 9.9;
+  reantrenarea pe 26–27 cu capacitatea calibrată; grila de planuri fixe pe geamănul calibrat. Răspunsurile Webcam
+  România (e-mail) și GitHub Support (#4909163).
 - Pași posibili: reantrenarea agenților pe scenariile „doar intrări” și cu participanți indisciplinați; adnotarea a
   2–3 minute de video pentru a fixa nivelul cererii între cele două margini.
 ## Stare anterioară (22.10.2026, 16:10) – Bornele 7 și 9 încheiate

@@ -492,9 +492,9 @@ Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor
 commiturile `e1d0f77` și `7a79502`, § 11.8); pe
 duminică, datele complete (până la 17:00) mută vârful la 15:30–16:30, iar fereastra de prânz devine scenariu separat.
 Rezultatele din § 9.1–9.7 au fost obținute pe calibrările anterioare (marginile de jos și de sus); reevaluarea pe
-cererea calibrată este în § 9.8. Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
+cererea calibrată este în § 9.8, iar testul pe ziua de luni 26.10, cu capacitatea calibrată, în § 9.9. Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
 GEH < 5 pentru ≈94% din relațiile autoturismelor și 100% din cele ale celorlalte tipuri. Agenții au fost
-antrenați pe scenariile din zilele lucrătoare; duminica servește doar ca test de generalizare.
+antrenați pe scenariile din 21–22.10; duminica 25.10 și lunea 26.10 servesc doar ca teste de generalizare.
 
 Compoziția traficului măsurată (prima zi, 21.10): ≈93% autoturisme, ≈4% autobuze și troleibuze, ≈3% camioane,
 sub 0,5% biciclete și motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi de
@@ -617,18 +617,29 @@ pe oră, față de ≈3 070 numărate pe cameră. Baleiajul parametrilor (planul
 | 1,0 s / 2,0 m / 0,5 | 2 051 (blocaj) | – |
 | 0,9 s / 2,5 m / 0,5 | 588 | – |
 | 0,9 s / 2,0 m / 0,5 | 473 | 1 000 |
-| **0,8 s / 2,5 m / 0,5** | **15** | – |
+| **0,8 s / 2,5 m / 0,5** | **15** | **45** |
 | 0,8 s / 2,0 m / 0,5 | 19 | 19 |
 | 0,8 s / 2,0 m / 0,3 | 10 | 19 |
 
 Parametrul decisiv este timpul de reacție: cu **`tau` = 0,8 s** (o singură modificare față de valoarea implicită,
-în intervalul folosit uzual la calibrarea SUMO pe trafic urban), geamănul servește tot vârful de luni și vârful ×1,2,
+aleasă empiric: dintre valorile încercate, cea mai mică modificare a unui singur parametru care elimină blocajul),
+geamănul servește practic tot vârful de luni și vârful ×1,2 (15 și 45 de vehicule neintroduse la final, din ≈5 700
+și ≈6 800),
 fără blocaje; distanța minimă și imperfecțiunea contează puțin. Calibrarea este în `sumo/demand/vtypes_capacitate.add.xml`
 (și `vtypes_capacitate_indisciplinat.add.xml`), cu scenariile `capacitate_zi_*` și `capacitate_indisciplinat_zi_*`
-(`romana.bridge.indisciplinat --vtypes … --prefix …`). Rezultatele din § 9.1–9.8 sunt obținute cu parametrii impliciți,
-pe cererea din 21–22.10, care era subnumărată (§ 4.6) – adică pe un geamăn cu capacitate de aproximativ jumătate din
-cea reală, încărcat cu aproximativ jumătate din cererea reală. Gradul de saturare era, astfel, comparabil cu cel
-real, dar valorile absolute nu. Evaluarea pe ziua de luni cu capacitatea calibrată este în § 9.9.
+(`romana.bridge.indisciplinat --vtypes … --prefix …`).
+
+Cu parametrii impliciți, intrările pieței trec doar 35–44% din câte trec cu `tau` = 0,8 s (1 689 față de 3 830 la
+vârf, 1 613 față de 4 633 la vârful ×1,2, în ora măsurată). Cum geamănul calibrat nu e saturat (rămân 10–19 vehicule
+neintroduse), capacitatea implicită este cel mult o treime până la jumătate din cea reală. Rezultatele din § 9.1–9.8
+sunt obținute cu parametrii impliciți:
+- pe cererea din 21–22.10, subnumărată la aproximativ jumătate (§ 4.6), deci cu un grad de saturare cel puțin
+  egal cu cel real, probabil mai mare, și cu valori absolute mai mici;
+- pe duminica 25.10 (§ 9.3, § 9.4), înregistrată continuu, deci cu o cerere apropiată de cea reală pe un geamăn
+  suprasaturat; de aici, probabil, și pierderea de avantaj a agenților la vârful de duminică.
+
+Geamănul live (`live_twin.py`) folosește încă tipurile implicite (`vtypes.add.xml`). Evaluarea pe ziua de luni cu
+capacitatea calibrată este în § 9.9.
 
 ## 7. Controlul inteligent al semafoarelor
 
@@ -756,17 +767,22 @@ aranjare pe o coloană sub 900 px. Atribuirile cerute (OSM, Webcam România, SUM
   la intrarea în rețea), bicicliști și pietoni –, exprimată față de planul fix de referință (programul actual,
   36/28/12 s, § 6.3). Restul metricilor (§ 7.5) sunt în `docs/rezultate/rezultate.md`.
 * **Separarea datelor**: fiecare simulare depinde de un seed aleatoriu (sosirile, comportamentul șoferilor).
-  Alegerile – ce agent, ce plan, ce strategie pe ce tip de trafic – s-au făcut **numai pe seed-urile de validare
-  11–15**; rezultatele raportate sunt pe **seed-urile de test 1–10**, nefolosite la alegere.
+  Alegerile – ce agent, ce plan, ce strategie pe ce tip de trafic – s-au făcut **pe seed-urile de validare
+  11–15**; rezultatele raportate sunt pe **seed-urile de test 1–10**, nefolosite la alegere. Excepția este
+  componenta pentru trafic greu a marginii de sus: validarea a ales agentul E7, iar planul 46/48/12, mai simplu, a
+  fost preferat după echivalența lor pe seed-urile de test 1–5 (p = 0,32, § 9.5).
 * **Statistica**: comparațiile se fac pe perechi (același scenariu, același seed), cu testul t pe perechi și
   testul Wilcoxon; „mai bun în k din n” numără rulările în care strategia are o pierdere totală mai mică.
 * **Cele două calibrări ale cererii** (§ 5.1): marginea de sus (media intrări/ieșiri măsurate) și marginea de jos
-  (doar intrările). Adevărul se află între ele, de aceea rezultatele sunt raportate pentru ambele.
+  (doar intrările). Atunci se credea că adevărul se află între ele, de aceea rezultatele sunt raportate pentru
+  ambele. Numărătoarea de referință (§ 4.3) și înregistrarea continuă din 26.10 (§ 4.6) au arătat ulterior că
+  cererea reală e de aproximativ două ori peste ambele margini; reevaluarea pe cererea calibrată e în § 9.8–9.9.
 
 ### 9.2 Rezultatul principal: programul pe tipuri de trafic
 
-Niciun agent AI, aplicat singur pe toate tipurile de trafic, nu bate în mod robust un plan fix bine reglat
-(§ 9.5). Soluția găsită este un **program pe tipuri de trafic**: pentru fiecare tip de trafic (lejer, moderat,
+Pe calibrările din 21, 22 și 25.10, cu geamănul cu capacitate implicită, niciun agent AI aplicat singur pe toate
+tipurile de trafic nu bătea în mod robust un plan fix bine reglat (§ 9.5). Pe cererea calibrată și pe ziua nouă,
+cu capacitatea calibrată, situația se schimbă (§ 9.9). Soluția găsită atunci a fost un **program pe tipuri de trafic**: pentru fiecare tip de trafic (lejer, moderat,
 greu) se folosește strategia care a fost cea mai bună pe datele de validare, iar la performanță practic egală se
 preferă strategia mai simplă. Toate componentele sunt implementabile pe automatul existent (se schimbă doar
 programul semaforului). Programul este implementat în geamănul digital și în dispecerat (modul „Program pe tipuri
@@ -899,16 +915,18 @@ afectate (verificat).
 | E9 – specialist trafic lejer | −9,5% față de −9,0% (agentul oficial), p = 0,001 | **adoptat pentru traficul lejer** (marginea de sus) |
 | E10 – E3 reantrenat 200 000 de pași pe scenariile cu participanți indisciplinați (lr 3·10⁻⁵, 26.10) | −6,6% pe validare față de −13,4% (E3); punctele intermediare, la 25 000 de pași distanță, variază între −5,4% și +7,2% (`docs/rezultate/validare_indisciplinat_e10.csv`) | negativ: reantrenarea strică politica E3 în loc s-o îmbunătățească → E3 rămâne |
 | E11 – agent nou de la zero, 1 000 000 de pași, pe scenariile de zi lucrătoare cu participanți disciplinați și indisciplinați amestecați (26.10) | cel mai bun punct intermediar (500 000 de pași) −6,9% pe validarea cu participanți indisciplinați, față de −13,4% (E3); modelul final +4,6% (`docs/rezultate/validare_indisciplinat_e11.csv`) | negativ: nici antrenarea de la zero pe ambele comportamente nu ajunge la E3 |
+| E12 / E13 – E3, respectiv agentul oficial, continuați 300 000 de pași (lr 3·10⁻⁵) pe cele 20 de scenarii calibrate de zi lucrătoare din 21–22.10 (participanți disciplinați și indisciplinați), cu punctele intermediare de la +100 000 și +200 000 de pași ca candidați (noaptea 26–27.10) | pe validarea cu participanți indisciplinați (seed-urile 11–15; medii pe perechi, ca în § 9.8–9.9): E12 (+100 000 de pași, `cand_romana_cal3_100k`) −5,9% față de −2,3% (E3), dar modelul final +1,7%; E13 (final, `ppo_romana_cal`) −9,3% față de −10,1% (agentul oficial, cel mai bun în validare). Media pe scenarii, convenția din `_alegere.json` și din rândurile E10/E11: −6,3% / −3,0% / +1,1% / −9,6% / −10,5%. Pe test (seed-urile 1–5), programul în care fiecare componentă a programului realist e înlocuită cu varianta ei reantrenată (oficialul → E13 la trafic lejer, E3 → E12 în rest), fixat înainte de rulare, dă față de planul fix −6,7% (40/50) cu participanți indisciplinați și −3,9% (37/50) cu disciplinați. Față de programul realist: +1,0% (p = 0,86 / 0,59) și −0,5% (p = 0,22 / 0,25) (`validare_calibrat.csv`, `test_reantrenare_*.csv`) | echivalent statistic cu programul realist → programul realist rămâne; scenariile de antrenare din 21–22.10 sunt subnumărate (§ 4.6) și geamănul avea capacitatea implicită (§ 6.4), deci reantrenarea pe ele nu poate repara vârfurile |
 | Grila de 11 planuri fixe (verde N–S × E–V × pietoni) | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** (marginea de sus) |
 
 Lecția metodologică: diferențele de 1–2 puncte își schimbau semnul între seed-urile de validare și cele de test,
 de aceea validarea a trecut de la 3 la 5 seed-uri, iar rezultatele finale se raportează pe 10 seed-uri de test, cu
 teste statistice.
 
-### 9.6 Limita fizică la vârf
+### 9.6 Unde se pierde timpul la vârf
 
-Analiza localizării întârzierilor pe cererea calibrată (§ 9.8; vârfurile din 21 și 22.10, planul fix actual, seed
-1, `romana.control.localizare`, § 11.8) împarte timpul vehiculelor oprite sau care așteaptă să intre în rețea astfel:
+Analiza localizării întârzierilor pe cererea calibrată (§ 9.8; vârfurile din 21 și 22.10, geamănul cu capacitate
+implicită, planul fix actual, seed 1, `romana.control.localizare`, § 11.8) împarte timpul vehiculelor oprite sau care
+așteaptă să intre în rețea astfel:
 
 | Vârful | Coada de intrare pe Bd. Dacia vest | Zona pieței (intrări + ≈250 m amonte) | La alte semafoare și pe alte străzi | Coada de intrare pe Dacia est / Magheru |
 |---|---|---|---|---|
@@ -917,31 +935,63 @@ Analiza localizării întârzierilor pe cererea calibrată (§ 9.8; vârfurile d
 | 21.10, participanți indisciplinați | **64%** | 13% | 16% | 0,5% / 7% |
 | 22.10, participanți indisciplinați | **50%** | 18% | 24% | 2% / 6% |
 
-Așadar, la vârf, **jumătate până la trei sferturi din timpul pierdut** este coada vehiculelor de pe Bd. Dacia dinspre
-Calea Victoriei care nici nu încap în rețea – coada se întinde dincolo de zona modelată – și doar 11–18% sunt opriri
-în piață propriu-zisă (`docs/rezultate/localizare_varf_calibrat.csv`). Pe calibrarea anterioară (22.10, zonele
-inițiale) ponderea era 68%, cu ≈24% în piață: cu zona nouă a camerei, Dacia vest e numărat aproape complet (§ 4.3),
-iar coada lui a crescut. Grila de planuri fixe (datele din 21–22.10) arăta că nici cel mai bun plan fix posibil nu
-câștigă mai mult de ≈5% la vârf. Niciun program de
-semafor nu poate elimina complet această coadă: decongestionarea serioasă a vârfului cere intervenții pe
-capacitatea acelui braț sau pe cerere (transport public, rute alternative) – o informație utilă pentru
-administratorul drumului.
+Așadar, pe geamănul cu capacitate implicită, la vârf, **jumătate până la trei sferturi din timpul pierdut** este
+coada vehiculelor de pe Bd. Dacia dinspre Calea Victoriei care nici nu încap în rețea – coada se întinde dincolo de
+zona modelată – și doar 11–18% sunt opriri în piață propriu-zisă (`docs/rezultate/localizare_varf_calibrat.csv`). Pe
+calibrarea anterioară (22.10, zonele inițiale) ponderea era 68%, cu ≈24% în piață: cu zona nouă a camerei, Dacia vest
+e numărat aproape complet (§ 4.3), iar coada lui a crescut. Grila de planuri fixe (datele din 21–22.10, capacitate
+implicită) arăta că nici cel mai bun plan fix posibil nu câștigă mai mult de ≈5% la vârf.
+
+**Cu capacitatea calibrată (§ 6.4), concluzia se schimbă.** Analiza s-a refăcut pe vârful de luni și pe vârful ×1,2,
+cu ambele comportamente (`docs/rezultate/localizare_varf_capacitate.csv`):
+- La aceeași cerere (vârful de luni, participanți disciplinați), timpul vehiculelor oprite sau neintroduse scade de
+  la 2 230 de vehicul-ore cu parametrii impliciți la 184 cu `tau` = 0,8 s.
+- **Coada de pe Bd. Dacia vest** (muchia de intrare `-231435896`) **practic dispare** (≈0,1%).
+- Restul timpului este tot în majoritate așteptare la intrare (67–86%), dar acum pe Calea Victoriei, la capătul
+  vestic al rețelei (muchia `1165343128#0`, 55–76%). De acolo pornesc ≈1 650 de vehicule/h, care merg spre piață pe
+  Bd. Dacia. În zona pieței rămân 6–14%.
+
+Raportată la pierderea totală a tuturor participanților (cu planul fix, § 9.9), această coadă de la margine
+înseamnă ≈16–22% la vârf și ≈40% la vârful ×1,2. Nu s-a verificat încă dacă e o limită reală (de exemplu la
+intersecția Calea Victoriei × Bd. Dacia) sau un efect al introducerii vehiculelor la marginea rețelei. Prin urmare, „limita fizică de pe Dacia vest” ține de geamănul cu capacitate implicită. Cu capacitatea
+calibrată, piața și brațul Dacia vest trec vârful de luni, iar coada rămasă e la marginea zonei modelate, unde
+semaforul pieței are o influență mică. Lămurirea ei e o lucrare viitoare (§ 10). Dacă se confirmă că e reală,
+decongestionarea vârfului cere intervenții pe acel acces sau pe cerere (transport public, rute alternative) – o
+informație utilă pentru administratorul drumului.
 
 ### 9.7 Concluzie
 
-1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Într-un program pe tipuri
-   de trafic reduce timpul pierdut de toți participanții față de programul actual cu ≈1,5–7% când participanții
-   respectă regulile și cu **≈16%** când nu le respectă (cazul real din București), semnificativ statistic, fără
-   nicio lucrare pe stradă.
-2. **Când participanții respectă regulile, un singur agent AI nu bate un plan fix bine reglat la vârf**, dar e
-   printre cele mai bune strategii la trafic lejer și moderat; pe o zi nouă generalizează la volume apropiate de
-   cele de antrenare, iar pentru situații foarte diferite are nevoie de reantrenare pe date noi.
+Punctele 1–5 rezumă rezultatele pe calibrările anterioare (21, 22 și 25.10; geamănul cu capacitate implicită,
+§ 6.4). Punctul 6 rezumă testul pe cererea calibrată și pe ziua nouă, cu geamănul care trece debitul real.
+
+1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Pe calibrările anterioare,
+   un program pe tipuri de trafic a redus timpul pierdut de toți participanții, față de programul actual, cu
+   ≈1,5–7% când participanții respectă regulile. Când nu le respectă (cazul real din București), reducerea a fost de
+   **≈16%**, semnificativ statistic, fără nicio lucrare pe stradă. Pe cererea calibrată, avantajul programului
+   realist față de planul fix scade și nu mai e semnificativ cu participanți indisciplinați (−6,2%, § 9.8;
+   −3,9% pe 26.10, § 9.9). Față de actuated rămâne clar (−8…−12%).
+2. **Pe calibrările anterioare, când participanții respectă regulile, un singur agent AI nu bătea un plan fix bine
+   reglat la vârf**, dar era printre cele mai bune strategii la trafic lejer și moderat. Pe o zi nouă generaliza
+   la volume apropiate de cele de antrenare; pentru situații foarte diferite are nevoie de reantrenare pe date noi.
+   Pe ziua de luni, cu capacitatea calibrată, E13 câștigă și la vârf (−9,5% cu participanți disciplinați, § 9.9).
 3. **Calitatea datelor contează cel mai mult**: corectarea zonelor și a felului de numărare a schimbat rezultatul
-   mai mult decât orice algoritm; incertitudinea măsurării cererii se reflectă într-un interval, nu într-un număr.
-4. **Cu participanți indisciplinați, ca în București, avantajul AI crește mult**: specialiștii E3 și E9 reduc timpul
-   pierdut cu ≈10–14% față de planul fix (până la −28% la vârf), semnificativ statistic, pentru că se adaptează la
-   blocaje pe care un plan fix nu le poate anticipa.
-5. **La vârf există o limită fizică** (coada de pe Dacia vest), care cere măsuri dincolo de semafor.
+   mai mult decât orice algoritm, iar o înregistrare sacadată a înjumătățit cererea măsurată fără să se observe
+   (§ 4.6). Incertitudinea măsurării cererii se reflectă într-un interval, nu într-un număr.
+4. **Cu participanți indisciplinați, ca în București, avantajul AI crește**: pe calibrarea marginii de jos,
+   specialiștii E3 și E9 au redus timpul pierdut cu ≈10–14% față de planul fix (până la −28% la vârf),
+   semnificativ statistic (§ 9.4), pentru că se adaptează la blocaje pe care un plan fix nu le poate anticipa. Pe
+   cererea calibrată, avantajul lor scade (E3 practic egal cu planul fix, § 9.8–9.9). Agenții antrenați pe toate
+   tipurile de trafic (oficialul, E13) păstrează însă ≈10% pe ziua nouă (§ 9.9).
+5. **La vârf, pe geamănul cu capacitate implicită, coada de pe Dacia vest domina timpul pierdut** (§ 9.6). Cu
+   capacitatea calibrată, această coadă dispare. Rămâne o coadă de intrare la marginea vestică a rețelei (Calea
+   Victoriei): ≈16–22% din pierderea totală la vârf, cu natura încă neverificată (limită reală sau efect al
+   marginii).
+6. **Pe o zi lucrătoare nevăzută, cu geamănul care trece debitul real (§ 9.9), toți agenții AI bat actuated și, în
+   medie, planul fix.** Cel mai constant este agentul oficial reantrenat pe cererea calibrată (E13): −9,5% / −9,7%
+   față de planul fix, câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu
+   participanți indisciplinați e la egalitate cu agentul oficial. Programul realist rămâne mai bun decât actuated,
+   dar componenta lui pentru traficul greu (E3) nu se transferă pe ziua nouă cu participanți indisciplinați. Dacă
+   E13 îl înlocuiește se decide pe testul din 27.10, după protocolul fixat dinainte.
 
 ### 9.8 Reevaluarea pe cererea calibrată (26.10.2026)
 
@@ -969,27 +1019,118 @@ pierde +12% și +24%).
 
 **Concluzia reevaluării:** pe cererea măsurată corect, avantajul AI se păstrează față de actuated și în majoritatea
 situațiilor față de planul fix, dar e mai mic decât pe calibrările anterioare, iar la volumele cele mai mari agenții
-trebuie **reantrenați pe scenariile calibrate** (pasul următor, § 10).
+trebuie **reantrenați pe scenariile calibrate**. Prima reantrenare (E12 / E13, § 9.5), pe scenariile calibrate din
+21–22.10, a dat un program echivalent statistic cu programul realist, deci nu a fost adoptată. Explicația a venit după
+ea: scenariile din 21–22.10 sunt subnumărate din cauza înregistrării sacadate (§ 4.6), iar geamănul cu parametrii
+impliciți nu poate trece debitul real de luni (§ 6.4). Evaluarea pe ziua de luni, cu capacitatea calibrată, este
+în § 9.9.
+
+### 9.9 Testul pe o zi lucrătoare nouă, cu capacitatea calibrată (luni, 26.10.2026)
+
+Luni 26.10 este prima zi lucrătoare înregistrată continuu (§ 4.6) și **nu a fost folosită nici la antrenarea, nici la
+alegerea vreunui agent sau program**. A servit însă la calibrarea modelului pe care se face testul: factorii de
+corecție vin din numărătoarea de referință din aceeași zi (§ 4.3), iar timpul de reacție al șoferilor a fost ales pe
+vârful ei (§ 6.4). Au fost evaluate planul fix, actuated, planul 46/48/12 și agenții (oficialul, E3, E9, E12 și E13,
+ultimii doi aleși înainte, § 9.5); Webster și Max-Pressure nu au fost rulate. Evaluarea s-a făcut pe cele 6
+scenarii ale zilei: prânz 12:00–13:00, vârf 15:00–16:00, seara 17:30–18:30, liniștit 21:30–22:30, plus vârful ×1,2
+și liniștitul ×0,8. Geamănul a avut capacitatea calibrată (`tau` = 0,8 s, § 6.4;
+scenariile `capacitate_zi_2026-10-26_*` și `capacitate_indisciplinat_zi_2026-10-26_*`). Rularea s-a făcut pe
+seed-urile 1–5, adică 30 de perechi scenariu × seed pentru fiecare comportament. Benzile sunt cele din § 9.8:
+lejer = scenariile liniștite, moderat = prânzul, greu = restul. Fișierele sunt
+`docs/rezultate/capacitate_indisciplinat_26.csv` și `capacitate_normal_26.csv`.
+
+| Față de planul fix | Participanți indisciplinați | Participanți disciplinați |
+|---|---|---|
+| **E13 singur** (agentul oficial reantrenat, `ppo_romana_cal`) | **−9,5%**, mai bun în 27 / 30 (p = 0,0007 / 0,0001) | **−9,7%**, 28 / 30 (p = 0,0001 / 0,00001) |
+| Agentul oficial singur | −10,0%, 26 / 30 (p = 0,001 / 0,0001) | −5,9%, 24 / 30 (p = 0,07 / 0,01) |
+| Programul reantrenat (E13 la lejer, E12 în rest) | −7,1%, 24 / 30 (p = 0,010 / 0,008) | −6,5%, 22 / 30 (p = 0,02 / 0,04) |
+| Programul realist (oficial la lejer, E3 în rest) | −3,9%, 18 / 30 (p = 0,85 / 0,73) | −6,4%, 24 / 30 (p = 0,04 / 0,009) |
+| E12 singur | −5,9%, 23 / 30 (p = 0,01 / 0,02) | −6,2%, 22 / 30 (p = 0,02 / 0,03) |
+| E9 singur | −5,4%, 19 / 30 (p = 0,07 / 0,22) | −7,0%, 23 / 30 (p = 0,01 / 0,003) |
+| E3 singur | −1,9%, 18 / 30 (p = 0,92 / 0,90) | −5,2%, 24 / 30 (p = 0,04 / 0,009) |
+| Actuated | +5,1%, 13 / 30 (p = 0,008 / 0,03) | +4,5%, 11 / 30 (p = 0,004 / 0,007) |
+| Planul 46/48/12 | +10,1%, 4 / 30 (p = 0,02 / 0,002) | +7,9%, 5 / 30 (p = 0,005 / 0,0006) |
+
+p = testul t pe perechi / testul Wilcoxon. Față de actuated, E13 este mai bun în **toate cele 60 de perechi**
+(−13,2% în ambele comportamente), iar programul realist câștigă −8,3% (24 / 30) și −10,2% (28 / 30).
+
+Ce arată testul:
+
+1. **Pe o zi nevăzută, cu geamănul care trece debitul real, toți agenții AI bat actuated** (semnificativ, în ambele
+   comportamente) **și, în medie, planul fix.** Față de planul fix, diferența e semnificativă pentru toți, cu excepția
+   E3 și E9 cu participanți indisciplinați. **E13 este cel mai constant:** câștigă în fiecare dintre cele 6 scenarii, în
+   ambele comportamente (−1,7% … −17,6% pe scenariu). Este cel mai bun cu participanți disciplinați (−9,7%, față de
+   −5,9% la oficial). Cu participanți indisciplinați e la egalitate cu oficialul (−9,5% față de −10,0%; direct, +1,2%,
+   p = 0,90 / 0,69), care însă pierde la vârful ×1,2. Pentru ordinul de mărime: cu planul fix, pierderea totală de
+   timp a tuturor participanților într-un scenariu este de ≈50 de ore-om noaptea, ≈450–490 la prânz, ≈590–610 seara,
+   ≈750–820 la vârf și ≈1 060 la vârful ×1,2.
+2. **Programul realist nu mai este cea mai bună combinație.** Componenta lui pentru trafic moderat și greu (E3)
+   pierde, cu participanți indisciplinați, seara (+4,7%) și la vârful ×1,2 (+6,4%). Cu participanți disciplinați, E3
+   se descurcă bine (−5,2%). Față de programul realist, E13 dă −5,2% cu participanți indisciplinați (p = 0,002 / 0,006)
+   și −3,1% cu disciplinați (p = 0,03 / 0,06). Combinația aleasă pe 21–22.10 (date subnumărate, capacitate implicită)
+   nu se transferă complet pe ziua nouă, iar agenții antrenați pe toate tipurile de trafic (oficialul, E13)
+   generalizează mai bine.
+3. **Planul 46/48/12, ales pentru vârf pe grila de planuri din 21–22.10, e acum mai slab decât planul actual**
+   (+8…+10%). Pe un geamăn cu capacitatea reală, dintre cele două planuri fixe testate, cel actual (36/28/12) este
+   mai bun; grila de planuri nu a fost refăcută cu capacitatea calibrată.
+4. **Reantrenarea pe scenariile calibrate a ajutat agentul oficial pe ziua nouă, dar doar cu participanți
+   disciplinați:** −9,7% față de −5,9%. Cu participanți indisciplinați, cei doi sunt la egalitate (−9,5% față de
+   −10,0%). Același tipar apărea și pe testul din 21–22.10 (§ 9.5): cu participanți disciplinați E13 dădea −4,8%, iar
+   oficialul +1,0%. Validarea din 21–22.10 conținea însă doar participanți indisciplinați, unde cei doi erau la
+   egalitate, deci nu avea cum să arate diferența.
+
+**Ce nu se poate concluziona din acest test.** Alegerea unui nou program după rezultatele de mai sus ar însemna
+alegerea pe datele de test. De aceea luni 26.10 devine **ziua de validare** pentru alegerea următoare, iar protocolul
+s-a fixat înainte de prelucrarea zilei de marți (27.10, ≈05:30):
+
+- **Candidatul este E13 singur.** Pe 26.10 este cel mai bun cu participanți disciplinați și cel mai constant: mai
+  bun decât planul fix în 55 din 60 de perechi, câștigă în toate scenariile. Față de programul realist, pe cele 60 de
+  perechi reunite, dă −4,1% (mai bun în 38 / 60, p = 0,0002 / 0,001).
+- **Testul se face pe marți 27.10**, zi lucrătoare nouă colectată live, pe toate scenariile generate de
+  `romana.bridge.scenarii_zi` pentru acea zi, cu capacitatea calibrată, pe seed-urile 1–10 și cu ambele
+  comportamente. Strategiile comparate sunt programul realist, agentul oficial, planul fix și actuated.
+- **Regula de decizie:** E13 înlocuiește programul realist doar dacă (a) pe toate perechile reunite (ambele
+  comportamente) are diferența medie negativă față de programul realist și testul Wilcoxon bilateral pe perechi dă
+  p < 0,05, și (b) în niciunul dintre comportamente, luat separat, nu iese semnificativ mai slab (Wilcoxon
+  bilateral, p < 0,05, cu diferența medie pozitivă). Pe 26.10, regula ar fi fost îndeplinită. Agentul oficial este
+  raportat, dar nu poate fi ales, pentru că nu este candidatul validării.
+- **Ce urmează dacă E13 trece testul:** se propune autorului să treacă geamănul live (`live_twin.py`) pe E13 și pe
+  capacitatea calibrată. Geamănul live pornește acum cu `vtypes.add.xml`, adică cu timpul de reacție implicit
+  (§ 6.4). Decizia finală aparține autorului.
+
+Limitele testului: 5 seed-uri și o singură zi lucrătoare, iar agenții sunt antrenați pe geamănul cu capacitate
+implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul de reacție). Reantrenarea pe
+scenariile de luni și marți cu capacitatea calibrată e pasul următor (§ 10).
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
 * **Precizia numărării – cererea reală este cunoscută doar ca interval.** Auditul numărării (§ 4.3) a arătat că
   ieșirile de pe brațele îndepărtate sunt supranumărate (vehicule mici pierdute de detector pe inelul din fundal),
   iar intrările pot fi subnumărate (vehicule ascunse de chioșc, de autobuze sau unele de altele în aglomerație).
-  De aceea rezultatele se raportează pentru două calibrări – doar intrări (marginea de jos) și media intrări /
-  ieșiri (marginea de sus) – care diferă cu ≈35% la vârf (§ 5.1, § 9.2). O numărătoare manuală în teren nu este
-  realistă pentru un singur om la peste 1 000 de vehicule pe oră și 6 brațe (observația autorului); în practica
-  ingineriei de trafic referința se obține din câteva minute de înregistrare adnotate cadru cu cadru sau de echipe
-  de numărători – o adnotare de 2–3 minute de video (estompat, șters după adnotare) ar fixa nivelul real al cererii
-  între cele două margini (lucrare viitoare).
+  O numărătoare manuală în teren nu este realistă pentru un singur om la peste 1 000 de vehicule pe oră și 6 brațe
+  (observația autorului). De aceea referința s-a obținut, ca în practica ingineriei de trafic, din înregistrare
+  adnotată: două clipuri de 3 minute din 26.10, 16:00, fiecare numărat de câte doi adnotatori independenți (§ 4.3).
+  Din ea vin factorii de corecție pe braț. Limitele care rămân: referința acoperă 6 minute dintr-o singură zi și o
+  singură oră, iar factorii presupun că raportul dintre numărătoarea automată și cea reală e același la orice oră.
+  Zilele 21–22.10 sunt subnumărate din cauza înregistrării sacadate (§ 4.6), iar factorii nu li se aplică. Rezultatele
+  pe cele două calibrări anterioare (marginile de jos și de sus, § 5.1) rămân raportate pentru transparență.
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine; virajele urmărite complet
   sunt ≈21% din intrări, deci proporțiile de viraj se sprijină parțial pe distribuția a priori (§ 5.1).
-* **Trei zile de date** (două zile lucrătoare de octombrie și o duminică), cu vreme rece: vara, ploaia puternică
-  sau evenimentele speciale nu sunt acoperite. Pe duminică, vârful a depășit volumele de antrenare, iar agenții AI
+* **Patru zile de date** (trei zile lucrătoare de octombrie și o duminică), cu vreme rece: vara, ploaia puternică
+  sau evenimentele speciale nu sunt acoperite. Dintre zilele lucrătoare, doar 26.10 a fost înregistrată continuu,
+  iar 21–22.10 sunt subnumărate (§ 4.6). Pe duminică, vârful a depășit volumele de antrenare, iar agenții AI
   au pierdut din avantaj (§ 9.3) – reantrenarea periodică pe date noi ar fi necesară într-o utilizare reală.
 * **Comportamentul participanților** din simulare este cel al modelelor SUMO; indisciplina (trecerea pe roșu,
-  blocarea intersecției, pietonii pe roșu) este modelată doar în testul de robustețe (§ 9.4), iar traversările
-  prin afara trecerilor nu pot fi modelate în SUMO.* **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
+  blocarea intersecției, pietonii pe roșu) este modelată prin tipurile de vehicule din `vtypes_indisciplinat.add.xml`
+  (§ 9.4). Ea e folosită și în § 9.6, § 9.8, § 9.9 și la antrenarea E10–E13, cu parametri aleși, nu măsurați.
+  Traversările prin afara trecerilor nu pot fi modelate în SUMO.
+* **Capacitatea geamănului.** Cu parametrii impliciți ai șoferilor, geamănul trece la intrări cel mult ≈35–45% din
+  cât trece geamănul calibrat (§ 6.4). Rezultatele din § 9.1–9.8 sunt obținute așa. Pentru 21–22.10, cererea era
+  subnumărată la aproximativ jumătate, deci gradul de saturare era cel puțin cel real, probabil mai mare, iar valorile
+  absolute erau mai mici. Duminica 25.10 (§ 9.3, § 9.4), înregistrată continuu, a pus o cerere apropiată de cea reală
+  pe geamănul implicit, deci suprasaturat. Doar testul din § 9.9 folosește capacitatea calibrată, iar agenții nu au
+  fost încă reantrenați pe ea.
+* **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
 * **Trecerile de pietoni** sunt reconstruite de `netconvert` (`--crossings.guess`), nu importate direct din OSM
@@ -1015,7 +1156,10 @@ trebuie **reantrenați pe scenariile calibrate** (pasul următor, § 10).
   Datele derivate din OSM rămân sub ODbL 1.0 (§ 14.1). Pentru folosirea fluxului camerei dincolo de scopul
   academic este necesar acordul scris al titularului drepturilor.
 
-Lucrări viitoare: recompensă cu prioritate pentru transportul public, ponderată cu numărul de călători
+Lucrări viitoare: testul agentului E13 pe ziua de marți 27.10, după protocolul fixat în § 9.9; reantrenarea
+agenților pe scenariile din 26–27.10 cu capacitatea calibrată; refacerea grilei de planuri fixe pe geamănul
+calibrat; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
+pentru transportul public, ponderată cu numărul de călători
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
 de date; compararea planului fix de referință cu programul real, dacă poate fi obținut de la operator.
 
@@ -1161,6 +1305,9 @@ cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actu
 | Rândurile „Actuated” (§ 9.4: +6,4%, 25 / 50; § 9.8: +7,4%, 20 / 50) | aceleași fișiere, cu `--strategii ACTUATED --referinte FIX` |
 | § 9.4, programul realist pe duminică (−4,4%, 40 / 50; dimineața de duminică intră în banda lejeră) | `romana.control.analiza docs\rezultate\robustete_indisciplinat_duminica.csv docs\rezultate\robustete_indisciplinat_duminica_6_10.csv --benzi "lejer=*linistit*,*dimineata;moderat=*pranz*;greu" --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3` (cu benzile implicite, dimineața ar intra la „greu”: −3,7%) |
 | § 9.2, programele marginilor de sus și de jos; § 9.3, duminica | marginea de sus: `romana.control.analiza docs\rezultate\rezultate_brute_marginea_de_sus.csv --exclude "*2026-10-25*" --program SUS=lejer:rl_ppo_romana_lejer,moderat:rl_ppo_romana_zn3,greu:plan_46_48_12 --referinte fix_referinta actuated`; marginea de jos: `romana.control.analiza docs\rezultate\rezultate_brute.csv --exclude "*2026-10-25*" --program JOS=lejer:actuated,moderat:rl_ppo_romana_zn3,greu:fix_referinta --referinte fix_referinta actuated`; duminica (§ 9.3): `--scenarii "*2026-10-25*" --benzi "lejer=*linistit*,*dimineata;moderat=*pranz*;greu"` |
+| § 9.5, validarea E12 / E13 (−5,9% / −2,3% / +1,7% / −9,3% / −10,1%, medii pe perechi) | `romana.control.analiza docs\rezultate\validare_calibrat.csv --referinte FIX` |
+| § 9.5, programul reantrenat pe test (−6,7% / −3,9% față de planul fix; față de programul realist +1,0% / −0,5%; fără `--strategii`, apar și agenții) | `romana.control.analiza docs\rezultate\calibrat_indisciplinat.csv docs\rezultate\test_reantrenare_indisciplinat.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program REANTRENAT=lejer:ppo_romana_cal,moderat:cand_romana_cal3_100k,greu:cand_romana_cal3_100k --strategii REANTRENAT --referinte FIX REALIST` (la fel pe `calibrat_normal.csv` cu `test_reantrenare_normal.csv`) |
+| § 9.9, toate strategiile pe luni 26.10 față de planul fix și actuated | `romana.control.analiza docs\rezultate\capacitate_indisciplinat_26.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program REANTRENAT=lejer:ppo_romana_cal,moderat:cand_romana_cal3_100k,greu:cand_romana_cal3_100k --pe-scenarii`; rândurile actuated și 46/48/12: `--strategii ACTUATED PLAN_46_48_12 --referinte FIX` (la fel pe `capacitate_normal_26.csv`) |
 | Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
 
 **Simulările.** Strategiile și seed-urile sunt exact cele din fișierul publicat; numărul de simulări în paralel se dă
@@ -1171,8 +1318,13 @@ cu `--procese N` (implicit 4).
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
 | `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
 | `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2*.jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
-| `capacitate_baleiaj.csv` (§ 6.4) | arborele curent | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` |
+| `capacitate_baleiaj.csv` (§ 6.4) | arborele curent | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` și, separat (rândul adăugat pe 27.10, fără al doilea rând „standard”), `zi_2026-10-26_varf_x1_2 t08g25=0.8:2.5:0.5` |
+| `localizare_varf_capacitate.csv` (§ 9.6) | arborele curent | `romana.control.localizare capacitate_zi_2026-10-26_varf capacitate_zi_2026-10-26_varf_x1_2 capacitate_indisciplinat_zi_2026-10-26_varf capacitate_indisciplinat_zi_2026-10-26_varf_x1_2 zi_2026-10-26_varf --out outputs\localizare_capacitate.csv` |
 | scenariile `capacitate_*` (§ 6.4) | arborele curent | `romana.bridge.indisciplinat --scenarii "sumo\scenarios\zi_2026-10-2[56]_*.sumocfg" --vtypes vtypes_capacitate.add.xml --prefix capacitate_` și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix capacitate_indisciplinat_` |
+| agenții E12 / E13 (§ 9.5) | arborele curent | se copiază `models\ppo_romana_zn3.*` în `models\ppo_romana_cal3.*` (E12), respectiv `models\ppo_romana.*` în `models\ppo_romana_cal.*` (E13), apoi `romana.control.train --nume romana_cal3 --continua --lr 3e-5 --pasi 300000 --medii 8 --scenarii` cu cele 20 de fișiere `sumo\scenarios\zi_2026-10-2[12]_*.sumocfg` și `indisciplinat_zi_2026-10-2[12]_*.sumocfg` (la fel cu `--nume romana_cal`); punctele intermediare sunt în `outputs\train\<nume>\checkpoints` (antrenarea PPO nu e deterministă pe mai multe procese, deci modelele refăcute diferă ușor de cele publicate) |
+| `validare_calibrat.csv` (§ 9.5) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal3.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 11-15 --out outputs\validare\validare_calibrat.csv --compara docs\rezultate\validare_calibrat.csv` |
+| `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` (§ 9.5) | arborele curent | `romana.control.validare models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --fara-fix --out outputs\validare\test_reantrenare_indisciplinat.csv --compara docs\rezultate\test_reantrenare_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `test_reantrenare_normal` |
+| `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` (§ 9.9) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "capacitate_indisciplinat_zi_2026-10-26_*" --seeds 1-5 --fara-alegere --out outputs\validare\capacitate_indisciplinat_26.csv --compara docs\rezultate\capacitate_indisciplinat_26.csv`; participanți disciplinați: `--scenarii "capacitate_zi_2026-10-26_*"`, cu `capacitate_normal_26` |
 | `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
@@ -1234,8 +1386,9 @@ credențiale în linia de comandă (push-ul se face prin GitHub Desktop), iar la
 agentul AI −4,6% față de planul fix. Corecturile autorului: strada se numește Calea Dorobanți; intersecția
 Dacia × Polonă e sens unic de ieșire, deci nu intră în coridor. Experimentele cu agentul care vede cozile din
 amonte, cu imitația unui plan fix, cu orizontul lung și cu coordonarea a 4 vecini (+35%) au fost negative.
-Diagnostic important: 68% din întârzierea la vârf vine din coada de pe Bd. Dacia vest, dincolo de piață (refăcut pe
-27.10, pe cererea calibrată: 50–78%, § 9.6).
+Diagnostic important: 68% din întârzierea la vârf vine din coada de pe Bd. Dacia vest, dincolo de piață. Analiza a
+fost refăcută pe 27.10: pe cererea calibrată ponderea iese 50–78%, iar cu capacitatea calibrată a geamănului coada
+dispare (§ 9.6).
 
 **Etapa 4 – sistemul rulat live, cap-coadă (seara de 22.10).** Rularea completă (camera, geamănul, dispeceratul) a
 scos la iveală defecte reale (§ 12.2, P1–P5, O8): oprirea viziunii la citiri simultane, revenirea pe date de rezervă
@@ -1268,6 +1421,17 @@ participanți indisciplinați (§ 9.4) – realitatea străzilor din București.
 identice cu cele normale, ceea ce a dus la descoperirea unui defect (simularea ignora tipurile de participanți din
 scenariu); după corectare, testul a dat cel mai puternic argument pentru AI: cu participanți indisciplinați,
 specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, până la −28% la vârf.
+
+**Etapa 8 – măsurarea măsurării (26–27.10).** O numărătoare de referință, cu două clipuri adnotate de câte doi
+adnotatori independenți, a dat factorii de corecție pe braț și zonele finale (§ 4.3). Prima zi lucrătoare
+prelucrată după aceea (luni 26.10) a ieșit cu de până la trei ori mai multe vehicule decât miercuri 21.10, la
+aceleași ore. Cauza nu era camera și nici codul, ci înregistrarea: înainte de tamponul HLS din 22.10 seara,
+urmărirea mergea în rafale și pierdea vehicule (§ 4.6). Debitul real a scos la iveală și o limită a geamănului: cu
+parametrii impliciți ai șoferilor, nu putea trece traficul de luni. Calibrarea timpului de reacție a rezolvat-o
+(§ 6.4). Reantrenarea agenților pe zilele subnumărate (E12/E13) nu a schimbat alegerea: pe validare, agentul oficial
+a rămas cel mai bun, iar pe test programul reantrenat a ieșit echivalent cu programul realist. Pe ziua de luni,
+nevăzută și cu geamănul calibrat, agenții AI au bătut actuated și, în medie, planul fix. Cel mai constant a fost
+agentul oficial reantrenat, E13 (§ 9.9). Alegerea finală s-a lăsat pe ziua de marți, după un protocol fixat înainte.
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -1312,8 +1476,10 @@ specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, p�
    corectarea zonelor de pe cameră și a felului în care se numără.
 2. **Un rezultat bun trebuie să supraviețuiască verificării.** −4,6% a devenit +5,2% când datele au fost corectate;
    rezultatul a fost raportat, iar soluția a fost căutată mai departe.
-3. **AI-ul e util acolo unde e potrivit.** Un singur agent nu bate un plan fix bine reglat la vârf; combinat cu
-   planuri clasice aduce un câștig semnificativ și se adaptează la zile noi, lucru pe care un plan fix nu-l face.
+3. **AI-ul e util acolo unde e potrivit, iar „potrivit” depinde de cât de fidel e geamănul.** Pe geamănul cu
+   capacitate implicită, un singur agent nu bătea un plan fix bine reglat la vârf, iar combinat cu planuri clasice
+   aducea un câștig semnificativ. Pe geamănul care trece debitul real, agentul reantrenat a câștigat singur, în
+   fiecare scenariu al unei zile noi (§ 9.9).
 4. **Rezultatele negative sunt rezultate.** Coridorul, agentul universal, specialiștii nereușiți au îngustat drumul
    spre soluția bună și sunt documentate.
 5. **Ochiul omului rămâne indispensabil.** Marcajul confundat cu o trecere, banda „lipsă” de pe Dacia, ideea de a
@@ -1596,12 +1762,16 @@ reface, celelalte da.
 | `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
 | `calitate_inregistrare.csv` | continuitatea urmăririi pe ore și zile (§ 4.6): traiectorii, goluri > 1 s, densitatea punctelor | – | `romana.vision.calitate` |
 | `capacitate_baleiaj.csv` | capacitatea geamănului pe vârful de luni și ×1,2 pentru variante ale parametrilor de șofer (§ 6.4): vehicule introduse, neintroduse, intrări pe brațe | arborele curent | `romana.control.capacitate` |
+| `localizare_varf_capacitate.csv` | aceeași analiză pe vârful de luni și vârful ×1,2, cu capacitatea calibrată (ambele comportamente), plus vârful de luni cu parametrii impliciți, pentru comparație (§ 9.6) | arborele curent | `romana.control.localizare` |
 | `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent | `romana.control.localizare` |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3, E9 și planul fix, pe 5 scenarii de zi lucrătoare | `e1d0f77` | `romana.control.validare --seeds 1-5` / `--seeds 6-10`, `--fara-alegere` (comanda completă: § 11.8) |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3 și planul fix | `e1d0f77` (cele 5 scenarii de duminică de atunci, fără `pranz`) | la fel |
 | `validare_indisciplinat.csv` + `_alegere.json` | validarea din care s-a ales programul realist (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |
 | `validare_intrari.csv` + `_alegere.json` | validarea componentelor programului pentru marginea de jos (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |
 | `validare_indisciplinat_e10.csv`, `validare_indisciplinat_e11.csv` | validarea agenților E10 și E11 (§ 9.5), cu punctele lor intermediare | `e1d0f77` | `romana.control.validare` (punctele intermediare nu sunt publicate) |
+| `validare_calibrat.csv` + `_alegere.json` | validarea agenților E12 și E13 (§ 9.5) pe scenariile calibrate cu participanți indisciplinați, seed-urile 11–15, cu planul fix, actuated, agentul oficial, E3 și câte trei candidați (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent | `romana.control.validare` (dintre candidați sunt publicați doar `cand_romana_cal3_100k`, `ppo_romana_cal3` și `ppo_romana_cal`) |
+| `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` | testul pe luni 26.10 cu capacitatea calibrată (§ 9.9): planul fix, actuated, planul 46/48/12, agentul oficial, E3, E9, E12 și E13, seed-urile 1–5 | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
+| `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
 | `validare_zone_noi`, `validare_e2_e3`, `validare_clasice`, `validare_nou_*`, `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9` (23–25.10), fiecare cu `_alegere.json` unde există | validările pentru marginea de sus (seed-urile 11–13, apoi 11–15), din care s-au ales agenții, planurile și componentele programului; în `_alegere.json`: scorul mediu al fiecărei strategii față de planul fix, strategia aleasă, seed-urile (cele prezente în CSV) și scenariile | `7a79502` | `romana.control.validare` (seed-urile din alegeri corectate cu `--corecteaza-alegeri`; testele pe seed-urile 1–10 nu au fișier de alegere) |
 | `validare_finala.csv` | validarea din 22.10 din care s-a ales agentul oficial (seed-urile 11–13) | `8176be5`, cu codul de atunci | scripturi de lucru, în formatul lui `romana.control.validare` |
 | `grila_plan.csv`, `grila_plan_zone_noi.csv` | grilele de planuri fixe (§ 9.5) | `1619a30`, cu codul de atunci / `7a79502` | scripturi de lucru nepublicate, cu aceeași funcție de simulare (`evaluate.run_one`); o grilă se reface cu `romana.control.validare PLAN_a_b_c …` sau `romana.control.evaluate --planuri a,b,c` |

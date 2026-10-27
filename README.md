@@ -47,9 +47,19 @@ Camera numără mai multe ieșiri decât intrări, de aceea rezultatele sunt dat
 marginea „de jos” (doar intrările) și cea „de sus” (media intrări/ieșiri) (§ 5.1). Numărătoarea de referință din 26.10
 (două clipuri de 3 minute adnotate cadru cu cadru, § 4.3) arată că cererea reală era mai aproape de marginea de sus:
 vârful zilelor lucrătoare ≈2 520–2 560 veh/h, față de ≈2 400–2 510 (marginea de sus) și ≈1 640 (marginea de jos).
+Toate aceste cifre sunt din 21–22.10, zile care s-au dovedit subnumărate (§ 4.6; vezi testul pe o zi nouă, mai jos).
 Pe această calibrare strategiile au fost reevaluate doar pe seed-urile 1–5, fără reantrenarea agenților (§ 9.8):
 programul realist dă −6,2% față de planul fix cu participanți indisciplinați (nesemnificativ, p = 0,46; −11,7% față de
 actuated) și −1,3% cu participanți disciplinați.
+
+**Testul pe o zi nouă (§ 9.9).** Înregistrarea din 21–22.10 s-a dovedit sacadată, deci zilele acelea sunt subnumărate
+(§ 4.6). Prima zi lucrătoare înregistrată continuu este luni 26.10, cu un vârf de ≈5 000 veh/h prin piață. Geamănul a
+fost calibrat ca să treacă acest debit (timpul de reacție al șoferilor 0,8 s, ales pe vârful aceleiași zile, § 6.4).
+Ziua de luni nu a fost folosită la antrenare sau la alegerea strategiilor. Pe ea, agentul oficial reantrenat pe
+cererea calibrată (E13) dă **−9,5% / −9,7%** față de planul fix (participanți indisciplinați / disciplinați; p ≤ 0,001
+la ambele teste). Câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu participanți
+indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Programul realist dă −3,9% (nesemnificativ) /
+−6,4%. Dacă E13 devine implicit se decide pe testul din 27.10, după protocolul fixat dinainte în § 9.9.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
 |---|---|---|
@@ -82,14 +92,17 @@ pe seed-urile de test 1–5, p = 0,32; § 9.2, § 9.5). În geamănul live comut
 | marginea de jos | actuated (egal cu agentul oficial, mai simplu) | agentul E3 | planul fix de referință | doar evaluare (geamănul nu are mod actuated) |
 | realist (participanți indisciplinați) | agentul oficial (`ppo_romana`) | agentul E3 | agentul E3 | evaluare; geamănul live (implicită, `"realist"` în `live_twin.py`) |
 
-- Cu participanți disciplinați, în zilele lucrătoare, un singur agent AI nu bate un plan fix bine reglat (oficialul:
-  +5,4% / +3,8% la marginea de sus / de jos, § 9.2); duminică, la marginea de sus, agenții singuri au câștigat
-  −4,9…−6,5% (§ 9.3); cu participanți indisciplinați, E3 singur dă −14,1%, până la −28,0% la vârf (§ 9.4).
+- Pe calibrările anterioare (geamănul cu capacitate implicită), cu participanți disciplinați, în zilele lucrătoare,
+  un singur agent AI nu bătea un plan fix bine reglat; pe ziua de luni, cu capacitatea calibrată, E13 singur dă −9,7%
+  (§ 9.9). Cifrele de atunci: oficialul +5,4% / +3,8% la marginea de sus / de jos (§ 9.2); duminică, la marginea de
+  sus, agenții singuri au câștigat −4,9…−6,5% (§ 9.3); cu participanți indisciplinați, E3 singur dădea −14,1%, până
+  la −28,0% la vârf (§ 9.4).
 - Agentul oficial dădea −4,6% cu zonele inițiale ale camerei și +5,2% pe datele renumărate; agentul pentru piață plus
   4 vecini a dat +35,4% (22.10, zonele inițiale; date brute în commitul `f1c0150`) (§ 9.5).
-- La vârf, pe cererea calibrată, 50–78% din timpul pierdut este al vehiculelor care nici nu încap în rețea (coada de
-  pe Bd. Dacia dinspre Calea Victoriei) și doar 11–18% sunt opriri în piață: o limită de capacitate pe care semaforul
-  nu o elimină (§ 9.6, `romana.control.localizare`).
+- La vârf, pe geamănul cu capacitate implicită, 50–78% din timpul vehiculelor oprite sau neintroduse era coada de pe
+  Bd. Dacia vest, care nici nu încăpea în rețea. Cu capacitatea calibrată, această coadă dispare, iar timpul total de
+  oprire scade de ≈12 ori la aceeași cerere. Rămâne o coadă de intrare la marginea vestică a rețelei (Calea
+  Victoriei), de lămurit: limită reală sau efect al marginii (§ 9.6, `romana.control.localizare`).
 
 ## Cum se rulează (Windows)
 
@@ -147,7 +160,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Limită | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare −3,2% (marginea de sus), practic zero la marginea de jos (+0,4%, p = 0,62), −18,4% cu participanți indisciplinați; duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | ≈23 de ore continue din zilele lucrătoare (miercuri 21.10, 11:45 – joi 22.10, 11:00) și o duminică parțială (25.10, de la 01:14); singurul test pe o zi nouă este duminica |
+| Puține date | patru zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14) și luni 26.10 (de la 09:11), înregistrate continuu. Testele pe zile noi: duminica (§ 9.3) și lunea (§ 9.9); marți 27.10 e testul prevăzut de protocolul din § 9.9 |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
 | Geamănul live | simulează participanți disciplinați; comutarea lui automată nu a fost evaluată: cifrele programului sunt compuse din rulările componentelor, după tipul scenariului |
 | Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
@@ -194,7 +207,8 @@ View, auditul numărării, cererea din intrări și testul cu participanți indi
 model Claude Opus 5.5, prin Claude Code, pe calculatorul autorului. Claude a scris aproape tot codul și documentația și a
 rulat colectarea datelor, antrenarea și evaluarea; commit-urile lui poartă linia `Co-Authored-By: Claude …`.
 
-**Starea proiectului (26.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat și pe 26.10 (E10, E11; § 9.5).
+**Starea proiectului (27.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–27.10 (E10–E13, § 9.5;
+calitatea înregistrării, § 4.6; capacitatea geamănului, § 6.4; testul pe ziua de luni, § 9.9).
 Pe 26.10 zonele de numărare au fost refăcute pe o numărătoare de referință (două clipuri adnotate de câte doi
 adnotatori independenți, § 4.3), iar cererea a fost calibrată cu factori de corecție pe braț (§ 5.1); `data/counts` și
 scenariile din `sumo/scenarios` au fost refăcute cu cererea calibrată (§ 5.4), iar strategiile au fost reevaluate pe
