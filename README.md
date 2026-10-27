@@ -59,7 +59,9 @@ Ziua de luni nu a fost folosită la antrenare sau la alegerea strategiilor. Pe e
 cererea calibrată (E13) dă **−9,5% / −9,7%** față de planul fix (participanți indisciplinați / disciplinați; p ≤ 0,001
 la ambele teste). Câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu participanți
 indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Programul realist dă −3,9% (nesemnificativ) /
-−6,4%. Dacă E13 devine implicit se decide pe testul din 27.10, după protocolul fixat dinainte în § 9.9.
+−6,4%. Dacă E13 devine implicit se decide pe testul din 28.10, după protocolul fixat dinainte în § 9.9. Din 28.10,
+geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
+live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
 |---|---|---|
@@ -183,8 +185,9 @@ Harta completă, fișier cu fișier (inclusiv `.gitignore`, `.gitattributes`, `.
 
 **Imaginile camerei** nu sunt licențiate de proiect: drepturile aparțin operatorului camerei, neidentificat public
 (Webcam România declară că nu deține drepturi asupra fluxurilor). Capturile publicate anterior au fost eliminate din tot
-istoricul pe 26.10.2026, cu identificatori de commit noi (`docs/corespondenta_commituri.txt`). Autorul a cerut în scris
-acordul Webcam România; până la răspuns nu se publică nicio imagine, iar la refuz analiza fluxului se oprește (§ 12.5).
+istoricul pe 26.10.2026, cu identificatori de commit noi (`docs/corespondenta_commituri.txt`). Webcam România și-a
+dat acordul scris pe 27.10.2026 pentru analiza automată a fluxului în scop academic și necomercial, cu sursa indicată
+(„Webcam România – https://webcamromania.ro”), și pentru publicarea a 1–2 capturi cu persoanele estompate (§ 14.1).
 
 ## Confidențialitate
 

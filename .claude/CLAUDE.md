@@ -36,7 +36,27 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (27.10.2026, ~05:20) – documentație unică, capacitatea geamănului, testul pe ziua de luni (§ 9.9)
+## Stare curentă (28.10.2026, ~01:00) – acordul Webcam România, geamănul calibrat implicit, testul pe 28.10
+
+- **28.10, ~01:00:** Webcam România și-a dat **acordul scris** (e-mail, 27.10, 20:27): analiza automată în scop
+  academic, necomercial, cu sursa „Webcam România – https://webcamromania.ro”, și publicarea a 1–2 capturi cu
+  persoanele estompate (documentat în § 4.5, § 10, § 12.5, § 14.1, § 14.2, README, NOTICE). PS-ul lor: vor linkul
+  proiectului – autorul a aprobat să le trimit eu răspunsul (ziua, „Bună ziua!”, semnătura după un rând liber; memoria
+  stil-email), după publicarea capturilor (de luat ziua, la lumină; persoanele + numerele estompate; REUSE.toml are
+  șablonul de adnotare). GitHub Support #4909163 (refs/pull/1/head): doar confirmarea automată, fără răspuns.
+- **Geamănul calibrat (tau = 0,8 s) e implicit din 28.10** (decizia autorului): `build_demand.VTYPE_DEFS` →
+  `vtypes.add.xml`, plus `vtypes_indisciplinat.add.xml`; `capacitate_*` rămân doar pentru § 9.9 / E14. Rezultatele
+  9.1–9.8 = istorice (tipurile din 75592d3; Anexa A „arborele curent, tipurile vechi”).
+- **Protocolul:** testul E13 vs programul realist se mută pe **miercuri 28.10** (27.10 incompletă, oprită la 06:04);
+  scenariile `zi_2026-10-28_*` / `indisciplinat_zi_2026-10-28_*` (calibrate implicit), seed-urile 1–10, ambele
+  comportamente, `romana.vision.calitate` întâi; 29.10 = zi de confirmare. Colectarea live repornită pe 28.10, 00:10
+  (PID în outputs/logs/viziune_2026-10-28.*). Laptopul rămâne pornit cât cer, cel mult până pe 30.10, 10:00.
+- **Lanțul de noapte 2** (scratchpad\noapte2.py, prioritate scăzută): ziua 27 publicată, seed-urile 6–10 pe luni,
+  E14 (= E13 continuat 300k pe cele 12 scenarii `capacitate_*` de luni), validarea pe 26.10 seed-urile 11–15 →
+  outputs/validare/validare_e14.csv. **E14 trebuie înregistrat în § 9.9 ca al doilea candidat ÎNAINTE de orice
+  prelucrare a zilei de 28.10.**
+
+## Stare anterioară (27.10.2026, ~05:20) – documentație unică, capacitatea geamănului, testul pe ziua de luni (§ 9.9)
 
 - **Singura documentație: `docs/DOCUMENTATIE.md`** (+ `docs/DOCUMENTATIE.pdf`, `python -m romana.doc_pdf`); GHID.md,
   JURNAL.md, OBSERVATII_EVALUARE.md au fost integrate (cap. 11 ghid, cap. 12 jurnal); README = prezentare scurtă;

@@ -7,8 +7,9 @@ Autor: Niunin Matei-Gabriel · Universitatea Transilvania din Brașov, Facultate
 Informatică ID, anul III · Discipline: *Interfețe om-calculator* și *Internet of Things* · Anul universitar 2026–2027
 
 Documentația: © 2026 Niunin Matei-Gabriel, CC BY 4.0 (§ 14.1) · Conține informații din OpenStreetMap,
-© OpenStreetMap contributors, ODbL 1.0 – https://www.openstreetmap.org/copyright · Cod sursă (GNU AGPL v3) și
-date: https://github.com/NiuninMatei/Semaforizare_Piata_Romana
+© OpenStreetMap contributors, ODbL 1.0 – https://www.openstreetmap.org/copyright · Sursa fluxului video:
+Webcam România – https://webcamromania.ro, folosit cu acordul scris din 27.10.2026 (§ 14.1) · Cod sursă (GNU AGPL v3)
+și date: https://github.com/NiuninMatei/Semaforizare_Piata_Romana
 
 ---
 
@@ -316,9 +317,10 @@ legată, în principiu, de alte imagini ale aceleiași camere – cu atât mai m
 păstrat, deocamdată, la precizia de 0,01 s. De aceea traiectoriile nu sunt numite anonime, iar
 licența deschisă a datelor (§ 14.1) nu ar face publicabile date personale. Fișierele `.ts`/`.mp4` sunt excluse
 din Git (`.gitignore`). Versiunea curentă a depozitului și PDF-ul nu conțin cadre ale camerei. Fluxul este
-public, iar utilizarea este strict academică. Drepturile asupra imaginilor aparțin operatorului camerei
-(§ 14.1)[^webcam], de aceea imaginile nu sunt redistribuite; pentru o utilizare dincolo de proiectul academic
-este necesar acordul scris al titularului.
+public, iar utilizarea este strict academică. Webcam România și-a dat acordul scris pe 27.10.2026 pentru analiza
+automată a fluxului în scop academic și necomercial, cu sursa indicată, și pentru publicarea a cel mult două
+capturi cu persoanele estompate (§ 14.1)[^webcam]. Orice altă utilizare (comercială, alte imagini, persoane
+neestompate) cere un acord nou.
 
 **Informarea persoanelor vizate (art. 14 GDPR).** Operatorul este autorul proiectului, Niunin Matei-Gabriel;
 contact: pagina de *Issues* a depozitului, https://github.com/NiuninMatei/Semaforizare_Piata_Romana/issues.
@@ -492,7 +494,8 @@ Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor
 commiturile `e1d0f77` și `7a79502`, § 11.8); pe
 duminică, datele complete (până la 17:00) mută vârful la 15:30–16:30, iar fereastra de prânz devine scenariu separat.
 Rezultatele din § 9.1–9.7 au fost obținute pe calibrările anterioare (marginile de jos și de sus); reevaluarea pe
-cererea calibrată este în § 9.8, iar testul pe ziua de luni 26.10, cu capacitatea calibrată, în § 9.9. Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
+cererea calibrată este în § 9.8, iar testul pe ziua de luni 26.10, cu capacitatea calibrată, în § 9.9. Din 28.10,
+scenariile din arbore folosesc capacitatea calibrată (§ 6.4). Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
 GEH < 5 pentru ≈94% din relațiile autoturismelor și 100% din cele ale celorlalte tipuri. Agenții au fost
 antrenați pe scenariile din 21–22.10; duminica 25.10 și lunea 26.10 servesc doar ca teste de generalizare.
 
@@ -638,8 +641,13 @@ sunt obținute cu parametrii impliciți:
 - pe duminica 25.10 (§ 9.3, § 9.4), înregistrată continuu, deci cu o cerere apropiată de cea reală pe un geamăn
   suprasaturat; de aici, probabil, și pierderea de avantaj a agenților la vârful de duminică.
 
-Geamănul live (`live_twin.py`) folosește încă tipurile implicite (`vtypes.add.xml`). Evaluarea pe ziua de luni cu
-capacitatea calibrată este în § 9.9.
+**Din 28.10.2026, geamănul calibrat este implicit** (decizia autorului). Timpul de reacție `tau` = 0,8 s este scris
+în tipurile de vehicule generate de `romana.bridge.build_demand` (`sumo/demand/vtypes.add.xml`) și în
+`vtypes_indisciplinat.add.xml`. Prin urmare, toate scenariile `zi_*` și `indisciplinat_*` din arbore, geamănul live
+și antrenările noi folosesc capacitatea calibrată. Fișierele `vtypes_capacitate*.add.xml` și scenariile
+`capacitate_*` au acum aceleași valori și rămân doar pentru reproducerea § 9.9 și a validării E14, care le folosesc
+numele. Rezultatele din § 9.1–9.8 sunt istorice: s-au obținut cu tipurile implicite SUMO, din commitul `75592d3`
+(Anexa A). Evaluarea pe ziua de luni cu capacitatea calibrată este în § 9.9.
 
 ## 7. Controlul inteligent al semafoarelor
 
@@ -991,7 +999,7 @@ Punctele 1–5 rezumă rezultatele pe calibrările anterioare (21, 22 și 25.10;
    față de planul fix, câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu
    participanți indisciplinați e la egalitate cu agentul oficial. Programul realist rămâne mai bun decât actuated,
    dar componenta lui pentru traficul greu (E3) nu se transferă pe ziua nouă cu participanți indisciplinați. Dacă
-   E13 îl înlocuiește se decide pe testul din 27.10, după protocolul fixat dinainte.
+   E13 îl înlocuiește se decide pe testul din 28.10, după protocolul fixat dinainte.
 
 ### 9.8 Reevaluarea pe cererea calibrată (26.10.2026)
 
@@ -1081,22 +1089,26 @@ Ce arată testul:
 
 **Ce nu se poate concluziona din acest test.** Alegerea unui nou program după rezultatele de mai sus ar însemna
 alegerea pe datele de test. De aceea luni 26.10 devine **ziua de validare** pentru alegerea următoare, iar protocolul
-s-a fixat înainte de prelucrarea zilei de marți (27.10, ≈05:30):
+s-a fixat pe 27.10, la ≈05:30, înainte de prelucrarea oricărei zile noi (data testului a fost mutată pe 28.10 în
+noaptea de 27–28.10, tot înainte de orice prelucrare):
 
 - **Candidatul este E13 singur.** Pe 26.10 este cel mai bun cu participanți disciplinați și cel mai constant: mai
   bun decât planul fix în 55 din 60 de perechi, câștigă în toate scenariile. Față de programul realist, pe cele 60 de
   perechi reunite, dă −4,1% (mai bun în 38 / 60, p = 0,0002 / 0,001).
-- **Testul se face pe marți 27.10**, zi lucrătoare nouă colectată live, pe toate scenariile generate de
-  `romana.bridge.scenarii_zi` pentru acea zi, cu capacitatea calibrată, pe seed-urile 1–10 și cu ambele
+- **Testul se face pe prima zi lucrătoare nouă colectată complet: miercuri 28.10.** Colectarea zilei de marți 27.10
+  s-a oprit la 06:04, la închiderea calculatorului, deci ziua nu e completă. Se folosesc toate scenariile generate
+  de `romana.bridge.scenarii_zi` pentru 28.10, adică `zi_2026-10-28_*` și `indisciplinat_zi_2026-10-28_*`, cu
+  capacitatea calibrată, implicită din 28.10 (§ 6.4). Rularea se face pe seed-urile 1–10 și cu ambele
   comportamente. Strategiile comparate sunt programul realist, agentul oficial, planul fix și actuated.
+  Înainte de scenarii se verifică și continuitatea înregistrării zilei (`romana.vision.calitate`, § 4.6).
+  Joi 29.10, dacă e colectată complet, servește ca zi de confirmare: se raportează, fără să schimbe decizia.
 - **Regula de decizie:** E13 înlocuiește programul realist doar dacă (a) pe toate perechile reunite (ambele
   comportamente) are diferența medie negativă față de programul realist și testul Wilcoxon bilateral pe perechi dă
   p < 0,05, și (b) în niciunul dintre comportamente, luat separat, nu iese semnificativ mai slab (Wilcoxon
   bilateral, p < 0,05, cu diferența medie pozitivă). Pe 26.10, regula ar fi fost îndeplinită. Agentul oficial este
   raportat, dar nu poate fi ales, pentru că nu este candidatul validării.
-- **Ce urmează dacă E13 trece testul:** se propune autorului să treacă geamănul live (`live_twin.py`) pe E13 și pe
-  capacitatea calibrată. Geamănul live pornește acum cu `vtypes.add.xml`, adică cu timpul de reacție implicit
-  (§ 6.4). Decizia finală aparține autorului.
+- **Ce urmează dacă E13 trece testul:** se propune autorului să treacă geamănul live (`live_twin.py`) pe E13.
+  Capacitatea calibrată e deja implicită în geamănul live din 28.10 (§ 6.4). Decizia finală aparține autorului.
 
 Limitele testului: 5 seed-uri și o singură zi lucrătoare, iar agenții sunt antrenați pe geamănul cu capacitate
 implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul de reacție). Reantrenarea pe
@@ -1128,8 +1140,8 @@ scenariile de luni și marți cu capacitatea calibrată e pasul următor (§ 10)
   cât trece geamănul calibrat (§ 6.4). Rezultatele din § 9.1–9.8 sunt obținute așa. Pentru 21–22.10, cererea era
   subnumărată la aproximativ jumătate, deci gradul de saturare era cel puțin cel real, probabil mai mare, iar valorile
   absolute erau mai mici. Duminica 25.10 (§ 9.3, § 9.4), înregistrată continuu, a pus o cerere apropiată de cea reală
-  pe geamănul implicit, deci suprasaturat. Doar testul din § 9.9 folosește capacitatea calibrată, iar agenții nu au
-  fost încă reantrenați pe ea.
+  pe geamănul implicit, deci suprasaturat. Testul din § 9.9 și toată munca de după 28.10 folosesc capacitatea
+  calibrată, implicită de atunci; dintre agenți, doar E14 (în lucru) e antrenat pe ea.
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
@@ -1153,11 +1165,12 @@ scenariile de luni și marți cu capacitatea calibrată e pasul următor (§ 10)
   versiune modificată pusă la dispoziția utilizatorilor prin rețea trebuie să le ofere codul ei sursă (AGPL § 13).
   O integrare cu sursă închisă (de exemplu într-un automat comercial sau în BTMS) ar cere atât licența Enterprise
   Ultralytics (sau înlocuirea detectorului), cât și o licență separată de la autor pentru codul proiectului.
-  Datele derivate din OSM rămân sub ODbL 1.0 (§ 14.1). Pentru folosirea fluxului camerei dincolo de scopul
-  academic este necesar acordul scris al titularului drepturilor.
+  Datele derivate din OSM rămân sub ODbL 1.0 (§ 14.1). Fluxul camerei este folosit cu acordul scris al Webcam
+  România (27.10.2026), limitat la scopul academic și necomercial, cu sursa indicată (§ 14.1); o folosire
+  comercială (de exemplu într-un produs pentru administrația drumului) ar cere un acord nou.
 
-Lucrări viitoare: testul agentului E13 pe ziua de marți 27.10, după protocolul fixat în § 9.9; reantrenarea
-agenților pe scenariile din 26–27.10 cu capacitatea calibrată; refacerea grilei de planuri fixe pe geamănul
+Lucrări viitoare: testul agentului E13 pe ziua de miercuri 28.10, după protocolul fixat în § 9.9; reantrenarea
+agenților pe scenariile cu capacitatea calibrată (E14, pe ziua de luni, în lucru); refacerea grilei de planuri fixe pe geamănul
 calibrat; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
 pentru transportul public, ponderată cu numărul de călători
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
@@ -1316,16 +1329,16 @@ cu `--procese N` (implicit 4).
 | Fișierul (secțiunea) | Scenariile | Comanda |
 |---|---|---|
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
-| `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
+| `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
 | `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2*.jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
-| `capacitate_baleiaj.csv` (§ 6.4) | arborele curent | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` și, separat (rândul adăugat pe 27.10, fără al doilea rând „standard”), `zi_2026-10-26_varf_x1_2 t08g25=0.8:2.5:0.5` |
-| `localizare_varf_capacitate.csv` (§ 9.6) | arborele curent | `romana.control.localizare capacitate_zi_2026-10-26_varf capacitate_zi_2026-10-26_varf_x1_2 capacitate_indisciplinat_zi_2026-10-26_varf capacitate_indisciplinat_zi_2026-10-26_varf_x1_2 zi_2026-10-26_varf --out outputs\localizare_capacitate.csv` |
+| `capacitate_baleiaj.csv` (§ 6.4) | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` și, separat (rândul adăugat pe 27.10, fără al doilea rând „standard”), `zi_2026-10-26_varf_x1_2 t08g25=0.8:2.5:0.5` |
+| `localizare_varf_capacitate.csv` (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare capacitate_zi_2026-10-26_varf capacitate_zi_2026-10-26_varf_x1_2 capacitate_indisciplinat_zi_2026-10-26_varf capacitate_indisciplinat_zi_2026-10-26_varf_x1_2 zi_2026-10-26_varf --out outputs\localizare_capacitate.csv` |
 | scenariile `capacitate_*` (§ 6.4) | arborele curent | `romana.bridge.indisciplinat --scenarii "sumo\scenarios\zi_2026-10-2[56]_*.sumocfg" --vtypes vtypes_capacitate.add.xml --prefix capacitate_` și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix capacitate_indisciplinat_` |
-| agenții E12 / E13 (§ 9.5) | arborele curent | se copiază `models\ppo_romana_zn3.*` în `models\ppo_romana_cal3.*` (E12), respectiv `models\ppo_romana.*` în `models\ppo_romana_cal.*` (E13), apoi `romana.control.train --nume romana_cal3 --continua --lr 3e-5 --pasi 300000 --medii 8 --scenarii` cu cele 20 de fișiere `sumo\scenarios\zi_2026-10-2[12]_*.sumocfg` și `indisciplinat_zi_2026-10-2[12]_*.sumocfg` (la fel cu `--nume romana_cal`); punctele intermediare sunt în `outputs\train\<nume>\checkpoints` (antrenarea PPO nu e deterministă pe mai multe procese, deci modelele refăcute diferă ușor de cele publicate) |
-| `validare_calibrat.csv` (§ 9.5) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal3.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 11-15 --out outputs\validare\validare_calibrat.csv --compara docs\rezultate\validare_calibrat.csv` |
-| `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` (§ 9.5) | arborele curent | `romana.control.validare models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --fara-fix --out outputs\validare\test_reantrenare_indisciplinat.csv --compara docs\rezultate\test_reantrenare_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `test_reantrenare_normal` |
+| agenții E12 / E13 (§ 9.5) | arborele curent, tipurile vechi | se copiază `models\ppo_romana_zn3.*` în `models\ppo_romana_cal3.*` (E12), respectiv `models\ppo_romana.*` în `models\ppo_romana_cal.*` (E13), apoi `romana.control.train --nume romana_cal3 --continua --lr 3e-5 --pasi 300000 --medii 8 --scenarii` cu cele 20 de fișiere `sumo\scenarios\zi_2026-10-2[12]_*.sumocfg` și `indisciplinat_zi_2026-10-2[12]_*.sumocfg` (la fel cu `--nume romana_cal`); punctele intermediare sunt în `outputs\train\<nume>\checkpoints` (antrenarea PPO nu e deterministă pe mai multe procese, deci modelele refăcute diferă ușor de cele publicate) |
+| `validare_calibrat.csv` (§ 9.5) | arborele curent, tipurile vechi | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal3.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 11-15 --out outputs\validare\validare_calibrat.csv --compara docs\rezultate\validare_calibrat.csv` |
+| `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` (§ 9.5) | arborele curent, tipurile vechi | `romana.control.validare models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --fara-fix --out outputs\validare\test_reantrenare_indisciplinat.csv --compara docs\rezultate\test_reantrenare_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `test_reantrenare_normal` |
 | `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` (§ 9.9) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "capacitate_indisciplinat_zi_2026-10-26_*" --seeds 1-5 --fara-alegere --out outputs\validare\capacitate_indisciplinat_26.csv --compara docs\rezultate\capacitate_indisciplinat_26.csv`; participanți disciplinați: `--scenarii "capacitate_zi_2026-10-26_*"`, cu `capacitate_normal_26` |
-| `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
+| `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent, tipurile vechi | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
 | `validare_indisciplinat.csv` + `_alegere.json` (alegerea programului realist, § 9.4) | `e1d0f77` | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 11-15 --out outputs\validare\validare_indisciplinat.csv --compara docs\rezultate\validare_indisciplinat.csv` (alegerea, scrisă în `outputs\validare\validare_indisciplinat_alegere.json`, se compară cu cea publicată) |
@@ -1502,9 +1515,11 @@ pietonilor (date pseudonimizate, nu anonime). Măsurile, în ordine:
   `docs/corespondenta_commituri.txt`, ca istoricul urmărit de coordonator să rămână verificabil;
 * PDF-ul actual (fără imagini ale camerei) și jurnalele curente (doar vehicule) au fost readăugate într-un commit
   nou; o copie a istoricului original este păstrată doar local de autor, nepublicată;
-* autorul cere în scris, prin e-mail, acordul Webcam România pentru analiza fluxului și pentru eventuale capturi
-  estompate (§ 14.1); până la răspuns nu se publică nicio imagine a camerei, iar în caz de refuz analiza fluxului se
-  oprește.
+* autorul a cerut în scris, prin e-mail (26.10.2026), acordul Webcam România pentru analiza fluxului și pentru 1–2
+  capturi estompate. **Acordul a venit în scris pe 27.10.2026** (§ 14.1). Curățarea istoricului rămâne justificată:
+  capturile vechi aveau persoane neestompate, pe care acordul nu le acoperă. Commit-urile vechi rămân totuși
+  accesibile pe GitHub prin referința cererii de actualizare automată a dependențelor (`refs/pull/1/head`), pe care
+  numai GitHub o poate șterge. Cererea autorului către GitHub Support (26.10.2026) așteaptă încă răspuns.
 
 ## 13. Asistență generativă
 
@@ -1616,8 +1631,16 @@ de reproducere: art. 35 alin. (3) din Legea nr. 8/1996[^legea8], care transpune 
 organizațiile de cercetare și instituțiile de patrimoniu cultural, iar art. 36^2 nu se aplică dacă titularul
 și-a rezervat drepturile prin mijloace care pot fi citite automat. Fișierul `robots.txt` al site-ului
 webcamromania.ro exclude listele de redare HLS (`.m3u8`), deci această excepție este incertă. Din acest motiv
-este necesar acordul scris al titularului, pe care autorul îl solicită în scris, prin e-mail (cererea din 26.10.2026); până
-la obținerea lui, utilizarea rămâne strict academică, iar imaginile nu sunt redistribuite. Depozitul și PDF-ul nu
+autorul a cerut în scris, prin e-mail (26.10.2026), acordul Webcam România. A rugat-o, dacă drepturile aparțin
+operatorului camerei, să indice titularul sau să-i transmită cererea. **Acordul a venit în scris pe 27.10.2026**,
+pentru:
+- (a) analiza automată a fluxului în scop academic și necomercial, cu indicarea sursei („Webcam România –
+  https://webcamromania.ro”);
+- (b) publicarea a 1–2 capturi ale camerei, cu persoanele estompate.
+
+Răspunsul nu a indicat alt titular, așa că acordul este al singurei părți identificabile. Dacă operatorul camerei se
+face cunoscut și obiectează, capturile se retrag și analiza fluxului se oprește. Corespondența este păstrată de
+autor. Utilizarea rămâne în limitele acordului: academică, necomercială, cu sursa indicată. Depozitul și PDF-ul nu
 conțin cadre ale camerei: figurile care le foloseau au fost scoase (se refac ca scheme proprii, pe fond neutru), iar
 capturile publicate anterior au fost eliminate și din tot istoricul depozitului (§ 12.5).
 
@@ -1666,7 +1689,7 @@ utilizare ai resurselor folosite efectiv în proiect.
 | Flask | BSD-3-Clause[^flask] |
 | Python-Markdown (exportul PDF) | BSD-3-Clause[^markdown-py] |
 | Eclipse Paho MQTT (client) / Mosquitto (broker opțional, neinclus) | EPL-2.0 OR EDL-1.0 (BSD-3-Clause); proiectul folosește opțiunea EDL-1.0[^mosquitto] |
-| Fluxul video al camerei Piața Romană (sursa: Webcam România) | drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor; analizat în memorie, în scop academic; nicio imagine din cameră nu este publicată în versiunea curentă a proiectului[^webcam][^webcam-termeni] |
+| Fluxul video al camerei Piața Romană (sursa: Webcam România) | drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor; analizat în memorie, în scop academic și necomercial, cu acordul scris al Webcam România din 27.10.2026, care permite și publicarea a 1–2 capturi cu persoanele estompate[^webcam][^webcam-termeni] |
 | Google Street View (doar verificarea vizuală a rețelei, § 10) | Termenii suplimentari Google Maps / Google Earth; nicio informație preluată, nicio captură publicată[^streetview] |
 | Fonturile Barlow și Barlow Semi Condensed (dispecerat, Google Fonts) | SIL Open Font License 1.1; legate, nu incluse[^barlow] |
 | Python 3.12 | PSF-2.0[^python] |
@@ -1744,7 +1767,10 @@ simulări (§ 11.8).
 
 Coloana „Scenariile” dă versiunea scenariilor pe care a fost produs fișierul: „arborele curent” sau commitul din
 care se aduc temporar (`git checkout <commit> -- sumo/scenarios sumo/demand config/demand.json`, revenirea cu
-`git checkout HEAD -- sumo config/demand.json`, § 11.8). Cu scenariile din arborele curent, care au aceleași nume, dar
+`git checkout HEAD -- sumo config/demand.json`, § 11.8). „Arborele curent, tipurile vechi” înseamnă scenariile
+actuale cu tipurile de vehicule de dinainte de 28.10 (timpul de reacție implicit SUMO, § 6.4). Ele se aduc cu
+`git checkout 75592d3 -- sumo/demand/vtypes.add.xml sumo/demand/vtypes_indisciplinat.add.xml`, iar revenirea se face
+cu `git checkout HEAD -- sumo/demand`. Cu scenariile din arborele curent, care au aceleași nume, dar
 cererea recalibrată pe 26.10, se obțin alte cifre. Coloana „Se reproduce cu” dă modulul care reface fișierul. Fișierele
 `validare_*`, `robustete_*` și `calibrat_*` au fost produse cu scripturile de lucru din care provine modulul
 `romana.control.validare` (publicat pe 26.10); modulul dă aceleași valori (verificat pe rulări din
@@ -1759,19 +1785,19 @@ reface, celelalte da.
 | `rezultate_brute_marginea_de_sus.csv` | evaluarea pe scenariile cu cererea „medie” (marginea de sus): 1 400 de simulări, zile lucrătoare cu seed-urile 1–10 și duminica dimineața | `7a79502` | `romana.control.evaluate` |
 | `rezultate_v1_si_experimente.csv` | evaluarea din 22.10 (zonele inițiale), cu agentul v1 și experimentele v2/v3 (§ 9.5) | `8176be5`, cu codul de atunci | `romana.control.evaluate` din acel commit |
 | `scenarii_referinta/` | evaluarea pe scenariile ipotetice inițiale (`referinta_*`) | `a845bf9`, cu codul de atunci | `romana.control.evaluate` din acel commit |
-| `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
+| `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere` |
 | `calitate_inregistrare.csv` | continuitatea urmăririi pe ore și zile (§ 4.6): traiectorii, goluri > 1 s, densitatea punctelor | – | `romana.vision.calitate` |
-| `capacitate_baleiaj.csv` | capacitatea geamănului pe vârful de luni și ×1,2 pentru variante ale parametrilor de șofer (§ 6.4): vehicule introduse, neintroduse, intrări pe brațe | arborele curent | `romana.control.capacitate` |
-| `localizare_varf_capacitate.csv` | aceeași analiză pe vârful de luni și vârful ×1,2, cu capacitatea calibrată (ambele comportamente), plus vârful de luni cu parametrii impliciți, pentru comparație (§ 9.6) | arborele curent | `romana.control.localizare` |
-| `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent | `romana.control.localizare` |
+| `capacitate_baleiaj.csv` | capacitatea geamănului pe vârful de luni și ×1,2 pentru variante ale parametrilor de șofer (§ 6.4): vehicule introduse, neintroduse, intrări pe brațe | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate` |
+| `localizare_varf_capacitate.csv` | aceeași analiză pe vârful de luni și vârful ×1,2, cu capacitatea calibrată (ambele comportamente), plus vârful de luni cu parametrii impliciți, pentru comparație (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare` |
+| `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent, tipurile vechi | `romana.control.localizare` |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3, E9 și planul fix, pe 5 scenarii de zi lucrătoare | `e1d0f77` | `romana.control.validare --seeds 1-5` / `--seeds 6-10`, `--fara-alegere` (comanda completă: § 11.8) |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3 și planul fix | `e1d0f77` (cele 5 scenarii de duminică de atunci, fără `pranz`) | la fel |
 | `validare_indisciplinat.csv` + `_alegere.json` | validarea din care s-a ales programul realist (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |
 | `validare_intrari.csv` + `_alegere.json` | validarea componentelor programului pentru marginea de jos (seed-urile 11–15) | `e1d0f77` | `romana.control.validare --seeds 11-15` |
 | `validare_indisciplinat_e10.csv`, `validare_indisciplinat_e11.csv` | validarea agenților E10 și E11 (§ 9.5), cu punctele lor intermediare | `e1d0f77` | `romana.control.validare` (punctele intermediare nu sunt publicate) |
-| `validare_calibrat.csv` + `_alegere.json` | validarea agenților E12 și E13 (§ 9.5) pe scenariile calibrate cu participanți indisciplinați, seed-urile 11–15, cu planul fix, actuated, agentul oficial, E3 și câte trei candidați (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent | `romana.control.validare` (dintre candidați sunt publicați doar `cand_romana_cal3_100k`, `ppo_romana_cal3` și `ppo_romana_cal`) |
+| `validare_calibrat.csv` + `_alegere.json` | validarea agenților E12 și E13 (§ 9.5) pe scenariile calibrate cu participanți indisciplinați, seed-urile 11–15, cu planul fix, actuated, agentul oficial, E3 și câte trei candidați (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent, tipurile vechi | `romana.control.validare` (dintre candidați sunt publicați doar `cand_romana_cal3_100k`, `ppo_romana_cal3` și `ppo_romana_cal`) |
 | `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` | testul pe luni 26.10 cu capacitatea calibrată (§ 9.9): planul fix, actuated, planul 46/48/12, agentul oficial, E3, E9, E12 și E13, seed-urile 1–5 | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
-| `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
+| `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
 | `validare_zone_noi`, `validare_e2_e3`, `validare_clasice`, `validare_nou_*`, `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9` (23–25.10), fiecare cu `_alegere.json` unde există | validările pentru marginea de sus (seed-urile 11–13, apoi 11–15), din care s-au ales agenții, planurile și componentele programului; în `_alegere.json`: scorul mediu al fiecărei strategii față de planul fix, strategia aleasă, seed-urile (cele prezente în CSV) și scenariile | `7a79502` | `romana.control.validare` (seed-urile din alegeri corectate cu `--corecteaza-alegeri`; testele pe seed-urile 1–10 nu au fișier de alegere) |
 | `validare_finala.csv` | validarea din 22.10 din care s-a ales agentul oficial (seed-urile 11–13) | `8176be5`, cu codul de atunci | scripturi de lucru, în formatul lui `romana.control.validare` |
 | `grila_plan.csv`, `grila_plan_zone_noi.csv` | grilele de planuri fixe (§ 9.5) | `1619a30`, cu codul de atunci / `7a79502` | scripturi de lucru nepublicate, cu aceeași funcție de simulare (`evaluate.run_one`); o grilă se reface cu `romana.control.validare PLAN_a_b_c …` sau `romana.control.evaluate --planuri a,b,c` |

@@ -9,7 +9,8 @@ Restul fișierului rămâne identic, octet cu octet. Scenariile fără `addition
 
 Același mecanism dă și variantele cu capacitatea calibrată (§ 6.4): `--vtypes vtypes_capacitate.add.xml --prefix
 capacitate_` (timpul de reacție al șoferilor 0,8 s) și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix
-capacitate_indisciplinat_`.
+capacitate_indisciplinat_`. Din 28.10.2026 calibrarea e implicită în `vtypes.add.xml` și `vtypes_indisciplinat.add.xml`,
+deci variantele `capacitate_*` mai sunt necesare doar pentru reproducerea § 9.9.
 
 Exemple:
   python -m romana.bridge.indisciplinat                                  # toate sumo/scenarios/zi_*.sumocfg
