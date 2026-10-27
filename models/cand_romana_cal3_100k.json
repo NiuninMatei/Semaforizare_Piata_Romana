@@ -1,0 +1,60 @@
+{
+  "model": "cand_romana_cal3_100k.zip",
+  "controlate": [
+    "romana"
+  ],
+  "scenarii": [
+    "indisciplinat_zi_2026-10-21_linistit.sumocfg",
+    "indisciplinat_zi_2026-10-21_linistit_x0_8.sumocfg",
+    "indisciplinat_zi_2026-10-21_pranz.sumocfg",
+    "indisciplinat_zi_2026-10-21_varf.sumocfg",
+    "indisciplinat_zi_2026-10-21_varf_x1_2.sumocfg",
+    "indisciplinat_zi_2026-10-22_dimineata.sumocfg",
+    "indisciplinat_zi_2026-10-22_linistit.sumocfg",
+    "indisciplinat_zi_2026-10-22_linistit_x0_8.sumocfg",
+    "indisciplinat_zi_2026-10-22_varf.sumocfg",
+    "indisciplinat_zi_2026-10-22_varf_x1_2.sumocfg",
+    "zi_2026-10-21_linistit.sumocfg",
+    "zi_2026-10-21_linistit_x0_8.sumocfg",
+    "zi_2026-10-21_pranz.sumocfg",
+    "zi_2026-10-21_varf.sumocfg",
+    "zi_2026-10-21_varf_x1_2.sumocfg",
+    "zi_2026-10-22_dimineata.sumocfg",
+    "zi_2026-10-22_linistit.sumocfg",
+    "zi_2026-10-22_linistit_x0_8.sumocfg",
+    "zi_2026-10-22_varf.sumocfg",
+    "zi_2026-10-22_varf_x1_2.sumocfg"
+  ],
+  "pasi": 661728,
+  "preantrenare_imitatie": null,
+  "hiperparametri": {
+    "lr": 3e-05,
+    "n_steps": 128,
+    "medii_paralele": 8,
+    "batch": 128,
+    "gamma": 0.98,
+    "ent_coef": 0.01,
+    "retea": [
+      128,
+      128
+    ],
+    "delta_t_s": 5,
+    "verde_min_s": 10,
+    "verde_max_s": 90
+  },
+  "faze_romana": [
+    "N–S: Magheru ↔ Lascăr Catargiu prin centru",
+    "E–V: Dacia în jurul insulei",
+    "Pietoni: toate trecerile, axa centrală se golește",
+    "N–S, cu intrările Dacia deschise (fără dozare)",
+    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+  ],
+  "faze_actiuni_romana": [
+    0,
+    1,
+    2
+  ],
+  "obs_amonte": false,
+  "nota": "E12 (§ 9.5): punctul intermediar de la +100 000 de pași (checkpoint romana_cal3_661728_steps) al antrenării ppo_romana_cal3, ales pe validarea cu participanți indisciplinați; durata_min este aproximativă (checkpoint-ul nu o salvează) (modelul final ppo_romana_cal3: 198,4 min)",
+  "durata_min": 155.0
+}

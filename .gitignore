@@ -203,3 +203,6 @@ data/trajectories_brute/
 # TEMPORAR: jurnalele BRUTE (cu pietoni) scrise încă în data/trajectories de procesul run_vision pornit cu codul vechi;
 # se mută în data/trajectories_brute, se publică prin `recount --publica`, apoi aceste rânduri se scot
 data/trajectories/traiectorii_2026-10-27.jsonl.gz
+# punctele intermediare ale antrenărilor E12/E13 rămân locale, cu excepția candidatului ales (E12, § 9.5)
+models/cand_*
+!models/cand_romana_cal3_100k.*
