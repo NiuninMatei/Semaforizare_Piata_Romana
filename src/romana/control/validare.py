@@ -48,6 +48,10 @@ from romana.common import OUTPUT_DIR, ROOT
 SCEN_DIR = ROOT / "sumo" / "scenarios"
 DOCS_RES = ROOT / "docs" / "rezultate"
 COLOANE = ["model", "scenariu", "seed", "pierdere_h"]
+# pierderea pe tip de participant (ore), din aceeași simulare: permite, ulterior, o măsură pe persoană cu ocupări
+# declarate (autobuze și troleibuze, autoturisme), fără simulări noi; suma lor este pierdere_h
+TIPURI = ("passenger", "bus", "truck", "motorcycle", "bicycle", "pieton")
+DETALII = [f"pierdere_h_{t}" for t in TIPURI]
 CHEI = ["model", "scenariu", "seed"]
 REFERINTA = "FIX"
 TOLERANTA_H = 1e-6                  # sub această diferență (ore), două rulări sunt considerate identice
@@ -119,7 +123,7 @@ def make_controller(spec: str):
 
 
 def run_task(task: tuple) -> tuple:
-    """O simulare (strategie, scenariu, seed) → (model, scenariu, seed, pierdere_h)."""
+    """O simulare (strategie, scenariu, seed) → (model, scenariu, seed, pierdere_h, pierderile pe tipuri)."""
     spec, sumocfg, seed, eval_dir, quiet = task
     if quiet:                       # SUMO scrie multe avertismente; în procesele de lucru nu le afișăm
         devnull = os.open(os.devnull, os.O_WRONLY)
@@ -130,7 +134,7 @@ def run_task(task: tuple) -> tuple:
     E.EVAL_DIR = Path(eval_dir)      # fișierele tripinfo temporare (șterse după agregare)
     ctrl = make_controller(spec)
     r = E.run_one(Path(sumocfg), ctrl, seed)
-    return ctrl.name, Path(sumocfg).stem, seed, r["pierdere_totala_h"]
+    return (ctrl.name, Path(sumocfg).stem, seed, r["pierdere_totala_h"], *(r.get(c, 0.0) for c in DETALII))
 
 
 def run_all(specs: list[str], scenarios: list[Path], seeds: list[int], procese: int,
@@ -145,7 +149,7 @@ def run_all(specs: list[str], scenarios: list[Path], seeds: list[int], procese: 
             res = list(ex.map(run_task, tasks))
     else:
         res = [run_task(t[:4] + (False,)) for t in tasks]
-    return pd.DataFrame(res, columns=COLOANE)
+    return pd.DataFrame(res, columns=COLOANE + DETALII)
 
 
 def relative_table(df: pd.DataFrame, ref: str = REFERINTA) -> pd.DataFrame:

@@ -82,6 +82,11 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   dintre zone). Efect: pietonii +6% pe 26.10; vehiculele neschimbate. Grija autorului: zonele se verifică pe date
   (harta traiectoriilor, OSM, fundal median) înainte de schimbare; jurnalul nu depinde de zone (recount, fără
   colectare nouă). Zonele de vehicule: de reverificat cu aceeași metodă după test (factorii din referinta factori).
+- **28.10, ≈14:30 – măsura pe persoană (întrebarea autorului: câți oameni sunt într-un autobuz?):** nu se poate vedea
+  și nu există date publice (doar vehiculele STB noi au numărătoare, TPBI / Google Maps) → ocupări declarate cu
+  sensibilitate: autoturism 1,2 (EEA), autobuz 20 / 40 / 70; `validare` păstrează acum pierderea pe tipuri
+  (pierdere_h_<tip>, suma = pierdere_h, verificat identic cu rezultatele publicate); `romana.control.ocupare`
+  scrie CSV-ul pe persoană; lanțurile 28 / 29 rulează `decizie` și pe el (raportat, nu schimbă decizia).
 - **De făcut:** după 29.10 00:15, lanțul scratchpad\test28.py (calitate → recount + --publica → scenarii_zi →
   indisciplinat → test seed-urile 1–10 → analizele → `romana.control.decizie` → decizie_2026-10-28.json) → setez
   `VARIANTA_PROGRAM` = varianta_live din JSON, eticheta din dashboard, § 9.10 nou; 30.10 00:15 test29.py (confirmare).

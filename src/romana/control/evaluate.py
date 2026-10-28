@@ -80,21 +80,25 @@ def parse_tripinfo(path: Path) -> dict:
     veh = {"wait": [], "loss": [], "dur": [], "depart": []}
     bike = {"wait": [], "loss": []}
     ped = {"loss": [], "dur": []}
+    per_tip: dict[str, float] = {}    # pierderea pe tip de participant (s), ca în total: vehiculele cu întârzierea la intrare
     co2, n_arr, n_unf, n_ped = 0.0, 0, 0, 0
     for _, el in ET.iterparse(path):
         if el.tag == "tripinfo":
+            vt = el.get("vType") or "altele"
             if float(el.get("arrival", -1)) < 0:
                 n_unf += 1
-            elif el.get("vType") != "bicycle":
+            elif vt != "bicycle":
                 n_arr += 1
-            if el.get("vType") == "bicycle":
+            if vt == "bicycle":
                 bike["wait"].append(float(el.get("waitingTime")))
                 bike["loss"].append(float(el.get("timeLoss")))
+                per_tip[vt] = per_tip.get(vt, 0.0) + float(el.get("timeLoss"))
             else:
                 veh["wait"].append(float(el.get("waitingTime")))
                 veh["loss"].append(float(el.get("timeLoss")))
                 veh["dur"].append(float(el.get("duration")))
                 veh["depart"].append(float(el.get("departDelay", 0)))
+                per_tip[vt] = per_tip.get(vt, 0.0) + veh["loss"][-1] + veh["depart"][-1]
             em = el.find("emissions")
             if em is not None:
                 co2 += float(em.get("CO2_abs", 0))
@@ -105,6 +109,7 @@ def parse_tripinfo(path: Path) -> dict:
                     n_ped += 1
                 ped["loss"].append(float(w.get("timeLoss", 0)))
                 ped["dur"].append(float(w.get("duration", 0)))
+                per_tip["pieton"] = per_tip.get("pieton", 0.0) + ped["loss"][-1]
             el.clear()
     path.unlink(missing_ok=True)   # fișierele brute sunt mari; păstrăm doar agregatele
     # întârzierea la intrare (vehicul care nu încape în rețea) face parte din pierderea totală
@@ -116,7 +121,8 @@ def parse_tripinfo(path: Path) -> dict:
             "biciclisti": len(bike["loss"]), "asteptare_biciclete_s": _mean(bike["wait"]),
             "pierdere_timp_biciclete_s": _mean(bike["loss"]),
             "pietoni_sositi": n_ped, "pierdere_timp_pietoni_s": _mean(ped["loss"]),
-            "durata_pietoni_s": _mean(ped["dur"]), "pierdere_totala_h": total_h}
+            "durata_pietoni_s": _mean(ped["dur"]), "pierdere_totala_h": total_h,
+            **{f"pierdere_h_{t}": v / 3600 for t, v in per_tip.items()}}
 
 
 def make_controllers(sumocfg: Path, models: list[Path], plans=()):
