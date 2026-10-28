@@ -75,6 +75,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   cel mai simplu). 29.10 = confirmare (revenire la REALIST doar dacă câștigătorul e semnificativ mai slab).
   `live_twin.py`: variantele e13 / plan_scurt / tod_debit, pragurile 2 400 / 4 100, planurile fixe urmărite secundă cu
   secundă; implicit tot "realist" până la decizie. Pe validare, regula ar alege PLAN_12_14_12 (egal cu TOD_DEBIT).
+- **28.10, ≈13:30 – observațiile autorului (O17):** plăcuțele tuturor vehiculelor estompate în imaginea publicată
+  (figura zonelor refăcută); zonele de trecere corectate înainte de test: Mendeleev mutată pe zebra marcată din OSM
+  (calea 1104820827, proiectată cu docs/rezultate/referinta/model_camera.json; locul real e acoperit – ≈0 pietoni
+  detectați), trecere_dacia_est_intrare prelungită până la zebra de jos (2 786 de traiectorii treceau prin golul
+  dintre zone). Efect: pietonii +6% pe 26.10; vehiculele neschimbate. Grija autorului: zonele se verifică pe date
+  (harta traiectoriilor, OSM, fundal median) înainte de schimbare; jurnalul nu depinde de zone (recount, fără
+  colectare nouă). Zonele de vehicule: de reverificat cu aceeași metodă după test (factorii din referinta factori).
 - **De făcut:** după 29.10 00:15, lanțul scratchpad\test28.py (calitate → recount + --publica → scenarii_zi →
   indisciplinat → test seed-urile 1–10 → analizele → `romana.control.decizie` → decizie_2026-10-28.json) → setez
   `VARIANTA_PROGRAM` = varianta_live din JSON, eticheta din dashboard, § 9.10 nou; 30.10 00:15 test29.py (confirmare).

@@ -206,7 +206,7 @@ istoricul pe 26.10.2026, cu identificatori de commit noi (`docs/corespondenta_co
 dat acordul scris pe 27.10.2026 pentru analiza automată a fluxului în scop academic și necomercial, cu sursa indicată
 („Webcam România – https://webcamromania.ro”), și pentru publicarea a 1–2 capturi cu persoanele estompate (§ 14.1).
 Cu acest acord, `docs/imagini/` conține două imagini dintr-un singur cadru din 28.10.2026, cu persoanele, plăcuțele
-vehiculelor apropiate și textul publicitar al camerei estompate (figurile 4.1 și 4.2). Ele nu intră sub nicio licență a
+tuturor vehiculelor și textul publicitar al camerei estompate (figurile 4.1 și 4.2). Ele nu intră sub nicio licență a
 proiectului (`LicenseRef-Toate-drepturile-rezervate`).
 
 ## Confidențialitate

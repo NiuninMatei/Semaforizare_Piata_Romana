@@ -189,7 +189,7 @@ publicarea a 1–2 capturi ale camerei, cu persoanele estompate. Orice altă uti
 Fluxul este analizat în memorie; pentru previzualizarea locală se suprascrie continuu un singur cadru
 estompat; capturile și clipurile de calibrare se păstrează local, temporar, și nu se publică. În limitele
 acordului, documentația conține două imagini dintr-un singur cadru (28.10.2026, 09:30): vederea camerei și
-zonele de numărare (docs/imagini/camera_*.jpg), cu persoanele, plăcuțele vehiculelor apropiate și textul
+zonele de numărare (docs/imagini/camera_*.jpg), cu persoanele, plăcuțele tuturor vehiculelor și textul
 publicitar suprapus de cameră estompate și cu sursa indicată pe imagine.
 Numărătorile sunt fapte agregate. Traiectoriile (doar ale vehiculelor) sunt fără imagini și fără
 identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu sunt publicate, ci doar
