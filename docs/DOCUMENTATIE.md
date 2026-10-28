@@ -62,19 +62,19 @@ date de trafic → model digital al intersecției → decizie automată → supr
 | # | Cerință (din tema proiectului) | Cum este îndeplinită |
 |---|---|---|
 | R1 | Preluarea în timp real a datelor de pe camera publică | `vision/stream.py` citește fluxul HLS cu reconectare automată; `run_vision.py` analizează 4–6 cadre/s |
-| R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 2 zone pe trecerile de pietoni vizibile |
+| R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 11 zone pe trecerile de pietoni (§ 4.4) |
 | R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje, pe tipuri de vehicule (inclusiv biciclete); pietoni din numărătorile de pe treceri; trafic de fond doar ca fracțiune declarată |
 | R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale |
-| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe 5 seed-uri, pentru toți participanții (vehicule, bicicliști, pietoni) |
+| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe seed-urile de test 1–10 (alegerile pe seed-urile de validare 11–15), pentru toți participanții (vehicule, bicicliști, pietoni) |
 | R6 | Extindere la intersecțiile principale conexe | varianta „coridor”: Piața Romană + cei 4 vecini imediați care o alimentează, controlați simultan |
 | R7 | Documentație în limba română, cu surse și licențe | acest document; note de subsol; § 14 |
 | R8 | Evoluție vizibilă pe GitHub, pe borne | commit + push la fiecare bornă (§ 12) |
 
 Cerințe nefuncționale: siguranță (agentul nu poate produce stări periculoase ale semaforului), confidențialitate
-(nicio înregistrare video păstrată și nicio imagine a camerei publicată; local rămân doar previzualizarea
+(nicio înregistrare video păstrată; din cameră e publicat doar un cadru estompat, § 4.5; local rămân doar previzualizarea
 estompată, suprascrisă continuu, și, temporar, capturi și scurte clipuri folosite la calibrarea zonelor, șterse după
 calibrare), reproductibilitate (rețea, cerere și rezultate regenerabile din scripturi),
-rulare pe un laptop Windows fără GPU.
+rulare pe un laptop Windows fără GPU dedicat (detecția rulează pe placa grafică Intel integrată, § 4.1).
 
 ## 3. Arhitectura sistemului (perspectiva IoT)
 
@@ -110,7 +110,7 @@ flowchart LR
 
 * **Senzorul virtual.** Camera nu este a proiectului; este tratată ca un senzor public, iar „inteligența” rulează pe
   stația locală (*edge computing*). Spre restul sistemului pleacă doar **numărători agregate** și traiectorii fără imagini și fără identificatori
-  (pseudonimizate) – economie de lățime de
+  (pseudonimizate), plus previzualizarea estompată pentru dispeceratul local (§ 4.5) – economie de lățime de
   bandă și, mai ales, conformitate cu principiul minimizării datelor din GDPR[^gdpr].
 * **Rețea.** Modulul de viziune publică opțional pe MQTT (OASIS Standard 5.0[^mqtt]; broker recomandat Eclipse
   Mosquitto[^mosquitto]): `romana/stare/camera` (retained, QoS 1), `romana/numaratori/interval` (retained),
@@ -123,8 +123,9 @@ flowchart LR
 ### 4.1 Sursa video
 
 Fluxul `mono.m3u8` este o listă HLS de segmente `.ts` de 6 s, H.264, 3288 × 1850 px, 18 fps (verificat cu
-`ffprobe` la 20.10.2026). `FrameSource` îl citește prin FFmpeg/OpenCV[^opencv][^ffmpeg] pe un fir separat și
-păstrează doar ultimul cadru; la căderea fluxului se reconectează cu întârziere exponențială (1 s → 30 s).
+`ffprobe` la 20.10.2026). `FrameSource` îl citește prin FFmpeg/OpenCV[^opencv][^ffmpeg] pe un fir separat, pune
+cadrele (6 pe secundă) într-un tampon în memorie și le redă uniform, cu o întârziere fixă de 8 s (§ 4.6); la căderea
+fluxului se reconectează cu întârziere exponențială (1 s → 30 s).
 
 ![Vederea camerei publice din Piața Romană, 28.10.2026, 09:30](imagini/camera_piata_romana.jpg)
 
@@ -140,7 +141,7 @@ listele de intersecții supravegheate. Rezultat:
 
 | Cameră | Ce arată | Folosită? |
 |---|---|---|
-| Webcam România – Piața Romană (HLS) | piața, toate cele 6 brațe, 2 treceri de pietoni | **da** – singura sursă video a proiectului |
+| Webcam România – Piața Romană (HLS) | piața, toate cele 6 brațe și trecerile lor de pietoni (pietonii se detectează de încredere doar pe cele 2 din prim-plan, § 4.4) | **da** – singura sursă video a proiectului |
 | Webcam România – Piața Victoriei (YouTube live)[^youtube] | pasajul Victoriei, în afara zonei modelate (dincolo de Lascăr Catargiu × Gh. Manu) | nu |
 | „Calea Victoriei City Cam” (YouTube) | imagine statică a Ateneului, fără trafic | nu |
 | Windy / Meteoblue „Piața Romană” | aceeași cameră Webcam România | – |
@@ -197,7 +198,7 @@ de la zero și alese pe măsurători, nu pe aspect:
 
 * *Numărătoarea de referință.* Două clipuri de câte 3 minute (26.10, 11:58 și 12:19; stocate doar local și șterse
   după adnotare) au fost adnotate cadru cu cadru, pe foi de contact la 0,5 s: pe fiecare țintă (intrările de pe cele
-  4 brațe, zebrele) și pe fiecare bucată de 30 s au numărat **doi adnotatori independenți**, cu un al treilea ca
+  4 brațe, zebrele) și pe fiecare bucată de 30 s au numărat **doi adnotatori AI independenți** (instanțe separate ale asistentului Claude, § 13; nu oameni), cu un al treilea ca
   arbitru la diferențe peste max(2; 15%). Aceleași clipuri au fost trecute prin lanțul live (YOLO11s, 1600 px,
   6 cadre/s), deci referința și numărarea automată văd exact aceleași cadre (clipurile au mici salturi de câteva
   secunde, aceleași pentru ambele). Adnotatorii au corectat și o greșeală de țintă: intrările dinspre Lascăr
@@ -231,8 +232,9 @@ Regula de numărare (`classify()` în `vision/od_counter.py`), aplicată pe trai
   alăturate: prima variantă a regulii producea 25 de „întoarceri” Magheru → Magheru în 5 minute, de fapt
   vehicule care atingeau banda vecină;
 * pe brațele îndepărtate, parțial ascunse (Dacia vest, Lascăr Catargiu, Mendeleev, Căderea Bastiliei), zonele
-  sunt marcate `capat_traiectorie`: o intrare contează doar dacă traiectoria **începe** acolo (vehiculul apare
-  din strada ascunsă), o ieșire doar dacă traiectoria **se termină** acolo (toleranță 1,5 s). Verificarea
+  de ieșire sunt marcate `capat_traiectorie`: o ieșire contează doar dacă traiectoria **se termină** acolo (toleranță
+  1,5 s); până la recalibrarea din 26.10 erau marcate și intrările Dacia vest și Catargiu, care contau doar dacă
+  traiectoria **începea** acolo (vehiculul apărea din strada ascunsă). Pe 21.10, verificarea
   sensului de mers (`recount --directii`) a arătat că fosta zonă „intrare Dacia vest” prindea de fapt
   vehiculele care circulă pe inel prin dreptul străzii (73 din 74 se îndepărtau de centru);
 * fiecare zonă cere un **sens de mers** în imagine (±60°), măsurat pe primele / ultimele 1,5 s ale
@@ -253,13 +255,15 @@ confirmă ordinea brațelor în imagine: camera privește spre vest, deci stâng
 **Reunirea fragmentelor.** La 5 cadre/s, stâlpii, autobuzele și copacii întrerup urmărirea. Înainte de
 numărare, `recount` reunește fragmentele aceleiași traiectorii: un fragment care se termină este legat de unul
 care începe în cel mult 2 s, aproape de poziția prezisă din viteza de la capăt, de aceeași categorie și cu
-direcție compatibilă (≈12% din fragmente sunt reunite). Chiar și așa, doar ≈10% dintre vehicule sunt urmărite
-de la intrare până la ieșire – matricea O–D se sprijină deci în principal pe totalurile pe brațe (§ 5.1).
+direcție compatibilă (≈12% din fragmente sunt reunite). Chiar și așa, doar ≈25–40% dintre vehicule sunt urmărite
+de la intrare până la ieșire (virajele față de intrări, în `data/counts`) – matricea O–D se sprijină deci în principal
+pe totalurile pe brațe (§ 5.1).
 
 Se agregă pe intervale de 15 minute, separat pe tipuri de vehicule, în `data/counts/numaratori_AAAA-LL-ZZ.csv`.
 
-**Auditul numărării (25.10.2026).** Camera numără în medie **1,6 ieșiri pentru fiecare intrare**, deși fizic
-fiecare vehicul care intră iese. Harta capetelor de traiectorie arată cauza: pe inelul din fundal vehiculele sunt
+**Auditul numărării (25.10.2026).** Cu zonele de atunci (23–24.10), camera număra în medie **1,6 ieșiri
+pentru fiecare intrare** (cu zonele actuale, ≈1,4), deși fizic fiecare vehicul care intră iese. Harta capetelor de
+traiectorie arată cauza: pe inelul din fundal vehiculele sunt
 atât de mici încât detectorul le pierde oriunde, iar un vehicul pierdut în dreptul unei ieșiri îndepărtate pare
 „ieșit” pe ea. S-a încercat corectarea regulii pe criteriul conservării vehiculelor (cadre minime în zonă,
 înaintare minimă pe stradă, prag relativ la lungimea zonei – `Params.capat_min_*`, rezultatele în
@@ -277,8 +281,10 @@ Astfel zonele pot fi recalibrate **după** colectare, iar `python -m romana.visi
 jurnalul local (testat: rezultat identic cu numărarea live). În depozit, `data/trajectories/` conține doar ieșirea
 comenzii `python -m romana.vision.recount --publica`: traiectoriile vehiculelor (inclusiv biciclete și motociclete),
 cu fragmentele deja reunite, fără pietoni, în același format. Pe acest jurnal publicat, renumărarea vehiculelor
-reproduce exact renumărarea din jurnalul complet (verificat pe 22.10: 10 726 de intrări, 2 238 de viraje, 0 din 53
-de intervale diferite); pietonii apar doar în numărătorile agregate din `data/counts/`.
+reproduce exact renumărarea din jurnalul complet (verificat pe ziua de 22.10, cu zonele din 23–24.10: 10 726 de
+intrări, 2 238 de viraje, 0 din 53 de intervale diferite; cu zonele actuale, recalibrate pe 26.10: 13 414 intrări din
+jurnalul publicat față de 13 413 din cel complet – o singură intrare în plus, pe Dacia vest, la 10:15–10:30 – și
+aceleași 3 270 de viraje); pietonii apar doar în numărătorile agregate din `data/counts/`.
 Tot din jurnal se desenează câmpul de mișcare al vehiculelor și capetele traiectoriilor (`recount --flux`),
 folosite la plasarea zonelor.
 
@@ -381,7 +387,7 @@ zonele mici de numărare. Problema a fost văzută atunci doar ca una de afișar
 (ziua) sunt subnumărate, cu un factor necunoscut și diferit pe brațe; factorii de corecție din § 4.3, măsurați pe
 26.10, corespund înregistrării continue și nu se aplică acelor zile; (2) prima zi lucrătoare înregistrată continuu este
 **luni 26.10**, chiar ziua numărătorii de referință: vârful ei calibrat are ≈5 000 de vehicule/h prin piață
-(§ 5.4), iar numărătoarea de referință de la 16:00 dă ≈6 200 de vehicule/h (Magheru ≈3 070, Lascăr Catargiu ≈1 450,
+(§ 5.4), iar numărătoarea de referință de la prânz (§ 4.3) dă ≈6 200 de vehicule/h (Magheru ≈3 070, Lascăr Catargiu ≈1 450,
 Dacia vest ≈1 050, Dacia est ≈650) – de aproximativ două ori vârfurile din 21–22.10 (≈2 500 de vehicule/h); (3)
 duminica 25.10, înregistrată continuu, părea „mai aglomerată” decât zilele lucrătoare (4 683 de vehicule/h la vârf) –
 un semnal care ar fi trebuit să atragă atenția mai devreme. Pentru o colectare nouă: `romana.vision.calitate` pe
@@ -402,8 +408,8 @@ distanța până la brațele îndepărtate). De aceea se combină trei surse (`b
   (`config/demand.json`) folosită doar ca regularizare când observațiile lipsesc ($w = 2$ vehicule-echivalent).
 
 Matricea se echilibrează prin metoda Furness (IPF)[^ortuzar], alternând scalarea coloanelor și a liniilor și
-terminând pe linii (cu `echilibrare: "doar_intrari"` se scalează doar liniile). Un factor de corecție a
-detecției (`factor_corectie_detectie`) poate fi setat după o adnotare de referință (§ 10).
+terminând pe linii (cu `echilibrare: "doar_intrari"` se scalează doar liniile). Factorii de corecție a
+detecției pe brațe (`factor_corectie_detectie`) vin din numărătoarea de referință adnotată (§ 4.3).
 
 **Echilibrarea intrări / ieșiri.** Pe datele de zi, suma ieșirilor numărate a depășit suma intrărilor cu
 ≈30% (ex. 12:00–12:15: 1.856 față de 2.436 veh/h). Diferența nu poate fi reală la scara a 15 minute (stocarea
@@ -424,7 +430,7 @@ autobuze sau unele de altele în aglomerație). Cele două calibrări mărginesc
 
 | Calibrare | Ce folosește | Vârf zile lucrătoare | Rolul în evaluare |
 |---|---|---|---|
-| **marginea de jos** – `doar_intrari` | doar intrările | ≈1 640–1 980 veh/h | scenariile actuale din `sumo/scenarios` |
+| **marginea de jos** – `doar_intrari` | doar intrările | ≈1 640–1 980 veh/h | scenariile din 25–26.10 (istoricul git) |
 | **marginea de sus** – `medie` | media intrări / ieșiri | ≈2 400–3 000 veh/h | scenariile din 23–25.10 (istoricul git) |
 
 Rezultatele se raportează pentru ambele (§ 9.2); incertitudinea din interiorul fiecăreia este acoperită de
@@ -433,9 +439,10 @@ scenariile de sensibilitate ×0,8 și ×1,2 (§ 5.4).
 **Cererea calibrată pe numărătoarea de referință (26.10.2026).** Numărătoarea de referință (§ 4.3) a măsurat cât
 din intrările reale prinde camera pe fiecare braț. Cu zonele refăcute, intrările numărate se înmulțesc cu factorii
 de corecție măsurați (Magheru 1,09; Dacia est 0,88; Dacia vest 1,12; Lascăr Catargiu 2,52), iar ieșirile servesc
-doar la proporțiile de viraj (`echilibrare: "doar_intrari"`). Vârful zilelor lucrătoare iese ≈2 520–2 560 veh/h prin
+doar la proporțiile de viraj (`echilibrare: "doar_intrari"`). Vârful zilelor 21–22.10 iese ≈2 520–2 560 veh/h prin
 piață – aproape de fosta margine de sus (≈2 400–2 510) și mult peste marginea de jos (≈1 640): cererea reală era
-mai aproape de marginea de sus. Scenariile actuale din `sumo/scenarios` folosesc această calibrare (§ 5.4).
+mai aproape de marginea de sus, probabil chiar peste ea (21–22.10 sunt subnumărate, § 4.6). Scenariile actuale din
+`sumo/scenarios` folosesc această calibrare (§ 5.4).
 
 ### 5.2 De la O–D la vehicule în SUMO
 
@@ -461,22 +468,23 @@ prin piață), *vârf* (720 / 620 / 390 / 330 veh/h pe Magheru / Catargiu / Daci
 și *aglomerat* (1,2× → 2.472 veh/h), fiecare cu 15% trafic de fond și 1.200 de pietoni/h prin zona pieței
 (stația de metrou M2 și ASE; valoare ipotetică). Compoziția: 88% autoturisme, 4% autobuze/troleibuze, 3%
 camioane, 3% motociclete, 2% biciclete. Volumul de vârf a fost ales astfel încât planul fix de referință să
-funcționeze aproape de saturație pe replica fidelă a rețelei: peste ≈1,0× inelul se suprasaturează, ceea ce
-corespunde congestiei cunoscute a pieței. Scenariile servesc la dezvoltarea și verificarea lanțului și vor fi
-completate cu scenarii construite din numărătorile reale.
+funcționeze aproape de saturație pe replica fidelă a rețelei, cu parametrii impliciți ai șoferilor (§ 6.4): peste
+≈1,0× inelul se suprasatura, ceea ce părea să corespundă congestiei cunoscute a pieței. Scenariile au servit la
+dezvoltarea și verificarea lanțului și au fost completate cu scenariile construite din numărătorile reale (§ 5.4).
 
 ### 5.4 Scenariile din date reale (Borna 9)
 
 Datele colectate: **miercuri 21.10.2026 de la 11:45 până joi 22.10.2026 la 11:00** (zi, seară, noapte și vârful
-de dimineață, flux continuu la ≈5–6 cadre/s) și **duminică 25.10.2026 de la 01:14** (noapte, dimineață, prânz;
-colectarea a continuat până la oprirea sistemului). Toate zilele sunt numărate cu zonele finale (§ 4.3): pentru
-21–22.10, ≈200 000 de traiectorii după reunirea fragmentelor, ≈24 000 de intrări numărate și ≈5 000 de viraje
-urmărite complet. Profilurile au forma așteptată: în zilele lucrătoare vârful de seară (17:15–18:15) și platoul
-de dimineață (08:00–10:45), noaptea câteva sute de vehicule pe oră; duminică traficul crește abia de la 08:30,
-cu vârful la prânz.
+de dimineață, la ≈5–6 cadre/s, dar cu urmărire sacadată, mai ales ziua, § 4.6), **duminică 25.10.2026 de la
+01:14 până la ≈17:00** (noapte, dimineață, prânz, după-amiază) și **luni 26.10.2026 de la 09:11 până marți
+27.10.2026 la 06:04** (din marți, doar noaptea: publicată, fără scenarii). Toate zilele sunt numărate cu zonele finale (§ 4.3): pentru
+21–22.10, ≈200 000 de traiectorii după reunirea fragmentelor, ≈31 000 de intrări numărate și ≈8 000 de viraje
+urmărite complet. Profilurile au forma așteptată: în 21–22.10 vârful de seară (17:15–18:15) și platoul
+de dimineață (08:00–10:45), iar luni 26.10 vârful la 15:00–16:00; noaptea, câteva sute de vehicule pe oră; duminică
+traficul crește abia de la 08:30, cu vârful după-amiaza (15:30–16:30).
 
 `python -m romana.bridge.scenarii_zi --zi AAAA-LL-ZZ` alege automat ferestrele (ora de vârf, ora cea mai liniștită
-și, dacă nu se suprapun cu vârful, dimineața 07:30–08:30 și prânzul 12:00–13:00) și construiește scenariile, plus
+și, dacă nu se suprapun cu vârful, dimineața 07:30–08:30, prânzul 12:00–13:00 și seara 17:30–18:30) și construiește scenariile, plus
 sensibilitățile vârf ×1,2 și liniștit ×0,8. Cu zonele și regulile din 26.10.2026 (§ 4.3, § 4.4), datele renumărate
 și cererea calibrată (§ 5.1), scenariile actuale sunt (pentru comparație, aceleași ferestre cu calibrările
 anterioare):
@@ -508,16 +516,19 @@ anterioare):
 
 Luni 26.10 (colectată de la 09:11, deci fără vârful de dimineață) este prima zi lucrătoare înregistrată cu urmărire
 continuă (§ 4.6); zilele 21–22.10 sunt subnumărate, iar vârfurile lor (≈2 500 de vehicule/h) sunt aproximativ
-jumătate din cel de luni (≈5 000) și din numărătoarea de referință de la 16:00 (≈6 200).
+jumătate din cel de luni (≈5 000) și din numărătoarea de referință de la prânz (≈6 200, § 4.3).
 
 Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor se regăsesc în istoricul git, la
 commiturile `e1d0f77` și `7a79502`, § 11.8); pe
 duminică, datele complete (până la 17:00) mută vârful la 15:30–16:30, iar fereastra de prânz devine scenariu separat.
-Rezultatele din § 9.1–9.7 au fost obținute pe calibrările anterioare (marginile de jos și de sus); reevaluarea pe
-cererea calibrată este în § 9.8, iar testul pe ziua de luni 26.10, cu capacitatea calibrată, în § 9.9. Din 28.10,
+Rezultatele din § 9.1–9.4 și din § 9.5 (fără E12–E14) au fost obținute pe calibrările anterioare (marginile de jos și
+de sus); reevaluarea pe cererea calibrată este în § 9.8 (tot pe ea sunt E12 / E13 și localizarea de la vârfurile din
+21–22.10, § 9.6), iar testul pe ziua de luni 26.10, cu capacitatea calibrată, în § 9.9 (pe aceleași scenarii sunt E14
+și localizarea de la vârful de luni, § 9.6). Din 28.10,
 scenariile din arbore folosesc capacitatea calibrată (§ 6.4). Pentru fiecare tip de vehicul, `routeSampler` reproduce relațiile de viraj țintă cu
 GEH < 5 pentru ≈94% din relațiile autoturismelor și 100% din cele ale celorlalte tipuri. Agenții au fost
-antrenați pe scenariile din 21–22.10; duminica 25.10 și lunea 26.10 servesc doar ca teste de generalizare.
+antrenați pe scenariile din 21–22.10 (doar E14, negativ, pe cele de luni, § 9.5); duminica 25.10 a servit ca test de
+generalizare, iar lunea 26.10 ca test și apoi ca zi de validare a protocolului din § 9.9 (testul: miercuri 28.10).
 
 Compoziția traficului măsurată (prima zi, 21.10): ≈93% autoturisme, ≈4% autobuze și troleibuze, ≈3% camioane,
 sub 0,5% biciclete și motociclete – mult sub ipoteza inițială (2% biciclete, 3% motociclete), într-o zi de
@@ -530,9 +541,9 @@ octombrie cu 12–15 °C; duminică, la prânz, ≈95% autoturisme și ≈3% aut
 debitele curente publicate de modulul de viziune și injectează vehicule pe brațe ca proces Poisson cu acele
 debite, cu destinații după proporțiile de viraj observate și tipuri după compoziția traficului (bicicliștii pe
 rute permise bicicletelor). Pietonii sunt injectați tot Poisson, pe trasee pietonale care trec prin piață, cu
-debitul măsurat pe trecerile vizibile × factorul de extrapolare. Dacă fluxul camerei lipsește mai mult de 60 s,
-trece pe profilul de referință și **afișează explicit** acest lucru în dashboard; la începutul fiecărui interval
-de numărare de 15 minute păstrează ultimele debite bune ale camerei. Simularea avansează în pași de 0,2 s
+debitul măsurat pe trecerile vizibile × factorul de extrapolare. Dacă fluxul camerei lipsește (starea lui e mai
+veche de 60 s) sau intervalul de numărare de 15 minute abia a început, păstrează ultimele debite bune ale camerei,
+cel mult 20 de minute; apoi trece pe profilul de referință și **afișează explicit** acest lucru în dashboard. Simularea avansează în pași de 0,2 s
 întinși pe secunda reală (mișcare fluentă în SUMO-GUI), iar controlerul semaforului lucrează pe secunde întregi.
 Modurile de control, alese din dispecerat: agentul AI, planul fix de referință (N–S / E–V / pietoni, § 6.3),
 Max-Pressure, manual și „Program pe tipuri de trafic” (§ 9.2, § 9.4), care comută automat după debitul măsurat
@@ -563,7 +574,8 @@ alimentează. Bd. Dacia × Str. Polonă a fost scoasă din coridor la observați
 ambele tronsoane dintre Calea Dorobanți și Str. Polonă, Bd. Dacia are `oneway=yes` (doar autobuzele circulă în
 contrasens, `oneway:bus=no`), deci la Polonă traficul obișnuit doar pleacă din piață. Intersecția rămâne în
 simulare, pe programul ei actual. Piața Victoriei și Piața Universității sunt mai departe (≈0,9 și ≈1,5 km, cu
-alte intersecții semaforizate între ele și piață) și în afara zonei modelate; nicio cameră publică nu le acoperă.
+alte intersecții semaforizate între ele și piață): prima abia intră în colțul de nord-vest al rețelei, a doua e în
+afara ei; camera publică a Pieței Victoriei arată pasajul și nu e folosită (§ 4.1).
 Denumirea străzii este **Calea Dorobanți**; în OSM apare ca „Calea Dorobanților”.
 
 ### 6.2 Replica fidelă a pieței (Borna 8)
@@ -628,10 +640,10 @@ excepția variantei „coridor”, în care sunt conduse de agent.
 Geometria poate fi fidelă, iar geamănul tot să nu poată trece traficul real: capacitatea depinde și de cât de strâns
 circulă șoferii. Verificarea s-a făcut pe luni 26.10, prima zi lucrătoare înregistrată continuu (§ 4.6): vârful
 calibrat (`zi_2026-10-26_varf`, 15:00–16:00, ≈5 000 de vehicule/h prin piață) și vârful ×1,2 (≈6 000 de vehicule/h,
-apropiat de numărătoarea de referință de la 16:00, ≈6 200). Cu parametrii impliciți SUMO pentru șoferi (modelul
+apropiat de numărătoarea de referință de la prânz, ≈6 200, § 4.3). Cu parametrii impliciți SUMO pentru șoferi (modelul
 Krauss: timpul de reacție `tau` = 1,0 s, distanța minimă 2,5 m, imperfecțiunea `sigma` = 0,5), geamănul **se
 blochează**: din 5 681 de vehicule ale vârfului rămân 2 121 neintroduse, iar pe intrarea Magheru trec 436 de vehicule
-pe oră, față de ≈3 070 numărate pe cameră. Baleiajul parametrilor (planul fix, seed 1):
+pe oră, față de ≈2 360 cerute de scenariu (≈3 070 în numărătoarea de referință). Baleiajul parametrilor (planul fix, seed 1):
 
 | Șoferi (`tau` / distanța minimă / `sigma`) | Vârful de luni: neintroduse la final | Vârful ×1,2: neintroduse la final |
 |---|---|---|
@@ -653,7 +665,7 @@ fără blocaje; distanța minimă și imperfecțiunea contează puțin. Calibrar
 (`romana.bridge.indisciplinat --vtypes … --prefix …`).
 
 Cu parametrii impliciți, intrările pieței trec doar 35–44% din câte trec cu `tau` = 0,8 s (1 689 față de 3 830 la
-vârf, 1 613 față de 4 633 la vârful ×1,2, în ora măsurată). Cum geamănul calibrat nu e saturat (rămân 10–19 vehicule
+vârf, 1 613 față de 4 576 la vârful ×1,2, în ora măsurată). Cum geamănul calibrat nu e saturat (rămân 15–45 de vehicule
 neintroduse), capacitatea implicită este cel mult o treime până la jumătate din cea reală. Rezultatele din § 9.1–9.8
 sunt obținute cu parametrii impliciți:
 - pe cererea din 21–22.10, subnumărată la aproximativ jumătate (§ 4.6), deci cu un grad de saturare cel puțin
@@ -739,7 +751,7 @@ mediul a fost scris în stilul sumo-rl[^sumorl].
    să-l depășească pentru a fi convingător. Pe replica fidelă, Max-Pressure cu toate cele 5 faze alegea mereu
    fazele „fără dozare” (cele mai multe legături verzi ⇒ presiunea cea mai mare) și bloca piața complet
    (scenariul moderat, 1 seed: 1.226 de vehicule rămase în rețea, față de 107 la planul fix); restrâns la fazele
-   planului real, nu mai blochează piața (97 de vehicule rămase, media pe 5 seed-uri; rezultatele complete în § 9).
+   planului real, nu mai blochează piața (97 de vehicule rămase, media pe 5 seed-uri; rezultatele complete în `docs/rezultate/scenarii_referinta/`, Anexa A).
 
 ### 7.5 Metrici
 
@@ -755,7 +767,7 @@ participanți**:
   în rețea sau neintroduse la final, coada medie de
   vehicule și numărul mediu de pietoni care așteaptă la trecerile Pieței Romane (eșantionate la 5 s).
 
-Se raportează media ± abaterea standard pe 5 seed-uri. Observație: o parte din întârzieri se produce la
+Se raportează media ± abaterea standard pe seed-urile de test 1–10 sau, la unele strategii și evaluări, doar pe 1–5 (precizat în cap. 9 și în Anexa A; în `docs/rezultate/rezultate.md` au 5 seed-uri duminica și, în zilele lucrătoare, Max-Pressure, planul 46/48/12, agentul oficial și E9). Observație: o parte din întârzieri se produce la
 semafoarele de la marginea zonei modelate (de ex. Str. Știrbei Vodă, Str. Ion Câmpineanu), pe rutele care pornesc
 de acolo; ele depind foarte puțin de strategia de la Piața Romană, deci nu schimbă clasamentul strategiilor, dar
 măresc valorile absolute.
@@ -775,7 +787,7 @@ algoritmul și poate prelua oricând controlul.
 | Controlul și libertatea utilizatorului | cinci moduri de control (Agent AI, Plan fix, Max-Pressure, Manual, Program pe tipuri de trafic); revenirea la AI sau la planul fix dintr-un clic; `Esc` anulează |
 | Consistență și standarde | aceleași denumiri ale modurilor în butoane, confirmări și starea afișată |
 | Prevenirea erorilor | schimbarea modului cere confirmare explicită; în modul manual se alege doar faza verde – galbenul și roșul de siguranță se aplică automat |
-| Recunoaștere în loc de reamintire | fazele manuale sunt afișate cu numele lor complet; legenda culorilor cozilor e implicită (albastru < 8, galben < 18, roșu ≥ 18 vehicule) |
+| Recunoaștere în loc de reamintire | fazele manuale sunt afișate cu numele lor complet; legenda culorilor cozilor e implicită (albastru ≤ 8, galben 9–18, roșu > 18 vehicule) |
 | Design estetic și minimalist | o singură accentuare cromatică (albastrul STB), restul neutru; culorile de semafor folosite doar pentru stare |
 | Ajutor la recunoașterea și remedierea erorilor | mesajele de lipsă indică exact scriptul de pornit („Porniți scripts\2_viziune_live.bat”) |
 
@@ -792,11 +804,12 @@ aranjare pe o coloană sub 900 px. Atribuirile cerute (OSM, Webcam România, SUM
   și variantele de sensibilitate ×0,8 / ×1,2) și 5 ore din duminica 25.10.2026, zi pe care nicio strategie nu a
   fost antrenată sau aleasă. Fiecare scenariu durează o oră de cerere plus 15 minute de golire.
 * **Indicatorul principal**: pierderea totală de timp a tuturor participanților – vehicule (inclusiv întârzierea
-  la intrarea în rețea), bicicliști și pietoni –, exprimată față de planul fix de referință (programul actual,
-  36/28/12 s, § 6.3). Restul metricilor (§ 7.5) sunt în `docs/rezultate/rezultate.md`.
+  la intrarea în rețea), bicicliști și pietoni –, exprimată față de planul fix de referință (ipoteza pentru programul actual,
+  36/28/12 s, § 6.3, § 10). Restul metricilor (§ 7.5) sunt în `docs/rezultate/rezultate.md`.
 * **Separarea datelor**: fiecare simulare depinde de un seed aleatoriu (sosirile, comportamentul șoferilor).
   Alegerile – ce agent, ce plan, ce strategie pe ce tip de trafic – s-au făcut **pe seed-urile de validare
-  11–15**; rezultatele raportate sunt pe **seed-urile de test 1–10**, nefolosite la alegere. Excepția este
+  11–15** (11–13 la primele, inclusiv agentul oficial și E3); rezultatele raportate sunt pe **seed-urile de
+  test 1–10** (1–5 unde se precizează), nefolosite la alegere. Excepția este
   componenta pentru trafic greu a marginii de sus: validarea a ales agentul E7, iar planul 46/48/12, mai simplu, a
   fost preferat după echivalența lor pe seed-urile de test 1–5 (p = 0,32, § 9.5).
 * **Statistica**: comparațiile se fac pe perechi (același scenariu, același seed), cu testul t pe perechi și
@@ -804,11 +817,11 @@ aranjare pe o coloană sub 900 px. Atribuirile cerute (OSM, Webcam România, SUM
 * **Cele două calibrări ale cererii** (§ 5.1): marginea de sus (media intrări/ieșiri măsurate) și marginea de jos
   (doar intrările). Atunci se credea că adevărul se află între ele, de aceea rezultatele sunt raportate pentru
   ambele. Numărătoarea de referință (§ 4.3) și înregistrarea continuă din 26.10 (§ 4.6) au arătat ulterior că
-  cererea reală e de aproximativ două ori peste ambele margini; reevaluarea pe cererea calibrată e în § 9.8–9.9.
+  cererea reală e de circa două ori marginea de sus și de trei ori marginea de jos; reevaluarea pe cererea calibrată e în § 9.8–9.9.
 
 ### 9.2 Rezultatul principal: programul pe tipuri de trafic
 
-Pe calibrările din 21, 22 și 25.10, cu geamănul cu capacitate implicită, niciun agent AI aplicat singur pe toate
+Pe calibrările din 21–22.10, cu geamănul cu capacitate implicită și participanți disciplinați, niciun agent AI aplicat singur pe toate
 tipurile de trafic nu bătea în mod robust un plan fix bine reglat (§ 9.5). Pe cererea calibrată și pe ziua nouă,
 cu capacitatea calibrată, situația se schimbă (§ 9.9). Soluția găsită atunci a fost un **program pe tipuri de trafic**: pentru fiecare tip de trafic (lejer, moderat,
 greu) se folosește strategia care a fost cea mai bună pe datele de validare, iar la performanță practic egală se
@@ -830,7 +843,7 @@ scenarii față de planul fix actual:
 
 | Program pe tipuri de trafic | Actuated | Webster | Agent E3 | Plan 46/48/12 | Agent E7 | Agent E9 | Agent oficial | Max-Pressure |
 |---|---|---|---|---|---|---|---|---|
-| **−6,9%** | −2,8% | +0,2% | +0,8% | +1,4% | +1,9% | +3,4% | +5,4% | +11,4% |
+| **−6,9%** | −2,8% | +0,2% | +0,8% | +1,4% | +1,9% | +3,4% | +5,4% | +11,3% |
 
 Programul este semnificativ mai bun decât planul fix (−6,9%; p = 0,0003 t / 0,00002 Wilcoxon; mai bun în 79 din
 100 de rulări) și decât actuated, cea mai bună metodă clasică (−3,2%; p = 0,04 / 0,002; 68 din 100). Pe
@@ -841,11 +854,11 @@ de test 1–10); celelalte strategii pe 50 (seed-urile 1–5):
 
 | Program pe tipuri de trafic | Actuated | Agent E3 | Agent E9 | Agent oficial | Plan 46/48/12 | Max-Pressure |
 |---|---|---|---|---|---|---|
-| **−1,5%** | −0,4% | +0,7% | +2,6% | +3,8% | +6,5% | +22,0% |
+| **−1,5%** | −0,3% | +0,7% | +2,6% | +3,8% | +6,4% | +22,0% |
 
 La volume mai mici (vârful ≈1 650 veh/h în loc de ≈2 500), planul fix actual este greu de bătut la vârf, iar
 programul rămâne pe el. Programul câștigă constant la trafic lejer (−6,0…−7,3%): pe cele 50 de rulări în care
-diferă de planul fix este mai bun în 44 (Wilcoxon p = 0,0003). La prânz, agentul E3 este instabil la această
+diferă de planul fix (trafic lejer și prânz) este mai bun în 44 (Wilcoxon p = 0,0003). La prânz, agentul E3 este instabil la această
 calibrare (−2,3% pe seed-urile 1–5, +11,7% în medie pe seed-urile 1–10), ceea ce reduce câștigul mediu la −1,5%.
 
 **Ce înseamnă.** Câștigul programului depinde de cât trafic este de fapt în piață și de cât de disciplinați sunt
@@ -855,18 +868,19 @@ pierde în piață câteva sute de ore-om, deci câștigul înseamnă zeci de or
 
 ### 9.3 Generalizarea pe o zi de weekend (duminică, 25.10.2026)
 
-Duminica are alt tipar de trafic (vârf la prânz, mai mare decât în zilele lucrătoare) și nu a fost folosită la
+Duminica are alt tipar de trafic (trafic mic până la 08:30, vârful la 15:30–16:30, § 5.4; datele de atunci, folosite
+mai jos, se opresc înainte de acest vârf) și nu a fost folosită la
 antrenare sau la alegere.
 
 * **Marginea de sus** (date până la 11:30; 5 scenarii × 10 seed-uri): programul −5,2% față de planul fix
   (p = 0,03; mai bun în 43 din 50) și semnificativ mai bun decât actuated (p = 0,0006). Agenții AI singuri au
-  bătut toți planul fix, inclusiv la vârful de weekend: E9 −6,5%, E3 −5,0% (−7,2% la vârf), agentul oficial
+  bătut toți planul fix, inclusiv la vârful datelor de atunci (09:30–10:30): E9 −6,5%, E3 −4,9% (−7,2% la vârf), agentul oficial
   −4,9%; Max-Pressure −4,5%, actuated −1,5%, Webster +0,4%, planul 46/48/12 +5,3%.
 * **Marginea de jos** (datele până la 13:50; vârful 11:45–12:45 cu ≈3 480 veh/h la intrări, mai mult decât orice
   scenariu de antrenare; 5 scenarii × 5 seed-uri): programul (regula aleasă pe validare pentru această calibrare)
   −4,5% față de planul fix – mai bun în toate cele 15 rulări în care diferă de el (Wilcoxon p = 0,0001); cea mai
   bună strategie a fost aici actuated (−6,2%, mai bun în 22 din 25), iar agenții AI au câștigat doar la trafic lejer
-  și în dimineața de duminică (−4…−8%), fiind la vârful foarte mare egali cu planul fix sau mai slabi (agentul
+  și în dimineața de duminică (−1…−8%), fiind la vârful foarte mare egali cu planul fix sau mai slabi (agentul
   oficial −2,0% în medie, E3 −0,4%, E9 −0,3%).
 
 Concluzie: programul pe tipuri de trafic rămâne mai bun decât planul fix și pe o zi nouă, pentru ambele calibrări.
@@ -893,14 +907,15 @@ intersecție nesaturată (seed-urile 1–5). Față de planul fix, în aceleași
 | **Agent E9** | **−9,9%** | −6,9% | −24,8% | −6,4% | −4,1% | −7,3% | 37 / 50 | 0,003 / 0,002 |
 | Agent oficial | −0,1% | +5,2% | −11,0% | +3,5% | +15,7% | −14,1% | 30 / 50 | 0,99 (nesemnif.) |
 | Actuated | +6,4% | +0,4% | +4,0% | +7,4% | +30,6% | −10,6% | 25 / 50 | 0,23 (nesemnif.) |
+
 **Cu participanți indisciplinați – situația reală din București – specialiștii AI sunt mult mai buni decât
 planul fix**, în special la vârf (până la −28%), deși au fost antrenați cu participanți disciplinați: observă cozile
 reale și se adaptează din mers când intersecția se blochează, ceea ce un plan fix nu poate face. Programul pe
-tipuri de trafic ales pentru marginea de jos (care păstrează planul fix la vârf) câștigă aici doar −1,5%
-(nesemnificativ). De aceea, pentru condițiile reale s-a ales pe validare (seed-urile 11–15 ale acelorași scenarii cu
+tipuri de trafic ales pentru marginea de jos (care păstrează planul fix la vârf) câștigă aici doar −2,7%
+(nesemnificativ; −1,5% pe seed-urile 1–5). De aceea, pentru condițiile reale s-a ales pe validare (seed-urile 11–15 ale acelorași scenarii cu
 participanți indisciplinați, `docs/rezultate/validare_indisciplinat.csv`) un **„program realist”**: agentul oficial
 la trafic lejer (−13,3% pe validare), agentul E3 la trafic moderat (−3,5%) și greu (−19,4%; planul 46/48/12 iese
-aici +22%). Pe seed-urile de test 1–10:
+aici +21%, +22% pe toată validarea). Pe seed-urile de test 1–10:
 
 | Program realist față de | Diferență medie | p (t / Wilcoxon) | Mai bun în |
 |---|---|---|---|
@@ -940,12 +955,12 @@ afectate (verificat).
 | E5 – specialist trafic greu, reantrenare | +9,4% pe validare | negativ |
 | E6/E7 – specialist trafic greu pornind de la planul 46/48/12 | E7: −9,3% validare, −7,0% test | echivalent statistic cu planul 46/48/12 (p = 0,32) → se păstrează planul, mai simplu |
 | E8 – specialist trafic moderat | mai slab decât E3 | negativ |
-| E9 – specialist trafic lejer | −9,5% față de −9,0% (agentul oficial), p = 0,001 | **adoptat pentru traficul lejer** (marginea de sus) |
+| E9 – specialist trafic lejer | pe test, la trafic lejer: −9,5% față de −9,0% (agentul oficial), p = 0,001 | **adoptat pentru traficul lejer** (marginea de sus) |
 | E10 – E3 reantrenat 200 000 de pași pe scenariile cu participanți indisciplinați (lr 3·10⁻⁵, 26.10) | −6,6% pe validare față de −13,4% (E3); punctele intermediare, la 25 000 de pași distanță, variază între −5,4% și +7,2% (`docs/rezultate/validare_indisciplinat_e10.csv`) | negativ: reantrenarea strică politica E3 în loc s-o îmbunătățească → E3 rămâne |
 | E11 – agent nou de la zero, 1 000 000 de pași, pe scenariile de zi lucrătoare cu participanți disciplinați și indisciplinați amestecați (26.10) | cel mai bun punct intermediar (500 000 de pași) −6,9% pe validarea cu participanți indisciplinați, față de −13,4% (E3); modelul final +4,6% (`docs/rezultate/validare_indisciplinat_e11.csv`) | negativ: nici antrenarea de la zero pe ambele comportamente nu ajunge la E3 |
 | E12 / E13 – E3, respectiv agentul oficial, continuați 300 000 de pași (lr 3·10⁻⁵) pe cele 20 de scenarii calibrate de zi lucrătoare din 21–22.10 (participanți disciplinați și indisciplinați), cu punctele intermediare de la +100 000 și +200 000 de pași ca candidați (noaptea 26–27.10) | pe validarea cu participanți indisciplinați (seed-urile 11–15; medii pe perechi, ca în § 9.8–9.9): E12 (+100 000 de pași, `cand_romana_cal3_100k`) −5,9% față de −2,3% (E3), dar modelul final +1,7%; E13 (final, `ppo_romana_cal`) −9,3% față de −10,1% (agentul oficial, cel mai bun în validare). Media pe scenarii, convenția din `_alegere.json` și din rândurile E10/E11: −6,3% / −3,0% / +1,1% / −9,6% / −10,5%. Pe test (seed-urile 1–5), programul în care fiecare componentă a programului realist e înlocuită cu varianta ei reantrenată (oficialul → E13 la trafic lejer, E3 → E12 în rest), fixat înainte de rulare, dă față de planul fix −6,7% (40/50) cu participanți indisciplinați și −3,9% (37/50) cu disciplinați. Față de programul realist: +1,0% (p = 0,86 / 0,59) și −0,5% (p = 0,22 / 0,25) (`validare_calibrat.csv`, `test_reantrenare_*.csv`) | echivalent statistic cu programul realist → programul realist rămâne; scenariile de antrenare din 21–22.10 sunt subnumărate (§ 4.6) și geamănul avea capacitatea implicită (§ 6.4), deci reantrenarea pe ele nu poate repara vârfurile |
 | E14 – E13 continuat 300 000 de pași (lr 3·10⁻⁵) pe cele 12 scenarii de luni 26.10 cu capacitatea calibrată (participanți disciplinați și indisciplinați), cu punctele intermediare de la +100 000 și +200 000 de pași ca candidați (noaptea 27–28.10) | pe validarea de luni (seed-urile 11–15, ambele comportamente, 60 de perechi; aceeași zi ca la antrenare, deci un test favorabil lui): modelul final −6,3% față de planul fix, față de −7,9% (E13) și −7,6% (agentul oficial); direct față de E13, +2,2% (mai bun în 27 / 60, p = 0,06 / 0,09); punctele intermediare, +4,5% și +5,0% față de E13 (p ≤ 0,03) (`validare_e14.csv`) | negativ: nici reantrenarea pe geamănul calibrat, chiar pe ziua de validare, nu întrece E13 → E14 nu devine candidat, iar protocolul din § 9.9 rămâne cu E13 singur |
-| Grila de 11 planuri fixe (verde N–S × E–V × pietoni) | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** (marginea de sus) |
+| Grila de 10 planuri fixe (verde N–S × E–V × pietoni; 21–22.10, capacitate implicită) | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** (marginea de sus) |
 
 Lecția metodologică: diferențele de 1–2 puncte își schimbau semnul între seed-urile de validare și cele de test,
 de aceea validarea a trecut de la 3 la 5 seed-uri, iar rezultatele finale se raportează pe 10 seed-uri de test, cu
@@ -964,12 +979,12 @@ așteaptă să intre în rețea astfel:
 | 21.10, participanți indisciplinați | **64%** | 13% | 16% | 0,5% / 7% |
 | 22.10, participanți indisciplinați | **50%** | 18% | 24% | 2% / 6% |
 
-Așadar, pe geamănul cu capacitate implicită, la vârf, **jumătate până la trei sferturi din timpul pierdut** este
+Așadar, pe geamănul cu capacitate implicită, la vârf, **jumătate până la trei sferturi din timpul vehiculelor oprite sau neintroduse** este
 coada vehiculelor de pe Bd. Dacia dinspre Calea Victoriei care nici nu încap în rețea – coada se întinde dincolo de
 zona modelată – și doar 11–18% sunt opriri în piață propriu-zisă (`docs/rezultate/localizare_varf_calibrat.csv`). Pe
 calibrarea anterioară (22.10, zonele inițiale) ponderea era 68%, cu ≈24% în piață: cu zona nouă a camerei, Dacia vest
 e numărat aproape complet (§ 4.3), iar coada lui a crescut. Grila de planuri fixe (datele din 21–22.10, capacitate
-implicită) arăta că nici cel mai bun plan fix posibil nu câștigă mai mult de ≈5% la vârf.
+implicită, zonele inițiale) arăta că nici cel mai bun plan fix posibil nu câștigă mai mult de ≈5% la vârful din 21.10.
 
 **Cu capacitatea calibrată (§ 6.4), concluzia se schimbă.** Analiza s-a refăcut pe vârful de luni și pe vârful ×1,2,
 cu ambele comportamente (`docs/rezultate/localizare_varf_capacitate.csv`):
@@ -977,12 +992,12 @@ cu ambele comportamente (`docs/rezultate/localizare_varf_capacitate.csv`):
   la 2 230 de vehicul-ore cu parametrii impliciți la 184 cu `tau` = 0,8 s.
 - **Coada de pe Bd. Dacia vest** (muchia de intrare `-231435896`) **practic dispare** (≈0,1%).
 - Restul timpului este tot în majoritate așteptare la intrare (67–86%), dar acum pe Calea Victoriei, la capătul
-  vestic al rețelei (muchia `1165343128#0`, 55–76%). De acolo pornesc ≈1 650 de vehicule/h, care merg spre piață pe
-  Bd. Dacia. În zona pieței rămân 6–14%.
+  vestic al rețelei (muchia `1165343128#0`, 55–75%). De acolo pornesc ≈1 650 de vehicule/h, care merg spre piață pe
+  Str. C. A. Rosetti și Bd. Magheru. În zona pieței rămân 6–14%.
 
 Raportată la pierderea totală a tuturor participanților (cu planul fix, § 9.9), această coadă de la margine
-înseamnă ≈16–22% la vârf și ≈40% la vârful ×1,2. Nu s-a verificat încă dacă e o limită reală (de exemplu la
-intersecția Calea Victoriei × Bd. Dacia) sau un efect al introducerii vehiculelor la marginea rețelei. Prin urmare, „limita fizică de pe Dacia vest” ține de geamănul cu capacitate implicită. Cu capacitatea
+înseamnă ≈13–20% la vârf și ≈30–38% la vârful ×1,2. Nu s-a verificat încă dacă e o limită reală (de exemplu la
+intersecția Str. C. A. Rosetti × Bd. Magheru) sau un efect al introducerii vehiculelor la marginea rețelei. În schimb, coada de pe Dacia vest, care părea o limită fizică, ține de geamănul cu capacitate implicită. Cu capacitatea
 calibrată, piața și brațul Dacia vest trec vârful de luni, iar coada rămasă e la marginea zonei modelate, unde
 semaforul pieței are o influență mică. Lămurirea ei e o lucrare viitoare (§ 10). Dacă se confirmă că e reală,
 decongestionarea vârfului cere intervenții pe acel acces sau pe cerere (transport public, rute alternative) – o
@@ -1002,7 +1017,7 @@ Punctele 1–5 rezumă rezultatele pe calibrările anterioare (21, 22 și 25.10;
 2. **Pe calibrările anterioare, când participanții respectă regulile, un singur agent AI nu bătea un plan fix bine
    reglat la vârf**, dar era printre cele mai bune strategii la trafic lejer și moderat. Pe o zi nouă generaliza
    la volume apropiate de cele de antrenare; pentru situații foarte diferite are nevoie de reantrenare pe date noi.
-   Pe ziua de luni, cu capacitatea calibrată, E13 câștigă și la vârf (−9,5% cu participanți disciplinați, § 9.9).
+   Pe ziua de luni, cu capacitatea calibrată, E13 dă în medie −9,7% față de planul fix cu participanți disciplinați (−7,9% pe 10 seed-uri) și câștigă în fiecare scenariu, inclusiv la vârf (§ 9.9).
 3. **Calitatea datelor contează cel mai mult**: corectarea zonelor și a felului de numărare a schimbat rezultatul
    mai mult decât orice algoritm, iar o înregistrare sacadată a înjumătățit cererea măsurată fără să se observe
    (§ 4.6). Incertitudinea măsurării cererii se reflectă într-un interval, nu într-un număr.
@@ -1013,7 +1028,7 @@ Punctele 1–5 rezumă rezultatele pe calibrările anterioare (21, 22 și 25.10;
    tipurile de trafic (oficialul, E13) păstrează însă ≈10% pe ziua nouă (§ 9.9).
 5. **La vârf, pe geamănul cu capacitate implicită, coada de pe Dacia vest domina timpul pierdut** (§ 9.6). Cu
    capacitatea calibrată, această coadă dispare. Rămâne o coadă de intrare la marginea vestică a rețelei (Calea
-   Victoriei): ≈16–22% din pierderea totală la vârf, cu natura încă neverificată (limită reală sau efect al
+   Victoriei): ≈13–20% din pierderea totală la vârf, cu natura încă neverificată (limită reală sau efect al
    marginii).
 6. **Pe o zi lucrătoare nevăzută, cu geamănul care trece debitul real (§ 9.9), toți agenții AI bat actuated și, în
    medie, planul fix.** Cel mai constant este agentul oficial reantrenat pe cererea calibrată (E13): −9,5% / −9,7%
@@ -1046,7 +1061,7 @@ din 50, nesemnificativ: p = 0,57 / 0,25) și −4,3% față de actuated (nesemni
 +1,0% și +3,6% față de planul fix (E3 −0,6% față de actuated); și aici vârfurile ×1,2 sunt punctul slab (programul
 pierde +12% și +24%).
 
-**Concluzia reevaluării:** pe cererea măsurată corect, avantajul AI se păstrează față de actuated și în majoritatea
+**Concluzia reevaluării:** pe cererea calibrată, avantajul AI se păstrează față de actuated și în majoritatea
 situațiilor față de planul fix, dar e mai mic decât pe calibrările anterioare, iar la volumele cele mai mari agenții
 trebuie **reantrenați pe scenariile calibrate**. Prima reantrenare (E12 / E13, § 9.5), pe scenariile calibrate din
 21–22.10, a dat un program echivalent statistic cu programul realist, deci nu a fost adoptată. Explicația a venit după
@@ -1057,7 +1072,7 @@ impliciți nu poate trece debitul real de luni (§ 6.4). Evaluarea pe ziua de lu
 ### 9.9 Testul pe o zi lucrătoare nouă, cu capacitatea calibrată (luni, 26.10.2026)
 
 Luni 26.10 este prima zi lucrătoare înregistrată continuu (§ 4.6) și **nu a fost folosită nici la antrenarea, nici la
-alegerea vreunui agent sau program**. A servit însă la calibrarea modelului pe care se face testul: factorii de
+alegerea vreunui agent sau program** până la acest test. A servit însă la calibrarea modelului pe care se face testul: factorii de
 corecție vin din numărătoarea de referință din aceeași zi (§ 4.3), iar timpul de reacție al șoferilor a fost ales pe
 vârful ei (§ 6.4). Au fost evaluate planul fix, actuated, planul 46/48/12 și agenții (oficialul, E3, E9, E12 și E13,
 ultimii doi aleși înainte, § 9.5); Webster și Max-Pressure nu au fost rulate. Evaluarea s-a făcut pe cele 6
@@ -1084,13 +1099,13 @@ p = testul t pe perechi / testul Wilcoxon. Față de actuated, E13 este mai bun 
 (−13,2% în ambele comportamente), iar programul realist câștigă −8,3% (24 / 30) și −10,2% (28 / 30).
 
 **Verificarea pe 10 seed-uri.** Seed-urile 6–10, rulate pe 27–28.10, după fixarea protocolului de mai jos
-(`capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv`), păstrează ordinea. Pe cele 60 de perechi
+(`capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv`), confirmă concluziile principale, dar nu și ordinea exactă a strategiilor. Pe cele 60 de perechi
 ale fiecărui comportament, față de planul fix, E13 dă −9,2% cu participanți indisciplinați și −7,9% cu disciplinați
 (mai bun în 53 / 60 în ambele). Agentul oficial dă −8,5% / −6,3%, E9 −6,3% / −7,5%, iar programul realist −3,5%
 (p = 0,84 / 0,53) / −5,0% (p = 0,13 / 0,05). Față de actuated, E13 e mai bun în 117 din 120 de perechi. Față de
 programul realist, E13 dă −5,3% (39 / 60) și −2,5% (33 / 60), iar pe cele 120 de perechi reunite −3,9% (72 / 120,
 p < 0,000001 / 0,000006). Avantajul lui E13 cu participanți disciplinați se îngustează pe seed-urile noi (−7,9% pe
-10 seed-uri, față de −9,7% pe seed-urile 1–5), dar rămâne cel mai bun în ambele comportamente.
+10 seed-uri, față de −9,7% pe seed-urile 1–5), dar pe 10 seed-uri este cel mai bun în ambele comportamente.
 
 Ce arată testul:
 
@@ -1151,9 +1166,9 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
 - **Testul se face pe prima zi lucrătoare nouă colectată complet: miercuri 28.10.** Colectarea zilei de marți 27.10
   s-a oprit la 06:04, la închiderea calculatorului, deci ziua nu e completă (noaptea 00:00–06:04 e publicată în
   `data/`, dar din ea nu s-au generat scenarii). Se folosesc toate scenariile generate
-  de `romana.bridge.scenarii_zi` pentru 28.10, adică `zi_2026-10-28_*` și `indisciplinat_zi_2026-10-28_*`, cu
+  de `romana.bridge.scenarii_zi` și `romana.bridge.indisciplinat` pentru 28.10, adică `zi_2026-10-28_*` și `indisciplinat_zi_2026-10-28_*`, cu
   capacitatea calibrată, implicită din 28.10 (§ 6.4). Rularea se face pe seed-urile 1–10 și cu ambele
-  comportamente. Strategiile comparate sunt programul realist, agentul oficial, planul fix și actuated.
+  comportamente. Strategiile comparate sunt programul realist, agentul oficial, planul fix, actuated, planul 12/14/12 și `TOD_FIX`.
   Înainte de scenarii se verifică și continuitatea înregistrării zilei (`romana.vision.calitate`, § 4.6).
   Joi 29.10, dacă e colectată complet, servește ca zi de confirmare: se raportează, fără să schimbe decizia.
 - **Regula de decizie:** E13 înlocuiește programul realist doar dacă (a) pe toate perechile reunite (ambele
@@ -1168,7 +1183,7 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
   E13, alegerea dintre ele rămâne a autorului, pentru că verzile scurte ar trebui întâi verificate față de timpii de
   degajare a pietonilor.
 
-Limitele testului: o singură zi lucrătoare (10 seed-uri; tabelul de mai sus, pe seed-urile 1–5), iar agenții sunt
+Limitele testului din 26.10: o singură zi lucrătoare (10 seed-uri; tabelul de mai sus, pe seed-urile 1–5), iar agenții sunt
 antrenați pe geamănul cu capacitate implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul
 de reacție). Reantrenarea pe ziua de luni cu capacitatea calibrată (E14) nu a întrecut E13 (§ 9.5); reantrenarea pe
 mai multe zile rămâne un pas următor (§ 10). Planurile fixe scurte și agenții folosesc același verde minim de 10 s,
@@ -1181,13 +1196,14 @@ fără timpul de degajare a pietonilor (§ 10).
   iar intrările pot fi subnumărate (vehicule ascunse de chioșc, de autobuze sau unele de altele în aglomerație).
   O numărătoare manuală în teren nu este realistă pentru un singur om la peste 1 000 de vehicule pe oră și 6 brațe
   (observația autorului). De aceea referința s-a obținut, ca în practica ingineriei de trafic, din înregistrare
-  adnotată: două clipuri de 3 minute din 26.10, 16:00, fiecare numărat de câte doi adnotatori independenți (§ 4.3).
-  Din ea vin factorii de corecție pe braț. Limitele care rămân: referința acoperă 6 minute dintr-o singură zi și o
+  adnotată: două clipuri de 3 minute din 26.10, 11:58 și 12:19, fiecare numărat de câte doi adnotatori AI independenți (§ 4.3).
+  Din ea vin factorii de corecție pe braț. Limitele care rămân: adnotatorii sunt instanțe ale asistentului AI, nu
+  oameni (o verificare umană a câtorva minute ar întări referința); referința acoperă 6 minute dintr-o singură zi și o
   singură oră, iar factorii presupun că raportul dintre numărătoarea automată și cea reală e același la orice oră.
   Zilele 21–22.10 sunt subnumărate din cauza înregistrării sacadate (§ 4.6), iar factorii nu li se aplică. Rezultatele
   pe cele două calibrări anterioare (marginile de jos și de sus, § 5.1) rămân raportate pentru transparență.
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine; virajele urmărite complet
-  sunt ≈21% din intrări, deci proporțiile de viraj se sprijină parțial pe distribuția a priori (§ 5.1).
+  sunt ≈25–40% din intrări (§ 4.3), deci proporțiile de viraj se sprijină parțial pe distribuția a priori (§ 5.1).
 * **Patru zile de date** (trei zile lucrătoare de octombrie și o duminică), cu vreme rece: vara, ploaia puternică
   sau evenimentele speciale nu sunt acoperite. Dintre zilele lucrătoare, doar 26.10 a fost înregistrată continuu,
   iar 21–22.10 sunt subnumărate (§ 4.6). Pe duminică, vârful a depășit volumele de antrenare, iar agenții AI
@@ -1205,7 +1221,7 @@ fără timpul de degajare a pietonilor (§ 10).
 * **Verdele minim și pietonii.** Controlerul impune verdele minim de 10 s, galbenul de 3 s și roșul general de 2 s
   (§ 7.2), dar nu impune separat timpul de degajare a pietonilor de pe trecerile paralele cu faza verde. Cea mai
   lungă trecere comandată de semaforul pieței are 12,8 m, adică ≈11 s la 1,2 m/s. Pe geamănul calibrat, cele mai
-  bune planuri fixe au verzi de 10–14 s (§ 9.9), la limita acestui timp, iar agenții folosesc aproape mereu chiar
+  bune planuri fixe au verzi de 10–16 s (§ 9.9), unele la limita acestui timp, iar agenții folosesc aproape mereu chiar
   verdele minim (mediana 11 s, § 9.9). O aplicare reală ar cere verzi minime pe fază, calculate după lungimea
   trecerilor, atât pentru planurile fixe, cât și pentru agenți.
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
@@ -1219,7 +1235,7 @@ fără timpul de degajare a pietonilor (§ 10).
   ca în rețea. Pe brațele pieței nu există parcare pe carosabil, cu excepția străzilor Mendeleev și Căderea
   Bastiliei (verificat de autor în Street View); vehiculele parcate nu sunt modelate în SUMO, iar pe aceste două
   străzi ele ocupă doar marginea, în afara benzii de circulație.
-* **Pietonii** sunt număraţi acum pe 6 zone de trecere desenate de autor (față de 2), dar pe trecerile
+* **Pietonii** sunt numărați acum pe 11 zone de trecere (3 în prim-plan, 8 proiectate din rețeaua OSM; § 4.4), dar pe trecerile
   îndepărtate persoanele sunt prea mici în imagine pentru detector; extrapolarea cu un factor declarat (2,5)
   rămâne; traseele lor în simulare sunt plauzibile (drumuri minime prin zona pieței), nu observate.
 * **Intersecțiile vecine** nu au cameră; traficul lor propriu este o fracțiune declarată (15%).
@@ -1280,8 +1296,8 @@ rezultatele se pot reproduce fără a colecta date noi.
 | Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (37 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei) |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | SUMO-GUI cu ora de vârf din 21.10.2026 și agentul AI la semaforul pieței |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu planul fix |
-| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | aceeași oră reală cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
-| Evaluare scurtă | `.venv\Scripts\python -m romana.control.evaluate --seeds 1 --procese 4 --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg` | tabelul din `docs\rezultate\rezultate.md` regenerat |
+| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | prânzul din 21.10 (altă oră: `--scenariu`), cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
+| Evaluare scurtă | `.venv\Scripts\python -m romana.control.evaluate --seeds 1 --procese 4 --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg` | tabelul din `docs\rezultate\rezultate.md` regenerat; **atenție:** se rescriu fișierele publicate `rezultate.md`, `rezultate_brute.csv` și graficul (refacere: `git checkout -- docs/rezultate`, § 11.8) |
 
 ### 11.4 Rularea completă, pas cu pas
 
@@ -1291,10 +1307,10 @@ rezultatele se pot reproduce fără a colecta date noi.
 | 2 | `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele, `q` = oprire); scrie `data\counts` și jurnalul local `data\trajectories_brute` (versiunea publicabilă, doar vehiculele: `recount --publica`) | cât se dorește (o zi întreagă pentru un profil complet) |
 | 2b | `2b_calibrare_zone.bat` | redesenarea zonelor dacă operatorul mută camera | ~5 min |
 | 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără ziua din jurnalul local de traiectorii (după o recalibrare a zonelor); pe o clonă fără `data\trajectories_brute` se renumără doar vehiculele din jurnalul publicat – folosiți atunci `--out` cu alt director, ca pietonii din `data\counts` să nu se piardă | ~5 min |
-| 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf, dimineața, prânzul și ora liniștită și construiește scenariile SUMO | ~5 min |
+| 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf și ora liniștită, adaugă dimineața, prânzul și seara dacă sunt acoperite complet de date și nu se suprapun cu vârful, apoi construiește scenariile SUMO (plus vârful ×1,2 și liniștitul ×0,8) | ~5 min |
 | 3 | `3_genereaza_cerere.bat --nume X --de-la "..." --pana-la "..."` | un scenariu pe o fereastră aleasă manual | ~1 min |
-| 4 | `4_antreneaza_ai.bat --pasi 500000 --medii 8 --scenarii sumo\scenarios\zi_*.sumocfg` | antrenarea unui agent PPO (opțiuni: `--continua`, `--lr`, `--bc-plan`, `--coridor`) | 1–3 h pe laptopul de test |
-| 5 | `5_evalueaza.bat` | evaluarea comparativă (opțiuni: `--seeds`, `--seed-start`, `--planuri 46,48,12`, `--adauga`); actualizează `docs\rezultate\` | ~1 h |
+| 4 | `4_antreneaza_ai.bat --nume X --pasi 500000 --medii 8 --scenarii <fișierele .sumocfg, enumerate>` | antrenarea unui agent PPO (opțiuni: `--continua`, `--lr`, `--bc-plan`, `--coridor`); fără un `--nume` nou se suprascrie `models\ppo_romana.zip`, iar `*` nu se expandează (nici de `cmd.exe`, nici de `train`) | 1–3 h pe laptopul de test |
+| 5 | `5_evalueaza.bat --scenarii <fișierele zi_* / referinta_*>` | evaluarea comparativă (opțiuni: `--seeds`, `--seed-start`, `--planuri 46,48,12`, `--adauga`); scenariile se dau cale cu cale, ca în § 11.3 (`cmd.exe` nu expandează `*`); fără `--scenarii` se oprește cu `FileNotFoundError`, înainte de orice simulare, la scenariile `capacitate_*` / `indisciplinat_*` (nu au `od_estimat.json`); rescrie fișierele publicate `rezultate_brute.csv`, `rezultate.md` și `comparatie_strategii.png` din `docs\rezultate\` (refacere: § 11.8) | ~1 h |
 | 6 | `6_geaman_digital.bat` | SUMO-GUI alimentat **live** de cameră, semafor condus de strategia aleasă în dispecerat | continuu |
 | 7 | `7_dashboard.bat` | dispeceratul web la http://localhost:8050 | continuu |
 | – | `PORNESTE_TOT.bat` | 2 + 6 + 7 în trei ferestre: sistemul complet în timp real | continuu |
@@ -1324,17 +1340,18 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`) și calibrarea camerei pe rețea (`calibrare_camera.py`) |
 | `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați (`indisciplinat.py`), geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
-| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`) statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`) și duratele de verde ale agenților (`durate_verde.py`) |
+| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`), statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`) și duratele de verde ale agenților (`durate_verde.py`) |
 | `src/romana/dashboard/` | dispeceratul web |
 | `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
 | `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectoriile vehiculelor, fără imagini și fără identificatori – pseudonimizate); licența în `data/LICENTA.txt`; jurnalul complet, cu pietoni, rămâne local în `data/trajectories_brute/` (exclus din Git) |
 | `sumo/scenarios/zi_*` | scenariile din date reale; `referinta_*` = scenariile ipotetice inițiale |
 | `models/` | agenții antrenați (`.zip` Stable-Baselines3 + `.npz` pentru rulare fără PyTorch) |
 | `docs/rezultate/` | datele brute ale evaluărilor (tabele CSV, grafice, tabelul detaliat generat automat) și numărătoarea de referință (`referinta/`) – anexa A |
+| `docs/imagini/` | cele două imagini ale camerei (figurile 4.1 și 4.2, un singur cadru estompat din 28.10.2026), publicate cu acordul scris al Webcam România; nu sunt licențiate de proiect (`LicenseRef-Toate-drepturile-rezervate`, § 14.1) |
 | `docs/img/` | figurile proprii (scheme pe fond neutru, fără imagini ale camerei); directorul se creează la refacerea figurilor |
 | `legacy/google_ai_draft/` | ciorna inițială, păstrată cu raportul de audit |
 | `README.md` | prezentarea scurtă afișată pe pagina GitHub a proiectului |
-| `LICENSE`, `LICENSES/` | textele licențelor: GNU AGPL v3 (codul și modelele), ODbL 1.0 (datele), CC BY 4.0 (documentația) |
+| `LICENSE`, `LICENSES/` | textele licențelor: GNU AGPL v3 (codul și modelele), ODbL 1.0 (datele), CC BY 4.0 (documentația), CC0 1.0 (`build.bat`, `run.bat`, `output.add.xml` din ciornă, generate de osmWebWizard) și nota pentru imaginile camerei (`LicenseRef-Toate-drepturile-rezervate`) |
 | `NOTICE`, `REUSE.toml`, `*/LICENTA.txt` | atribuirile terților, harta „cale → licență” și notele de licență din `data/`, `sumo/`, `models/` (§ 14.1) |
 | `.claude/CLAUDE.md` | instrucțiunile și starea de lucru pentru asistentul Claude Code (nu fac parte din documentație) |
 
@@ -1359,7 +1376,9 @@ Toate comenzile se dau din rădăcina depozitului, după `set PYTHONPATH=src` (�
    pierdere de timp (verificat pe rulări din `calibrat_normal.csv`, `calibrat_indisciplinat.csv`,
    `robustete_indisciplinat.csv` și `validare_indisciplinat.csv`). Scenariile se regenerează însă, cu aceleași nume, la
    fiecare recalibrare a cererii, deci un fișier se reproduce numai cu **versiunea scenariilor din momentul rulării**,
-   dată în coloana „Scenariile” (aici și în Anexa A). Doar `calibrat_*.csv` corespund scenariilor din arborele curent;
+   dată în coloana „Scenariile” (aici și în Anexa A). Fișierele marcate „arborele curent” corespund scenariilor actuale;
+   cele marcate „tipurile vechi” (de exemplu `calibrat_*.csv`) cer și tipurile de vehicule de dinainte de 28.10, aduse cu
+   `git checkout 75592d3 -- sumo/demand/vtypes.add.xml sumo/demand/vtypes_indisciplinat.add.xml` (Anexa A);
    pentru celelalte, scenariile se aduc temporar din istoricul git, ca în README – de exemplu
    `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json`, iar după rulare
    `git checkout HEAD -- sumo config/demand.json`. Fișierele apărute după acel commit rămân cele curente (de exemplu
@@ -1400,7 +1419,7 @@ cu `--procese N` (implicit 4).
 |---|---|---|
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
 | `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
-| `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2*.jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
+| `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2[1256].jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
 | `capacitate_baleiaj.csv` (§ 6.4) | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` și, separat (rândul adăugat pe 27.10, fără al doilea rând „standard”), `zi_2026-10-26_varf_x1_2 t08g25=0.8:2.5:0.5` |
 | `localizare_varf_capacitate.csv` (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare capacitate_zi_2026-10-26_varf capacitate_zi_2026-10-26_varf_x1_2 capacitate_indisciplinat_zi_2026-10-26_varf capacitate_indisciplinat_zi_2026-10-26_varf_x1_2 zi_2026-10-26_varf --out outputs\localizare_capacitate.csv` |
 | scenariile `capacitate_*` (§ 6.4) | arborele curent | `romana.bridge.indisciplinat --scenarii "sumo\scenarios\zi_2026-10-2[56]_*.sumocfg" --vtypes vtypes_capacitate.add.xml --prefix capacitate_` și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix capacitate_indisciplinat_` |
@@ -1450,15 +1469,15 @@ pe laptopul autorului. Ciorna inițială (până la 18.10.2026): modulul AI Goog
 
 ### 12.1 Etapele proiectului
 
-**Etapa 0 – de la ciornă la un proiect serios (până la 20.10.2026).** Ciorna inițială avea o rețea „agregată”
-(piața ca un singur nod), trafic aleatoriu și un agent fără verificare; a fost auditată, păstrată în `legacy/`, iar
+**Etapa 0 – de la ciornă la un proiect serios (până la 20.10.2026).** Ciorna inițială avea un scenariu
+`osmWebWizard` în blocaj, trafic aleatoriu și un agent fără verificare; a fost auditată, păstrată în `legacy/`, iar
 proiectul a fost restructurat pe borne (§ 12.3). Regula de bază, stabilită de autor: **nu se schimbă nimic din
 infrastructură** – doar felul în care semafoarele existente răspund traficului.
 
 **Etapa 1 – rețeaua fidelă și toți participanții (noaptea de 20–21.10).** Replica fidelă din OpenStreetMap: 16
 semafoare fizice într-un singur controler, grupuri de semnal, treceri, trotuare, benzi STB. Provocări: importul
 trecerilor din OSM bloca `netconvert` (trecerile au fost reconstruite geometric); inelul pieței se bloca singur
-(diagnostic: ieșirile primeau roșu – acum au verde permanent); liniile de bază aveau defecte (actuated cu faze
+(diagnostic: ieșirile primeau roșu – acum au verde în fazele de vehicule); liniile de bază aveau defecte (actuated cu faze
 greșite, Webster cu chei vechi, Max-Pressure care bloca inelul prin faze fără dozare) – toate reparate. Cel mai
 instructiv: **agentul care trișa** – agentul pentru coridor ținea vehiculele în afara rețelei, ca să nu apară în
 cozi; vehiculele care așteaptă să intre contează acum în recompensă ca unele oprite.
@@ -1485,8 +1504,8 @@ la fiecare 15 minute, imaginea care mergea 2 s și stătea 4 s, dispeceratul cu 
 greșeală: **marcajul de staționare interzisă confundat cu trecerea de pietoni de pe Magheru**.
 
 **Etapa 5 – datele corectate răstoarnă rezultatul (23.10).** Autorul a desenat el însuși zonele pe capturi ale
-camerei; localizarea lor automată (potrivire SIFT, scara 3288/1920 dedusă din potrivirile sigure) a pornit după o
-eroare de citire a fondului transparent. Renumărarea a crescut virajele urmărite complet de la 2 800 la 4 995. Pe
+camerei; localizarea lor automată (potrivire SIFT, scara 3288/1920 dedusă din potrivirile sigure) a mers abia după
+corectarea citirii fondului transparent. Renumărarea a crescut virajele urmărite complet de la 2 800 la 4 995. Pe
 scenariile corecte, agentul care dădea −4,6% a ajuns la **+5,2%** – rezultatul frumos era construit pe date greșite,
 iar acest lucru a fost raportat ca atare. O greșeală a asistentului, corectată de autor: o singură bandă „văzută” în
 Street View pe Dacia est (în realitate două pe sens, iar rețeaua era corectă).
@@ -1510,8 +1529,8 @@ identice cu cele normale, ceea ce a dus la descoperirea unui defect (simularea i
 scenariu); după corectare, testul a dat cel mai puternic argument pentru AI: cu participanți indisciplinați,
 specialiștii AI au redus timpul pierdut cu ≈10–14% față de planul fix, până la −28% la vârf.
 
-**Etapa 8 – măsurarea măsurării (26–27.10).** O numărătoare de referință, cu două clipuri adnotate de câte doi
-adnotatori independenți, a dat factorii de corecție pe braț și zonele finale (§ 4.3). Prima zi lucrătoare
+**Etapa 8 – măsurarea măsurării (26–28.10).** O numărătoare de referință, cu două clipuri adnotate de câte doi
+adnotatori AI independenți, a dat factorii de corecție pe braț și zonele finale (§ 4.3). Prima zi lucrătoare
 prelucrată după aceea (luni 26.10) a ieșit cu de până la trei ori mai multe vehicule decât miercuri 21.10, la
 aceleași ore. Cauza nu era camera și nici codul, ci înregistrarea: înainte de tamponul HLS din 22.10 seara,
 urmărirea mergea în rafale și pierdea vehicule (§ 4.6). Debitul real a scos la iveală și o limită a geamănului: cu
@@ -1549,7 +1568,7 @@ că a intrat în test ca referință raportată (§ 9.9).
 
 | Bornă | Data | Conținut |
 |---|---|---|
-| Ciornă | 18.10.2026 | scenariu `osmWebWizard` cu trafic aleator, script YOLOv8 cu 3 linii, PPO 2000 pași (modulul AI Google) |
+| Ciornă | 18.10.2026 | scenariu `osmWebWizard` cu trafic aleator, script YOLOv8 cu 3 linii de numărare, PPO cu 2000 de pași (modulul AI Google) |
 | B0 | 20.10.2026 | audit al ciornei (erori de sintaxă, `hash()` nedeterminist, fără galben, scenariu în blocaj), restructurare |
 | B1 | 20.10.2026 | rețea SUMO reproductibilă din OSM, semafoarele identificate geografic |
 | B2 | 20.10.2026 | viziune: HLS, YOLO11 + ByteTrack, zone, matrice O–D |
@@ -1557,9 +1576,9 @@ că a intrat în test ca referință raportată (§ 9.9).
 | B4 | 20–21.10.2026 | mediu RL, PPO (piață și coridor), Webster / actuated / Max-Pressure, evaluare |
 | B5 | 20.10.2026 | geamăn digital live, dispecerat web, MQTT, scripturi Windows |
 | B6 | 20–21.10.2026 | documentația |
-| B7 | 21–22.10.2026 | viziune pe lumină de zi, OpenVINO, jurnal de traiectorii și renumărare, colectare continuă de două zile |
+| B7 | 21–22.10.2026 | viziune pe lumină de zi, OpenVINO, jurnal de traiectorii și renumărare, colectare de date în intervalul 21.10, 11:45 – 22.10, 11:00 (cu urmărire sacadată, § 4.6) |
 | B8 | 21.10.2026 | replica fidelă a rețelei, toți participanții (pietoni, bicicliști), liniile de bază corectate |
-| B9 | 21–26.10.2026 | scenariile din date reale, agenții pe date reale, verificarea live, zonele desenate de autor, renumărarea, specialiștii și programul pe tipuri de trafic, evaluarea statistică, ziua de weekend, cererea din intrări, testul de robustețe, licențele și curățarea istoricului, zonele refăcute pe numărătoarea de referință și cererea calibrată |
+| B9 | 21–28.10.2026 | scenariile din date reale, agenții pe date reale, verificarea live, zonele desenate de autor, renumărarea, specialiștii și programul pe tipuri de trafic, evaluarea statistică, ziua de weekend, cererea din intrări, testul de robustețe, licențele și curățarea istoricului, zonele refăcute pe numărătoarea de referință și cererea calibrată, calitatea înregistrării, capacitatea geamănului, testul pe ziua de luni și protocolul pentru 28.10, acordul Webcam România |
 
 ### 12.4 Ce am învățat
 
@@ -1569,12 +1588,13 @@ că a intrat în test ca referință raportată (§ 9.9).
    rezultatul a fost raportat, iar soluția a fost căutată mai departe.
 3. **AI-ul e util acolo unde e potrivit, iar „potrivit” depinde de cât de fidel e geamănul.** Pe geamănul cu
    capacitate implicită, un singur agent nu bătea un plan fix bine reglat la vârf, iar combinat cu planuri clasice
-   aducea un câștig semnificativ. Pe geamănul care trece debitul real, agentul reantrenat a câștigat singur, în
-   fiecare scenariu al unei zile noi (§ 9.9).
+   aducea un câștig semnificativ. Pe geamănul care trece debitul real, agentul reantrenat a bătut singur planul fix
+   actual în fiecare scenariu al unei zile noi, dar pe aceeași zi un plan fix cu ciclu scurt (12/14/12) ajunge la
+   nivelul lui (§ 9.9).
 4. **Rezultatele negative sunt rezultate.** Coridorul, agentul universal, specialiștii nereușiți au îngustat drumul
    spre soluția bună și sunt documentate.
 5. **Ochiul omului rămâne indispensabil.** Marcajul confundat cu o trecere, banda „lipsă” de pe Dacia, ideea de a
-   număra doar intrările – toate au venit de la autor.
+   lua volumele doar din intrări – toate au venit de la autor.
 
 ### 12.5 Post-scriptum: curățarea istoricului depozitului (26.10.2026)
 
@@ -1591,7 +1611,7 @@ pietonilor (date pseudonimizate, nu anonime). Măsurile, în ordine:
   fiecărui commit (codul, textul documentației, datele de vehicule, mesajele, autorii, datele) a rămas neschimbat;
   s-au schimbat doar identificatorii commit-urilor. Corespondența vechi → nou a celor 105 commit-uri este în
   `docs/corespondenta_commituri.txt`, ca istoricul urmărit de coordonator să rămână verificabil;
-* PDF-ul actual (fără imagini ale camerei) și jurnalele curente (doar vehicule) au fost readăugate într-un commit
+* PDF-ul de atunci (fără imagini ale camerei) și jurnalele curente (doar vehicule) au fost readăugate într-un commit
   nou; o copie a istoricului original este păstrată doar local de autor, nepublicată;
 * autorul a cerut în scris, prin e-mail (26.10.2026), acordul Webcam România pentru analiza fluxului și pentru 1–2
   capturi estompate. **Acordul a venit în scris pe 27.10.2026** (§ 14.1). Curățarea istoricului rămâne justificată:
@@ -1613,8 +1633,9 @@ Conform cerințelor de integritate academică, se declară folosirea asistențil
 **Contribuția declarată a asistentului.** Claude a realizat cea mai mare parte a muncii de implementare:
 auditul ciornei, arhitectura sistemului, **aproape tot codul sursă** (viziune, estimarea cererii, rețeaua
 SUMO, mediul de învățare, agenții, liniile de bază, evaluarea, geamănul digital, dispeceratul, testele),
-colectarea și calibrarea datelor de pe cameră, antrenarea și evaluarea modelelor, diagnosticarea erorilor și
-redactarea acestei documentații. A lucrat autonom pe repository, cu acordul explicit al autorului de a controla
+colectarea și calibrarea datelor de pe cameră, inclusiv adnotarea clipurilor numărătorii de referință (instanțe
+separate ale asistentului, independente între ele, § 4.3), antrenarea și evaluarea modelelor, diagnosticarea erorilor
+și redactarea acestei documentații. A lucrat autonom pe repository, cu acordul explicit al autorului de a controla
 calculatorul (inclusiv publicarea commit-urilor pe GitHub prin GitHub Desktop). Fiecare commit realizat de
 asistent poartă linia `Co-Authored-By: Claude …` în istoricul Git.
 
@@ -1627,7 +1648,7 @@ trecere), verificarea rețelei în Street View, auditul numărării („ești si
 cererii doar din intrări, testul cu participanți indisciplinați și organizarea documentației într-un singur
 document.
 
-Deciziile de proiectare, rezultatele experimentale și sursele au fost verificate prin rularea efectivă a
+Deciziile de proiectare și rezultatele experimentale au fost verificate prin rularea efectivă a
 codului; afirmațiile despre lumea reală sunt susținute de sursele de mai jos.
 
 ## 14. Bibliografie și licențe
@@ -1646,12 +1667,13 @@ ambiguă, s-a ales varianta sigură.
 | Codul sursă, scripturile, testele, configurările | `src/`, `scripts/`, `tests/`, `config/`, `requirements.txt`; codul ciornei din `legacy/` | GNU AGPL v3 sau ulterioară (`AGPL-3.0-or-later`)[^agpl] | obligatorie pentru modulul de viziune, care folosește Ultralytics YOLO11 (AGPL-3.0); extinsă la tot codul, ca variantă sigură, conform cerinței Ultralytics de licențiere a întregului proiect |
 | Modelele antrenate | `models/` | AGPL-3.0-or-later | alegerea autorului: aceeași licență ca a codului care le încarcă; atribuire OSM, pentru că au fost antrenate pe rețeaua derivată[^osmf-atribuire] |
 | Extrasul OSM, rețeaua, cererea, scenariile | `data/osm/`, `sumo/`, `legacy/google_ai_draft/osm*` | ODbL 1.0 | impusă de OpenStreetMap: sunt baze de date derivate, cu share-alike |
+| Fișierele ciornei generate de osmWebWizard | `legacy/google_ai_draft/build.bat`, `run.bat`, `output.add.xml` | CC0 1.0 | generate automat de `osmWebWizard.py` (Eclipse SUMO 1.28.0): nu se revendică drepturi; în măsura în care ar exista, autorul renunță la ele |
 | Numărătorile și traiectoriile | `data/counts/`, `data/trajectories/`; traiectoriile vehiculelor din clipurile numărătorii de referință (`docs/rezultate/referinta/clip*/traiectorii/`) | ODbL 1.0, în măsura în care asupra lor există drepturi | alegerea autorului: aceeași licență ca a cererii care încorporează numărătorile; faptele în sine nu sunt protejate |
-| Documentația, rezultatele, figurile proprii | `docs/` (fără traiectoriile de mai sus), `README.md`, `NOTICE` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
+| Documentația, rezultatele, figurile proprii | `docs/` (fără traiectoriile de mai sus și fără imaginile camerei din `docs/imagini/`), `README.md`, `NOTICE` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
 
-Textele integrale se află în `LICENSE` (AGPL), `LICENSES/ODbL-1.0.txt` și `LICENSES/CC-BY-4.0.txt`. Atribuirile
-terților și harta detaliată „cale → licență” sunt în fișierele `NOTICE` și `REUSE.toml`. În `data/`, `sumo/` și
-`models/` există câte o notă de licență, `LICENTA.txt`.
+Textele integrale se află în `LICENSE` (AGPL), `LICENSES/ODbL-1.0.txt`, `LICENSES/CC-BY-4.0.txt` și
+`LICENSES/CC0-1.0.txt`. Atribuirile terților și harta detaliată „cale → licență” sunt în fișierele `NOTICE` și
+`REUSE.toml`. În `data/`, `sumo/` și `models/` există câte o notă de licență, `LICENTA.txt`.
 
 **De ce AGPL.** Ultralytics distribuie sub AGPL-3.0 atât biblioteca, cât și ponderile YOLO11 preantrenate. Tot
 sub AGPL-3.0 este și trackerul ByteTrack folosit, care este implementarea din Ultralytics[^yolo11][^bytetrack].
@@ -1659,7 +1681,7 @@ Programul combinat cu Ultralytics – modulul de viziune – se distribuie deci 
 (cererea, rețeaua, controlul, dispeceratul) nu importă Ultralytics și comunică cu viziunea doar prin fișiere; ele
 ar putea purta și o licență compatibilă (MIT, Apache-2.0, GPL-3.0). S-a ales totuși AGPL-3.0-or-later pentru tot
 codul: este conformă poziției Ultralytics („Open-source your entire project under AGPL-3.0”), coerentă și cea mai
-sigură. AGPL nu permite restricții suplimentare, de tipul „doar uz academic” sau „necomercial” (§ 7 și § 10).
+sigură. AGPL nu permite restricții suplimentare, de tipul „doar uz academic” sau „necomercial” (AGPL § 7 și § 10).
 Ultralytics își declară licența ca „AGPL-3.0” în fișierul de licență, ca „AGPLv3 or later” în metadatele
 pachetului și ca „AGPL-3.0-only” în dependența sa `ultralytics-platform`. Formula „AGPL-3.0-or-later” rămâne
 compatibilă cu toate aceste variante și este cea recomandată de textul licenței. Celelalte componente sunt
@@ -1685,13 +1707,13 @@ detectorului) și o licență separată de la autor pentru codul proiectului.
 
 **Datele OpenStreetMap.** Extrasul din `data/osm/` și tot ce este derivat din el (rețeaua, rutele, scenariile)
 se distribuie numai sub ODbL 1.0, cu notificarea pusă în directoare (`sumo/LICENTA.txt`, `data/LICENTA.txt`), în
-`NOTICE` și în această documentație, iar ca comentariu XML în fișierele generate de `build_network.py` și
-`build_demand.py` începând cu următoarea regenerare (ODbL § 4.2). Rezultatele, graficele și modelele sunt *lucrări
+`NOTICE` și în această documentație, iar ca comentariu XML în fișierele generate de `build_demand.py` de la 26.10
+(în rețea, la următoarea regenerare cu `build_network.py`; ODbL § 4.2). Rezultatele, graficele și modelele sunt *lucrări
 produse* și poartă notificarea cerută de ODbL § 4.3 (prin această documentație, prin `NOTICE`, prin
 `models/LICENTA.txt` și, pentru tabelele generate, în capul fișierelor `docs/rezultate/**/rezultate.md`):
 „Conține informații din OpenStreetMap (https://www.openstreetmap.org), puse la dispoziție aici sub Open
 Database License (ODbL) 1.0 – https://opendatacommons.org/licenses/odbl/1-0/. © OpenStreetMap contributors –
-https://www.openstreetmap.org/copyright”. Cerința de a oferi baza derivată sau metoda (§ 4.6) este îndeplinită
+https://www.openstreetmap.org/copyright”. Cerința de a oferi baza derivată sau metoda (ODbL § 4.6) este îndeplinită
 prin `sumo/net/`, `sumo/demand/`, `sumo/scenarios/`, `src/romana/network/build_network.py` și
 `config/network.json`; versiunile exacte ale scenariilor folosite pentru fiecare model sau rezultat se găsesc în
 istoricul git al depozitului https://github.com/NiuninMatei/Semaforizare_Piata_Romana (scenariile de antrenare
@@ -1743,7 +1765,8 @@ aplică în măsura în care asupra acestui conținut există drepturi de autor.
 
 * citatele din surse terțe (presă, pagina și termenii Webcam România, termenii Ultralytics, Anthropic și Google,
   ghidurile OSMF), preluate cu indicarea sursei (art. 35 din Legea nr. 8/1996);
-* imaginile camerei din versiunile mai vechi aflate în istoricul git (drepturile aparțin operatorului camerei);
+* imaginile camerei: cele două din `docs/imagini/` (figurile 4.1 și 4.2) și capturile vechi, eliminate din istoric, dar
+  încă accesibile pe GitHub prin `refs/pull/1/head` (§ 12.5); drepturile aparțin operatorului camerei;
 * mărcile menționate;
 * subseturile de fonturi Microsoft încorporate în PDF (licența lor permite încorporarea);
 * bibliotecile terțe, care rămân sub licențele lor (§ 14.2) și nu sunt incluse în depozit.
@@ -1776,10 +1799,10 @@ utilizare ai resurselor folosite efectiv în proiect.
 | Google Street View (doar verificarea vizuală a rețelei, § 10) | Termenii suplimentari Google Maps / Google Earth; nicio informație preluată, nicio captură publicată[^streetview] |
 | Fonturile Barlow și Barlow Semi Condensed (dispecerat, Google Fonts) | SIL Open Font License 1.1; legate, nu incluse[^barlow] |
 | Python 3.12 | PSF-2.0[^python] |
-| Licențele proiectului (§ 14.1) | GNU AGPL v3[^agpl]; ODbL 1.0[^osm]; CC BY 4.0[^ccby] |
+| Licențele proiectului (§ 14.1) | GNU AGPL v3[^agpl]; ODbL 1.0[^osm]; CC BY 4.0[^ccby]; CC0 1.0 (trei fișiere generate ale ciornei) |
 
 [^wiki-romana]: Wikipedia, „Piața Romană” și „Piața Romană metro station”, https://en.wikipedia.org/wiki/Pia%C8%9Ba_Roman%C4%83, accesat 20.10.2026. Licență CC BY-SA 4.0. Folosită doar pentru fapte; nu s-a preluat text.
-[^webcam]: Webcam România, „Webcam Piața Romană București – Live din Centrul Capitalei”, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/, accesat 20.10.2026. Flux: https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8. Pagina: © 2016–2026 WebcamRomania.ro. Fluxul: drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor („Termeni și condiții”, secțiunile 2 și 4). Fluxul este analizat doar în memorie; proiectul nu publică imagini din cameră.
+[^webcam]: Webcam România, „Webcam Piața Romană București – Live din Centrul Capitalei”, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/, accesat 20.10.2026. Flux: https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8. Pagina: © 2016–2026 WebcamRomania.ro. Fluxul: drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor („Termeni și condiții”, secțiunile 2 și 4). Fluxul este analizat doar în memorie; proiectul publică doar două imagini estompate dintr-un singur cadru (figurile 4.1 și 4.2), cu acordul scris al Webcam România din 27.10.2026 (§ 14.1).
 [^tomtom]: TomTom, „Bucharest traffic report – TomTom Traffic Index 2025”, https://www.tomtom.com/traffic-index/city/bucharest/, publicat ianuarie 2026. © TomTom, citare cu atribuire.
 [^pmb-tomtom]: Primăria Municipiului București, „București, pe locul 20 în lume din punct de vedere al traficului…”, https://www.bucuresti.ro/articole/bucuresti-pe-locul-20-in-lume-din-punct-de-vedere-al-traficului-care-este-viteza-medie-cu-care-se-circula-in-oras-1751, 2026.
 [^btms-267]: Business24, „București: extinderea sistemului de trafic – rețea centralizată de intersecții”, https://business24.ro/trafic-inteligent/bucuresti-extindere-sistem-trafic-retea-centralizata-intersectii-1670366, 6.10.2026; B365, https://b365.ro/pmb-anunta-extinderea-sistemului-de-semaforizare-inteligenta-dar-nu-se-spune-si-ce-presupune-aminteste-ca-e-implementat-deja-in-267-de-intersectii-din-bucuresti-622733/. Drepturi rezervate (presă).
@@ -1853,13 +1876,15 @@ care se aduc temporar (`git checkout <commit> -- sumo/scenarios sumo/demand conf
 `git checkout HEAD -- sumo config/demand.json`, § 11.8). „Arborele curent, tipurile vechi” înseamnă scenariile
 actuale cu tipurile de vehicule de dinainte de 28.10 (timpul de reacție implicit SUMO, § 6.4). Ele se aduc cu
 `git checkout 75592d3 -- sumo/demand/vtypes.add.xml sumo/demand/vtypes_indisciplinat.add.xml`, iar revenirea se face
-cu `git checkout HEAD -- sumo/demand`. Cu scenariile din arborele curent, care au aceleași nume, dar
-cererea recalibrată pe 26.10, se obțin alte cifre. Coloana „Se reproduce cu” dă modulul care reface fișierul. Fișierele
+cu `git checkout HEAD -- sumo/demand`. La fișierele marcate cu un commit, scenariile din arborele curent au aceleași nume, dar
+cererea recalibrată pe 26.10, deci dau alte cifre. Coloana „Se reproduce cu” dă modulul care reface fișierul. Fișierele
 `validare_*`, `robustete_*` și `calibrat_*` au fost produse cu scripturile de lucru din care provine modulul
 `romana.control.validare` (publicat pe 26.10); modulul dă aceleași valori (verificat pe rulări din
 `calibrat_normal.csv`, `calibrat_indisciplinat.csv`, `robustete_indisciplinat.csv` și `validare_indisciplinat.csv`).
 Unele validări conțin și candidați sau puncte intermediare ale antrenării care nu sunt publicate în `models/`
-(`ppo_romana_final_a/b`, `ppo_romana_nou_600k/800k/900k`, `romana_ind_*`, `romana_mix_*`): rândurile lor nu se pot
+(`ppo_romana_final_a/b`, `ppo_romana_nou_375k/600k/800k/900k`, `ppo_romana_greu_e7`, `ppo_romana_moderat_mij`,
+`romana_ind_*`, `romana_mix_*`, `ppo_romana_g99*`, `ppo_romana_v3_c*` și candidații `cand_*`, în afară de
+`cand_romana_cal3_100k`): rândurile lor nu se pot
 reface, celelalte da.
 
 | Fișier | Conținut | Scenariile | Se reproduce cu |
@@ -1871,7 +1896,7 @@ reface, celelalte da.
 | `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere` |
 | `calitate_inregistrare.csv` | continuitatea urmăririi pe ore și zile (§ 4.6): traiectorii, goluri > 1 s, densitatea punctelor | – | `romana.vision.calitate` |
 | `capacitate_baleiaj.csv` | capacitatea geamănului pe vârful de luni și ×1,2 pentru variante ale parametrilor de șofer (§ 6.4): vehicule introduse, neintroduse, intrări pe brațe | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate` |
-| `localizare_varf_capacitate.csv` | aceeași analiză pe vârful de luni și vârful ×1,2, cu capacitatea calibrată (ambele comportamente), plus vârful de luni cu parametrii impliciți, pentru comparație (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare` |
+| `localizare_varf_capacitate.csv` | aceeași analiză ca în `localizare_varf_calibrat.csv` (rândul următor), pe vârful de luni și vârful ×1,2, cu capacitatea calibrată (ambele comportamente), plus vârful de luni cu parametrii impliciți, pentru comparație (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare` |
 | `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent, tipurile vechi | `romana.control.localizare` |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` | testul cu participanți indisciplinați, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3, E9 și planul fix, pe 5 scenarii de zi lucrătoare | `e1d0f77` | `romana.control.validare --seeds 1-5` / `--seeds 6-10`, `--fara-alegere` (comanda completă: § 11.8) |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` | același test pe duminica 25.10, seed-urile 1–5 și 6–10 (§ 9.4): actuated, agentul oficial, E3 și planul fix | `e1d0f77` (cele 5 scenarii de duminică de atunci, fără `pranz`) | la fel |
