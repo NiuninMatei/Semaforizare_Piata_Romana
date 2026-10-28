@@ -1110,7 +1110,8 @@ Ce arată testul:
    generalizează mai bine.
 3. **Planul 46/48/12, ales pentru vârf pe grila de planuri din 21–22.10, e acum mai slab decât planul actual**
    (+8…+10%). Pe un geamăn cu capacitatea reală, dintre cele două planuri fixe testate, cel actual (36/28/12) este
-   mai bun; grila de planuri nu a fost refăcută cu capacitatea calibrată.
+   mai bun. Grila refăcută ulterior pe geamănul calibrat (protocolul de mai jos) arată însă că nici planul actual nu
+   e aproape de cel mai bun plan fix: ciclurile scurte câștigă.
 4. **Reantrenarea pe scenariile calibrate a ajutat agentul oficial pe ziua nouă, dar doar cu participanți
    disciplinați:** −9,7% față de −5,9%. Cu participanți indisciplinați, cei doi sunt la egalitate (−9,5% față de
    −10,0%). Același tipar apărea și pe testul din 21–22.10 (§ 9.5): cu participanți disciplinați E13 dădea −4,8%, iar
@@ -1128,6 +1129,19 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
 - **E14, verificat înainte de test (28.10, ≈05:00).** Agentul E14 (E13 continuat pe scenariile de luni cu
   capacitatea calibrată, § 9.5) a fost validat pe seed-urile 11–15 ale zilei de luni, înainte de prelucrarea zilei
   de 28.10. Iese mai slab decât E13 (+2,2%, p = 0,06 / 0,09), deci nu devine candidat. Candidatul rămâne E13 singur.
+- **Grila de planuri fixe pe geamănul calibrat, verificată înainte de test (28.10, ≈10:30).** Pe aceeași validare
+  (luni 26.10, seed-urile 11–15, cele 12 scenarii cu capacitatea calibrată) s-au încercat 23 de planuri fixe: verdele
+  N–S de 12–44 s, E–V de 10–36 s, pietonii 12 s (`grila_calibrat.csv`). Câștigă ciclurile scurte. Cel mai bun plan,
+  **12/14/12**, are un ciclu de ≈53 s, față de ≈91 s la planul de referință 36/28/12. Dă −9,3% față de planul fix
+  (mai bun în 53 / 60, p < 0,000001). Pe aceleași date, E13 dă −7,9%. Direct, planul 12/14/12 față de E13 dă −0,9%
+  (35 / 60, p = 0,10 / 0,15), adică o diferență nesemnificativă. Pe benzi, validarea alege 16/10/12 la trafic lejer
+  și moderat și 12/14/12 la trafic greu. Acest program din planuri fixe (`TOD_FIX`) dă −10,8% față de planul fix și
+  −2,3% față de E13 (p = 0,05 / 0,01), dar e ales chiar pe aceste date, deci estimarea e optimistă. Planul 12/14/12
+  și programul `TOD_FIX` intră în test ca **strategii raportate**: E13 se compară și cu ele, dar ele nu pot fi alese,
+  iar regula de decizie de mai jos rămâne neschimbată. Aceste planuri au o limită: verdele de 10–14 s respectă
+  verdele minim al controlerului (10 s, § 7.2), dar e aproape de timpul de degajare a pietonilor. Cea mai lungă
+  trecere comandată de semaforul pieței are 12,8 m, adică ≈11 s la 1,2 m/s, timp pe care modelul nu îl impune
+  separat, nici planurilor fixe, nici agenților (§ 10).
 - **Testul se face pe prima zi lucrătoare nouă colectată complet: miercuri 28.10.** Colectarea zilei de marți 27.10
   s-a oprit la 06:04, la închiderea calculatorului, deci ziua nu e completă (noaptea 00:00–06:04 e publicată în
   `data/`, dar din ea nu s-au generat scenarii). Se folosesc toate scenariile generate
@@ -1144,12 +1158,15 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
 - **Ce urmează dacă E13 trece testul:** geamănul live (`live_twin.py`) trece pe E13. Autorul a aprobat pe 28.10
   ca trecerea să se facă automat, dacă regula de decizie este îndeplinită, și să fie documentată. Dacă regula nu
   este îndeplinită, programul realist rămâne. Capacitatea calibrată e deja implicită în geamănul live din 28.10
-  (§ 6.4).
+  (§ 6.4). Comparația cu planurile fixe din grilă se raportează separat. Dacă un plan fix scurt iese mai bun decât
+  E13, alegerea dintre ele rămâne a autorului, pentru că verzile scurte ar trebui întâi verificate față de timpii de
+  degajare a pietonilor.
 
 Limitele testului: o singură zi lucrătoare (10 seed-uri; tabelul de mai sus, pe seed-urile 1–5), iar agenții sunt
 antrenați pe geamănul cu capacitate implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul
 de reacție). Reantrenarea pe ziua de luni cu capacitatea calibrată (E14) nu a întrecut E13 (§ 9.5); reantrenarea pe
-mai multe zile rămâne un pas următor (§ 10).
+mai multe zile rămâne un pas următor (§ 10). Planurile fixe scurte și agenții folosesc același verde minim de 10 s,
+fără timpul de degajare a pietonilor (§ 10).
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
@@ -1179,6 +1196,11 @@ mai multe zile rămâne un pas următor (§ 10).
   absolute erau mai mici. Duminica 25.10 (§ 9.3, § 9.4), înregistrată continuu, a pus o cerere apropiată de cea reală
   pe geamănul implicit, deci suprasaturat. Testul din § 9.9 și toată munca de după 28.10 folosesc capacitatea
   calibrată, implicită de atunci; dintre agenți, doar E14 e antrenat pe ea, fără câștig față de E13 (§ 9.5).
+* **Verdele minim și pietonii.** Controlerul impune verdele minim de 10 s, galbenul de 3 s și roșul general de 2 s
+  (§ 7.2), dar nu impune separat timpul de degajare a pietonilor de pe trecerile paralele cu faza verde. Cea mai
+  lungă trecere comandată de semaforul pieței are 12,8 m, adică ≈11 s la 1,2 m/s. Pe geamănul calibrat, cele mai
+  bune planuri fixe au verzi de 10–14 s (§ 9.9), la limita acestui timp. O aplicare reală ar cere verzi minime pe
+  fază, calculate după lungimea trecerilor, atât pentru planurile fixe, cât și pentru agenți.
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
@@ -1207,8 +1229,9 @@ mai multe zile rămâne un pas următor (§ 10).
   comercială (de exemplu într-un produs pentru administrația drumului) ar cere un acord nou.
 
 Lucrări viitoare: testul agentului E13 pe ziua de miercuri 28.10, după protocolul fixat în § 9.9; reantrenarea
-agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); refacerea
-grilei de planuri fixe pe geamănul calibrat; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
+agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); verzi minime
+pe fază, calculate după trecerile de pietoni, pentru planurile fixe și pentru agenți, apoi reantrenarea și
+reevaluarea cu ele; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
 pentru transportul public, ponderată cu numărul de călători
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
 de date; compararea planului fix de referință cu programul real, dacă poate fi obținut de la operator.
@@ -1360,6 +1383,7 @@ cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actu
 | § 9.9, toate strategiile pe luni 26.10 față de planul fix și actuated | `romana.control.analiza docs\rezultate\capacitate_indisciplinat_26.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program REANTRENAT=lejer:ppo_romana_cal,moderat:cand_romana_cal3_100k,greu:cand_romana_cal3_100k --pe-scenarii`; rândurile actuated și 46/48/12: `--strategii ACTUATED PLAN_46_48_12 --referinte FIX` (la fel pe `capacitate_normal_26.csv`) |
 | § 9.9, verificarea pe 10 seed-uri (E13 −9,2% / −7,9% față de planul fix; −3,9% față de programul realist pe 120 de perechi) | `romana.control.analiza docs\rezultate\capacitate_indisciplinat_26.csv docs\rezultate\capacitate_indisciplinat_26_6_10.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --referinte FIX REALIST ACTUATED` (la fel cu fișierele `capacitate_normal_26*`; pentru perechile reunite, toate cele patru fișiere și `--referinte FIX REALIST`) |
 | § 9.5 / § 9.9, validarea E14 (−6,3% față de planul fix; +2,2% față de E13) | `romana.control.analiza docs\rezultate\validare_e14.csv --referinte FIX ppo_romana_cal` (o strategie dată ca referință nu mai apare și ca strategie comparată: E13 față de planul fix se obține cu `--referinte FIX`) |
+| § 9.9, grila de planuri fixe pe geamănul calibrat (12/14/12: −9,3% față de planul fix, −0,9% față de E13; `TOD_FIX`: −10,8% / −2,3%) | `romana.control.analiza docs\rezultate\grila_calibrat.csv docs\rezultate\validare_e14.csv --program TOD_FIX=lejer:PLAN_16_10_12,moderat:PLAN_16_10_12,greu:PLAN_12_14_12 --strategii PLAN_12_14_12 TOD_FIX --referinte FIX ppo_romana_cal` (fără `--strategii` și cu `--referinte FIX` apar toate cele 23 de planuri; alegerea pe bandă s-a făcut după media pe scenarii a diferențelor procentuale, ca în `romana.control.validare`) |
 | Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
 
 **Simulările.** Strategiile și seed-urile sunt exact cele din fișierul publicat; numărul de simulări în paralel se dă
@@ -1380,6 +1404,7 @@ cu `--procese N` (implicit 4).
 | `capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv` (§ 9.9) | arborele curent | aceeași comandă, cu `--seeds 6-10` și `_26_6_10` în locul lui `_26` în cele două nume de fișier |
 | agentul E14 (§ 9.5) | arborele curent | se copiază `models\ppo_romana_cal.*` în `models\ppo_romana_e14.*`, apoi `romana.control.train --nume romana_e14 --continua --lr 3e-5 --pasi 300000 --medii 8 --scenarii` cu cele 12 fișiere `sumo\scenarios\capacitate_zi_2026-10-26_*.sumocfg` și `capacitate_indisciplinat_zi_2026-10-26_*.sumocfg` (modelele refăcute diferă ușor de cel publicat, ca la E12 / E13) |
 | `validare_e14.csv` (§ 9.5) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_cal.zip models\cand_romana_e14_100k.zip models\cand_romana_e14_200k.zip models\ppo_romana_e14.zip --scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\validare_e14.csv`; punctele intermediare nu sunt publicate: `cand_romana_e14_100k` și `cand_romana_e14_200k` sunt `outputs\train\romana_e14\checkpoints\romana_e14_901344_steps.zip` și `romana_e14_1001344_steps.zip` |
+| `grila_calibrat.csv` (§ 9.9) | arborele curent | `romana.control.validare` cu cele 23 de planuri `PLAN_a_b_12`, pentru (a, b) = (28, 22), (28, 28), (28, 36), (36, 22), (36, 36), (44, 22), (44, 28), (44, 36), (20, 14), (20, 18), (20, 22), (24, 14), (24, 18), (24, 22), (28, 14), (28, 18), (12, 10), (12, 14), (12, 18), (16, 10), (16, 14), (16, 18), (20, 10), și `--scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\grila_calibrat.csv`; rulată pe 28.10 în trei tranșe (8 + 8 + 7 planuri, fiecare rafinare în jurul celui mai bun plan de până atunci), reunite; simulările sunt deterministe, iar planul fix a ieșit identic în toate tranșele |
 | `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent, tipurile vechi | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
@@ -1487,7 +1512,9 @@ parametrii impliciți ai șoferilor, nu putea trece traficul de luni. Calibrarea
 a rămas cel mai bun, iar pe test programul reantrenat a ieșit echivalent cu programul realist. Pe ziua de luni,
 nevăzută și cu geamănul calibrat, agenții AI au bătut actuated și, în medie, planul fix. Cel mai constant a fost
 agentul oficial reantrenat, E13 (§ 9.9). Alegerea finală s-a lăsat pe o zi nouă (miercuri 28.10), după un protocol
-fixat înainte. Reantrenarea pe ziua de luni cu geamănul calibrat (E14) nu a întrecut E13 (§ 9.5).
+fixat înainte. Reantrenarea pe ziua de luni cu geamănul calibrat (E14) nu a întrecut E13 (§ 9.5). Grila de planuri
+fixe refăcută pe geamănul calibrat a arătat că un ciclu scurt (12/14/12) ajunge pe validare la nivelul lui E13, așa
+că a intrat în test ca referință raportată (§ 9.9).
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -1846,6 +1873,7 @@ reface, celelalte da.
 | `validare_calibrat.csv` + `_alegere.json` | validarea agenților E12 și E13 (§ 9.5) pe scenariile calibrate cu participanți indisciplinați, seed-urile 11–15, cu planul fix, actuated, agentul oficial, E3 și câte trei candidați (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent, tipurile vechi | `romana.control.validare` (dintre candidați sunt publicați doar `cand_romana_cal3_100k`, `ppo_romana_cal3` și `ppo_romana_cal`) |
 | `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` | testul pe luni 26.10 cu capacitatea calibrată (§ 9.9): planul fix, actuated, planul 46/48/12, agentul oficial, E3, E9, E12 și E13, seed-urile 1–5 | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
 | `capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv` | aceleași strategii pe seed-urile 6–10, rulate după fixarea protocolului (§ 9.9) | arborele curent | `romana.control.validare --seeds 6-10 --fara-alegere` |
+| `grila_calibrat.csv` | grila de 23 de planuri fixe pe geamănul calibrat (§ 9.9): luni 26.10, ambele comportamente, seed-urile 11–15, plus planul fix | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `validare_e14.csv` + `_alegere.json` | validarea agentului E14 (§ 9.5) pe luni 26.10, ambele comportamente, seed-urile 11–15: planul fix, actuated, agentul oficial, E3, E13 și trei candidați E14 (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent | `romana.control.validare` (dintre candidați e publicat doar modelul final, `ppo_romana_e14`) |
 | `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
 | `validare_zone_noi`, `validare_e2_e3`, `validare_clasice`, `validare_nou_*`, `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9` (23–25.10), fiecare cu `_alegere.json` unde există | validările pentru marginea de sus (seed-urile 11–13, apoi 11–15), din care s-au ales agenții, planurile și componentele programului; în `_alegere.json`: scorul mediu al fiecărei strategii față de planul fix, strategia aleasă, seed-urile (cele prezente în CSV) și scenariile | `7a79502` | `romana.control.validare` (seed-urile din alegeri corectate cu `--corecteaza-alegeri`; testele pe seed-urile 1–10 nu au fișier de alegere) |
