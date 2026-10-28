@@ -1,0 +1,7 @@
+strategie,scenariu,seed,verde_median_ns_s,verzi_ns,verde_median_ev_s,verzi_ev,verde_median_pietoni_s,verzi_pietoni,ciclu_median_s
+ppo_romana_cal,capacitate_zi_2026-10-26_linistit,11,11.0,117,11.0,88,11.0,84,40.0
+ppo_romana_cal,capacitate_zi_2026-10-26_pranz,11,11.0,115,11.0,42,11.0,97,30.0
+ppo_romana_cal,capacitate_zi_2026-10-26_varf,11,11.0,93,11.0,27,11.0,90,35.0
+ppo_romana,capacitate_zi_2026-10-26_linistit,11,11.0,99,11.0,82,11.0,93,45.0
+ppo_romana,capacitate_zi_2026-10-26_pranz,11,11.0,115,11.0,60,11.0,107,35.0
+ppo_romana,capacitate_zi_2026-10-26_varf,11,11.0,120,11.0,55,11.0,109,32.5
