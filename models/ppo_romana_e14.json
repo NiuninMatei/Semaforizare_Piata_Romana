@@ -1,0 +1,51 @@
+{
+  "model": "ppo_romana_e14.zip",
+  "controlate": [
+    "romana"
+  ],
+  "scenarii": [
+    "capacitate_zi_2026-10-26_linistit.sumocfg",
+    "capacitate_zi_2026-10-26_linistit_x0_8.sumocfg",
+    "capacitate_zi_2026-10-26_pranz.sumocfg",
+    "capacitate_zi_2026-10-26_seara.sumocfg",
+    "capacitate_zi_2026-10-26_varf.sumocfg",
+    "capacitate_zi_2026-10-26_varf_x1_2.sumocfg",
+    "capacitate_indisciplinat_zi_2026-10-26_linistit.sumocfg",
+    "capacitate_indisciplinat_zi_2026-10-26_linistit_x0_8.sumocfg",
+    "capacitate_indisciplinat_zi_2026-10-26_pranz.sumocfg",
+    "capacitate_indisciplinat_zi_2026-10-26_seara.sumocfg",
+    "capacitate_indisciplinat_zi_2026-10-26_varf.sumocfg",
+    "capacitate_indisciplinat_zi_2026-10-26_varf_x1_2.sumocfg"
+  ],
+  "pasi": 1101376,
+  "durata_min": 312.8,
+  "preantrenare_imitatie": null,
+  "hiperparametri": {
+    "lr": 3e-05,
+    "n_steps": 128,
+    "medii_paralele": 8,
+    "batch": 128,
+    "gamma": 0.98,
+    "ent_coef": 0.01,
+    "retea": [
+      128,
+      128
+    ],
+    "delta_t_s": 5,
+    "verde_min_s": 10,
+    "verde_max_s": 90
+  },
+  "faze_romana": [
+    "N–S: Magheru ↔ Lascăr Catargiu prin centru",
+    "E–V: Dacia în jurul insulei",
+    "Pietoni: toate trecerile, axa centrală se golește",
+    "N–S, cu intrările Dacia deschise (fără dozare)",
+    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+  ],
+  "faze_actiuni_romana": [
+    0,
+    1,
+    2
+  ],
+  "obs_amonte": false
+}

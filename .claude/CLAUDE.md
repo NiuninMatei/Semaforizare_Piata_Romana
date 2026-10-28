@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (28.10.2026, ~01:00) – acordul Webcam România, geamănul calibrat implicit, testul pe 28.10
+## Stare curentă (28.10.2026, ~05:30) – acordul Webcam România, geamănul calibrat implicit, E14 negativ, testul pe 28.10
 
 - **28.10, ~01:00:** Webcam România și-a dat **acordul scris** (e-mail, 27.10, 20:27): analiza automată în scop
   academic, necomercial, cu sursa „Webcam România – https://webcamromania.ro”, și publicarea a 1–2 capturi cu
@@ -51,10 +51,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   scenariile `zi_2026-10-28_*` / `indisciplinat_zi_2026-10-28_*` (calibrate implicit), seed-urile 1–10, ambele
   comportamente, `romana.vision.calitate` întâi; 29.10 = zi de confirmare. Colectarea live repornită pe 28.10, 00:10
   (PID în outputs/logs/viziune_2026-10-28.*). Laptopul rămâne pornit cât cer, cel mult până pe 30.10, 10:00.
-- **Lanțul de noapte 2** (scratchpad\noapte2.py, prioritate scăzută): ziua 27 publicată, seed-urile 6–10 pe luni,
-  E14 (= E13 continuat 300k pe cele 12 scenarii `capacitate_*` de luni), validarea pe 26.10 seed-urile 11–15 →
-  outputs/validare/validare_e14.csv. **E14 trebuie înregistrat în § 9.9 ca al doilea candidat ÎNAINTE de orice
-  prelucrare a zilei de 28.10.**
+- **28.10, ~05:30 – lanțul de noapte 2 încheiat și publicat:** noaptea zilei 27 (00:00–06:04) publicată în data/;
+  seed-urile 6–10 pe luni (§ 9.9, „Verificarea pe 10 seed-uri”: E13 −9,2% / −7,9% vs fix, −3,9% vs realist pe 120 de
+  perechi); **E14 negativ** (`ppo_romana_e14`, validare 26.10 seed-urile 11–15: −6,3% vs fix, +2,2% vs E13, p = 0,06 /
+  0,09; § 9.5) → **E13 rămâne singurul candidat**, protocolul neschimbat. Aprobarea autorului (28.10) trecută în § 9.9:
+  dacă E13 trece regula, `live_twin.py` trece automat pe E13 și se documentează (subcapitol nou în cap. 9).
+- **De făcut:** ziua (≈10:30) capturile estompate + răspunsul Webcam România; după 29.10 00:00 prelucrarea zilei 28
+  (calitate → recount + --publica → scenarii_zi → indisciplinat → test seed-urile 1–10 → regula → eventual E13 live).
 
 ## Stare anterioară (27.10.2026, ~05:20) – documentație unică, capacitatea geamănului, testul pe ziua de luni (§ 9.9)
 
