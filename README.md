@@ -67,7 +67,10 @@ cererea calibrată (E13) dă **−9,5% / −9,7%** față de planul fix (partici
 la ambele teste). Câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu participanți
 indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Programul realist dă −3,9% (nesemnificativ) /
 −6,4%. Pe 10 seed-uri, E13 dă −9,2% / −7,9%. Dacă E13 devine implicit se decide pe testul din 28.10, după
-protocolul fixat dinainte în § 9.9. Reantrenarea lui pe ziua de luni (E14) nu l-a întrecut (§ 9.5). Din 28.10,
+protocolul fixat dinainte în § 9.9. Reantrenarea lui pe ziua de luni (E14) nu l-a întrecut (§ 9.5). O grilă de
+23 de planuri fixe pe geamănul calibrat arată că ciclurile scurte câștigă: planul 12/14/12 (ciclu ≈53 s) dă pe validare
+−9,3% față de planul fix, la nivelul lui E13 (diferență nesemnificativă). Intră în test ca referință raportată; verzile
+lui de 10–14 s sunt însă la limita timpului de degajare a pietonilor, pe care modelul nu îl impune (§ 10). Din 28.10,
 geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
 live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
 

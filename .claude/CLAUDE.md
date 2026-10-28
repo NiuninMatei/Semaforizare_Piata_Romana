@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (28.10.2026, ~05:30) – acordul Webcam România, geamănul calibrat implicit, E14 negativ, testul pe 28.10
+## Stare curentă (28.10.2026, ~11:00) – capturile publicate, răspunsul Webcam România trimis, grila pe geamănul calibrat, testul pe 28.10
 
 - **28.10, ~01:00:** Webcam România și-a dat **acordul scris** (e-mail, 27.10, 20:27): analiza automată în scop
   academic, necomercial, cu sursa „Webcam România – https://webcamromania.ro”, și publicarea a 1–2 capturi cu
@@ -56,8 +56,19 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   perechi); **E14 negativ** (`ppo_romana_e14`, validare 26.10 seed-urile 11–15: −6,3% vs fix, +2,2% vs E13, p = 0,06 /
   0,09; § 9.5) → **E13 rămâne singurul candidat**, protocolul neschimbat. Aprobarea autorului (28.10) trecută în § 9.9:
   dacă E13 trece regula, `live_twin.py` trece automat pe E13 și se documentează (subcapitol nou în cap. 9).
-- **De făcut:** ziua (≈10:30) capturile estompate + răspunsul Webcam România; după 29.10 00:00 prelucrarea zilei 28
-  (calitate → recount + --publica → scenarii_zi → indisciplinat → test seed-urile 1–10 → regula → eventual E13 live).
+- **28.10, 09:30–10:15 – capturile publicate (8b4579e):** un singur cadru (09:30, ploaie) → `docs/imagini/camera_*.jpg`
+  (figurile 4.1 / 4.2, și în README); estompate persoanele, plăcuțele apropiate și reclama „Notar…” suprapusă de cameră;
+  verificare pe 9 dale în două runde (19 locuri scăpate + 14 incerte estompate); cadrul brut șters;
+  `LicenseRef-Toate-drepturile-rezervate` (LICENSES/, REUSE.toml, NOTICE). **Răspunsul către Webcam România trimis pe
+  28.10, 10:11** (firul 1a178a0160eff9ba; linkul proiectului și al PDF-ului). GitHub Support: tot fără răspuns.
+- **28.10, ~10:30 – grila de planuri fixe pe geamănul calibrat (§ 9.9, `docs/rezultate/grila_calibrat.csv`):** 23 de
+  planuri pe validarea 26.10 (seed-urile 11–15); ciclurile scurte câștigă: 12/14/12 −9,3% vs fix, −0,9% vs E13 (ns);
+  `TOD_FIX` (16/10/12 lejer + moderat, 12/14/12 greu) −10,8% / −2,3% (ales pe aceleași date). Intră în test ca
+  **strategii raportate** (scratchpad\test28_extra.json, cu `referinte`); regula de decizie neschimbată; dacă un plan
+  fix iese mai bun decât E13, alegerea rămâne a autorului (degajarea pietonilor: cea mai lungă trecere 12,8 m, § 10).
+- **De făcut:** după 29.10 00:15, lanțul scratchpad\test28.py (calitate → recount + --publica → scenarii_zi →
+  indisciplinat → test seed-urile 1–10 cu planurile din grilă → analizele, inclusiv `*_planuri`) → regula → eventual
+  E13 live (`VARIANTA_PROGRAM = "e13"`, eticheta din dashboard, subcapitol nou în cap. 9).
 
 ## Stare anterioară (27.10.2026, ~05:20) – documentație unică, capacitatea geamănului, testul pe ziua de luni (§ 9.9)
 
