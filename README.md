@@ -52,7 +52,7 @@ mai simplu, a fost preferat după echivalența lor pe seed-urile de test 1–5 (
 seed-urile de test 1–10 (1–5 unde se precizează; § 9.1); seed-ul schimbă doar partea aleatorie, nu ziua de trafic.
 Camera numără mai multe ieșiri decât intrări, de aceea rezultatele sunt date pentru două calibrări ale cererii:
 marginea „de jos” (doar intrările) și cea „de sus” (media intrări/ieșiri) (§ 5.1). Numărătoarea de referință din 26.10
-(două clipuri de 3 minute adnotate cadru cu cadru, § 4.3) arată că cererea reală era mai aproape de marginea de sus:
+(două clipuri de 3 minute adnotate cadru cu cadru de agenți AI, § 4.3) arată că cererea reală era mai aproape de marginea de sus:
 vârful zilelor lucrătoare ≈2 520–2 560 veh/h, față de ≈2 400–2 510 (marginea de sus) și ≈1 640 (marginea de jos).
 Toate aceste cifre sunt din 21–22.10, zile care s-au dovedit subnumărate (§ 4.6; vezi testul pe o zi nouă, mai jos).
 Pe această calibrare strategiile au fost reevaluate doar pe seed-urile 1–5, fără reantrenarea agenților (§ 9.8):
@@ -62,7 +62,7 @@ actuated) și −1,3% cu participanți disciplinați.
 **Testul pe o zi nouă (§ 9.9).** Înregistrarea din 21–22.10 s-a dovedit sacadată, deci zilele acelea sunt subnumărate
 (§ 4.6). Prima zi lucrătoare înregistrată continuu este luni 26.10, cu un vârf de ≈5 000 veh/h prin piață. Geamănul a
 fost calibrat ca să treacă acest debit (timpul de reacție al șoferilor 0,8 s, ales pe vârful aceleiași zile, § 6.4).
-Ziua de luni nu a fost folosită la antrenare sau la alegerea strategiilor. Pe ea, agentul oficial reantrenat pe
+Până la acest test, ziua de luni nu fusese folosită la antrenare sau la alegerea strategiilor. Pe ea, agentul oficial reantrenat pe
 cererea calibrată (E13) dă **−9,5% / −9,7%** față de planul fix (participanți indisciplinați / disciplinați; p ≤ 0,001
 la ambele teste). Câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu participanți
 indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Programul realist dă −3,9% (nesemnificativ) /
@@ -70,7 +70,7 @@ indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Prog
 protocolul fixat dinainte în § 9.9. Reantrenarea lui pe ziua de luni (E14) nu l-a întrecut (§ 9.5). O grilă de
 23 de planuri fixe pe geamănul calibrat arată că ciclurile scurte câștigă: planul 12/14/12 (ciclu ≈53 s) dă pe validare
 −9,3% față de planul fix, la nivelul lui E13 (diferență nesemnificativă). Intră în test ca referință raportată; verzile
-lui de 10–14 s sunt însă la limita timpului de degajare a pietonilor, pe care modelul nu îl impune (§ 10). Din 28.10,
+lui de 12–14 s sunt însă la limita timpului de degajare a pietonilor, pe care modelul nu îl impune (§ 10). Din 28.10,
 geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
 live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
 
@@ -85,8 +85,9 @@ live, antrenarea și testele. Rezultatele obținute înainte rămân în documen
 
 Câștigul depinde de nivelul real al cererii și de disciplina participanților: de la nesemnificativ (marginea de jos) la
 ≈7% (marginea de sus) și ≈16% cu indisciplina ipotetică. Scenariile `zi_*` și `indisciplinat_*` din arbore folosesc,
-din 26.10, cererea calibrată pe numărătoarea de referință (vârful zilelor lucrătoare ≈2 520–2 560 veh/h, § 5.1, § 5.4), nu
-cele pe care s-au obținut cifrele de mai sus. Pentru a le reproduce:
+din 26.10, cererea calibrată pe numărătoarea de referință (vârful din 21–22.10 ≈2 520–2 560 veh/h, cel de luni ≈5 000;
+§ 5.1, § 5.4) și, din 28.10, capacitatea calibrată (§ 6.4), nu cele pe care s-au obținut cifrele de mai sus. Pentru a
+le reproduce:
 - marginea de jos: `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json`;
 - marginea de sus: `git checkout 7a79502 -- sumo/scenarios sumo/demand config/demand.json`;
 - revenire: `git checkout HEAD -- sumo config/demand.json` (fișierele adăugate după acel commit, de exemplu
@@ -106,10 +107,10 @@ pe seed-urile de test 1–5, p = 0,32; § 9.2, § 9.5). În geamănul live comut
 | realist (participanți indisciplinați) | agentul oficial (`ppo_romana`) | agentul E3 | agentul E3 | evaluare; geamănul live (implicită, `"realist"` în `live_twin.py`) |
 
 - Pe calibrările anterioare (geamănul cu capacitate implicită), cu participanți disciplinați, în zilele lucrătoare,
-  un singur agent AI nu bătea un plan fix bine reglat; pe ziua de luni, cu capacitatea calibrată, E13 singur dă −9,7%
-  (§ 9.9). Cifrele de atunci: oficialul +5,4% / +3,8% la marginea de sus / de jos (§ 9.2); duminică, la marginea de
-  sus, agenții singuri au câștigat −4,9…−6,5% (§ 9.3); cu participanți indisciplinați, E3 singur dădea −14,1%, până
-  la −28,0% la vârf (§ 9.4).
+  un singur agent AI nu bătea un plan fix bine reglat; pe ziua de luni, cu capacitatea calibrată, E13 singur dă −9,7%,
+  dar planul fix scurt 12/14/12 ajunge pe validare la nivelul lui (§ 9.9). Cifrele de atunci: oficialul +5,4% / +3,8%
+  la marginea de sus / de jos (§ 9.2); duminică, la marginea de sus, agenții singuri au câștigat −4,9…−6,5% (§ 9.3);
+  cu participanți indisciplinați, E3 singur dădea −14,1%, până la −28,0% la vârf (§ 9.4).
 - Agentul oficial dădea −4,6% cu zonele inițiale ale camerei și +5,2% pe datele renumărate; agentul pentru piață plus
   4 vecini a dat +35,4% (22.10, zonele inițiale; date brute în commitul `f1c0150`) (§ 9.5).
 - La vârf, pe geamănul cu capacitate implicită, 50–78% din timpul vehiculelor oprite sau neintroduse era coada de pe
@@ -135,16 +136,16 @@ scripts\0_instalare.bat
 |---|---|
 | Doar dacă `pip` a afișat erori (scriptul scrie „Instalare terminata.” chiar și atunci), de regulă pe Python 3.14+ (`0_instalare.bat` creează `.venv` cu `py -3`, cel mai nou Python 3 al lansatorului, sau cu `python` din PATH): mediul refăcut pe 3.12 | `py -3.12 -m venv --clear .venv`, apoi `.venv\Scripts\python -m pip install -r requirements.txt` |
 | Prânzul din 21.10 (scenariul din arbore, cu cererea calibrată din 26.10, reevaluată în § 9.8) cu planul fix, Max-Pressure și agentul oficial, seed-urile 1–5 (câteva minute; scrie doar în `outputs/demo`) | `scripts\9_demo_comparatie.bat` |
-| Agentul E3 la vârful din 22.10 cu participanți indisciplinați (E3 apare în coloana „Agent AI (PPO)”). Scenariul din arbore are cererea calibrată din 26.10 (≈2 560 veh/h, § 5.4), reevaluată în § 9.8: acolo E3 dă −16,1% față de planul fix pe seed-urile 1–5 (≈ −20% ca raport al mediilor, cum o afișează demonstrația). Cifra din § 9.4 (−28,0% pe 10 seed-uri; pe seed-urile 1–5, ≈ −27% ca raport al mediilor) e la marginea de jos: se reproduce după `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json` (revenire: `git checkout HEAD -- sumo config/demand.json`) | `scripts\9_demo_comparatie.bat --scenariu sumo\scenarios\indisciplinat_zi_2026-10-22_varf.sumocfg --model models\ppo_romana_zn3.zip` |
+| Agentul E3 la vârful din 22.10 cu participanți indisciplinați (E3 apare în coloana „Agent AI (PPO)”). Scenariul din arbore are cererea calibrată din 26.10 (≈2 560 veh/h, § 5.4) și, din 28.10, capacitatea calibrată (§ 6.4), deci nu mai reproduce § 9.8. Acolo, cu tipurile de vehicule vechi (`git checkout 75592d3 -- sumo/demand/vtypes.add.xml sumo/demand/vtypes_indisciplinat.add.xml`; revenire: `git checkout HEAD -- sumo/demand`), E3 dă −16,1% față de planul fix pe seed-urile 1–5 (≈ −20% ca raport al mediilor, cum o afișează demonstrația). Cifra din § 9.4 (−28,0% pe 10 seed-uri; pe seed-urile 1–5, ≈ −27% ca raport al mediilor) e la marginea de jos: se reproduce după `git checkout e1d0f77 -- sumo/scenarios sumo/demand config/demand.json` (revenire: `git checkout HEAD -- sumo config/demand.json`) | `scripts\9_demo_comparatie.bat --scenariu sumo\scenarios\indisciplinat_zi_2026-10-22_varf.sumocfg --model models\ppo_romana_zn3.zip` |
 | SUMO-GUI: vârful din 21.10 cu agentul oficial, apoi cu planul fix | `scripts\8_simulare_gui.bat`, apoi `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` |
 | Cele 37 de teste automate (numărarea, statisticile pe perechi, validarea, scenariile indisciplinate, referința, calibrarea camerei) | `set PYTHONPATH=src`, apoi `.venv\Scripts\python -m unittest discover tests` (PowerShell: `$env:PYTHONPATH="src"`) |
 | Reproducerea statisticilor din § 9 și a calibrării (§ 11.8), ex. programul realist din § 9.4 | `.venv\Scripts\python -m romana.control.analiza docs\rezultate\robustete_indisciplinat.csv docs\rezultate\robustete_indisciplinat_6_10.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3` |
-| O evaluare scurtă. **Atenție:** evaluarea rescrie `docs/rezultate/rezultate_brute.csv`, `rezultate.md` și graficul (refacere: `git checkout -- docs/rezultate`). Fără `--scenarii`, evaluarea ia toate cele 35 de fișiere din `sumo/scenarios` și se oprește imediat cu `FileNotFoundError` la scenariile `indisciplinat_*` (nu au `od_estimat.json`, cerut de planul Webster; folosesc rutele scenariilor `zi_*`); dați întotdeauna explicit scenariile `zi_*` / `referinta_*`, ca în comanda alăturată (cu toate cele 19 strategii – 4 clasice + 15 modele: 19 × 5 = 95 de simulări pe scenariu) | `scripts\5_evalueaza.bat --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategii fix_referinta rl_ppo --model models\ppo_romana.zip --seeds 1` |
+| O evaluare scurtă. **Atenție:** evaluarea rescrie `docs/rezultate/rezultate_brute.csv`, `rezultate.md` și graficul (refacere: `git checkout -- docs/rezultate`). Fără `--scenarii`, evaluarea ia toate cele 71 de fișiere din `sumo/scenarios` și se oprește imediat cu `FileNotFoundError` la scenariile `capacitate_*` și `indisciplinat_*` (nu au `od_estimat.json`, cerut de planul Webster; folosesc rutele scenariilor `zi_*`); dați întotdeauna explicit scenariile `zi_*` / `referinta_*`, ca în comanda alăturată (cu toate cele 22 de strategii – 4 clasice + 18 modele: 22 × 5 = 110 simulări pe scenariu) | `scripts\5_evalueaza.bat --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategii fix_referinta rl_ppo --model models\ppo_romana.zip --seeds 1` |
 | Antrenarea unui agent nou: dați un `--nume` nou (altfel se suprascrie `models/ppo_romana.zip`) și scenariile explicit (implicit intră toate, inclusiv duminica și `indisciplinat_*`; `cmd.exe` nu expandează `*`) | `scripts\4_antreneaza_ai.bat --nume test --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg sumo\scenarios\zi_2026-10-22_varf.sumocfg` |
-| Sistemul live, cu camera: viziunea, geamănul SUMO-GUI și dispeceratul (localhost:8050). La prima rulare se descarcă ponderile YOLO11 și se exportă local în OpenVINO. `config/camera.json` e setat pentru o placă grafică Intel (`"device": "intel:gpu"`); fără ea, `"intel:cpu"` sau ștergeți cheia; cu NVIDIA: întâi PyTorch cu CUDA de pe https://pytorch.org în `.venv` (cum indică `0_instalare.bat`), apoi `"runtime": "pytorch"` și `"device": "0"`. La prima rulare geamănul pornește în modul „Agent AI” (apoi în ultimul mod confirmat, păstrat în `outputs/live/command.json`) și își generează o singură dată rutele candidate (`sumo/demand/candidate*.rou.xml`, neversionate), deci prima pornire durează mai mult; „Program pe tipuri de trafic” se alege din dispecerat și se confirmă (descrierea de pe buton e încă a unei variante vechi) | `scripts\PORNESTE_TOT.bat` |
+| Sistemul live, cu camera: viziunea, geamănul SUMO-GUI și dispeceratul (localhost:8050). La prima rulare se descarcă ponderile YOLO11 și se exportă local în OpenVINO. `config/camera.json` e setat pentru o placă grafică Intel (`"device": "intel:gpu"`); fără ea, `"intel:cpu"` sau ștergeți cheia; cu NVIDIA: întâi PyTorch cu CUDA de pe https://pytorch.org în `.venv` (cum indică `0_instalare.bat`), apoi `"runtime": "pytorch"` și `"device": "0"`. La prima rulare geamănul pornește în modul „Agent AI” (apoi în ultimul mod confirmat, păstrat în `outputs/live/command.json`) și își generează o singură dată rutele candidate (`sumo/demand/candidate*.rou.xml`, neversionate), deci prima pornire durează mai mult; „Program pe tipuri de trafic” se alege din dispecerat și se confirmă | `scripts\PORNESTE_TOT.bat` |
 
 Fluxul aparține unei camere terțe: doar uz academic, fără redistribuirea imaginilor; sistemul scrie pe disc doar
-previzualizarea estompată, suprascrisă continuu (§ 4.5, § 14.1). Pașii completi sunt în § 11.4 (pentru
+previzualizarea estompată, suprascrisă continuu (§ 4.5, § 14.1). Pașii compleți sunt în § 11.4 (pentru
 `routeSampler` instalați și `scipy`, § 11.7). Proiectul a fost testat doar pe Windows.
 
 ## Structura repository-ului
@@ -154,8 +155,8 @@ previzualizarea estompată, suprascrisă continuu (§ 4.5, § 14.1). Pașii comp
 | `src/romana/` | `vision/` (detecție, urmărire, numărare O–D, renumărare, numărătoarea de referință `referinta.py`, calibrarea camerei pe rețea `calibrare_camera.py`), `bridge/` (estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați `indisciplinat.py`, geamănul live), `network/` (rețeaua din OSM), `control/` (controlerul sigur de semafor, mediul RL, PPO, liniile de bază, evaluarea, validarea pe seed-uri `validare.py`, statisticile pe perechi `analiza.py`, localizarea întârzierilor la vârf `localizare.py`, demonstrația, SUMO-GUI, exportul NumPy), `dashboard/` (dispeceratul), `iot/` (gol; MQTT opțional în `vision/run_vision.py --mqtt`), `common.py`, `atribuire_osm.py`, `doc_pdf.py` |
 | `config/` | `camera.json` (fluxul, detectorul, zonele), `network.json` (semafoarele, grupurile de semnal, fazele), `demand.json` (cererea și calibrarea ei) |
 | `data/` | `counts/` (numărători la 15 min; pietonii doar aici, agregat), `trajectories/` (traiectoriile vehiculelor, fără imagini și identificatori), `osm/` (extrasul OpenStreetMap) |
-| `sumo/` | `net/` (rețeaua), `demand/` (un dosar pentru fiecare scenariu `zi_*` și `referinta_*` – scenariile `indisciplinat_*` folosesc aceleași dosare `zi_*`, cu `vtypes_indisciplinat.add.xml` –, plus `vtypes.add.xml` și `zi_*_rezumat.json`; unele dosare păstrează fișiere vechi – contează doar ce listează `.sumocfg`), `scenarios/` (`zi_*` = date reale, cu cererea calibrată din 26.10, § 5.4; `indisciplinat_*` = testul de robustețe, pe rutele scenariilor `zi_*`; `referinta_*` = scenariile ipotetice inițiale; scenariile marginilor de jos și de sus, pe care s-au obținut rezultatele, sunt în istoricul git, la `e1d0f77` / `7a79502`) |
-| `models/` | 15 agenți PPO: `.zip` (Stable-Baselines3; conține pickle – doar din surse de încredere), `.npz` (aceeași politică, preferată la rulare, fără PyTorch; lipsește la două), `.json` (scenariile, hiperparametrii, setările citite la rulare). Programul folosește `ppo_romana`, `ppo_romana_zn3` (E3), `ppo_romana_lejer` (E9); restul sunt experimente (§ 9.5) |
+| `sumo/` | `net/` (rețeaua), `demand/` (un dosar pentru fiecare scenariu `zi_*` și `referinta_*` – scenariile `indisciplinat_*` folosesc aceleași dosare `zi_*`, cu `vtypes_indisciplinat.add.xml` –, plus `vtypes.add.xml` și `zi_*_rezumat.json`; unele dosare păstrează fișiere vechi – contează doar ce listează `.sumocfg`), `scenarios/` (`zi_*` = date reale, cu cererea calibrată din 26.10, § 5.4; `indisciplinat_*` = testul de robustețe, pe rutele scenariilor `zi_*`; `referinta_*` = scenariile ipotetice inițiale; `capacitate_*` = rutele scenariilor `zi_*` din 25–26.10, cu `vtypes_capacitate*.add.xml` (din 28.10, aceleași valori ca `vtypes.add.xml` / `vtypes_indisciplinat.add.xml`), păstrate pentru reproducerea § 9.9 și a validării E14 (§ 6.4); scenariile marginilor de jos și de sus, pe care s-au obținut rezultatele, sunt în istoricul git, la `e1d0f77` / `7a79502`) |
+| `models/` | 19 agenți PPO: `.zip` (Stable-Baselines3; conține pickle – doar din surse de încredere), `.npz` (aceeași politică, preferată la rulare, fără PyTorch; lipsește la trei), `.json` (scenariile, hiperparametrii, setările citite la rulare). Programul folosește `ppo_romana`, `ppo_romana_zn3` (E3), `ppo_romana_lejer` (E9); restul sunt experimente (§ 9.5) |
 | `scripts/` | de la `0_instalare` la `10_documentatie_pdf` (`8_`, `9_` = demonstrații), `PORNESTE_TOT`, `_mediu.bat` (`.venv` și `PYTHONPATH=src`) |
 | `docs/` | `DOCUMENTATIE.md` / `.pdf`; `rezultate/` (evaluările și validările – Anexa A; cele mai vechi sunt în istoricul git; `rezultate/referinta/` = numărătoarea de referință din 26.10, fără imagini); `antrenare/` (jurnale din Borna 4, ale unor modele scoase între timp); `corespondenta_commituri.txt` (§ 12.5) |
 | `tests/`, `legacy/` | testele (numărarea, statisticile, validarea, scenariile indisciplinate, referința, calibrarea camerei); ciorna inițială (până la 18.10.2026), cu raportul de audit |
@@ -176,7 +177,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Puține date | patru zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14) și luni 26.10 (de la 09:11), înregistrate continuu. Testele pe zile noi: duminica (§ 9.3) și lunea (§ 9.9); miercuri 28.10 e testul prevăzut de protocolul din § 9.9 (marți 27.10 e înregistrată doar noaptea, 00:00–06:04) |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
 | Geamănul live | simulează participanți disciplinați; comutarea lui automată nu a fost evaluată: cifrele programului sunt compuse din rulările componentelor, după tipul scenariului |
-| Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
+| Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; pentru cele marcate „tipurile vechi”, doar tipurile de vehicule din `75592d3`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
 | Transferul în realitate | agenții observă coada și vehiculele de pe fiecare bandă de intrare și pietonii care așteaptă, exacte în simulare; pe stradă ar trebui detectoare pe fiecare bandă, detecția pietonilor, integrare cu BTMS și validare cu operatorul (§ 10) |
 
 ## Licențe și drepturi
@@ -186,7 +187,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Codul (AGPL obligatorie pentru viziune, care folosește Ultralytics YOLO11, și aleasă pentru tot codul) și modelele (aceeași licență, alegerea autorului) | `src/`, `scripts/`, `tests/`, `config/`, `models/`, `requirements.txt` (harta completă, fișier cu fișier: `REUSE.toml`) | [GNU AGPL v3 sau ulterioară](LICENSE) |
 | Extrasul OSM, rețeaua, cererea, scenariile | `data/osm/`, `sumo/` | [ODbL 1.0](LICENSES/ODbL-1.0.txt), © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright) |
 | Numărătorile și traiectoriile | `data/counts/`, `data/trajectories/`, `docs/rezultate/referinta/clip*/traiectorii/` | ODbL 1.0, © 2026 Niunin Matei-Gabriel, în măsura în care există drepturi |
-| Documentația, rezultatele, acest README | `docs/` (fără traiectoriile de mai sus), `README.md`, `NOTICE`, `.claude/CLAUDE.md` | [CC BY 4.0](LICENSES/CC-BY-4.0.txt); rezultatele și modelele conțin informații din OpenStreetMap, © OpenStreetMap contributors, ODbL 1.0 |
+| Documentația, rezultatele, acest README | `docs/` (fără traiectoriile de mai sus și fără `docs/imagini/`), `README.md`, `NOTICE`, `.claude/CLAUDE.md` | [CC BY 4.0](LICENSES/CC-BY-4.0.txt); rezultatele și modelele conțin informații din OpenStreetMap, © OpenStreetMap contributors, ODbL 1.0 |
 | Ciorna inițială | `legacy/google_ai_draft/` | codul și arhiva `ai_semafor_romana.zip`: GNU AGPL v3 sau ulterioară; fișierele `osm*`: ODbL 1.0, © OpenStreetMap contributors; `build.bat`, `run.bat`, `output.add.xml` (generate de osmWebWizard): [CC0 1.0](LICENSES/CC0-1.0.txt); `README.md`: CC BY 4.0 |
 | Bibliotecile (neincluse; `NOTICE`, § 14.2) | – | Eclipse SUMO: EPL-2.0 OR GPL-2.0-or-later; Ultralytics: AGPL-3.0; Stable-Baselines3, Gymnasium: MIT; OpenCV, OpenVINO: Apache-2.0; Flask, Python-Markdown 3.8.1: BSD-3-Clause; Paho MQTT: EPL-2.0 OR EDL-1.0; PyTorch: licențe permisive |
 
@@ -225,10 +226,10 @@ View, auditul numărării, cererea din intrări și testul cu participanți indi
 model Claude Opus 5.5, prin Claude Code, pe calculatorul autorului. Claude a scris aproape tot codul și documentația și a
 rulat colectarea datelor, antrenarea și evaluarea; commit-urile lui poartă linia `Co-Authored-By: Claude …`.
 
-**Starea proiectului (27.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–27.10 (E10–E13, § 9.5;
+**Starea proiectului (28.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–28.10 (E10–E14, § 9.5;
 calitatea înregistrării, § 4.6; capacitatea geamănului, § 6.4; testul pe ziua de luni, § 9.9).
 Pe 26.10 zonele de numărare au fost refăcute pe o numărătoare de referință (două clipuri adnotate de câte doi
-adnotatori independenți, § 4.3), iar cererea a fost calibrată cu factori de corecție pe braț (§ 5.1); `data/counts` și
+adnotatori AI independenți, instanțe separate ale asistentului Claude, § 4.3), iar cererea a fost calibrată cu factori de corecție pe braț (§ 5.1); `data/counts` și
 scenariile din `sumo/scenarios` au fost refăcute cu cererea calibrată (§ 5.4), iar strategiile au fost reevaluate pe
 ele pe seed-urile 1–5, fără reantrenarea agenților (§ 9.8). Cifrele din tabelul de rezultate provin din calibrările anterioare (datele din 21, 22 și 25.10.2026,
 numărate cu zonele desenate de autor pe 23–24.10; scenariile lor sunt în commiturile `e1d0f77` și `7a79502`);
