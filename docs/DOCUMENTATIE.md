@@ -126,6 +126,14 @@ Fluxul `mono.m3u8` este o listă HLS de segmente `.ts` de 6 s, H.264, 3288 × 18
 `ffprobe` la 20.10.2026). `FrameSource` îl citește prin FFmpeg/OpenCV[^opencv][^ffmpeg] pe un fir separat și
 păstrează doar ultimul cadru; la căderea fluxului se reconectează cu întârziere exponențială (1 s → 30 s).
 
+![Vederea camerei publice din Piața Romană, 28.10.2026, 09:30](imagini/camera_piata_romana.jpg)
+
+*Figura 4.1 – Vederea camerei publice din Piața Romană, miercuri 28.10.2026, 09:30, pe ploaie (sursa: Webcam
+România – https://webcamromania.ro[^webcam]). În prim-plan, Bd. Magheru (stânga) și Bd. Dacia est (dreapta); în
+fundal, Bd. Lascăr Catargiu și clădirea ASE. Persoanele, plăcuțele vehiculelor apropiate și textul publicitar
+suprapus de cameră sunt estompate (§ 4.5). Publicată cu acordul scris al Webcam România din 27.10.2026 (§ 14.1);
+imaginea nu este licențiată de proiect.*
+
 **Camere pentru intersecțiile conexe.** S-au căutat (21.10.2026) toate camerele publice din zona modelată:
 lista Webcam România pentru București (8 camere)[^webcam-buc], Windy Webcams[^windy], Meteoblue[^meteoblue] și
 listele de intersecții supravegheate. Rezultat:
@@ -170,8 +178,12 @@ poligoane – banda de intrare spre piață și banda de ieșire – iar pentru 
 (10 zone de vehicule, plus zonele de trecere pentru pietoni, § 4.4; `config/camera.json`, coordonate normalizate
 0–1, independente de rezoluție). Ieșirile servesc doar la direcții (proporțiile de viraj), nu la volume (§ 5.1).
 
-*Figurile zonelor de numărare și ale câmpului de mișcare al vehiculelor se refac ca scheme proprii, pe fond
-neutru, fără imagini ale camerei.*
+![Zonele de numărare peste captura din figura 4.1](imagini/camera_zone.jpg)
+
+*Figura 4.2 – Zonele de numărare actuale (recalibrate pe 26.10, `config/camera.json`) peste captura din figura
+4.1, fără cer: verde – intrările, din care se iau volumele; portocaliu – ieșirile, folosite doar pentru
+direcții; albastru – trecerile de pietoni (§ 4.4). Sursa imaginii: Webcam România; persoanele, plăcuțele și
+textul publicitar al camerei sunt estompate.*
 
 **Zonele desenate de autor** (23–24.10.2026, folosite până la recalibrarea din 26.10, de mai jos): 16 decupaje pe capturi ale camerei (10 zone de
 vehicule, 6 treceri), localizate automat în cadrul de 3288 px prin potrivire de puncte caracteristice (SIFT) cu
@@ -304,6 +316,14 @@ EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate:
   scrisă pe disc în funcționarea normală este previzualizarea pentru dispecerat (persoanele estompate, redusă la
   960 px, suprascrisă continuu și afișată doar local). Pentru calibrarea zonelor s-au folosit, temporar, capturi
   și scurte clipuri ale camerei, păstrate local și șterse după calibrare; niciuna nu este publicată;
+* singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru (28.10.2026, 09:30). În
+  cadru s-au estompat automat persoanele, bicicliștii și motocicliștii (YOLO11 pe dale suprapuse, cu margine în
+  jurul fiecărei detecții), banda plăcuțelor la vehiculele apropiate și textul publicitar suprapus de cameră.
+  Imaginea publicată a fost apoi verificată vizual pe 9 bucăți, de agenți independenți, în două runde. Prima
+  rundă a găsit 19 locuri scăpate detectorului, mai ales pietoni mici pe trotuarele din fundal, estompate apoi
+  manual. A doua rundă nu a mai găsit nicio persoană sigur neestompată; cele 14 locuri incerte pe care le-a semnalat
+  (forme mici la marginea petelor, posibile siluete îndepărtate) au fost estompate preventiv. Cadrul brut a fost
+  șters;
 * numerele de înmatriculare nu se citesc;
 * ID-urile de urmărire sunt temporare și se uită la închiderea traiectoriei;
 * se publică doar numărători agregate și jurnalul de traiectorii al vehiculelor (inclusiv biciclete și
@@ -316,7 +336,7 @@ Riscul de reidentificare nu este nul: o traiectorie individualizează un obiect 
 legată, în principiu, de alte imagini ale aceleiași camere – cu atât mai mult cu cât momentul de început `t0` este
 păstrat, deocamdată, la precizia de 0,01 s. De aceea traiectoriile nu sunt numite anonime, iar
 licența deschisă a datelor (§ 14.1) nu ar face publicabile date personale. Fișierele `.ts`/`.mp4` sunt excluse
-din Git (`.gitignore`). Versiunea curentă a depozitului și PDF-ul nu conțin cadre ale camerei. Fluxul este
+din Git (`.gitignore`). Depozitul și PDF-ul conțin un singur cadru al camerei, estompat (figurile 4.1 și 4.2). Fluxul este
 public, iar utilizarea este strict academică. Webcam România și-a dat acordul scris pe 27.10.2026 pentru analiza
 automată a fluxului în scop academic și necomercial, cu sursa indicată, și pentru publicarea a cel mult două
 capturi cu persoanele estompate (§ 14.1)[^webcam]. Orice altă utilizare (comercială, alte imagini, persoane
@@ -1542,7 +1562,9 @@ pietonilor (date pseudonimizate, nu anonime). Măsurile, în ordine:
   capturi estompate. **Acordul a venit în scris pe 27.10.2026** (§ 14.1). Curățarea istoricului rămâne justificată:
   capturile vechi aveau persoane neestompate, pe care acordul nu le acoperă. Commit-urile vechi rămân totuși
   accesibile pe GitHub prin referința cererii de actualizare automată a dependențelor (`refs/pull/1/head`), pe care
-  numai GitHub o poate șterge. Cererea autorului către GitHub Support (26.10.2026) așteaptă încă răspuns.
+  numai GitHub o poate șterge. Cererea autorului către GitHub Support (26.10.2026) așteaptă încă răspuns;
+* pe 28.10.2026 s-a publicat, în limitele acordului, un singur cadru estompat, verificat pe bucăți (figurile 4.1
+  și 4.2, § 4.5).
 
 ## 13. Asistență generativă
 
@@ -1663,9 +1685,12 @@ pentru:
 
 Răspunsul nu a indicat alt titular, așa că acordul este al singurei părți identificabile. Dacă operatorul camerei se
 face cunoscut și obiectează, capturile se retrag și analiza fluxului se oprește. Corespondența este păstrată de
-autor. Utilizarea rămâne în limitele acordului: academică, necomercială, cu sursa indicată. Depozitul și PDF-ul nu
-conțin cadre ale camerei: figurile care le foloseau au fost scoase (se refac ca scheme proprii, pe fond neutru), iar
-capturile publicate anterior au fost eliminate și din tot istoricul depozitului (§ 12.5).
+autor. Utilizarea rămâne în limitele acordului: academică, necomercială, cu sursa indicată. Depozitul și PDF-ul
+conțin două imagini dintr-un singur cadru al camerei (28.10.2026, 09:30): `docs/imagini/camera_piata_romana.jpg` și
+`docs/imagini/camera_zone.jpg`, adică figurile 4.1 și 4.2. Persoanele, plăcuțele vehiculelor apropiate și textul
+publicitar suprapus de cameră sunt estompate (§ 4.5), iar sursa este scrisă pe imagine. Imaginile nu sunt licențiate
+de proiect și nu intră sub CC BY 4.0 (`LicenseRef-Toate-drepturile-rezervate`, adnotarea din `REUSE.toml`). Capturile
+publicate anterior, cu persoane neestompate, au fost eliminate din tot istoricul depozitului (§ 12.5).
 
 **Datele de trafic.** Numărătorile și traiectoriile sunt informații factuale, iar „simplele fapte și date” nu
 sunt protejate (art. 9 lit. f) din Legea nr. 8/1996). Licența ODbL se acordă asupra lor în măsura în care există
@@ -1712,7 +1737,7 @@ utilizare ai resurselor folosite efectiv în proiect.
 | Flask | BSD-3-Clause[^flask] |
 | Python-Markdown (exportul PDF) | BSD-3-Clause[^markdown-py] |
 | Eclipse Paho MQTT (client) / Mosquitto (broker opțional, neinclus) | EPL-2.0 OR EDL-1.0 (BSD-3-Clause); proiectul folosește opțiunea EDL-1.0[^mosquitto] |
-| Fluxul video al camerei Piața Romană (sursa: Webcam România) | drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor; analizat în memorie, în scop academic și necomercial, cu acordul scris al Webcam România din 27.10.2026, care permite și publicarea a 1–2 capturi cu persoanele estompate[^webcam][^webcam-termeni] |
+| Fluxul video al camerei Piața Romană (sursa: Webcam România) | drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor; analizat în memorie, în scop academic și necomercial, cu acordul scris al Webcam România din 27.10.2026, care permite și publicarea a 1–2 capturi cu persoanele estompate; folosit: un singur cadru, din 28.10.2026 (figurile 4.1 și 4.2)[^webcam][^webcam-termeni] |
 | Google Street View (doar verificarea vizuală a rețelei, § 10) | Termenii suplimentari Google Maps / Google Earth; nicio informație preluată, nicio captură publicată[^streetview] |
 | Fonturile Barlow și Barlow Semi Condensed (dispecerat, Google Fonts) | SIL Open Font License 1.1; legate, nu incluse[^barlow] |
 | Python 3.12 | PSF-2.0[^python] |

@@ -53,10 +53,13 @@ Excluse din oricare dintre licențele de mai sus (rămân ale titularilor lor):
   și Google, ghidurile OSMF), preluate cu indicarea sursei (art. 35 din Legea nr. 8/1996);
 - subseturile de fonturi Microsoft încorporate în docs/DOCUMENTATIE.pdf;
 - mărcile comerciale menționate;
-- orice imagine din camera Piața Romană: drepturile aparțin operatorului camerei. Capturile publicate
-  anterior au fost eliminate din tot istoricul depozitului pe 26.10.2026 (docs/DOCUMENTATIE.md, § 12.5;
-  docs/corespondenta_commituri.txt); eventualele copii păstrate de terți nu sunt acoperite de licențele
-  proiectului.
+- orice imagine din camera Piața Romană: drepturile aparțin operatorului camerei. Singurele din depozit,
+  docs/imagini/camera_piata_romana.jpg și docs/imagini/camera_zone.jpg (din același cadru, 28.10.2026,
+  reproduse și în docs/DOCUMENTATIE.pdf, figurile 4.1 și 4.2), sunt publicate cu acordul scris al Webcam
+  România (§ 6 de mai jos) și poartă LicenseRef-Toate-drepturile-rezervate (LICENSES/, REUSE.toml).
+  Capturile publicate anterior, cu persoane neestompate, au fost eliminate din tot istoricul depozitului pe
+  26.10.2026 (docs/DOCUMENTATIE.md, § 12.5; docs/corespondenta_commituri.txt); eventualele copii păstrate de
+  terți nu sunt acoperite de licențele proiectului.
 
 Fără garanție: vezi AGPL-3.0 §15–16, ODbL 1.0 §7–8 și CC BY 4.0 §5.
 
@@ -184,11 +187,14 @@ Webcam România și-a dat acordul scris (e-mail, 27.10.2026) pentru analiza auto
 academic și necomercial, cu indicarea sursei („Webcam România – https://webcamromania.ro”), și pentru
 publicarea a 1–2 capturi ale camerei, cu persoanele estompate. Orice altă utilizare cere un acord nou.
 Fluxul este analizat în memorie; pentru previzualizarea locală se suprascrie continuu un singur cadru
-estompat; capturile și clipurile de calibrare se păstrează local, temporar, și nu se publică.
+estompat; capturile și clipurile de calibrare se păstrează local, temporar, și nu se publică. În limitele
+acordului, documentația conține două imagini dintr-un singur cadru (28.10.2026, 09:30): vederea camerei și
+zonele de numărare (docs/imagini/camera_*.jpg), cu persoanele, plăcuțele vehiculelor apropiate și textul
+publicitar suprapus de cameră estompate și cu sursa indicată pe imagine.
 Numărătorile sunt fapte agregate. Traiectoriile (doar ale vehiculelor) sunt fără imagini și fără
 identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu sunt publicate, ci doar
 numărătorile agregate (versiunile vechi care le conțineau au fost eliminate din istoric pe 26.10.2026).
-Depozitul nu conține imagini sau video din cameră. Proiectul nu este
+În afara celor două imagini, depozitul nu conține imagini sau video din cameră. Proiectul nu este
 afiliat cu Webcam România sau cu operatorul camerei și nu este susținut de aceștia.
 
 
