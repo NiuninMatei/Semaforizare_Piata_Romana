@@ -1237,6 +1237,18 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
     revine la programul realist.
   - *Pragurile se reverifică* pe fiecare zi nouă. Dacă ferestrele unei zile se împart altfel între cazuri sau dacă
     un caz ar cere o treaptă intermediară, schimbarea se face doar după o nouă validare, nu pe datele de test.
+  - *Măsura pe persoană (raportată, nu schimbă decizia).* Măsura principală dă aceeași greutate unei ore pierdute de
+    un vehicul și de un pieton, deci un troleibuz plin contează cât un autoturism. Camera nu vede câte persoane
+    sunt într-un vehicul. Pentru liniile din piață nu există nici date publice de ocupare: doar vehiculele STB noi au
+    numărătoare automate de călători, iar restul se estimează din sondaje[^stb-ocupare]. De aceea, de la testul din
+    28.10, simulările păstrează pierderea pe tipuri de participanți (autoturisme, autobuze și troleibuze, camioane,
+    motociclete, bicicliști, pietoni), din aceeași rulare. Măsura pe persoană se calculează apoi cu ocupări declarate
+    (`romana.control.ocupare`): 1,2 persoane pe autoturism, valoarea pentru naveta la orele de vârf[^eea-ocupare], și
+    20, 40 sau 70 de persoane pe autobuz sau troleibuz, adică un sfert, jumătate și trei sferturi din capacitatea
+    unui vehicul de 12 m. Regula se aplică și pe fiecare variantă, ca analiză de sensibilitate: se raportează dacă
+    și cum s-ar schimba câștigătorul. Pe câteva perechi de probă (luni, liniștit ×0,8 și prânz), pietonii au fost
+    ≈63–73% din orele pierdute în măsura principală și ≈37–53% în măsura pe persoană, iar călătorii din autobuze
+    ≈18–44%, după ipoteza de ocupare.
 - **Ce urmează:** geamănul live (`live_twin.py`) primește câștigătorul prin `VARIANTA_PROGRAM`. Variantele `e13`,
   `plan_scurt` și `tod_debit` și pragurile noi au fost implementate înainte de test. Planurile fixe rulează acum
   în geamăn cu duratele exacte, verificate secundă cu secundă; înainte, o verificare la 5 s le rotunjea în sus.
@@ -1403,7 +1415,7 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`) și calibrarea camerei pe rețea (`calibrare_camera.py`) |
 | `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați (`indisciplinat.py`), geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
-| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`), statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`), duratele de verde ale agenților (`durate_verde.py`) și regula „cel mai bun câștigă”, cu cazurile de trafic după debit (`decizie.py`) |
+| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`), statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`), duratele de verde ale agenților (`durate_verde.py`), regula „cel mai bun câștigă”, cu cazurile de trafic după debit (`decizie.py`), și măsura pe persoană, cu ocupări declarate (`ocupare.py`) |
 | `src/romana/dashboard/` | dispeceratul web |
 | `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
 | `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectoriile vehiculelor, fără imagini și fără identificatori – pseudonimizate); licența în `data/LICENTA.txt`; jurnalul complet, cu pietoni, rămâne local în `data/trajectories_brute/` (exclus din Git) |
@@ -1875,6 +1887,8 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^wiki-romana]: Wikipedia, „Piața Romană” și „Piața Romană metro station”, https://en.wikipedia.org/wiki/Pia%C8%9Ba_Roman%C4%83, accesat 20.10.2026. Licență CC BY-SA 4.0. Folosită doar pentru fapte; nu s-a preluat text.
 [^webcam]: Webcam România, „Webcam Piața Romană București – Live din Centrul Capitalei”, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/, accesat 20.10.2026. Flux: https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8. Pagina: © 2016–2026 WebcamRomania.ro. Fluxul: drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor („Termeni și condiții”, secțiunile 2 și 4). Fluxul este analizat doar în memorie; proiectul publică doar două imagini estompate dintr-un singur cadru (figurile 4.1 și 4.2), cu acordul scris al Webcam România din 27.10.2026 (§ 14.1).
 [^tomtom]: TomTom, „Bucharest traffic report – TomTom Traffic Index 2025”, https://www.tomtom.com/traffic-index/city/bucharest/, publicat ianuarie 2026. © TomTom, citare cu atribuire.
+[^eea-ocupare]: European Environment Agency, gradul de ocupare al autoturismelor (indicatorul TERM 029, întrerupt; naveta la orele de vârf: ≈1,1–1,2 persoane pe autoturism), https://www.eea.europa.eu/en/analysis/publications/envissueno12/page029.html, consultat pe 28.10.2026. Conținut EEA, reutilizare cu atribuire.
+[^stb-ocupare]: HotNews, „Care sunt cele mai aglomerate linii de transport public din București. Singura linie pe care se știe exact numărul de călători”, https://hotnews.ro/care-sunt-cele-mai-aglomerate-linii-de-transport-public-din-bucuresti-singura-linie-pe-care-se-stie-exact-numarul-de-calatori-49929; Informat.ro, despre gradul de încărcare afișat în Google Maps din numărătoarele vehiculelor noi, https://informat.ro/en/current-affairs/nicusor-dan-announces-that-the-google-maps-application-can-be-used-to-see-the-degree-of-load-of-means-of-transportation-in-bucharest-24094; consultate pe 28.10.2026, citate doar ca sursă a informației.
 [^pmb-tomtom]: Primăria Municipiului București, „București, pe locul 20 în lume din punct de vedere al traficului…”, https://www.bucuresti.ro/articole/bucuresti-pe-locul-20-in-lume-din-punct-de-vedere-al-traficului-care-este-viteza-medie-cu-care-se-circula-in-oras-1751, 2026.
 [^btms-267]: Business24, „București: extinderea sistemului de trafic – rețea centralizată de intersecții”, https://business24.ro/trafic-inteligent/bucuresti-extindere-sistem-trafic-retea-centralizata-intersectii-1670366, 6.10.2026; B365, https://b365.ro/pmb-anunta-extinderea-sistemului-de-semaforizare-inteligenta-dar-nu-se-spune-si-ce-presupune-aminteste-ca-e-implementat-deja-in-267-de-intersectii-din-bucuresti-622733/. Drepturi rezervate (presă).
 [^buletin-btms]: Buletin de București, „Sistemul de semaforizare inteligentă din București se extinde: patru noi intersecții integrate în BTMS”, https://buletin.de/bucuresti/sistemul-de-semaforizare-inteligenta-din-bucuresti-se-extinde-patru-noi-intersectii-integrate-in-btms-anul-acesta/, 2026; HCL PMB nr. 187/2026.
