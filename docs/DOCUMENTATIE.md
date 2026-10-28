@@ -72,7 +72,7 @@ bicicliști și pietoni.
 | # | Cerință (din tema proiectului) | Cum este îndeplinită |
 |---|---|---|
 | R1 | Preluarea în timp real a datelor de pe camera publică | `vision/stream.py` citește fluxul HLS cu reconectare automată; `run_vision.py` analizează 4–6 cadre/s |
-| R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 11 zone pe trecerile de pietoni (§ 4.4) |
+| R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 10 zone pe trecerile de pietoni, corectate pe 28.10 (§ 4.4) |
 | R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje, pe tipuri de vehicule (inclusiv biciclete); pietoni din numărătorile de pe treceri; trafic de fond doar ca fracțiune declarată |
 | R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale; agenții sunt candidați alături de planurile fixe, în programul pe cazuri de trafic (§ 9.9) |
 | R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe seed-urile de test 1–10 (alegerile pe seed-urile de validare 11–15), pentru toți participanții (vehicule, bicicliști, pietoni); fluidizarea optimă se caută pe cazuri de trafic: fiecare caz primește strategia care câștigă pe el, plan fix sau agent, aleasă pe validare și verificată pe o zi nevăzută (§ 9.9) |
@@ -141,7 +141,7 @@ fluxului se reconectează cu întârziere exponențială (1 s → 30 s).
 
 *Figura 4.1 – Vederea camerei publice din Piața Romană, miercuri 28.10.2026, 09:30, pe ploaie (sursa: Webcam
 România – https://webcamromania.ro[^webcam]). În prim-plan, Bd. Magheru (stânga) și Bd. Dacia est (dreapta); în
-fundal, Bd. Lascăr Catargiu și clădirea ASE. Persoanele, plăcuțele vehiculelor apropiate și textul publicitar
+fundal, Bd. Lascăr Catargiu și clădirea ASE. Persoanele, plăcuțele tuturor vehiculelor și textul publicitar
 suprapus de cameră sunt estompate (§ 4.5). Publicată cu acordul scris al Webcam România din 27.10.2026 (§ 14.1);
 imaginea nu este licențiată de proiect.*
 
@@ -307,6 +307,26 @@ Catargiu, Căderea Bastiliei). În practică, pietonii sunt detectați de încre
 cadrului și parțial ascunsă de chioșc, și mai ales Dacia est): pe trecerile îndepărtate persoanele sunt prea mici
 în imagine pentru detector.
 
+**Corecturile din 28.10 (observațiile autorului)**, făcute înainte de prelucrarea zilei de test. Zonele de vehicule
+au rămas neschimbate.
+- *Mendeleev.* Cele două zone vechi stăteau pe locul unde netconvert ghicește trecerea, adică peste banda cu mașini
+  parcate și taxiuri de pe Str. Mendeleev. Pe 28.10 zona a fost mutată pe zebra marcată din OpenStreetMap (calea
+  1104820827, 10,3 m), proiectată cu modelul camerei (§ 4.3), mai la stânga, lângă colțul clădirii BCR.
+  Pe locul real trecerea e acoperită de un stâlp, de copaci și de mașinile parcate. Pe 28.10 traiectoriile au arătat
+  doar 2 traversări ale străzii în tot cadrul. Pietonii de pe Mendeleev intră deci în cerere doar prin factorul de
+  extrapolare.
+- *Dacia est.* Trecerea dublă e, de fapt, o singură trecere peste bulevard: în OSM, o singură cale de trecere taie
+  ambele carosabile. Între cele două zone rămăsese neacoperită porțiunea din mijloc a zebrei. Pe 28.10, 2 786 de
+  traiectorii de pietoni au trecut prin această porțiune, majoritatea între trotuarul de lângă cameră și cel din
+  dreapta-sus. Zona de peste intrare a fost prelungită până la cea de peste ieșire.
+- *Celelalte treceri din fundal* (Magheru, Dacia vest, Lascăr Catargiu, Căderea Bastiliei) se potrivesc cu nodurile
+  de trecere din OSM proiectate în imagine.
+- *Efectul* pe ziua de luni: traversările numărate cresc cu 6% (14 421 → 15 294), în principal pe Dacia est
+  (5 596 → 6 604). Cele 135 de „traversări” ale zonei vechi de pe Mendeleev erau, cel mai probabil, detecții false.
+
+Jurnalul de traiectorii nu depinde de zone. O corectură a zonelor nu cere deci o colectare nouă: numărătorile se
+refac din jurnal cu `romana.vision.recount`.
+
 * **Pietoni.** Persoanele detectate sunt urmărite cu același ByteTrack. De la 26.10.2026 fiecare trecere are
   zebra reală (poligon + axa de la o bordură la cealaltă) și câte o **zonă de așteptare** la fiecare bordură
   (ideea autorului, restrânsă la proximitatea zebrei, ca să nu fie numărați trecătorii de pe trotuar). Un pieton
@@ -334,7 +354,8 @@ EDPB 3/2019 privind dispozitivele video[^edpb]. Măsurile implementate:
   și scurte clipuri ale camerei, păstrate local și șterse după calibrare; niciuna nu este publicată;
 * singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru (28.10.2026, 09:30). În
   cadru s-au estompat automat persoanele, bicicliștii și motocicliștii (YOLO11 pe dale suprapuse, cu margine în
-  jurul fiecărei detecții), banda plăcuțelor la vehiculele apropiate și textul publicitar suprapus de cameră.
+  jurul fiecărei detecții), banda plăcuțelor la toate vehiculele (la cererea autorului, pentru o imagine uniformă,
+  și la cele îndepărtate, deși plăcuțele lor nu se pot citi) și textul publicitar suprapus de cameră.
   Imaginea publicată a fost apoi verificată vizual pe 9 bucăți, de agenți independenți, în două runde. Prima
   rundă a găsit 19 locuri scăpate detectorului, mai ales pietoni mici pe trotuarele din fundal, estompate apoi
   manual. A doua rundă nu a mai găsit nicio persoană sigur neestompată; cele 14 locuri incerte pe care le-a semnalat
@@ -1191,7 +1212,10 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
   validați, oricare ar fi ea, iar celelalte să rămână în documentație ca încercări. Ideea proiectului se mută astfel
   de la „un agent AI cu orice preț” la cea mai bună combinație implementabilă, pe cazuri de trafic din date reale
   (§ 1, § 2). Schimbarea s-a făcut înaintea oricărei prelucrări a zilei de 28.10. Până atunci se rulase pe ea doar
-  planul fix, pe o oră parțială, ca verificare tehnică a lanțului, fără comparații între strategii.
+  planul fix, pe o oră parțială, ca verificare tehnică a lanțului, fără comparații între strategii. Tot înainte de
+  test, la observația autorului, s-au corectat zonele a două treceri de pietoni: Mendeleev mutată pe zebra reală și
+  Dacia est legată (§ 4.4). Corectura schimbă doar numărul de pietoni, cu ≈ +6%, nu și vehiculele. Zilele 28.10 și
+  29.10 se numără cu zonele noi. Scenariile zilei de validare 26.10 nu s-au refăcut: au cu ≈6% mai puțini pietoni.
   - *Cazurile de trafic se definesc după debitul echilibrat măsurat de cameră* (media dintre intrări și ieșiri, ca în
     `scenarii_zi` și ca în geamănul live): **lejer sub 2 400 veh/h, intens peste 4 100 veh/h, mediu între ele**.
     Pragurile sunt la jumătatea distanței dintre ferestrele zilei de validare: liniștit 1 213, seara 3 502, prânz
@@ -1274,7 +1298,7 @@ fără timpul de degajare a pietonilor (§ 10).
   ca în rețea. Pe brațele pieței nu există parcare pe carosabil, cu excepția străzilor Mendeleev și Căderea
   Bastiliei (verificat de autor în Street View); vehiculele parcate nu sunt modelate în SUMO, iar pe aceste două
   străzi ele ocupă doar marginea, în afara benzii de circulație.
-* **Pietonii** sunt numărați acum pe 11 zone de trecere (3 în prim-plan, 8 proiectate din rețeaua OSM; § 4.4), dar pe trecerile
+* **Pietonii** sunt numărați acum pe 10 zone de trecere (3 în prim-plan, 7 în fundal; § 4.4), dar pe trecerile
   îndepărtate persoanele sunt prea mici în imagine pentru detector; extrapolarea cu un factor declarat (2,5)
   rămâne; traseele lor în simulare sunt plauzibile (drumuri minime prin zona pieței), nu observate.
 * **Intersecțiile vecine** nu au cameră; traficul lor propriu este o fracțiune declarată (15%).
@@ -1609,6 +1633,7 @@ plan fix sau agent AI, nu cu un singur agent impus dinainte (§ 1). Înainte de 
 | P6 | Programul live comuta după intrările camerei, iar pragurile erau pe altă unitate | comutarea pe aceeași măsură ca scenariile (§ 9.2) |
 | O16 | Fluidizarea cere un ansamblu de planuri / agenți pe cazuri de trafic, nu un singur agent; cel mai bun câștigă (28.10) | regula „cel mai bun câștigă”, cazurile după debit (2 400 / 4 100 veh/h), variantele noi din geamănul live, fixate înainte de testul din 28.10 (§ 9.9); pragurile se reverifică pe fiecare zi nouă |
 | P7 | Pragurile programului live (1 300 / 2 000 veh/h) veneau din zilele subnumărate, iar planurile fixe rulau în geamăn rotunjite la 5 s | pragurile din ziua de validare (2 400 / 4 100); planurile fixe urmărite secundă cu secundă (§ 9.9) |
+| O17 | Plăcuțele tuturor vehiculelor să fie estompate, pentru o imagine uniformă; trecerea de pe Mendeleev stătea peste locul taxiurilor; zona trecerii de pe Dacia est nu era legată (28.10) | plăcuțele estompate la toate vehiculele; Mendeleev mutată pe zebra marcată din OSM; zona de peste intrarea Dacia est prelungită până la cea de peste ieșire, după traiectoriile pietonilor; numărătorile se refac din jurnal, fără colectare nouă (§ 4.4) |
 
 ### 12.3 Bornele
 
@@ -1790,7 +1815,7 @@ Răspunsul nu a indicat alt titular, așa că acordul este al singurei părți i
 face cunoscut și obiectează, capturile se retrag și analiza fluxului se oprește. Corespondența este păstrată de
 autor. Utilizarea rămâne în limitele acordului: academică, necomercială, cu sursa indicată. Depozitul și PDF-ul
 conțin două imagini dintr-un singur cadru al camerei (28.10.2026, 09:30): `docs/imagini/camera_piata_romana.jpg` și
-`docs/imagini/camera_zone.jpg`, adică figurile 4.1 și 4.2. Persoanele, plăcuțele vehiculelor apropiate și textul
+`docs/imagini/camera_zone.jpg`, adică figurile 4.1 și 4.2. Persoanele, plăcuțele tuturor vehiculelor și textul
 publicitar suprapus de cameră sunt estompate (§ 4.5), iar sursa este scrisă pe imagine. Imaginile nu sunt licențiate
 de proiect și nu intră sub CC BY 4.0 (`LicenseRef-Toate-drepturile-rezervate`, adnotarea din `REUSE.toml`). Capturile
 publicate anterior, cu persoane neestompate, au fost eliminate din tot istoricul depozitului (§ 12.5).
