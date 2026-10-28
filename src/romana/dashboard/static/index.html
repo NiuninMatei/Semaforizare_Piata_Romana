@@ -97,7 +97,7 @@ footer a{color:inherit;text-decoration:underline}
         <button data-mod="fix">Plan fix</button>
         <button data-mod="max_pressure">Max-Pressure</button>
         <button data-mod="manual">Manual</button>
-        <button data-mod="program" style="grid-column:1/-1" title="Programul realist: agentul AI oficial la trafic lejer, agentul E3 la trafic moderat și greu (documentația § 9.2, § 9.4)">Program pe tipuri de trafic</button>
+        <button data-mod="program" style="grid-column:1/-1" title="Programul pe cazuri de trafic (după debitul măsurat de cameră): varianta aleasă după regula „cel mai bun câștigă” (documentația § 9.9); până la test, programul realist – agentul AI oficial la trafic lejer, agentul E3 la trafic mediu și intens">Program pe cazuri de trafic</button>
       </div>
       <div class="manual" id="manual"><p class="sub" style="margin:10px 0 6px">Alegeți faza verde. Galbenul și roșul de degajare se aplică automat.</p><div class="faze" id="faze"></div></div>
       <div class="confirm" id="confirm" role="alertdialog" aria-live="assertive">
@@ -114,7 +114,7 @@ footer a{color:inherit;text-decoration:underline}
 <footer>Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, persoanele estompate, afișată doar local. Hartă și rețea: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0 OR GPL-2.0-or-later). <a href="https://github.com/NiuninMatei/Semaforizare_Piata_Romana">Cod sursă</a> (GNU AGPL v3).</footer>
 <script>
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
-const MOD={ai:"Agent AI (PPO)",fix:"Plan fix (N–S / E–V / pietoni)",max_pressure:"Max-Pressure",manual:"Manual",program:"Program pe tipuri de trafic",plan_lung:"plan cu ciclu lung 46/48/12 s",ai_pranz:"agentul E3, trafic moderat",ai_lejer:"agentul E9, trafic lejer"};
+const MOD={ai:"Agent AI (PPO)",fix:"Plan fix (N–S / E–V / pietoni)",max_pressure:"Max-Pressure",manual:"Manual",program:"Program pe cazuri de trafic",plan_lung:"plan cu ciclu lung 46/48/12 s",ai_pranz:"agentul E3, trafic mediu și intens",ai_lejer:"agentul E9, trafic lejer",ai_e13:"agentul E13 (oficialul reantrenat)",plan_scurt:"plan fix scurt 12/14/12 s",plan_mediu:"plan fix 16/10/12 s, trafic lejer și mediu"};
 // geometrie aproximativă: unghiuri reale ale brațelor (nord sus)
 const BRATE={catargiu:[-130,"in"],caderea_bastiliei:[-80,"out"],dacia_est:[0,"in"],magheru:[100,"in"],mendeleev:[140,"out"],dacia_vest:[180,"in"]};
 const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],[],["magheru","catargiu","dacia_est","dacia_vest"],["magheru","catargiu","dacia_est","dacia_vest"]];

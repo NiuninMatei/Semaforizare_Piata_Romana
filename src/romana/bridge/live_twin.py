@@ -28,15 +28,25 @@ from romana.control.signals import SignalController, romana_green_phases
 
 LIVE = OUTPUT_DIR / "live"
 SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă în SUMO-GUI
-# programul pe tipuri de trafic (docs/DOCUMENTATIE.md § 9.6): sub PRAG_LEJER veh/h intrați în piață → agentul AI,
-# între praguri → planul de referință, peste PRAG_GREU → planul cu ciclu lung (verde N–S, E–V, pietoni, s)
-PRAG_LEJER, PRAG_GREU = 1300, 2000
-# varianta programului: "realist" (implicit; ales pe validare cu participanți indisciplinați, § 9.4) sau
-# "marginea_sus" (participanți disciplinați: E9 / E3 / planul 46/48/12, § 9.2)
+# programul pe cazuri de trafic (docs/DOCUMENTATIE.md § 9.9): cazul se alege după debitul echilibrat măsurat de
+# cameră (media dintre intrări și ieșiri, veh/h): lejer sub PRAG_LEJER, intens peste PRAG_GREU, mediu între ele.
+# Pragurile vin din ziua de validare, luni 26.10, înregistrată continuu (cele vechi, 1 300 / 2 000, veneau din zilele
+# subnumărate 21–22.10, iar cu debitele de acum ar fi pus aproape toată ziua la „intens”)
+PRAG_LEJER, PRAG_GREU = 2400, 4100
+# varianta programului (aleasă după testul din § 9.9, regula „cel mai bun câștigă”):
+#   "realist"      – agentul oficial la trafic lejer, E3 la mediu și intens (în vigoare până la test, § 9.4);
+#   "e13"          – agentul E13 singur (oficialul reantrenat pe cererea calibrată, § 9.5);
+#   "plan_scurt"   – planul fix 12/14/12, cel mai bun plan unic din grila pe geamănul calibrat;
+#   "tod_debit"    – planuri fixe pe cazuri: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens;
+#   "marginea_sus" – participanți disciplinați: E9 / E3 / planul 46/48/12 (§ 9.2, istoric)
 VARIANTA_PROGRAM = "realist"
 PLAN_LUNG = (46, 48, 12)
+PLAN_SCURT = (12, 14, 12)
+PLAN_MEDIU = (16, 10, 12)
+PLANURI_FIXE = {"plan_lung": PLAN_LUNG, "plan_scurt": PLAN_SCURT, "plan_mediu": PLAN_MEDIU}   # verde N–S, E–V, pietoni (s)
 MODEL_PRANZ = MODELS_DIR / "ppo_romana_zn3.zip"   # agentul E3, cel mai bun la trafic moderat (prânz)
-MODEL_LEJER = MODELS_DIR / "ppo_romana_lejer.zip"  # agentul E9, specialistul de trafic lejer (§ 9.10)
+MODEL_LEJER = MODELS_DIR / "ppo_romana_lejer.zip"  # agentul E9, specialistul de trafic lejer (§ 9.2)
+MODEL_E13 = MODELS_DIR / "ppo_romana_cal.zip"     # agentul E13, oficialul reantrenat pe cererea calibrată (§ 9.5)
 
 
 def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
@@ -128,7 +138,7 @@ def main(argv=None) -> None:
         rl = RLPolicy(Path(args.model))
         rl.reset(traci)
         rl.ctrls = [ctrl]           # aceeași instanță de controler pentru toate modurile
-    rl_pranz = rl_lejer = None      # specialiștii programului pe tipuri de trafic (§ 9.6, § 9.10)
+    rl_pranz = rl_lejer = rl_e13 = None   # componentele programului pe cazuri de trafic (§ 9.2, § 9.9)
     if Path(MODEL_PRANZ).exists():
         rl_pranz = RLPolicy(Path(MODEL_PRANZ))
         rl_pranz.reset(traci)
@@ -137,6 +147,10 @@ def main(argv=None) -> None:
         rl_lejer = RLPolicy(Path(MODEL_LEJER))
         rl_lejer.reset(traci)
         rl_lejer.ctrls = [ctrl]
+    if Path(MODEL_E13).exists():
+        rl_e13 = RLPolicy(Path(MODEL_E13))
+        rl_e13.reset(traci)
+        rl_e13.ctrls = [ctrl]
     from romana.control.controllers import fixed_phase_indices
 
     plan_cycle = fixed_phase_indices()            # planul fix de referință: N–S, E–V, pietoni
@@ -152,7 +166,8 @@ def main(argv=None) -> None:
         while not args.durata or t < args.durata:
             t0 = time.time()
             cam = read_json(LIVE / "state.json", max_age=60)
-            cmd = read_json(LIVE / "command.json") or {"mod": "ai" if rl else "fix"}
+            # fără o comandă din dispecerat, geamănul rulează programul pe cazuri de trafic (varianta aleasă, § 9.9)
+            cmd = read_json(LIVE / "command.json") or {"mod": "program"}
             if cam and cam.get("intrari_veh_h") and cam.get("secunde_interval", 0) >= 60:
                 good_cam, good_t = cam, time.time()
             elif good_cam and time.time() - good_t < 1200:
@@ -213,38 +228,44 @@ def main(argv=None) -> None:
             mode = cmd.get("mod", "ai")
             sub = None
             if mode == "program":
-                # programul pe tipuri de trafic (§ 9.6), după debitul măsurat de cameră la intrările pieței
+                # programul pe cazuri de trafic (§ 9.9), după debitul echilibrat măsurat de cameră
                 tot = debit
                 if VARIANTA_PROGRAM == "realist":
-                    # participanți reali, indisciplinați (§ 9.4): agentul oficial la trafic lejer, E3 la moderat și greu
+                    # participanți reali, indisciplinați (§ 9.4): agentul oficial la trafic lejer, E3 la mediu și intens
                     sub = (("ai" if rl is not None else "fix") if tot < PRAG_LEJER else
                            "ai_pranz" if rl_pranz is not None else "fix")
+                elif VARIANTA_PROGRAM == "e13":
+                    sub = "ai_e13" if rl_e13 is not None else ("ai" if rl is not None else "fix")
+                elif VARIANTA_PROGRAM == "plan_scurt":
+                    sub = "plan_scurt"
+                elif VARIANTA_PROGRAM == "tod_debit":
+                    sub = "plan_mediu" if tot <= PRAG_GREU else "plan_scurt"
                 else:   # "marginea_sus": participanți disciplinați, cererea = media intrări/ieșiri (§ 9.2)
                     sub = (("ai_lejer" if rl_lejer is not None else "ai" if rl is not None else "fix") if tot < PRAG_LEJER else
                            ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
             efectiv = sub or mode
-            if t % 5 == 0:
-                if efectiv == "plan_lung":
-                    if ctrl.current not in plan_cycle:
-                        ctrl.request(plan_cycle[0])
-                    elif ctrl.green_time >= PLAN_LUNG[plan_cycle.index(ctrl.current)]:
-                        ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
-                elif efectiv == "ai" and rl is not None:
+            if efectiv in PLANURI_FIXE or efectiv == "fix":
+                # planurile fixe se urmăresc în fiecare secundă: duratele de verde sunt exact cele evaluate
+                # (o verificare la 5 s le-ar fi rotunjit în sus, de exemplu 12 s → 15 s)
+                durate = PLANURI_FIXE.get(efectiv) or tuple(plan_green[i] for i in plan_cycle)
+                if ctrl.current not in plan_cycle:
+                    ctrl.request(plan_cycle[0])
+                elif ctrl.green_time >= durate[plan_cycle.index(ctrl.current)]:
+                    ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
+            elif t % 5 == 0:
+                if efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
                 elif efectiv == "ai_pranz":
                     rl_pranz.act(traci, t)
                 elif efectiv == "ai_lejer":
                     rl_lejer.act(traci, t)
+                elif efectiv == "ai_e13":
+                    rl_e13.act(traci, t)
                 elif efectiv == "max_pressure" and ctrl.can_switch():
                     p = ctrl.phase_pressure()              # doar fazele planului real (vezi MaxPressure)
                     ctrl.request(max(plan_cycle, key=lambda i: p[i]))
                 elif efectiv == "manual":
                     ctrl.request(int(cmd.get("faza", ctrl.current)))
-                elif efectiv == "fix":
-                    if ctrl.current not in plan_cycle:
-                        ctrl.request(plan_cycle[0])
-                    elif ctrl.green_time >= plan_green[ctrl.current]:
-                        ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
             # o secundă de simulare în SUBPASI pași mici, întinși pe secunda reală: mișcarea apare fluentă,
             # iar controlerul (verde minim, galben, roșu de degajare) rămâne pe secunde întregi
             for k in range(SUBPASI):
