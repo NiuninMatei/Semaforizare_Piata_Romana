@@ -57,6 +57,16 @@ care sistemul propus are întotdeauna un plan fix de rezervă.
 Proiectul arată, la scară academică, lanțul complet pe care îl presupun aceste sisteme: **senzor video →
 date de trafic → model digital al intersecției → decizie automată → supraveghere umană**.
 
+**Întrebarea proiectului.** Pe măsură ce s-au strâns date reale, s-a văzut că nu există o singură strategie bună
+pentru orice trafic (§ 9). De aceea proiectul nu caută un agent AI „cu orice preț”. Caută **cea mai bună combinație
+implementabilă de planuri și agenți pentru cazurile reale de trafic ale pieței**. Fiecare caz (lejer, mediu sau
+intens, după debitul măsurat de cameră) primește strategia care câștigă pe datele lui, iar un selector o activează
+după traficul măsurat. Programul semafoarelor e singurul lucru schimbat; geometria și semafoarele rămân cele reale.
+Candidați sunt deopotrivă planurile fixe clasice, programele din planuri fixe pe cazuri și agenții de învățare prin
+întărire. Câștigă cel mai bun, verificat pe o zi nevăzută, iar ceilalți rămân documentați ca încercări (§ 9.9). În
+calcul intră toți participanții observați pe cameră: autoturisme, autobuze și troleibuze, camioane, motociclete,
+bicicliști și pietoni.
+
 ## 2. Obiective și cerințe
 
 | # | Cerință (din tema proiectului) | Cum este îndeplinită |
@@ -64,8 +74,8 @@ date de trafic → model digital al intersecției → decizie automată → supr
 | R1 | Preluarea în timp real a datelor de pe camera publică | `vision/stream.py` citește fluxul HLS cu reconectare automată; `run_vision.py` analizează 4–6 cadre/s |
 | R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 11 zone pe trecerile de pietoni (§ 4.4) |
 | R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje, pe tipuri de vehicule (inclusiv biciclete); pietoni din numărătorile de pe treceri; trafic de fond doar ca fracțiune declarată |
-| R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale |
-| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe seed-urile de test 1–10 (alegerile pe seed-urile de validare 11–15), pentru toți participanții (vehicule, bicicliști, pietoni) |
+| R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale; agenții sunt candidați alături de planurile fixe, în programul pe cazuri de trafic (§ 9.9) |
+| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe seed-urile de test 1–10 (alegerile pe seed-urile de validare 11–15), pentru toți participanții (vehicule, bicicliști, pietoni); fluidizarea optimă se caută pe cazuri de trafic: fiecare caz primește strategia care câștigă pe el, plan fix sau agent, aleasă pe validare și verificată pe o zi nevăzută (§ 9.9) |
 | R6 | Extindere la intersecțiile principale conexe | varianta „coridor”: Piața Romană + cei 4 vecini imediați care o alimentează, controlați simultan |
 | R7 | Documentație în limba română, cu surse și licențe | acest document; note de subsol; § 14 |
 | R8 | Evoluție vizibilă pe GitHub, pe borne | commit + push la fiecare bornă (§ 12) |
@@ -1152,8 +1162,8 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
   (35 / 60, p = 0,10 / 0,15), adică o diferență nesemnificativă. Pe benzi, validarea alege 16/10/12 la trafic lejer
   și moderat și 12/14/12 la trafic greu. Acest program din planuri fixe (`TOD_FIX`) dă −10,8% față de planul fix și
   −2,3% față de E13 (p = 0,05 / 0,01), dar e ales chiar pe aceste date, deci estimarea e optimistă. Planul 12/14/12
-  și programul `TOD_FIX` intră în test ca **strategii raportate**: E13 se compară și cu ele, dar ele nu pot fi alese,
-  iar regula de decizie de mai jos rămâne neschimbată. Aceste planuri au o limită: verdele de 10–14 s respectă
+  și programul pe benzi intră în test: la început ca strategii raportate, apoi, după decizia autorului de mai jos
+  („cel mai bun câștigă”), ca candidați. Aceste planuri au o limită: verdele de 10–14 s respectă
   verdele minim al controlerului (10 s, § 7.2), dar e aproape de timpul de degajare a pietonilor. Cea mai lungă
   trecere comandată de semaforul pieței are 12,8 m, adică ≈11 s la 1,2 m/s, timp pe care modelul nu îl impune
   separat, nici planurilor fixe, nici agenților (§ 10).
@@ -1168,20 +1178,49 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
   `data/`, dar din ea nu s-au generat scenarii). Se folosesc toate scenariile generate
   de `romana.bridge.scenarii_zi` și `romana.bridge.indisciplinat` pentru 28.10, adică `zi_2026-10-28_*` și `indisciplinat_zi_2026-10-28_*`, cu
   capacitatea calibrată, implicită din 28.10 (§ 6.4). Rularea se face pe seed-urile 1–10 și cu ambele
-  comportamente. Strategiile comparate sunt programul realist, agentul oficial, planul fix, actuated, planul 12/14/12 și `TOD_FIX`.
-  Înainte de scenarii se verifică și continuitatea înregistrării zilei (`romana.vision.calitate`, § 4.6).
-  Joi 29.10, dacă e colectată complet, servește ca zi de confirmare: se raportează, fără să schimbe decizia.
-- **Regula de decizie:** E13 înlocuiește programul realist doar dacă (a) pe toate perechile reunite (ambele
-  comportamente) are diferența medie negativă față de programul realist și testul Wilcoxon bilateral pe perechi dă
-  p < 0,05, și (b) în niciunul dintre comportamente, luat separat, nu iese semnificativ mai slab (Wilcoxon
-  bilateral, p < 0,05, cu diferența medie pozitivă). Pe 26.10, regula ar fi fost îndeplinită. Agentul oficial este
-  raportat, dar nu poate fi ales, pentru că nu este candidatul validării.
-- **Ce urmează dacă E13 trece testul:** geamănul live (`live_twin.py`) trece pe E13. Autorul a aprobat pe 28.10
-  ca trecerea să se facă automat, dacă regula de decizie este îndeplinită, și să fie documentată. Dacă regula nu
-  este îndeplinită, programul realist rămâne. Capacitatea calibrată e deja implicită în geamănul live din 28.10
-  (§ 6.4). Comparația cu planurile fixe din grilă se raportează separat. Dacă un plan fix scurt iese mai bun decât
-  E13, alegerea dintre ele rămâne a autorului, pentru că verzile scurte ar trebui întâi verificate față de timpii de
-  degajare a pietonilor.
+  comportamente. Strategiile comparate sunt programul realist, agentul oficial, E3, E13, planul fix, actuated,
+  planurile 12/14/12 și 16/10/12 și programele din planuri fixe pe benzi (`TOD_FIX` după numele scenariilor,
+  `TOD_DEBIT` după debit). Înainte de scenarii se verifică și continuitatea înregistrării zilei
+  (`romana.vision.calitate`, § 4.6). Joi 29.10, dacă e colectată complet, servește ca zi de confirmare (mai jos).
+- **Regula inițială, pentru E13 (se raportează în continuare):** E13 ar înlocui programul realist dacă (a) pe toate
+  perechile reunite (ambele comportamente) are diferența medie negativă față de programul realist și testul Wilcoxon
+  bilateral pe perechi dă p < 0,05, și (b) în niciunul dintre comportamente, luat separat, nu iese semnificativ mai
+  slab (Wilcoxon bilateral, p < 0,05, cu diferența medie pozitivă). Pe 26.10, regula ar fi fost îndeplinită.
+- **Schimbarea protocolului înainte de test: „cel mai bun câștigă” (decizia autorului, 28.10, ≈12:30).** După
+  rezultatul grilei, autorul a hotărât ca geamănul live să primească cea mai bună strategie dintre candidații
+  validați, oricare ar fi ea, iar celelalte să rămână în documentație ca încercări. Ideea proiectului se mută astfel
+  de la „un agent AI cu orice preț” la cea mai bună combinație implementabilă, pe cazuri de trafic din date reale
+  (§ 1, § 2). Schimbarea s-a făcut înaintea oricărei prelucrări a zilei de 28.10. Până atunci se rulase pe ea doar
+  planul fix, pe o oră parțială, ca verificare tehnică a lanțului, fără comparații între strategii.
+  - *Cazurile de trafic se definesc după debitul echilibrat măsurat de cameră* (media dintre intrări și ieșiri, ca în
+    `scenarii_zi` și ca în geamănul live): **lejer sub 2 400 veh/h, intens peste 4 100 veh/h, mediu între ele**.
+    Pragurile sunt la jumătatea distanței dintre ferestrele zilei de validare: liniștit 1 213, seara 3 502, prânz
+    3 592, vârf 4 653 veh/h. Pragurile vechi ale geamănului live (1 300 / 2 000 veh/h) veneau din zilele
+    subnumărate 21–22.10 și ar fi pus azi aproape toată ziua la „intens”. Pe benzile noi, validarea alege aceleași
+    planuri: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens. Programul rezultat, `TOD_DEBIT`, dă −10,2%
+    față de planul fix și −1,7% față de E13 (Wilcoxon p = 0,02; testul t nesemnificativ).
+  - *Candidații*, fixați înainte de test, de la cel mai simplu la cel mai complex, sunt planul 12/14/12, programul
+    `TOD_DEBIT` și E13. Ei se compară cu strategia în vigoare, programul realist (aceleași benzi după debit).
+  - *Regula* (`romana.control.decizie`): câștigă candidatul cu cea mai mică pierdere totală de timp pe toate
+    perechile din 28.10 (scenariu × seed, ambele comportamente), cu două condiții. (a) Trebuie să fie semnificativ
+    mai bun decât programul realist (Wilcoxon bilateral, p < 0,05, diferența medie negativă). (b) Nu are voie să fie
+    semnificativ mai slab în niciun comportament luat separat. Dacă primii doi candidați eligibili nu se deosebesc
+    semnificativ, câștigă cel mai simplu de pus în practică. Fără niciun candidat eligibil, rămâne programul
+    realist. Pe validare (în eșantion pentru planuri), regula ar alege planul 12/14/12: toți trei bat programul
+    realist, iar planul 12/14/12 și `TOD_DEBIT` sunt la egalitate (p = 0,83).
+  - *Confirmarea pe 29.10*: câștigătorul rămâne în geamănul live, afară de cazul în care pe ziua de confirmare iese
+    semnificativ mai slab decât programul realist (Wilcoxon p < 0,05, diferența medie pozitivă). Atunci geamănul
+    revine la programul realist.
+  - *Pragurile se reverifică* pe fiecare zi nouă. Dacă ferestrele unei zile se împart altfel între cazuri sau dacă
+    un caz ar cere o treaptă intermediară, schimbarea se face doar după o nouă validare, nu pe datele de test.
+- **Ce urmează:** geamănul live (`live_twin.py`) primește câștigătorul prin `VARIANTA_PROGRAM`. Variantele `e13`,
+  `plan_scurt` și `tod_debit` și pragurile noi au fost implementate înainte de test. Planurile fixe rulează acum
+  în geamăn cu duratele exacte, verificate secundă cu secundă; înainte, o verificare la 5 s le rotunjea în sus.
+  Fără o comandă din dispecerat, geamănul pornește acum în modul „program” (înainte: agentul oficial). Cazul se
+  alege live după debitul intervalului curent de 15 minute, deci lângă un prag programul poate comuta mai des decât în
+  evaluare, unde cazul vine din media orei. Autorul a aprobat ca trecerea să se facă automat și să fie documentată. Capacitatea calibrată e deja implicită în
+  geamănul live din 28.10 (§ 6.4). Dacă un plan fix câștigă, verzile lui scurte ar trebui verificate, înainte de o
+  aplicare reală, față de timpii de degajare a pietonilor (§ 10).
 
 Limitele testului din 26.10: o singură zi lucrătoare (10 seed-uri; tabelul de mai sus, pe seed-urile 1–5), iar agenții sunt
 antrenați pe geamănul cu capacitate implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul
@@ -1340,7 +1379,7 @@ participanți indisciplinați, ca în realitate; dispeceratul arată în fiecare
 | `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`) și calibrarea camerei pe rețea (`calibrare_camera.py`) |
 | `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați (`indisciplinat.py`), geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
-| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`), statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`) și duratele de verde ale agenților (`durate_verde.py`) |
+| `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`), statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`), duratele de verde ale agenților (`durate_verde.py`) și regula „cel mai bun câștigă”, cu cazurile de trafic după debit (`decizie.py`) |
 | `src/romana/dashboard/` | dispeceratul web |
 | `config/` | camera și zonele, rețeaua și grupurile de semnal, parametrii cererii |
 | `data/counts/`, `data/trajectories/` | datele reale colectate (numărători agregate și traiectoriile vehiculelor, fără imagini și fără identificatori – pseudonimizate); licența în `data/LICENTA.txt`; jurnalul complet, cu pietoni, rămâne local în `data/trajectories_brute/` (exclus din Git) |
@@ -1543,6 +1582,11 @@ fixat înainte. Reantrenarea pe ziua de luni cu geamănul calibrat (E14) nu a î
 fixe refăcută pe geamănul calibrat a arătat că un ciclu scurt (12/14/12) ajunge pe validare la nivelul lui E13, așa
 că a intrat în test ca referință raportată (§ 9.9).
 
+**Etapa 9 – cel mai bun câștigă (28.10).** Rezultatul grilei a schimbat întrebarea proiectului. Autorul a hotărât
+ca fluidizarea să se construiască pe cazuri de trafic din date reale, cu cea mai bună strategie pe fiecare caz,
+plan fix sau agent AI, nu cu un singur agent impus dinainte (§ 1). Înainte de testul din 28.10 s-au fixat regula
+„cel mai bun câștigă”, cazurile după debitul măsurat de cameră și variantele din geamănul live (§ 9.9).
+
 ### 12.2 Observațiile autorului și corecturile
 
 | # | Observație / problemă | Ce s-a făcut |
@@ -1563,6 +1607,8 @@ că a intrat în test ca referință raportată (§ 9.9).
 | P4 | Fereastra camerei tăia imaginea | fereastră redimensionabilă |
 | P5 | SUMO-GUI pornea cu toată rețeaua | vederea pornește centrată pe piață |
 | P6 | Programul live comuta după intrările camerei, iar pragurile erau pe altă unitate | comutarea pe aceeași măsură ca scenariile (§ 9.2) |
+| O16 | Fluidizarea cere un ansamblu de planuri / agenți pe cazuri de trafic, nu un singur agent; cel mai bun câștigă (28.10) | regula „cel mai bun câștigă”, cazurile după debit (2 400 / 4 100 veh/h), variantele noi din geamănul live, fixate înainte de testul din 28.10 (§ 9.9); pragurile se reverifică pe fiecare zi nouă |
+| P7 | Pragurile programului live (1 300 / 2 000 veh/h) veneau din zilele subnumărate, iar planurile fixe rulau în geamăn rotunjite la 5 s | pragurile din ziua de validare (2 400 / 4 100); planurile fixe urmărite secundă cu secundă (§ 9.9) |
 
 ### 12.3 Bornele
 

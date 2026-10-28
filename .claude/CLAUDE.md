@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (28.10.2026, ~11:00) – capturile publicate, răspunsul Webcam România trimis, grila pe geamănul calibrat, testul pe 28.10
+## Stare curentă (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
 
 - **28.10, ~01:00:** Webcam România și-a dat **acordul scris** (e-mail, 27.10, 20:27): analiza automată în scop
   academic, necomercial, cu sursa „Webcam România – https://webcamromania.ro”, și publicarea a 1–2 capturi cu
@@ -66,9 +66,18 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   `TOD_FIX` (16/10/12 lejer + moderat, 12/14/12 greu) −10,8% / −2,3% (ales pe aceleași date). Intră în test ca
   **strategii raportate** (scratchpad\test28_extra.json, cu `referinte`); regula de decizie neschimbată; dacă un plan
   fix iese mai bun decât E13, alegerea rămâne a autorului (degajarea pietonilor: cea mai lungă trecere 12,8 m, § 10).
+- **28.10, ≈12:30 – decizia autorului: „cel mai bun câștigă”** (ideea proiectului mutată: cea mai bună combinație
+  implementabilă pe cazuri de trafic din date reale, nu un agent AI cu orice preț; § 1, § 2, § 9.9, § 12, README).
+  Cazurile după debitul echilibrat: lejer < 2 400, intens > 4 100 veh/h (din 26.10; de reverificat pe fiecare zi nouă,
+  cerința autorului, eventual o treaptă intermediară – doar după o nouă validare). Candidați: PLAN_12_14_12, TOD_DEBIT
+  (16/10/12 lejer + mediu, 12/14/12 intens), E13; în vigoare: REALIST. Regula: `romana.control.decizie` (cea mai mică
+  pierdere totală; semnificativ mai bun decât REALIST; nesemnificativ mai slab în niciun comportament; la egalitate,
+  cel mai simplu). 29.10 = confirmare (revenire la REALIST doar dacă câștigătorul e semnificativ mai slab).
+  `live_twin.py`: variantele e13 / plan_scurt / tod_debit, pragurile 2 400 / 4 100, planurile fixe urmărite secundă cu
+  secundă; implicit tot "realist" până la decizie. Pe validare, regula ar alege PLAN_12_14_12 (egal cu TOD_DEBIT).
 - **De făcut:** după 29.10 00:15, lanțul scratchpad\test28.py (calitate → recount + --publica → scenarii_zi →
-  indisciplinat → test seed-urile 1–10 cu planurile din grilă → analizele, inclusiv `*_planuri`) → regula → eventual
-  E13 live (`VARIANTA_PROGRAM = "e13"`, eticheta din dashboard, subcapitol nou în cap. 9).
+  indisciplinat → test seed-urile 1–10 → analizele → `romana.control.decizie` → decizie_2026-10-28.json) → setez
+  `VARIANTA_PROGRAM` = varianta_live din JSON, eticheta din dashboard, § 9.10 nou; 30.10 00:15 test29.py (confirmare).
 
 ## Stare anterioară (27.10.2026, ~05:20) – documentație unică, capacitatea geamănului, testul pe ziua de luni (§ 9.9)
 
