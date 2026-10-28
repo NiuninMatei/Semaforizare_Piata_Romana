@@ -1,0 +1,12 @@
+Toate drepturile rezervate titularului.
+
+Se aplică imaginilor docs/imagini/camera_piata_romana.jpg și docs/imagini/camera_zone.jpg (și reproducerii lor
+în docs/DOCUMENTATIE.pdf, figurile 4.1 și 4.2). Ambele provin dintr-un singur cadru al fluxului public al camerei
+din Piața Romană, București, din 28.10.2026, ora 09:30 (sursa: Webcam România – https://webcamromania.ro).
+
+Drepturile asupra imaginilor aparțin operatorului camerei. Imaginile sunt reproduse în acest depozit cu acordul
+scris al Webcam România din 27.10.2026, numai în scop academic și necomercial, cu sursa indicată și cu persoanele
+estompate (de asemenea plăcuțele vehiculelor apropiate și textul publicitar suprapus de cameră).
+
+Imaginile NU sunt licențiate de proiect: nicio licență a depozitului (AGPL-3.0-or-later, CC-BY-4.0, ODbL-1.0,
+CC0-1.0) nu li se aplică. Orice altă reproducere sau utilizare cere acordul titularului drepturilor.

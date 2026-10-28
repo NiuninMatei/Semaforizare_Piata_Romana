@@ -8,7 +8,8 @@ OpenStreetMap (geometria, benzile, sensurile, trecerile și semafoarele rămân 
 clasice de semaforizare cu agenți de învățare prin întărire (PPO); un dispecerat web lasă omul să preia controlul.
 
 > Totul rulează în simulare: proiectul nu comandă niciun semafor real. Nu este afiliat cu Webcam România sau cu
-> operatorul camerei, iar depozitul nu conține imagini din cameră.
+> operatorul camerei. Din cameră, depozitul conține doar două imagini dintr-un singur cadru estompat, publicate cu
+> acordul scris al Webcam România (`docs/imagini/`).
 
 Proiect pentru disciplinele *Interfețe om-calculator* și *Internet of Things* · Universitatea Transilvania din Brașov,
 Facultatea de Matematică și Informatică, Informatică ID, anul III · 2026–2027 · Autor: **Niunin Matei-Gabriel**.
@@ -31,6 +32,12 @@ flowchart LR
   TWIN -->|"starea simulării"| UI
   UI -->|"comenzi: modul de control"| TWIN
 ```
+
+![Zonele de numărare peste un cadru estompat al camerei din Piața Romană](docs/imagini/camera_zone.jpg)
+
+*Zonele de numărare peste un cadru al camerei din 28.10.2026 (§ 4.3). Sursa: Webcam România –
+https://webcamromania.ro. Persoanele, plăcuțele și textul publicitar al camerei sunt estompate. Imaginea nu este
+licențiată de proiect; e publicată cu acordul scris al Webcam România (§ 14.1).*
 
 ## Rezultate pe scurt
 
@@ -59,7 +66,8 @@ Ziua de luni nu a fost folosită la antrenare sau la alegerea strategiilor. Pe e
 cererea calibrată (E13) dă **−9,5% / −9,7%** față de planul fix (participanți indisciplinați / disciplinați; p ≤ 0,001
 la ambele teste). Câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu participanți
 indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Programul realist dă −3,9% (nesemnificativ) /
-−6,4%. Dacă E13 devine implicit se decide pe testul din 28.10, după protocolul fixat dinainte în § 9.9. Din 28.10,
+−6,4%. Pe 10 seed-uri, E13 dă −9,2% / −7,9%. Dacă E13 devine implicit se decide pe testul din 28.10, după
+protocolul fixat dinainte în § 9.9. Reantrenarea lui pe ziua de luni (E14) nu l-a întrecut (§ 9.5). Din 28.10,
 geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
 live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
 
@@ -162,7 +170,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Limită | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare −3,2% (marginea de sus), practic zero la marginea de jos (+0,4%, p = 0,62), −18,4% cu participanți indisciplinați; duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | patru zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14) și luni 26.10 (de la 09:11), înregistrate continuu. Testele pe zile noi: duminica (§ 9.3) și lunea (§ 9.9); marți 27.10 e testul prevăzut de protocolul din § 9.9 |
+| Puține date | patru zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14) și luni 26.10 (de la 09:11), înregistrate continuu. Testele pe zile noi: duminica (§ 9.3) și lunea (§ 9.9); miercuri 28.10 e testul prevăzut de protocolul din § 9.9 (marți 27.10 e înregistrată doar noaptea, 00:00–06:04) |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
 | Geamănul live | simulează participanți disciplinați; comutarea lui automată nu a fost evaluată: cifrele programului sunt compuse din rulările componentelor, după tipul scenariului |
 | Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
@@ -188,13 +196,17 @@ Harta completă, fișier cu fișier (inclusiv `.gitignore`, `.gitattributes`, `.
 istoricul pe 26.10.2026, cu identificatori de commit noi (`docs/corespondenta_commituri.txt`). Webcam România și-a
 dat acordul scris pe 27.10.2026 pentru analiza automată a fluxului în scop academic și necomercial, cu sursa indicată
 („Webcam România – https://webcamromania.ro”), și pentru publicarea a 1–2 capturi cu persoanele estompate (§ 14.1).
+Cu acest acord, `docs/imagini/` conține două imagini dintr-un singur cadru din 28.10.2026, cu persoanele, plăcuțele
+vehiculelor apropiate și textul publicitar al camerei estompate (figurile 4.1 și 4.2). Ele nu intră sub nicio licență a
+proiectului (`LicenseRef-Toate-drepturile-rezervate`).
 
 ## Confidențialitate
 
 Modulul de viziune nu înregistrează video: cadrele sunt analizate în memorie; pe disc rămâne doar ultima
 previzualizare pentru dispecerat (960 px, persoane estompate, suprascrisă continuu, neversionată). Capturile și cele
 două clipuri de 3 minute folosite la calibrarea zonelor și la numărătoarea de referință (26.10) au stat doar local și au
-fost șterse după folosire (§ 4.3, § 4.5). Numerele de înmatriculare nu se citesc. Se publică numărători agregate și
+fost șterse după folosire (§ 4.3, § 4.5). Singurele imagini publicate sunt cele două figuri estompate din
+`docs/imagini/`, verificate pe bucăți înainte de publicare. Numerele de înmatriculare nu se citesc. Se publică numărători agregate și
 traiectoriile vehiculelor (clasa, momentul de început, pozițiile normalizate), fără imagini și identificatori: date
 **pseudonimizate, nu anonime**; ale pietonilor nu se publică (versiunile vechi care le conțineau au fost scoase din
 istoric). Informarea persoanelor vizate (art. 14 GDPR): § 4.5; contact:
