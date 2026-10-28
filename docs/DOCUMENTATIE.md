@@ -924,6 +924,7 @@ afectate (verificat).
 | E10 – E3 reantrenat 200 000 de pași pe scenariile cu participanți indisciplinați (lr 3·10⁻⁵, 26.10) | −6,6% pe validare față de −13,4% (E3); punctele intermediare, la 25 000 de pași distanță, variază între −5,4% și +7,2% (`docs/rezultate/validare_indisciplinat_e10.csv`) | negativ: reantrenarea strică politica E3 în loc s-o îmbunătățească → E3 rămâne |
 | E11 – agent nou de la zero, 1 000 000 de pași, pe scenariile de zi lucrătoare cu participanți disciplinați și indisciplinați amestecați (26.10) | cel mai bun punct intermediar (500 000 de pași) −6,9% pe validarea cu participanți indisciplinați, față de −13,4% (E3); modelul final +4,6% (`docs/rezultate/validare_indisciplinat_e11.csv`) | negativ: nici antrenarea de la zero pe ambele comportamente nu ajunge la E3 |
 | E12 / E13 – E3, respectiv agentul oficial, continuați 300 000 de pași (lr 3·10⁻⁵) pe cele 20 de scenarii calibrate de zi lucrătoare din 21–22.10 (participanți disciplinați și indisciplinați), cu punctele intermediare de la +100 000 și +200 000 de pași ca candidați (noaptea 26–27.10) | pe validarea cu participanți indisciplinați (seed-urile 11–15; medii pe perechi, ca în § 9.8–9.9): E12 (+100 000 de pași, `cand_romana_cal3_100k`) −5,9% față de −2,3% (E3), dar modelul final +1,7%; E13 (final, `ppo_romana_cal`) −9,3% față de −10,1% (agentul oficial, cel mai bun în validare). Media pe scenarii, convenția din `_alegere.json` și din rândurile E10/E11: −6,3% / −3,0% / +1,1% / −9,6% / −10,5%. Pe test (seed-urile 1–5), programul în care fiecare componentă a programului realist e înlocuită cu varianta ei reantrenată (oficialul → E13 la trafic lejer, E3 → E12 în rest), fixat înainte de rulare, dă față de planul fix −6,7% (40/50) cu participanți indisciplinați și −3,9% (37/50) cu disciplinați. Față de programul realist: +1,0% (p = 0,86 / 0,59) și −0,5% (p = 0,22 / 0,25) (`validare_calibrat.csv`, `test_reantrenare_*.csv`) | echivalent statistic cu programul realist → programul realist rămâne; scenariile de antrenare din 21–22.10 sunt subnumărate (§ 4.6) și geamănul avea capacitatea implicită (§ 6.4), deci reantrenarea pe ele nu poate repara vârfurile |
+| E14 – E13 continuat 300 000 de pași (lr 3·10⁻⁵) pe cele 12 scenarii de luni 26.10 cu capacitatea calibrată (participanți disciplinați și indisciplinați), cu punctele intermediare de la +100 000 și +200 000 de pași ca candidați (noaptea 27–28.10) | pe validarea de luni (seed-urile 11–15, ambele comportamente, 60 de perechi; aceeași zi ca la antrenare, deci un test favorabil lui): modelul final −6,3% față de planul fix, față de −7,9% (E13) și −7,6% (agentul oficial); direct față de E13, +2,2% (mai bun în 27 / 60, p = 0,06 / 0,09); punctele intermediare, +4,5% și +5,0% față de E13 (p ≤ 0,03) (`validare_e14.csv`) | negativ: nici reantrenarea pe geamănul calibrat, chiar pe ziua de validare, nu întrece E13 → E14 nu devine candidat, iar protocolul din § 9.9 rămâne cu E13 singur |
 | Grila de 11 planuri fixe (verde N–S × E–V × pietoni) | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** (marginea de sus) |
 
 Lecția metodologică: diferențele de 1–2 puncte își schimbau semnul între seed-urile de validare și cele de test,
@@ -1062,6 +1063,15 @@ lejer = scenariile liniștite, moderat = prânzul, greu = restul. Fișierele sun
 p = testul t pe perechi / testul Wilcoxon. Față de actuated, E13 este mai bun în **toate cele 60 de perechi**
 (−13,2% în ambele comportamente), iar programul realist câștigă −8,3% (24 / 30) și −10,2% (28 / 30).
 
+**Verificarea pe 10 seed-uri.** Seed-urile 6–10, rulate pe 27–28.10, după fixarea protocolului de mai jos
+(`capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv`), păstrează ordinea. Pe cele 60 de perechi
+ale fiecărui comportament, față de planul fix, E13 dă −9,2% cu participanți indisciplinați și −7,9% cu disciplinați
+(mai bun în 53 / 60 în ambele). Agentul oficial dă −8,5% / −6,3%, E9 −6,3% / −7,5%, iar programul realist −3,5%
+(p = 0,84 / 0,53) / −5,0% (p = 0,13 / 0,05). Față de actuated, E13 e mai bun în 117 din 120 de perechi. Față de
+programul realist, E13 dă −5,3% (39 / 60) și −2,5% (33 / 60), iar pe cele 120 de perechi reunite −3,9% (72 / 120,
+p < 0,000001 / 0,000006). Avantajul lui E13 cu participanți disciplinați se îngustează pe seed-urile noi (−7,9% pe
+10 seed-uri, față de −9,7% pe seed-urile 1–5), dar rămâne cel mai bun în ambele comportamente.
+
 Ce arată testul:
 
 1. **Pe o zi nevăzută, cu geamănul care trece debitul real, toți agenții AI bat actuated** (semnificativ, în ambele
@@ -1095,8 +1105,12 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
 - **Candidatul este E13 singur.** Pe 26.10 este cel mai bun cu participanți disciplinați și cel mai constant: mai
   bun decât planul fix în 55 din 60 de perechi, câștigă în toate scenariile. Față de programul realist, pe cele 60 de
   perechi reunite, dă −4,1% (mai bun în 38 / 60, p = 0,0002 / 0,001).
+- **E14, verificat înainte de test (28.10, ≈05:00).** Agentul E14 (E13 continuat pe scenariile de luni cu
+  capacitatea calibrată, § 9.5) a fost validat pe seed-urile 11–15 ale zilei de luni, înainte de prelucrarea zilei
+  de 28.10. Iese mai slab decât E13 (+2,2%, p = 0,06 / 0,09), deci nu devine candidat. Candidatul rămâne E13 singur.
 - **Testul se face pe prima zi lucrătoare nouă colectată complet: miercuri 28.10.** Colectarea zilei de marți 27.10
-  s-a oprit la 06:04, la închiderea calculatorului, deci ziua nu e completă. Se folosesc toate scenariile generate
+  s-a oprit la 06:04, la închiderea calculatorului, deci ziua nu e completă (noaptea 00:00–06:04 e publicată în
+  `data/`, dar din ea nu s-au generat scenarii). Se folosesc toate scenariile generate
   de `romana.bridge.scenarii_zi` pentru 28.10, adică `zi_2026-10-28_*` și `indisciplinat_zi_2026-10-28_*`, cu
   capacitatea calibrată, implicită din 28.10 (§ 6.4). Rularea se face pe seed-urile 1–10 și cu ambele
   comportamente. Strategiile comparate sunt programul realist, agentul oficial, planul fix și actuated.
@@ -1107,12 +1121,15 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
   p < 0,05, și (b) în niciunul dintre comportamente, luat separat, nu iese semnificativ mai slab (Wilcoxon
   bilateral, p < 0,05, cu diferența medie pozitivă). Pe 26.10, regula ar fi fost îndeplinită. Agentul oficial este
   raportat, dar nu poate fi ales, pentru că nu este candidatul validării.
-- **Ce urmează dacă E13 trece testul:** se propune autorului să treacă geamănul live (`live_twin.py`) pe E13.
-  Capacitatea calibrată e deja implicită în geamănul live din 28.10 (§ 6.4). Decizia finală aparține autorului.
+- **Ce urmează dacă E13 trece testul:** geamănul live (`live_twin.py`) trece pe E13. Autorul a aprobat pe 28.10
+  ca trecerea să se facă automat, dacă regula de decizie este îndeplinită, și să fie documentată. Dacă regula nu
+  este îndeplinită, programul realist rămâne. Capacitatea calibrată e deja implicită în geamănul live din 28.10
+  (§ 6.4).
 
-Limitele testului: 5 seed-uri și o singură zi lucrătoare, iar agenții sunt antrenați pe geamănul cu capacitate
-implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul de reacție). Reantrenarea pe
-scenariile de luni și marți cu capacitatea calibrată e pasul următor (§ 10).
+Limitele testului: o singură zi lucrătoare (10 seed-uri; tabelul de mai sus, pe seed-urile 1–5), iar agenții sunt
+antrenați pe geamănul cu capacitate implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul
+de reacție). Reantrenarea pe ziua de luni cu capacitatea calibrată (E14) nu a întrecut E13 (§ 9.5); reantrenarea pe
+mai multe zile rămâne un pas următor (§ 10).
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
@@ -1134,14 +1151,14 @@ scenariile de luni și marți cu capacitatea calibrată e pasul următor (§ 10)
   au pierdut din avantaj (§ 9.3) – reantrenarea periodică pe date noi ar fi necesară într-o utilizare reală.
 * **Comportamentul participanților** din simulare este cel al modelelor SUMO; indisciplina (trecerea pe roșu,
   blocarea intersecției, pietonii pe roșu) este modelată prin tipurile de vehicule din `vtypes_indisciplinat.add.xml`
-  (§ 9.4). Ea e folosită și în § 9.6, § 9.8, § 9.9 și la antrenarea E10–E13, cu parametri aleși, nu măsurați.
+  (§ 9.4). Ea e folosită și în § 9.6, § 9.8, § 9.9 și la antrenarea E10–E14, cu parametri aleși, nu măsurați.
   Traversările prin afara trecerilor nu pot fi modelate în SUMO.
 * **Capacitatea geamănului.** Cu parametrii impliciți ai șoferilor, geamănul trece la intrări cel mult ≈35–45% din
   cât trece geamănul calibrat (§ 6.4). Rezultatele din § 9.1–9.8 sunt obținute așa. Pentru 21–22.10, cererea era
   subnumărată la aproximativ jumătate, deci gradul de saturare era cel puțin cel real, probabil mai mare, iar valorile
   absolute erau mai mici. Duminica 25.10 (§ 9.3, § 9.4), înregistrată continuu, a pus o cerere apropiată de cea reală
   pe geamănul implicit, deci suprasaturat. Testul din § 9.9 și toată munca de după 28.10 folosesc capacitatea
-  calibrată, implicită de atunci; dintre agenți, doar E14 (în lucru) e antrenat pe ea.
+  calibrată, implicită de atunci; dintre agenți, doar E14 e antrenat pe ea, fără câștig față de E13 (§ 9.5).
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
@@ -1170,8 +1187,8 @@ scenariile de luni și marți cu capacitatea calibrată e pasul următor (§ 10)
   comercială (de exemplu într-un produs pentru administrația drumului) ar cere un acord nou.
 
 Lucrări viitoare: testul agentului E13 pe ziua de miercuri 28.10, după protocolul fixat în § 9.9; reantrenarea
-agenților pe scenariile cu capacitatea calibrată (E14, pe ziua de luni, în lucru); refacerea grilei de planuri fixe pe geamănul
-calibrat; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
+agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); refacerea
+grilei de planuri fixe pe geamănul calibrat; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
 pentru transportul public, ponderată cu numărul de călători
 (obiectiv declarat și de PMB); coordonare multi-agent cu atenție pe graf (CoLight); validare pe mai multe zile
 de date; compararea planului fix de referință cu programul real, dacă poate fi obținut de la operator.
@@ -1321,6 +1338,8 @@ cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actu
 | § 9.5, validarea E12 / E13 (−5,9% / −2,3% / +1,7% / −9,3% / −10,1%, medii pe perechi) | `romana.control.analiza docs\rezultate\validare_calibrat.csv --referinte FIX` |
 | § 9.5, programul reantrenat pe test (−6,7% / −3,9% față de planul fix; față de programul realist +1,0% / −0,5%; fără `--strategii`, apar și agenții) | `romana.control.analiza docs\rezultate\calibrat_indisciplinat.csv docs\rezultate\test_reantrenare_indisciplinat.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program REANTRENAT=lejer:ppo_romana_cal,moderat:cand_romana_cal3_100k,greu:cand_romana_cal3_100k --strategii REANTRENAT --referinte FIX REALIST` (la fel pe `calibrat_normal.csv` cu `test_reantrenare_normal.csv`) |
 | § 9.9, toate strategiile pe luni 26.10 față de planul fix și actuated | `romana.control.analiza docs\rezultate\capacitate_indisciplinat_26.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program REANTRENAT=lejer:ppo_romana_cal,moderat:cand_romana_cal3_100k,greu:cand_romana_cal3_100k --pe-scenarii`; rândurile actuated și 46/48/12: `--strategii ACTUATED PLAN_46_48_12 --referinte FIX` (la fel pe `capacitate_normal_26.csv`) |
+| § 9.9, verificarea pe 10 seed-uri (E13 −9,2% / −7,9% față de planul fix; −3,9% față de programul realist pe 120 de perechi) | `romana.control.analiza docs\rezultate\capacitate_indisciplinat_26.csv docs\rezultate\capacitate_indisciplinat_26_6_10.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --referinte FIX REALIST ACTUATED` (la fel cu fișierele `capacitate_normal_26*`; pentru perechile reunite, toate cele patru fișiere și `--referinte FIX REALIST`) |
+| § 9.5 / § 9.9, validarea E14 (−6,3% față de planul fix; +2,2% față de E13) | `romana.control.analiza docs\rezultate\validare_e14.csv --referinte FIX ppo_romana_cal` (o strategie dată ca referință nu mai apare și ca strategie comparată: E13 față de planul fix se obține cu `--referinte FIX`) |
 | Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
 
 **Simulările.** Strategiile și seed-urile sunt exact cele din fișierul publicat; numărul de simulări în paralel se dă
@@ -1338,6 +1357,9 @@ cu `--procese N` (implicit 4).
 | `validare_calibrat.csv` (§ 9.5) | arborele curent, tipurile vechi | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal3.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 11-15 --out outputs\validare\validare_calibrat.csv --compara docs\rezultate\validare_calibrat.csv` |
 | `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` (§ 9.5) | arborele curent, tipurile vechi | `romana.control.validare models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --fara-fix --out outputs\validare\test_reantrenare_indisciplinat.csv --compara docs\rezultate\test_reantrenare_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `test_reantrenare_normal` |
 | `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` (§ 9.9) | arborele curent | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip models\cand_romana_cal3_100k.zip models\ppo_romana_cal.zip --scenarii "capacitate_indisciplinat_zi_2026-10-26_*" --seeds 1-5 --fara-alegere --out outputs\validare\capacitate_indisciplinat_26.csv --compara docs\rezultate\capacitate_indisciplinat_26.csv`; participanți disciplinați: `--scenarii "capacitate_zi_2026-10-26_*"`, cu `capacitate_normal_26` |
+| `capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv` (§ 9.9) | arborele curent | aceeași comandă, cu `--seeds 6-10` și `_26_6_10` în locul lui `_26` în cele două nume de fișier |
+| agentul E14 (§ 9.5) | arborele curent | se copiază `models\ppo_romana_cal.*` în `models\ppo_romana_e14.*`, apoi `romana.control.train --nume romana_e14 --continua --lr 3e-5 --pasi 300000 --medii 8 --scenarii` cu cele 12 fișiere `sumo\scenarios\capacitate_zi_2026-10-26_*.sumocfg` și `capacitate_indisciplinat_zi_2026-10-26_*.sumocfg` (modelele refăcute diferă ușor de cel publicat, ca la E12 / E13) |
+| `validare_e14.csv` (§ 9.5) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_cal.zip models\cand_romana_e14_100k.zip models\cand_romana_e14_200k.zip models\ppo_romana_e14.zip --scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\validare_e14.csv`; punctele intermediare nu sunt publicate: `cand_romana_e14_100k` și `cand_romana_e14_200k` sunt `outputs\train\romana_e14\checkpoints\romana_e14_901344_steps.zip` și `romana_e14_1001344_steps.zip` |
 | `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent, tipurile vechi | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
@@ -1444,7 +1466,8 @@ parametrii impliciți ai șoferilor, nu putea trece traficul de luni. Calibrarea
 (§ 6.4). Reantrenarea agenților pe zilele subnumărate (E12/E13) nu a schimbat alegerea: pe validare, agentul oficial
 a rămas cel mai bun, iar pe test programul reantrenat a ieșit echivalent cu programul realist. Pe ziua de luni,
 nevăzută și cu geamănul calibrat, agenții AI au bătut actuated și, în medie, planul fix. Cel mai constant a fost
-agentul oficial reantrenat, E13 (§ 9.9). Alegerea finală s-a lăsat pe ziua de marți, după un protocol fixat înainte.
+agentul oficial reantrenat, E13 (§ 9.9). Alegerea finală s-a lăsat pe o zi nouă (miercuri 28.10), după un protocol
+fixat înainte. Reantrenarea pe ziua de luni cu geamănul calibrat (E14) nu a întrecut E13 (§ 9.5).
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -1797,6 +1820,8 @@ reface, celelalte da.
 | `validare_indisciplinat_e10.csv`, `validare_indisciplinat_e11.csv` | validarea agenților E10 și E11 (§ 9.5), cu punctele lor intermediare | `e1d0f77` | `romana.control.validare` (punctele intermediare nu sunt publicate) |
 | `validare_calibrat.csv` + `_alegere.json` | validarea agenților E12 și E13 (§ 9.5) pe scenariile calibrate cu participanți indisciplinați, seed-urile 11–15, cu planul fix, actuated, agentul oficial, E3 și câte trei candidați (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent, tipurile vechi | `romana.control.validare` (dintre candidați sunt publicați doar `cand_romana_cal3_100k`, `ppo_romana_cal3` și `ppo_romana_cal`) |
 | `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` | testul pe luni 26.10 cu capacitatea calibrată (§ 9.9): planul fix, actuated, planul 46/48/12, agentul oficial, E3, E9, E12 și E13, seed-urile 1–5 | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
+| `capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv` | aceleași strategii pe seed-urile 6–10, rulate după fixarea protocolului (§ 9.9) | arborele curent | `romana.control.validare --seeds 6-10 --fara-alegere` |
+| `validare_e14.csv` + `_alegere.json` | validarea agentului E14 (§ 9.5) pe luni 26.10, ambele comportamente, seed-urile 11–15: planul fix, actuated, agentul oficial, E3, E13 și trei candidați E14 (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent | `romana.control.validare` (dintre candidați e publicat doar modelul final, `ppo_romana_e14`) |
 | `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
 | `validare_zone_noi`, `validare_e2_e3`, `validare_clasice`, `validare_nou_*`, `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9` (23–25.10), fiecare cu `_alegere.json` unde există | validările pentru marginea de sus (seed-urile 11–13, apoi 11–15), din care s-au ales agenții, planurile și componentele programului; în `_alegere.json`: scorul mediu al fiecărei strategii față de planul fix, strategia aleasă, seed-urile (cele prezente în CSV) și scenariile | `7a79502` | `romana.control.validare` (seed-urile din alegeri corectate cu `--corecteaza-alegeri`; testele pe seed-urile 1–10 nu au fișier de alegere) |
 | `validare_finala.csv` | validarea din 22.10 din care s-a ales agentul oficial (seed-urile 11–13) | `8176be5`, cu codul de atunci | scripturi de lucru, în formatul lui `romana.control.validare` |

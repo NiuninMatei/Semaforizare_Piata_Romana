@@ -1,0 +1,33 @@
+{
+  "scor_mediu_procent": {
+    "ACTUATED": 7.58,
+    "cand_romana_e14_100k": -4.6,
+    "cand_romana_e14_200k": -4.08,
+    "ppo_romana": -7.83,
+    "ppo_romana_cal": -8.04,
+    "ppo_romana_e14": -6.5,
+    "ppo_romana_zn3": -2.73
+  },
+  "ales": "ppo_romana_cal",
+  "seeduri_validare": [
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "scenarii": [
+    "capacitate_indisciplinat_zi_2026-10-26_linistit",
+    "capacitate_indisciplinat_zi_2026-10-26_linistit_x0_8",
+    "capacitate_indisciplinat_zi_2026-10-26_pranz",
+    "capacitate_indisciplinat_zi_2026-10-26_seara",
+    "capacitate_indisciplinat_zi_2026-10-26_varf",
+    "capacitate_indisciplinat_zi_2026-10-26_varf_x1_2",
+    "capacitate_zi_2026-10-26_linistit",
+    "capacitate_zi_2026-10-26_linistit_x0_8",
+    "capacitate_zi_2026-10-26_pranz",
+    "capacitate_zi_2026-10-26_seara",
+    "capacitate_zi_2026-10-26_varf",
+    "capacitate_zi_2026-10-26_varf_x1_2"
+  ]
+}
