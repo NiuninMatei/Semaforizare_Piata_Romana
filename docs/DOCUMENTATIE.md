@@ -220,6 +220,12 @@ de la zero și alese pe măsurători, nu pe aspect:
   desenat pe marcajele reale, pe un fundal median din 90 de cadre (fără vehicule), verificate pe câmpul de mișcare.
   Tot atunci s-a constatat că zona cu dungi din stânga-jos (unde parchează uneori o mașină) este o **zonă hașurată,
   nu o trecere de pietoni** – nu se numără pietoni acolo.
+* *Reverificarea din 29.10* (după testul final, fără nicio schimbare de zone). Pe traiectoriile din 28.10, 94% dintre
+  vehiculele în mișcare ating o zonă de vehicule. Restul sunt fragmente scurte pe inel și ≈100–500 de traiectorii pe zi
+  în colțurile de jos ale cadrului, sub 1%. Pe un fundal median nou (40 de cadre la 2 s, 29.10, ≈09:25, pe ploaie;
+  cadrele au stat doar local și au fost șterse după), toate zonele de vehicule stau pe carosabil, pe benzile sensului
+  lor: intrările pe banda spre piață, ieșirile pe cea dinspre piață. În fundal ele se suprapun cu benzile OSM
+  proiectate. În prim-plan proiecția OSM se abate, ca la calibrare, iar zonele urmează marcajele reale.
 * *Rezultat* (cât din referință prinde numărarea automată pe bucățile adnotate, clipul 1 / clipul 2 – ieșirea
   „prins” a comenzii `referinta factori`, § 11.8): **Dacia vest** 27% / 37% cu zona veche (zonele din commitul
   `e1d0f77`) → **90% / 89%** cu zona nouă (mașinile care ies din bulevard spre cameră, după linia de oprire; zona
@@ -426,19 +432,38 @@ duminica 25.10, înregistrată continuu, părea „mai aglomerată” decât zil
 un semnal care ar fi trebuit să atragă atenția mai devreme. Pentru o colectare nouă: `romana.vision.calitate` pe
 jurnalul zilei, înainte de orice scenariu.
 
-**Imaginea înghețată (28.10, ≈03:40–04:30).** Golurile și densitatea nu văd o imagine înghețată: fluxul livrează
-același cadru, detectorul găsește în fiecare cadru vehiculele parcate, iar traiectoriile rămân dense. Pe 28.10,
-noaptea, s-a întâmplat exact asta (§ 9.10). Pe 15 minute, vehiculele urmărite au scăzut de 4–5 ori, 80–85% dintre
-ele stăteau pe loc, iar durata lor mediană a urcat de la 3–5 s la 20–40 s. Semnul se vede pe jurnalul brut: multe
-traiectorii fixe și puține în mișcare. Avertismentele datate din jurnalul colectării (pauze ale fluxului de 30 s)
-sunt toate din 22:28–22:54, niciunul din 03:30–04:45. Câteva erori de conexiune fără oră nu pot fi plasate în timp.
-Înghețarea a venit deci, cel mai probabil, de la sursă, nu de la conexiune. De pe 29.10, `romana.vision.calitate` caută și acest semn,
-pe intervale de 15 minute (opțiunea `--out-15min` scrie tabelul). Un interval e suspect când are sub 30% din
-vehiculele în mișcare ale intervalelor din jur (±2 h) și cel puțin 75% traiectorii fixe. Pe 28.10 ies suspecte
-exact 03:45, 04:00 și 04:15, iar pe 25.10 și 26.10 niciun interval. Opțiunea `--fara-inghetate` din
-`romana.bridge.scenarii_zi` scoate aceste intervale din alegerea ferestrelor. Pe 28.10, fereastra liniștită s-ar
-muta astfel pe 02:45–03:45, iar pe 26.10 nu se schimbă nimic. Opțiunea e oprită implicit, ca zilele deja prelucrate
-să rămână reproductibile.
+**Prelucrarea încetinită (28.10, 03:46–04:28), nu o imagine înghețată.** În noaptea zilei de test, numărătorile au
+scăzut brusc. Pe 15 minute, vehiculele urmărite au scăzut de 4–5 ori, 80–85% dintre ele stăteau pe loc, iar durata
+lor mediană a urcat de la 3–5 s la 20–40 s. Semnul a fost pus întâi, greșit, pe seama unei imagini înghețate.
+Verificarea directă, cerută de autor pe 29.10 și refăcută independent de doi agenți, arată altceva. Imaginea nu era
+înghețată: pozițiile mașinilor parcate fluctuează ca în orice noapte (un cadru repetat ar da poziții identice de la
+un cadru la altul), autobuze traversează piața la 04:08 și la 04:10, iar nicio traiectorie nu se repetă. Nici strada
+nu era goală: scăderea începe și se termină la minut odată cu rata cadrelor prelucrate. Între 03:46 și 04:28, pasul
+median dintre punctele unei traiectorii a urcat de la ≈0,17 s la ≈0,7 s (≈1,4 cadre/s în loc de 5–6), cu câte o
+pauză de ≈6 s în fiecare minut. La această rată, ByteTrack nu mai leagă vehiculele în mișcare: ele se mută prea mult
+de la un cadru la altul și se rup în fragmente care nu ating zonele. Mașinile parcate rămân urmărite, de unde
+traiectoriile „fixe” și cele 1–7 intrări pe sfert de oră din jurnalul colectării, față de 22–52 înainte. Cauza cea
+mai probabilă e încărcarea calculatorului: validarea E14 (multe simulări în paralel) a rulat între 03:04 și 04:48,
+încetinirea a început ușor pe la 03:00, iar rata normală a revenit pe la 04:45. Cauza nu e sigură: o sacadare a
+fluxului camerei ar arăta asemănător, iar în noaptea de 29.10 un lanț la fel de greu (testul, 00:15–02:27, 11
+procese) a încetinit colectarea doar ușor: pasul median a fost 0,19–0,22 s în loc de 0,17 s, fără niciun interval
+încetinit. La fel, validarea din 28.10, 00:25–01:11.
+
+Episoade de același fel apar și pe 27.10, 01:15–02:45, cu o revenire scurtă pe la 02:15–02:30 (sfertul 02:15 rămâne
+sub prag; tot în timpul calculelor de noapte), pe 26.10, 16:45–17:00, și, mai scurt, pe 25.10, 02:55–03:08 (sub prag,
+pentru că se împarte între două sferturi de oră). Pe 21, 22 și 29.10 (până la 09:15) nu apar. Dintre ferestrele
+folosite în teste, doar cea liniștită din 28.10 (03:30–04:30) a căzut pe o încetinire: debitul ei măsurat (56 veh/h)
+e subestimat, iar decizia e aceeași fără ferestrele de noapte (§ 9.10). Celelalte ferestre ale zilei de test nu sunt
+încetinite (pasul median 0,17–0,23 s, cel mult 9% pași lungi). Nici ferestrele zilei de validare 26.10 nu sunt
+(0,17–0,31 s, cel mult 16% pași lungi): la prânz și seara târziu rata e puțin sub cea normală, dar departe de prag.
+
+De pe 29.10, `romana.vision.calitate` caută direct acest semn, pe intervale de 15 minute (opțiunea `--out-15min` scrie
+tabelul): un interval e încetinit când cel puțin 40% dintre pașii traiectoriilor de vehicule depășesc 0,5 s. Pe
+jurnalele brute din 21.10–29.10 (29.10 până la 09:15) ies încetinite exact cele 9 intervale de mai sus (44–83% pași
+lungi); celelalte 375 au sub 30% (mediana 6%). Opțiunea `--fara-incetinite` din `romana.bridge.scenarii_zi` scoate aceste intervale din alegerea
+ferestrelor. Pe 28.10, fereastra liniștită s-ar muta astfel pe 02:45–03:45, iar pe 26.10 nu se schimbă nimic.
+Opțiunea e oprită implicit, ca zilele deja prelucrate să rămână reproductibile. Calculele grele rulează de acum la
+prioritate scăzută cât timp camera colectează.
 
 **Golurile din colectare (29.10).** O oprire a colectării lasă sferturi de oră fără date. Fereastra glisantă de o oră
 din `scenarii_zi` număra însă rânduri, nu minute, așa că unea sferturile de o parte și de alta a golului într-o „oră”
@@ -1326,14 +1351,16 @@ zonele corectate, publicarea jurnalului, scenariile, rularea strategiilor, anali
   fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12. Ele însumează 840 de simulări, ≈2 h pe 11
   procese. Programele pe cazuri (programul realist, `TOD_DEBIT`) se compun din rulările componentelor, după cazul
   fiecărui scenariu.
-- **Fereastra liniștită a căzut pe o înghețare a imaginii.** Pe 26.10, cu înregistrarea pornită la 09:11, fereastra
-  liniștită fusese seara, la 1 213 veh/h. Pe 28.10, cu toată ziua înregistrată, ea a ajuns noaptea. Verificarea de
-  după test, pe jurnalul brut de traiectorii, arată însă că între ≈03:40 și 04:30 imaginea camerei a înghețat. Pe
-  15 minute, vehiculele urmărite scad de la 150–240 la 40–50. Dintre ele, 80–85% stau pe loc: sunt mașinile parcate,
-  urmărite câte 20–40 s, iar deplasarea mediană e practic zero. Înainte de 03:30 și după 04:30 imaginea e normală,
-  cu ≈190–450 veh/h (debitul echilibrat). Scenariile „liniștit” (56 și 44 veh/h) nu sunt deci trafic real, iar cazul
-  lejer nu e reprezentat în acest test. Metricile de continuitate din § 4.6 nu văd înghețarea, pentru că un cadru
-  înghețat dă detecții dense. Efectul asupra deciziei e neglijabil: noaptea are cel mult ≈1,2 h pierdute pe simulare,
+- **Fereastra liniștită a căzut pe o încetinire a prelucrării.** Pe 26.10, cu înregistrarea pornită la 09:11,
+  fereastra liniștită fusese seara, la 1 213 veh/h. Pe 28.10, cu toată ziua înregistrată, ea a ajuns noaptea, pe
+  03:30–04:30. Între 03:46 și 04:28, calculatorul a prelucrat însă de 4–5 ori mai puține cadre pe secundă, cel mai
+  probabil din cauza validării E14, care rula în paralel. La ≈1,4 cadre/s, urmărirea pierde vehiculele în mișcare
+  (§ 4.6). Pe 15 minute, vehiculele urmărite scad de la 150–240 la 40–50, iar 80–85% dintre ele sunt mașini parcate.
+  Înainte de 03:30 și după 04:30, debitul echilibrat e de ≈190–450 veh/h. Rata de cadre e normală înainte de ≈03:05 și
+  de la ≈04:47; în rest, în afara încetinirii puternice, e doar ușor redusă (pasul median 0,25–0,36 s). Debitul scenariilor
+  „liniștit” (56 și 44 veh/h) e deci subestimat, iar cazul lejer nu e reprezentat corect în acest test. Semnul a fost
+  descris întâi, greșit, ca o imagine înghețată; verificarea directă de pe 29.10 a arătat că imaginea era vie (§ 4.6).
+  Efectul asupra deciziei e neglijabil: noaptea are cel mult ≈1,2 h pierdute pe simulare,
   0,05% din total. Fără cele 40 de perechi de noapte, regula alege tot planul 12/14/12, mai clar: p = 0,000005 față
   de programul realist (indisciplinați 0,0004, disciplinați 0,002), iar `TOD_DEBIT` rămâne la egalitate cu el
   (p = 0,47). Media schimbărilor relative pe perechi dă însă nopții aceeași greutate ca vârfului. De aceea, alături de
@@ -1375,7 +1402,7 @@ zonele corectate, publicarea jurnalului, scenariile, rularea strategiilor, anali
 
   | Cazul (ferestrele) | Programul realist | Planul fix | 12/14/12 | `TOD_DEBIT` | E13 | Agentul oficial | 16/10/12 |
   |---|---|---|---|---|---|---|---|
-  | lejer (noaptea, 44–56 veh/h, imaginea înghețată) | 30,2 | 32,5 | 32,4 | 33,0 | 30,7 | 30,2 | 33,0 |
+  | lejer (noaptea, 44–56 veh/h, subestimat: prelucrare încetinită) | 30,2 | 32,5 | 32,4 | 33,0 | 30,7 | 30,2 | 33,0 |
   | mediu (seara, 3 010; dimineața, 4 093) | 20 122 | 19 828 | 17 913 | 17 751 | 18 335 | 18 403 | 17 751 |
   | intens (vârful, 4 934, și vârful ×1,2) | 41 650 | 41 787 | 39 580 | 39 580 | 39 758 | 39 390 | 38 963 |
 
@@ -1425,10 +1452,10 @@ zonele corectate, publicarea jurnalului, scenariile, rularea strategiilor, anali
   pragul de 4 100, deci o dimineață puțin mai aglomerată ar trece la „intens”. Pe 28.10, aceleași planuri scurte sunt
   cele mai bune și la trafic mediu, și la trafic intens, la 1–2% unul de altul. Datele nu cer deci o treaptă
   intermediară, iar pragurile rămân 2 400 / 4 100 veh/h. Pentru câștigător ele nu contează, pentru că planul 12/14/12
-  nu comută. Pe ziua de test nu e acoperit cazul lejer real: nici noaptea (imaginea înghețată), nici intervalul
-  1 200–2 400 veh/h (seara târziu). Faptul că planul câștigător nu comută are și un avantaj practic: o înghețare a
-  imaginii, ca aceea din noaptea de 28.10, ar coborî debitul măsurat aproape la zero și ar comuta un program pe cazuri
-  pe „lejer”, dar nu schimbă un plan fix.
+  nu comută. Pe ziua de test nu e acoperit cazul lejer real: nici noaptea (debit subestimat de prelucrarea încetinită),
+  nici intervalul 1 200–2 400 veh/h (seara târziu). Faptul că planul câștigător nu comută are și un avantaj practic: o
+  încetinire a prelucrării, ca aceea din noaptea de 28.10, coboară debitul măsurat de câteva ori și ar comuta un
+  program pe cazuri pe „lejer”, dar nu schimbă un plan fix.
 - **Verdele pe treceri** (verificare de fezabilitate, `romana.control.treceri`). Semaforul pieței comandă 7 treceri,
   de 6,4–12,8 m. Patru dintre ele au verde doar în faza de pietoni. Faza aceasta are 12 s în toate planurile grilei,
   deci și în planul de referință. Pe aceste treceri, planul 12/14/12 nu scurtează verdele: rămâne de 12 s pe ciclu și
@@ -1457,8 +1484,8 @@ zonele corectate, publicarea jurnalului, scenariile, rularea strategiilor, anali
   aplicare reală rămâne verificarea fazei de pietoni de 12 s după normele de proiectare (§ 10). Dacă normele cer mai
   mult, planul 12/14/18 păstrează câștigul (punctele de mai sus).
 
-Limitele testului: o singură zi lucrătoare nouă (plus confirmarea de pe 29.10). Cazul lejer nu e reprezentat de
-trafic real, pentru că fereastra liniștită a căzut pe o înghețare a imaginii. Agenții sunt antrenați pe geamănul cu
+Limitele testului: o singură zi lucrătoare nouă (plus confirmarea de pe 29.10). Cazul lejer nu e reprezentat corect,
+pentru că fereastra liniștită a căzut pe o încetinire a prelucrării (§ 4.6). Agenții sunt antrenați pe geamănul cu
 capacitatea implicită. Verdele minim pentru pietoni nu este impus
 separat (§ 10). Geamănul live comută după debitul de la 15 minute. Pentru câștigător asta nu contează, pentru că el
 nu comută.
@@ -1532,8 +1559,8 @@ nu comută.
   comercială (de exemplu într-un produs pentru administrația drumului) ar cere un acord nou.
 
 Lucrări viitoare: confirmarea câștigătorului (planul 12/14/12) pe joi 29.10, după protocolul din § 9.9; excluderea
-implicită a intervalelor cu imagine înghețată din alegerea ferestrelor (`scenarii_zi --fara-inghetate`, § 4.6) și un
-prag validat pe mai multe zile; reantrenarea
+implicită a intervalelor cu prelucrarea încetinită din alegerea ferestrelor (`scenarii_zi --fara-incetinite`, § 4.6),
+cu pragul validat pe mai multe zile, și rata de cadre scrisă direct în jurnalul colectării; reantrenarea
 agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); verzi minime
 pe fază, calculate după trecerile de pietoni, pentru planurile fixe și pentru agenți, apoi reantrenarea și
 reevaluarea cu ele; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
@@ -1700,7 +1727,7 @@ cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actu
 | § 9.10, măsura pe persoană (20 / 40 / 70 de călători pe autobuz) | `romana.control.ocupare docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv --autobuz 40 --out outputs\validare\test_28_persoane_40.csv`, apoi `romana.control.decizie outputs\validare\test_28_persoane_40.csv --out outputs\validare\decizie_persoane_40.json` (publicat: `decizie_2026-10-28_persoane_40.json`; la fel cu 20 și 70) |
 | § 9.10, sensibilitatea la faza de pietoni de 18 s (12/14/18 față de 36/28/18: −7,9% din total, 92 / 120) | `romana.control.totaluri docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv docs\rezultate\sens_pietoni_28_indisciplinat.csv docs\rezultate\sens_pietoni_28_normal.csv --referinte PLAN_36_28_18 FIX REALIST`; testele pe perechi: `romana.control.analiza` cu aceleași patru fișiere și `--strategii PLAN_12_14_18 --referinte PLAN_36_28_18 PLAN_12_14_12` |
 | § 9.10, verdele pe fiecare trecere de pietoni (fezabilitatea planurilor scurte) | `romana.control.treceri --plan 12,14,12 --plan 16,10,12 --plan 36,28,12` (încarcă rețeaua dintr-un scenariu, fără simulare) |
-| § 4.6 / § 9.10, imaginea înghețată din 28.10 (03:45, 04:00, 04:15) | `romana.vision.calitate data\trajectories_brute\traiectorii_2026-10-28.jsonl.gz --out-15min outputs\calitate_15min.csv` (jurnalul brut e local; pe cel publicat din `data\trajectories` ies aceleași trei intervale) |
+| § 4.6 / § 9.10, prelucrarea încetinită din 28.10 (03:45, 04:00, 04:15) și celelalte episoade (27.10, 26.10) | `romana.vision.calitate data\trajectories_brute\traiectorii_2026-10-2*.jsonl.gz --out-15min outputs\calitate_15min.csv` (jurnalele brute sunt locale) |
 | Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
 
 **Simulările.** Strategiile și seed-urile sunt exact cele din fișierul publicat; numărul de simulări în paralel se dă
@@ -1845,9 +1872,10 @@ plan fix sau agent AI, nu cu un singur agent impus dinainte (§ 1). Înainte de 
 verificarea înregistrării, renumărarea, scenariile, 840 de simulări și regula de decizie. Toți cei trei candidați
 au bătut programul realist, iar între ei diferențele nu au fost semnificative, deci a câștigat cel mai simplu:
 planul fix 12/14/12, care a trecut în geamănul live (§ 9.10). Câștigul vine de la pietoni, prin ciclul mai scurt.
-Verificarea de după test a găsit o înghețare a imaginii în noaptea zilei de test (≈03:40–04:30), pe care a căzut
-fereastra liniștită. Decizia nu se schimbă fără ea, iar semnul înghețării e acum descris în § 4.6. Confirmarea se
-face pe joi 29.10.
+Verificarea de după test a găsit o scădere bruscă a numărătorilor în noaptea zilei de test (03:46–04:28), pe care a
+căzut fereastra liniștită. Descrisă întâi ca imagine înghețată, ea s-a dovedit, la verificarea directă cerută de autor,
+o încetinire a prelucrării: ≈1,4 cadre/s, cel mai probabil din cauza calculelor rulate în paralel (§ 4.6). Decizia nu
+se schimbă fără ferestrele de noapte. Confirmarea se face pe joi 29.10.
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -1872,6 +1900,7 @@ face pe joi 29.10.
 | O16 | Fluidizarea cere un ansamblu de planuri / agenți pe cazuri de trafic, nu un singur agent; cel mai bun câștigă (28.10) | regula „cel mai bun câștigă”, cazurile după debit (2 400 / 4 100 veh/h), variantele noi din geamănul live, fixate înainte de testul din 28.10 (§ 9.9); pragurile se reverifică pe fiecare zi nouă |
 | P7 | Pragurile programului live (1 300 / 2 000 veh/h) veneau din zilele subnumărate, iar planurile fixe rulau în geamăn rotunjite la 5 s | pragurile din ziua de validare (2 400 / 4 100); planurile fixe urmărite secundă cu secundă (§ 9.9) |
 | O17 | Plăcuțele tuturor vehiculelor să fie estompate, pentru o imagine uniformă; trecerea de pe Mendeleev stătea peste locul taxiurilor; zona trecerii de pe Dacia est nu era legată (28.10) | plăcuțele estompate la toate vehiculele; Mendeleev mutată pe zebra marcată din OSM; zona de peste intrarea Dacia est prelungită până la cea de peste ieșire, după traiectoriile pietonilor; numărătorile se refac din jurnal, fără colectare nouă (§ 4.4) |
+| O18 | Era chiar o imagine înghețată pe 28.10, 03:40–04:30, sau doar același cadru fără vehicule? De ce aflu abia a doua zi? (29.10) | verificarea directă (poziții, traversări, rata de cadre; doi agenți independenți): imaginea era vie, iar calculatorul prelucrase de 4–5 ori mai puține cadre; corectat în § 4.6 / § 9.10 și în `calitate`, care caută acum rata de cadre; calculele grele, la prioritate scăzută cât timp camera colectează; anomaliile, spuse autorului imediat, cu gradul de certitudine |
 
 ### 12.3 Bornele
 

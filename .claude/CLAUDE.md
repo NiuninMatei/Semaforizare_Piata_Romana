@@ -48,12 +48,16 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **Aplicat (aprobarea autorului):** `live_twin.py` `VARIANTA_PROGRAM = "plan_scurt"`, outputs/live/command.json
   `{"mod":"program"}`, eticheta din dispecerat; § 9.10 nou, § 9.7 punctul 7, § 1/§ 2/§ 4.6/§ 9.4/§ 10/§ 12.1, Anexa A,
   § 11.8, README; modul nou `romana.control.totaluri` (tabelele § 9.10); `decizie` afișează diferențele în ore.
-- **Imaginea înghețată 28.10 ≈03:40–04:30** (fereastra „liniștit” 03:30–04:30, 56 veh/h, a căzut pe ea; 80–85%
-  traiectorii fixe, durate 20–40 s) – documentat în § 4.6 / § 9.10; decizia fără noapte: aceeași (p = 0,000005).
-  `calitate` o caută acum pe 15 min (vehiculele în mișcare față de ±2 h + traiectorii fixe; `--out-15min`): pe 28.10
-  exact 03:45/04:00/04:15, pe 25–26.10 nimic, pe 29.10 până la 02:50 nimic. `scenarii_zi --fara-inghetate`
-  (implicit oprită; pe 28.10 liniștit → 02:45–03:45) e gata; folosirea la confirmare (test29.py rulează deja cu
-  versiunea veche – pentru schimbare: TaskStop bftlyvmel + repornire) = de întrebat autorul la 08:00.
+- **28.10, 03:46–04:28: prelucrarea încetinită, NU imagine înghețată** (corectat pe 29.10, ≈09:30, după întrebarea
+  autorului O18 și doi agenți independenți): pozițiile mașinilor parcate fluctuează normal, autobuze traversează la
+  04:08 / 04:10, nicio traiectorie repetată; pasul median dintre puncte 0,17 → ≈0,7 s (≈1,4 cadre/s, pauze de ≈6 s),
+  deci ByteTrack pierde vehiculele în mișcare (de 4–5 ori mai puține cadre). Cauza probabilă: validarea E14
+  (03:04–04:48) rula în paralel (nesigur: pe 29.10 noaptea lanțul testului a încetinit doar ușor, 0,19–0,22 s, fără
+  intervale încetinite). Episoade similare: 27.10 01:15–02:45 (sfertul 02:15 sub prag), 26.10 16:45, 25.10
+  02:55–03:08 (scurt); 21, 22, 29.10 (până la 09:15) nimic. Fereastra liniștită din 28.10 (56 veh/h) e subestimată;
+  decizia fără noapte: aceeași (p = 0,000005). `calitate` caută acum direct rata de cadre (încetinit: ≥ 40% pași >
+  0,5 s; exact 9 intervale pe 21.10–29.10 09:15, restul < 30%); `scenarii_zi --fara-incetinite` (implicit oprită; nefolosită la confirmare,
+  protocolul de pe 28.10). Calculele grele: doar la prioritate scăzută cât timp camera colectează.
 - **29.10, 03:00–04:30:** verificarea independentă (4 agenți) – cifrele confirmate, protocolul respectat, corecturi
   comise (04a6e1f); `romana.control.treceri`: cu 12/14/12 nicio trecere nu are sub 12 s de verde pe ciclu (faza
   de pietoni, ca în planul de referință; trecerile din două faze 29–31 s în loc de 45–53 s); **sensibilitatea pietonală** (`sens_pietoni_28_*.csv`): 12/14/18 vs
@@ -69,14 +73,20 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   scratchpad-ul copiat în outputs/copie_scratchpad_2026-10-29. `scenarii_zi`: grila completă de 15 min (un gol nu mai e
   sărit de fereastra glisantă; înainte putea da o „oră” falsă sau KeyError la `windows["varf"]`) + `--exclude
   HH:MM-HH:MM`; zilele 21–28.10 neschimbate (verificare independentă).
-- **La reluare (după repornire):** (1) `run_vision` fără fereastră: `$env:PYTHONPATH="src"; Start-Process
+- **Reluat (29.10, 08:46):** `run_vision` repornit la 08:46:12 (PID 10228; prima traiectorie 08:46:21; gol
+  08:33:21–08:46:21, 13 min); noaptea 29.10 fără încetiniri (calitate, goluri 1,1–3,0% pe oră); test29.py
+  repornit în fundal cu `scenarii_zi --exclude 08:30-09:00` și oprire dacă calitate / recount eșuează; prioritatea
+  BelowNormal a lanțului setată din afară (cea din script nu se aplicase); keep-awake activ. Autorul doarme (după
+  tura de noapte) și a lăsat restul în grija mea; întrebarea despre excludere retrasă (premisa era greșită); zonele
+  de vehicule pe imagine – ziua, la lumină.
+- **Pașii de reluare folosiți (pentru o altă repornire):** (1) `run_vision` fără fereastră: `$env:PYTHONPATH="src"; Start-Process
   .venv\Scripts\python.exe -ArgumentList '-m','romana.vision.run_vision' -RedirectStandardOutput
   outputs\logs\viziune_2026-10-29.log -RedirectStandardError outputs\logs\viziune_2026-10-29.err -WindowStyle Hidden
   -PassThru`, apoi verificat că jurnalul brut al zilei crește; (2) keep-awake; (3) în test29.py, la `scenarii_zi`:
   `--exclude 08:30-<sfertul de după cel al repornirii>` (sfertul opririi, golul și sfertul repornirii, căruia `recount`
   îi dă durata întreagă deși are date doar de la repornire) și oprirea lanțului dacă calitate / recount ies cu cod
-  nenul (un membru gzip trunchiat face recount să cadă cu zlib.error), apoi test29.py repornit în fundal; (4) rezumatul pentru
-  autor (cel de la 08:00) cu întrebarea `--fara-inghetate`; (5) zonele de vehicule pe imagine, la lumină.
+  nenul (un membru gzip trunchiat face recount să cadă cu zlib.error), apoi test29.py repornit în fundal (prioritate
+  BelowNormal); (4) zonele de vehicule pe imagine, la lumină.
 - **De făcut:** 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10 „Confirmarea” (și golul
   din 29.10 în § 4.6); până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.
 

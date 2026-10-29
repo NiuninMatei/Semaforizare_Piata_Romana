@@ -1,4 +1,4 @@
-"""Teste pentru semnul imaginii înghețate din `romana.vision.calitate` (§ 4.6) și pentru verdele pe treceri din
+"""Teste pentru semnul prelucrării încetinite din `romana.vision.calitate` (§ 4.6) și pentru verdele pe treceri din
 `romana.control.treceri` (date sintetice, fără SUMO).
 
 Rulare:  set PYTHONPATH=src && python -m unittest discover -s tests
@@ -10,35 +10,37 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
+import numpy as np
+
 from romana.control.treceri import verde_continuu
-from romana.vision.calitate import inghetate, quality
+from romana.vision.calitate import incetinite, pasi, quality
 
 
-def per15(miscare: dict[str, tuple[int, int]], durata: float = 4.0) -> dict[str, list]:
-    """interval → [traiectorii, în mișcare, durate]; restul intervalelor dintre 02:00 și 06:00: 100 / 45."""
+def per15(pas: dict[str, float], miscare: dict[str, tuple[int, int]] | None = None) -> dict[str, list]:
+    """interval → [traiectorii, în mișcare, durate, pași]; între 02:00 și 06:00, implicit 100 de traiectorii (45 în
+    mișcare), cu pași de 0,17 s (≈6 cadre/s)."""
     out = {}
     for h in range(2, 6):
         for m in (0, 15, 30, 45):
             k = f"{h:02d}:{m:02d}"
-            n, mis = miscare.get(k, (100, 45))
-            out[k] = [n, mis, [durata] * n]
+            n, mis = (miscare or {}).get(k, (100, 45))
+            out[k] = [n, mis, [4.0] * n, [np.full(20, pas.get(k, 0.17))]]
     return out
 
 
-class TestImagineInghetata(unittest.TestCase):
-    def test_inghetarea_e_gasita(self):
-        p = per15({"03:45": (45, 8), "04:00": (40, 6), "04:15": (48, 9)})
-        self.assertEqual([x[0] for x in inghetate(p)], ["03:45", "04:00", "04:15"])
+class TestPrelucrareIncetinita(unittest.TestCase):
+    def test_incetinirea_e_gasita(self):
+        p = per15({"03:45": 0.69, "04:00": 0.67, "04:15": 0.68})
+        self.assertEqual([x[0] for x in incetinite(p)], ["03:45", "04:00", "04:15"])
 
-    def test_scaderea_lina_nu_e_inghetare(self):
-        # trafic care scade treptat, cu aceeași pondere de vehicule în mișcare: niciun interval suspect
-        lin = {f"{h:02d}:{m:02d}": (100 - 5 * i, 45 - 2 * i)
-               for i, (h, m) in enumerate((h, m) for h in range(2, 6) for m in (0, 15, 30, 45))}
-        self.assertEqual(inghetate(per15(lin)), [])
+    def test_strada_goala_la_rata_normala_nu_e_incetinire(self):
+        # puține vehicule în mișcare și multe traiectorii fixe, dar cadre la rata normală: trafic real, foarte rar
+        self.assertEqual(incetinite(per15({}, {"04:00": (40, 3)})), [])
 
-    def test_putine_in_miscare_dar_putine_fixe_nu_e_inghetare(self):
-        # un interval cu puține traiectorii, dar majoritatea în mișcare (trafic real, foarte rar)
-        self.assertEqual(inghetate(per15({"04:00": (10, 8)})), [])
+    def test_pasul_median_si_pasii_lungi(self):
+        med, lungi = pasi([1, 1, [4.0], [np.array([0.17, 0.17]), np.array([0.7, 0.7, 0.7])]])
+        self.assertAlmostEqual(med, 0.7)
+        self.assertAlmostEqual(lungi, 0.6)
 
     def test_quality_numara_pe_15_minute(self):
         t0 = datetime(2026, 10, 28, 3, 50).timestamp()
@@ -51,6 +53,7 @@ class TestImagineInghetata(unittest.TestCase):
                 fh.write("\n".join(json.dumps(r) for r in recs) + "\n")
             _, p = quality(f)
         self.assertEqual(p["03:45"][:2], [2, 1])
+        self.assertEqual(pasi(p["03:45"]), (1.0, 1.0))      # câte un pas de 1 s pe traiectorie
 
 
 class TestVerdeContinuu(unittest.TestCase):

@@ -95,8 +95,9 @@ dă același câștigător. Cu planul câștigător, nicio trecere de pietoni nu
 de pietoni), la fel ca în planul de referință. Mai trebuie verificată doar această fază de 12 s după normele de
 proiectare, pe trecerea cea mai lungă, de 12,8 m (§ 9.10, `romana.control.treceri`). Ghidurile europene calculează degajarea la 1,2 m/s. Chiar
 cu faza de pietoni lungită la 18 s în ambele planuri, ciclul scurt rămâne cu 7,9% mai bun decât ciclul actual
-(Wilcoxon p < 0,000001). În noaptea zilei de test, imaginea camerei a înghețat ≈50 de minute (≈03:40–04:30), iar
-fereastra liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 9.10). Confirmarea se face pe joi 29.10.
+(Wilcoxon p < 0,000001). În noaptea zilei de test, între 03:46 și 04:28, calculatorul a prelucrat de 4–5 ori mai
+puține cadre (cel mai probabil din cauza calculelor rulate în paralel), deci a pierdut vehicule, iar fereastra
+liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 4.6, § 9.10). Confirmarea se face pe joi 29.10.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
 |---|---|---|
@@ -201,7 +202,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Limită | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare −3,2% (marginea de sus), practic zero la marginea de jos (+0,4%, p = 0,62), −18,4% cu participanți indisciplinați; duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | cinci zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11) și miercuri 28.10 (00:10–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9) și miercurea, testul final (§ 9.10); joi 29.10 e ziua de confirmare. Cazul lejer real nu e acoperit de testul final (fereastra liniștită a căzut pe o înghețare a imaginii) |
+| Puține date | cinci zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11) și miercuri 28.10 (00:10–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9) și miercurea, testul final (§ 9.10); joi 29.10 e ziua de confirmare. Cazul lejer real nu e acoperit de testul final (fereastra liniștită a căzut pe o încetinire a prelucrării, § 4.6) |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
 | Geamănul live | simulează participanți disciplinați. Varianta implicită din 29.10, planul 12/14/12, nu comută, deci e exact strategia evaluată. Pentru variantele care comută (de exemplu programul realist), comutarea live nu a fost evaluată: cifrele lor sunt compuse din rulările componentelor, după cazul scenariului |
 | Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; pentru cele marcate „tipurile vechi”, doar tipurile de vehicule din `75592d3`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
