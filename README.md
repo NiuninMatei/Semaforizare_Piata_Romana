@@ -77,8 +77,9 @@ indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Prog
 protocolul fixat dinainte în § 9.9 (mai jos). Reantrenarea lui E13 pe ziua de luni (E14) nu l-a întrecut (§ 9.5). O grilă de
 23 de planuri fixe pe geamănul calibrat arată că ciclurile scurte câștigă: planul 12/14/12 (ciclu ≈53 s) dă pe validare
 −9,3% față de planul fix, la nivelul lui E13 (diferență nesemnificativă). Intră în test, după decizia „cel mai bun
-câștigă”, ca primul candidat (§ 9.9); verzile
-lui de 12–14 s sunt însă la limita timpului de degajare a pietonilor, pe care modelul nu îl impune (§ 10). Din 28.10,
+câștigă”, ca primul candidat (§ 9.9). Verzile lui de 12–14 s păreau aproape de timpul de degajare a pietonilor,
+pe care modelul nu îl impune. Verificarea pe treceri de după test (§ 9.10) a arătat că problema rămâne doar faza de
+pietoni de 12 s, aceeași în toate planurile; cu ea lungită la 18 s, câștigul se păstrează. Din 28.10,
 geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
 live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
 
@@ -90,9 +91,11 @@ p între 0,0001 și 0,0013), iar între ei diferențele nu sunt semnificative. R
 **planul fix 12/14/12** (ciclu ≈53 s în loc de ≈91 s), care a trecut în geamănul live. Câștigul vine de la pietoni,
 care așteaptă mai puțin (−12% față de planul fix de referință), în timp ce vehiculele pierd puțin (+1–2%). Față de
 programul realist, câștigă și vehiculele (−2…−3%), și pietonii (−10%). Măsura pe persoană (20, 40 sau 70 de călători pe autobuz)
-dă același câștigător. Planul nu scurtează verdele minim al niciunei treceri de pietoni față de planul de referință
-(12 s, în faza de pietoni). Mai trebuie verificată doar această fază de 12 s după normele de proiectare, pe trecerea
-cea mai lungă, de 12,8 m (§ 9.10, `romana.control.treceri`). În noaptea zilei de test, imaginea camerei a înghețat ≈50 de minute (≈03:40–04:30), iar
+dă același câștigător. Cu planul câștigător, nicio trecere de pietoni nu are mai puțin de 12 s de verde pe ciclu (faza
+de pietoni), la fel ca în planul de referință. Mai trebuie verificată doar această fază de 12 s după normele de
+proiectare, pe trecerea cea mai lungă, de 12,8 m (§ 9.10, `romana.control.treceri`). Ghidurile europene calculează degajarea la 1,2 m/s. Chiar
+cu faza de pietoni lungită la 18 s în ambele planuri, ciclul scurt rămâne cu 7,9% mai bun decât ciclul actual
+(Wilcoxon p < 0,000001). În noaptea zilei de test, imaginea camerei a înghețat ≈50 de minute (≈03:40–04:30), iar
 fereastra liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 9.10). Confirmarea se face pe joi 29.10.
 
 | Situația simulată | Strategia | Față de planul fix de referință |

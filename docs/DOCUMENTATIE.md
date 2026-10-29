@@ -1089,9 +1089,11 @@ punctul 7 testul final, după regula „cel mai bun câștigă”.
    fixată dinainte, toți cei trei candidați bat semnificativ programul realist, cu ≈6–7% din pierderea totală:
    planul 12/14/12, programul din planuri fixe pe cazuri și E13. Între ei, diferențele nu sunt semnificative, așa că
    regula alege candidatul cel mai simplu, planul 12/14/12, care a trecut în geamănul live. Ciclul scurt (≈53 s în loc
-   de ≈91 s) câștigă prin pietoni: −12% față de planul fix actual, în timp ce vehiculele pierd puțin (+1–2%). Planul nu
-   scurtează verdele minim al niciunei treceri față de planul de referință (12 s, în faza de pietoni). Mai trebuie
-   verificată doar această fază de 12 s după normele de proiectare (§ 9.10, § 10). Cea mai bună combinație
+   de ≈91 s) câștigă prin pietoni: −12% față de planul fix actual, în timp ce vehiculele pierd puțin (+1–2%). Cu el,
+   nicio trecere nu are mai puțin de 12 s de verde pe ciclu (faza de pietoni), la fel ca în planul de referință.
+   Trecerile legate de o fază de vehicule au verde mai scurt, dar tot peste dublul timpului de traversare. Mai trebuie
+   verificată doar faza de pietoni de 12 s după normele de proiectare (§ 9.10, § 10). Chiar și cu faza de pietoni lungită
+   la 18 s, ciclul scurt rămâne cu ≈8% mai bun decât ciclul actual cu aceeași fază (§ 9.10). Cea mai bună combinație
    implementabilă găsită pe datele reale e deci cea mai simplă: aceleași faze, cu durate mai scurte.
 
 ### 9.8 Reevaluarea pe cererea calibrată (26.10.2026)
@@ -1419,13 +1421,28 @@ zonele corectate, publicarea jurnalului, scenariile, rularea strategiilor, anali
   deci și în planul de referință. Pe aceste treceri, planul 12/14/12 nu scurtează verdele: rămâne de 12 s pe ciclu și
   vine mai des, la ≈53 s în loc de ≈91 s. Celelalte trei treceri au verde și într-o fază de vehicule, legată de faza de
   pietoni. Verdele lor continuu scade de la 45–53 s la 29–31 s. Asta e tot peste dublul timpului de traversare la
-  1,0 m/s (6,4–12,8 s). Planul câștigător nu scurtează deci verdele minim al niciunei treceri față de planul de
-  referință. Rămâne de verificat, după normele de proiectare, faza de pietoni de 12 s pe trecerea de 12,8 m. Ea cere
+  1,0 m/s (6,4–12,8 s). Cu planul câștigător, nicio trecere nu are deci mai puțin de 12 s de verde pe ciclu, la fel ca
+  în planul de referință. Rămâne de verificat, după normele de proiectare, faza de pietoni de 12 s pe trecerea de 12,8 m. Ea cere
   10,7 s de traversare la 1,2 m/s și 12,8 s la 1,0 m/s, iar după verde urmează 5 s de tranziție. Întrebarea privește la
-  fel și planul de referință.
+  fel și planul de referință. Punctul următor arată că o fază de pietoni mai lungă nu schimbă concluzia.
+- **Sensibilitatea la o fază de pietoni mai lungă** (rulată după test; nu schimbă decizia). Ghidurile europene
+  calculează timpul de degajare a pietonilor la 1,2 m/s. În ghidurile german și britanic, o viteză mai mică (până la
+  1,0 m/s) se folosește doar în cazuri speciale, de pildă unde trec mulți pietoni lenți. Alte orașe, ca Singapore și
+  Toronto, folosesc 1,0 m/s ca regulă[^rilsa][^trl-viteza]. Pentru România nu am găsit o normă publică. Pe trecerea de 12,8 m, degajarea durează
+  ≈10,7 s, iar modelul are după faza de pietoni doar 5 s de tranziție. De aceea, testul s-a refăcut cu faza de pietoni
+  de 18 s (+6 s), în planul scurt și în planul de referință: 240 de simulări, aceleași scenarii și seed-uri
+  (`sens_pietoni_28_*.csv`). Planul 12/14/18 pierde 56 535 h, cu 7,9% sub planul 36/28/18 (61 359 h). E mai bun în
+  92 din 120 de perechi (Wilcoxon p < 0,000001) și în ambele comportamente (p = 0,00001 / 0,00008). Față de planul
+  12/14/12 e echivalent (p = 0,96). Față de 12/14/12, pietonii mai câștigă 3%, iar autoturismele, autobuzele și
+  camioanele pierd 0,3–1,6%; motocicletele și bicicliștii pierd câteva ore.
+  Avantajul ciclului scurt rămâne deci și dacă normele ar cere o fază de pietoni mai lungă. În simulare, cele 6 s în
+  plus sunt verde pentru pietoni, nu doar timp de degajare, deci estimarea e ușor favorabilă pietonilor. Pentru
+  vehicule, costul ciclului mai lung e același. Geamănul live rămâne pe 12/14/12, varianta decisă după regulă. Dacă
+  normele cer o fază mai lungă, 12/14/18 e candidatul firesc pentru o validare nouă.
 - **Ce urmează.** Confirmarea se face pe joi 29.10: lanțul pornește automat pe 30.10, la 00:15. Planul 12/14/12 rămâne
   în geamănul live, afară de cazul în care pe 29.10 iese semnificativ mai slab decât programul realist. Înainte de o
-  aplicare reală rămâne verificarea fazei de pietoni de 12 s după normele de proiectare (punctul de mai sus, § 10).
+  aplicare reală rămâne verificarea fazei de pietoni de 12 s după normele de proiectare (§ 10). Dacă normele cer mai
+  mult, planul 12/14/18 păstrează câștigul (punctele de mai sus).
 
 Limitele testului: o singură zi lucrătoare nouă (plus confirmarea de pe 29.10). Cazul lejer nu e reprezentat de
 trafic real, pentru că fereastra liniștită a căzut pe o înghețare a imaginii. Agenții sunt antrenați pe geamănul cu
@@ -1468,9 +1485,11 @@ nu comută.
   are 12,8 m, adică ≈11 s la 1,2 m/s. Verificarea pe treceri (`romana.control.treceri`, § 9.10) arată cum stau
   planurile fixe. Trecerile servite într-o fază de vehicule au verde și în faza de pietoni, legată de ea: 27–33 s
   continuu în planurile scurte și 45–53 s în planul de referință. Celelalte treceri au doar faza de pietoni, de 12 s în
-  toate planurile. Planul câștigător nu scurtează deci verdele minim al niciunei treceri față de planul de referință.
+  toate planurile. Cu planul câștigător, nicio trecere nu are deci mai puțin de 12 s de verde pe ciclu, la fel ca în
+  planul de referință.
   Rămâne de verificat, după normele de proiectare, faza de pietoni de 12 s pe trecerea de 12,8 m, la fel ca la planul
-  de referință. Agenții pot scurta însă faza de pietoni până la verdele minim de 10 s (mediana verzilor lor e de 11 s,
+  de referință. Cu faza de pietoni lungită la 18 s în ambele planuri, ciclul scurt rămâne cu 7,9% mai bun (§ 9.10).
+  Agenții pot scurta însă faza de pietoni până la verdele minim de 10 s (mediana verzilor lor e de 11 s,
   § 9.9). O aplicare reală ar cere verzi minime pe fază, calculate după lungimea trecerilor, mai ales pentru agenți.
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
@@ -1666,6 +1685,7 @@ cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actu
 | § 9.10, toate strategiile: pierderea totală, pe comportamente, pe cazuri de trafic, pe tipuri de participanți și fără noapte | `romana.control.totaluri docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv` |
 | § 9.10, testele pe perechi ale tuturor strategiilor (ex. 16/10/12 față de 12/14/12: p = 0,51) | `romana.control.analiza docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program TOD_DEBIT=lejer:PLAN_16_10_12,moderat:PLAN_16_10_12,greu:PLAN_12_14_12 --benzi "<câmpul benzi_analiza din decizie_2026-10-28.json>" --referinte FIX REALIST TOD_DEBIT PLAN_12_14_12` (pe fiecare comportament: un singur fișier și `--pe-scenarii`) |
 | § 9.10, măsura pe persoană (20 / 40 / 70 de călători pe autobuz) | `romana.control.ocupare docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv --autobuz 40 --out outputs\validare\test_28_persoane_40.csv`, apoi `romana.control.decizie outputs\validare\test_28_persoane_40.csv --out outputs\validare\decizie_persoane_40.json` (publicat: `decizie_2026-10-28_persoane_40.json`; la fel cu 20 și 70) |
+| § 9.10, sensibilitatea la faza de pietoni de 18 s (12/14/18 față de 36/28/18: −7,9% din total, 92 / 120) | `romana.control.totaluri docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv docs\rezultate\sens_pietoni_28_indisciplinat.csv docs\rezultate\sens_pietoni_28_normal.csv --referinte PLAN_36_28_18 FIX REALIST`; testele pe perechi: `romana.control.analiza` cu aceleași patru fișiere și `--strategii PLAN_12_14_18 --referinte PLAN_36_28_18 PLAN_12_14_12` |
 | § 9.10, verdele pe fiecare trecere de pietoni (fezabilitatea planurilor scurte) | `romana.control.treceri --plan 12,14,12 --plan 16,10,12 --plan 36,28,12` (încarcă rețeaua dintr-un scenariu, fără simulare) |
 | § 4.6 / § 9.10, imaginea înghețată din 28.10 (03:45, 04:00, 04:15) | `romana.vision.calitate data\trajectories_brute\traiectorii_2026-10-28.jsonl.gz --out-15min outputs\calitate_15min.csv` (jurnalul brut e local; pe cel publicat din `data\trajectories` ies aceleași trei intervale) |
 | Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
@@ -1690,6 +1710,7 @@ cu `--procese N` (implicit 4).
 | `validare_e14.csv` (§ 9.5) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_cal.zip models\cand_romana_e14_100k.zip models\cand_romana_e14_200k.zip models\ppo_romana_e14.zip --scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\validare_e14.csv`; punctele intermediare nu sunt publicate: `cand_romana_e14_100k` și `cand_romana_e14_200k` sunt `outputs\train\romana_e14\checkpoints\romana_e14_901344_steps.zip` și `romana_e14_1001344_steps.zip` |
 | `grila_calibrat.csv` (§ 9.9) | arborele curent | `romana.control.validare` cu cele 23 de planuri `PLAN_a_b_12`, pentru (a, b) = (28, 22), (28, 28), (28, 36), (36, 22), (36, 36), (44, 22), (44, 28), (44, 36), (20, 14), (20, 18), (20, 22), (24, 14), (24, 18), (24, 22), (28, 14), (28, 18), (12, 10), (12, 14), (12, 18), (16, 10), (16, 14), (16, 18), (20, 10), și `--scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\grila_calibrat.csv`; rulată pe 28.10 în trei tranșe (8 + 8 + 7 planuri, fiecare rafinare în jurul celui mai bun plan de până atunci), reunite; simulările sunt deterministe, iar planul fix a ieșit identic în toate tranșele |
 | `durate_verde_agenti.csv` (§ 9.9) | arborele curent | `romana.control.durate_verde models\ppo_romana_cal.zip models\ppo_romana.zip --scenarii capacitate_zi_2026-10-26_linistit capacitate_zi_2026-10-26_pranz capacitate_zi_2026-10-26_varf --seed 11 --out outputs\durate_verde.csv` |
+| `sens_pietoni_28_indisciplinat.csv`, `sens_pietoni_28_normal.csv` (§ 9.10) | arborele curent | `romana.control.validare PLAN_12_14_18 PLAN_36_28_18 --scenarii "indisciplinat_zi_2026-10-28_*" --seeds 1-10 --fara-alegere --fara-fix --procese 4 --out outputs\validare\sens_pietoni_28_indisciplinat.csv --compara docs\rezultate\sens_pietoni_28_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-28_*"`, cu `sens_pietoni_28_normal` (≈30 min fiecare pe 4 procese) |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` (§ 9.10) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_cal.zip PLAN_12_14_12 PLAN_16_10_12 --scenarii "indisciplinat_zi_2026-10-28_*" --seeds 1-10 --fara-alegere --procese 11 --out outputs\validare\test_28_indisciplinat.csv --compara docs\rezultate\test_28_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-28_*"`, cu `test_28_normal` (≈1 h fiecare pe 11 procese) |
 | `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent, tipurile vechi | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
@@ -2079,6 +2100,8 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^wiki-romana]: Wikipedia, „Piața Romană” și „Piața Romană metro station”, https://en.wikipedia.org/wiki/Pia%C8%9Ba_Roman%C4%83, accesat 20.10.2026. Licență CC BY-SA 4.0. Folosită doar pentru fapte; nu s-a preluat text.
 [^webcam]: Webcam România, „Webcam Piața Romană București – Live din Centrul Capitalei”, https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/, accesat 20.10.2026. Flux: https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8. Pagina: © 2016–2026 WebcamRomania.ro. Fluxul: drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor („Termeni și condiții”, secțiunile 2 și 4). Fluxul este analizat doar în memorie; proiectul publică doar două imagini estompate dintr-un singur cadru (figurile 4.1 și 4.2), cu acordul scris al Webcam România din 27.10.2026 (§ 14.1).
 [^tomtom]: TomTom, „Bucharest traffic report – TomTom Traffic Index 2025”, https://www.tomtom.com/traffic-index/city/bucharest/, publicat ianuarie 2026. © TomTom, citare cu atribuire.
+[^rilsa]: FGSV, *Richtlinien für Lichtsignalanlagen (RiLSA)*, ediția 2015: viteza standard de degajare a pietonilor 1,2 m/s, cu abateri între 1,0 m/s (doar în cazuri speciale) și 1,5 m/s. Valorile sunt citate după un document al orașului München, https://muenchen-transparent.de/dokumente/6708749/datei, consultat pe 29.10.2026. Ghidul însuși nu a fost consultat: e o publicație FGSV, cu drepturi rezervate.
+[^trl-viteza]: TRL, *PPR700 – Review of pedestrian walking speeds*: în Regatul Unit, timpul de degajare se calculează la viteza minimă de mers de 1,2 m/s, iar trecerile cu mulți pietoni lenți folosesc o viteză mai mică; Singapore și Toronto folosesc 1,0 m/s. https://www.trl.co.uk/uploads/trl/documents/PPR700%20-%20Review%20of%20pedestrian%20walking%20speeds.pdf, consultat pe 29.10.2026. Drepturi rezervate (TRL).
 [^eea-ocupare]: European Environment Agency, gradul de ocupare al autoturismelor (indicatorul TERM 029, întrerupt; naveta la orele de vârf: ≈1,1–1,2 persoane pe autoturism), https://www.eea.europa.eu/en/analysis/publications/envissueno12/page029.html, consultat pe 28.10.2026. Conținut EEA, reutilizare cu atribuire.
 [^stb-ocupare]: HotNews, „Care sunt cele mai aglomerate linii de transport public din București. Singura linie pe care se știe exact numărul de călători”, https://hotnews.ro/care-sunt-cele-mai-aglomerate-linii-de-transport-public-din-bucuresti-singura-linie-pe-care-se-stie-exact-numarul-de-calatori-49929; Informat.ro, despre gradul de încărcare afișat în Google Maps din numărătoarele vehiculelor noi, https://informat.ro/en/current-affairs/nicusor-dan-announces-that-the-google-maps-application-can-be-used-to-see-the-degree-of-load-of-means-of-transportation-in-bucharest-24094; consultate pe 28.10.2026, citate doar ca sursă a informației.
 [^pmb-tomtom]: Primăria Municipiului București, „București, pe locul 20 în lume din punct de vedere al traficului…”, https://www.bucuresti.ro/articole/bucuresti-pe-locul-20-in-lume-din-punct-de-vedere-al-traficului-care-este-viteza-medie-cu-care-se-circula-in-oras-1751, 2026.
@@ -2186,6 +2209,7 @@ reface, celelalte da.
 | `durate_verde_agenti.csv` | duratele de verde ale lui E13 și ale agentului oficial pe trei scenarii de validare (luni 26.10, seed 11): mediana pe fază, numărul de verzi, ciclul median (§ 9.9) | arborele curent | `romana.control.durate_verde` |
 | `grila_calibrat.csv` | grila de 23 de planuri fixe pe geamănul calibrat (§ 9.9): luni 26.10, ambele comportamente, seed-urile 11–15, plus planul fix | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` | testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13, planurile 12/14/12 și 16/10/12, seed-urile 1–10, cu pierderea pe tipuri de participanți (`pierdere_h_<tip>`) | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |
+| `sens_pietoni_28_indisciplinat.csv`, `sens_pietoni_28_normal.csv` | sensibilitatea la o fază de pietoni mai lungă (§ 9.10): planurile 12/14/18 și 36/28/18 pe aceleași scenarii și seed-uri ca testul din 28.10 (rulate după test; se citesc împreună cu `test_28_*.csv`) | arborele curent | `romana.control.validare PLAN_12_14_18 PLAN_36_28_18 --seeds 1-10 --fara-alegere --fara-fix` |
 | `decizie_2026-10-28.json`, `decizie_2026-10-28_persoane_20.json` / `_40` / `_70` | decizia după regula „cel mai bun câștigă” (§ 9.10): debitele și cazurile scenariilor, candidații cu testele lor, primii doi, câștigătorul și varianta live; la fel pe măsura pe persoană, cu 20 / 40 / 70 de călători pe autobuz (fișierele intermediare pe persoană nu sunt publicate: le reface `romana.control.ocupare`) | – (din fișierele de test) | `romana.control.decizie`, `romana.control.ocupare` |
 | `validare_e14.csv` + `_alegere.json` | validarea agentului E14 (§ 9.5) pe luni 26.10, ambele comportamente, seed-urile 11–15: planul fix, actuated, agentul oficial, E3, E13 și trei candidați E14 (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent | `romana.control.validare` (dintre candidați e publicat doar modelul final, `ppo_romana_e14`) |
 | `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
