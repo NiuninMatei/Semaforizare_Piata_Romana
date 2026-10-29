@@ -10,7 +10,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from romana.vision.veghe import Fereastra, StareLive, membri_noi, semne_jurnal
+from romana.vision.veghe import Fereastra, StareLive, _eveniment, membri_noi, semne_jurnal
 
 T0 = datetime(2026, 10, 29, 3, 0).timestamp()
 
@@ -110,6 +110,12 @@ class TestStareLive(unittest.TestCase):
         for sec in range(400):                         # evenimentul ajunge în CSV
             s.adauga(T0 + sec, {"timestamp": T0 + (199 if 200 <= sec < 300 else sec), "fps": 6.0})
         self.assertEqual(len(s.evenimente), 1)
+        playlist = {"citiri": [{"ultimul_segment_in_urma_s": 24.2}, {"ultimul_segment_in_urma_s": 31.0}],
+                    "avanseaza": False}                # serverul camerei rămăsese în urmă
+        text = _eveniment(s.evenimente[0], playlist)
+        self.assertIn("fără cadre 101 s", text)
+        self.assertIn("în urmă 24, 31 s", text)
+        self.assertIn("necitit", _eveniment(s.evenimente[0], None))
 
     def test_fara_cadre_trei_minute(self):
         self.assertIn("cadre", stare_live([t for t in self.NORMAL if t < 300]))
