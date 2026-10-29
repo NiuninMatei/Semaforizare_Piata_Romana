@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (29.10.2026, ~03:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10
+## Stare curentă (29.10.2026, ~08:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10; pauză pentru repornire
 
 - **Testul pe 28.10 (lanțul scratchpad\test28.py, 29.10 00:15–02:27, toți pașii exit 0):** ziua 28 completă
   (96 de intervale, 58 557 intrări; calitatea 1–6% goluri), publicată în data/; 12 scenarii × seed-urile 1–10 × 7
@@ -61,9 +61,24 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   (RiLSA, TRL; nicio normă românească publică găsită). Zonele de vehicule pe traiectoriile din 28.10: 94% din
   vehiculele în mișcare ating o zonă; restul = fragmente pe inel + 96 / 489 traiectorii/zi în colțurile de jos (< 1%)
   – partea cu imaginea (fundal median, OSM) rămâne pentru ziua, la lumină (scratchpad\zone_vehicule28.py).
-- **De făcut:** rezumatul pentru autor la 08:00 (întrebarea: excluderea intervalelor înghețate în `scenarii_zi`
-  înainte de confirmare?); ziua: zonele de vehicule reverificate și pe imagine; 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10
-  „Confirmarea”; până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.
+- **29.10, ≈08:33 – pauză pentru repornirea calculatorului** (cererea autorului: actualizarea Claude Desktop și o
+  repornire completă; oprirea după 08:30, ca fereastra fixă de dimineață 07:30–08:30 a zilei de confirmare să rămână
+  întreagă). Colectarea oprită curat (Ctrl+C în consola ascunsă → `counter.flush()`; scratchpad\oprire_curata.py,
+  încercat întâi pe un proces de probă), lanțul test29 oprit, jurnalul zilei verificat cap-coadă
+  (scratchpad\verifica_jurnal.py; ora opririi și ultima traiectorie în outputs/logs/oprire_2026-10-29.txt);
+  scratchpad-ul copiat în outputs/copie_scratchpad_2026-10-29. `scenarii_zi`: grila completă de 15 min (un gol nu mai e
+  sărit de fereastra glisantă; înainte putea da o „oră” falsă sau KeyError la `windows["varf"]`) + `--exclude
+  HH:MM-HH:MM`; zilele 21–28.10 neschimbate (verificare independentă).
+- **La reluare (după repornire):** (1) `run_vision` fără fereastră: `$env:PYTHONPATH="src"; Start-Process
+  .venv\Scripts\python.exe -ArgumentList '-m','romana.vision.run_vision' -RedirectStandardOutput
+  outputs\logs\viziune_2026-10-29.log -RedirectStandardError outputs\logs\viziune_2026-10-29.err -WindowStyle Hidden
+  -PassThru`, apoi verificat că jurnalul brut al zilei crește; (2) keep-awake; (3) în test29.py, la `scenarii_zi`:
+  `--exclude 08:30-<sfertul de după cel al repornirii>` (sfertul opririi, golul și sfertul repornirii, căruia `recount`
+  îi dă durata întreagă deși are date doar de la repornire) și oprirea lanțului dacă calitate / recount ies cu cod
+  nenul (un membru gzip trunchiat face recount să cadă cu zlib.error), apoi test29.py repornit în fundal; (4) rezumatul pentru
+  autor (cel de la 08:00) cu întrebarea `--fara-inghetate`; (5) zonele de vehicule pe imagine, la lumină.
+- **De făcut:** 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10 „Confirmarea” (și golul
+  din 29.10 în § 4.6); până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.
 
 ## Stare anterioară (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
 
