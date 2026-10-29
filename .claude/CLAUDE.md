@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (29.10.2026, ~08:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10; pauză pentru repornire
+## Stare curentă (29.10.2026, ~16:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10; veghea fluxului de cadre
 
 - **Testul pe 28.10 (lanțul scratchpad\test28.py, 29.10 00:15–02:27, toți pașii exit 0):** ziua 28 completă
   (96 de intervale, 58 557 intrări; calitatea 1–6% goluri), publicată în data/; 12 scenarii × seed-urile 1–10 × 7
@@ -86,6 +86,19 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   – diferență nelămurită, declarată; § 9.2 / § 9.7 limitate explicit la calibrările anterioare; § 6.4 excepțiile de la
   „9.1–9.8 istorice” (E14, § 9.6 a doua parte); 50 de teste, 83 de scenarii, ≈250 MB; zonele de vehicule verificate pe
   imagine (§ 4.3).
+- **29.10, 14:50–16:30 – veghea fluxului de cadre** (cererea autorului: orice „înghețare” se analizează pe loc, singur,
+  până la cauză; rezolv dacă e la noi, mă adaptez dacă vine din teren – memoria anomalii-verificare-directa):
+  `romana.vision.veghe` (+ `scripts\2d_veghe.bat`, 12 teste, 62 în total) citește state.json la 1 s, previzualizarea la
+  15 s (doar în memorie), jurnalul la 60 s; iese cu cod 2 și `outputs/logs/veghe_alerta_*.json` (procese, performanța
+  CPU, GPU, coada `viziune_*.err`, playlistul HLS). Praguri pe `--reluare` 21–29.10 (`docs/rezultate/veghe_reluare.csv`)
+  și pe `viziune_*.err` din 26 / 28.10 (întreruperi de 30–120 s refăcute singure → „fără cadre” abia la 3 min, 4 episoade
+  de reconectare în 30 min); verificată de 2 agenți (wf_5610ffb0-a9d), observațiile lor aplicate. **Rulează în fundal
+  (task bk7duao2x, pornită 15:57) până pe 30.10, 09:05; dimineața: întâi TaskStop, apoi oprirea colectării.** La alertă:
+  analiza întâi (diagnosticul), apoi rezolvarea, apoi adaptarea; repornire cu `--fara <semn>` dacă semnul e analizat.
+  Descoperiri (§ 4.6): încetiniri scurte pe 25–28.10, toate în timpul calculelor grele (28.10 00:58–01:10 = sfârșitul
+  validării, încheiată la 01:11); prioritatea scăzută din scripturile de noapte nu se aplica (ctypes fără tipuri,
+  verificat) → lanțul test29 e BelowNormal din afară, `run_vision` AboveNormal (și în cod, la pornire); la prânzul din
+  26.10 (clipurile referinței) rata live era redusă → explică probabil o parte din diferența din § 5.4.
 - **Pașii de reluare folosiți (pentru o altă repornire):** (1) `run_vision` fără fereastră: `$env:PYTHONPATH="src"; Start-Process
   .venv\Scripts\python.exe -ArgumentList '-m','romana.vision.run_vision' -RedirectStandardOutput
   outputs\logs\viziune_2026-10-29.log -RedirectStandardError outputs\logs\viziune_2026-10-29.err -WindowStyle Hidden
@@ -95,7 +108,10 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   nenul (un membru gzip trunchiat face recount să cadă cu zlib.error), apoi test29.py repornit în fundal (prioritate
   BelowNormal); (4) zonele de vehicule pe imagine, la lumină.
 - **De făcut:** 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10 „Confirmarea” (și golul
-  din 29.10 în § 4.6); până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.
+  din 29.10 în § 4.6); după miezul nopții, `veghe --reluare` pe 29.10 întreagă → rândurile 29.10 din
+  `veghe_reluare.csv` și cifrele din § 4.6; ce a arătat veghea în noaptea cu lanțul; până pe 30.10 09:30 totul oprit
+  (întâi veghea), comis, împins, explicația cap-coadă (schița: scratchpad\explicatie_cap_coada.md, lista:
+  scratchpad\dupa_confirmare.md).
 
 ## Stare anterioară (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
 

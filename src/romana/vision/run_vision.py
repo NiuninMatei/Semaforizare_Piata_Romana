@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 from pathlib import Path
 
@@ -136,6 +137,9 @@ def main(argv=None) -> None:
     ap.add_argument("--fara-traiectorii", action="store_true",
                     help="nu salva jurnalul local de traiectorii (data/trajectories_brute) pentru renumărare")
     args = ap.parse_args(argv)
+    if os.name == "nt":   # colectarea are întâietate față de calculele grele de pe același calculator (§ 4.6)
+        import psutil
+        psutil.Process().nice(psutil.ABOVE_NORMAL_PRIORITY_CLASS)
 
     zones = load_zones(cam)
     src = FrameSource(args.source, target_fps=args.fps)
