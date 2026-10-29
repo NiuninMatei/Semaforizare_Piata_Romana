@@ -440,6 +440,17 @@ exact 03:45, 04:00 și 04:15, iar pe 25.10 și 26.10 niciun interval. Opțiunea 
 muta astfel pe 02:45–03:45, iar pe 26.10 nu se schimbă nimic. Opțiunea e oprită implicit, ca zilele deja prelucrate
 să rămână reproductibile.
 
+**Golurile din colectare (29.10).** O oprire a colectării lasă sferturi de oră fără date. Fereastra glisantă de o oră
+din `scenarii_zi` număra însă rânduri, nu minute, așa că unea sferturile de o parte și de alta a golului într-o „oră”
+care nu a existat. Pe 21.10 și 22.10, care au astfel de goluri, orele false existau, dar niciuna nu a fost aleasă. Pe
+datele din 28.10, cu un gol pus lângă vârf, scriptul se oprea cu o eroare. De pe 29.10, profilul se întinde pe grila
+completă de 15 minute, iar golurile rămân goale, deci nicio fereastră nu trece peste ele. Ferestrele și profilurile
+zilelor 21–28.10 rămân identice (verificare independentă). Mai e un efect: sfertul în care colectarea repornește are
+date doar de la repornire, dar `recount` îi dă durata întreagă. Pe 21.10, sfertul 21:30 are 220 de vehicule, față de
+1 024 în sfertul următor. Opțiunea `--exclude HH:MM-HH:MM` scoate explicit din alegerea ferestrelor sfertul opririi,
+golul și sfertul repornirii. Oprirea de pe 29.10 (repornirea calculatorului) e pusă după 08:30. Simularea aceleiași
+opriri pe datele din 28.10 lasă fereastra de dimineață 07:30–08:30 neschimbată, vehicul cu vehicul.
+
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
 Aceasta este piesa care asigură că agentul se antrenează pe **trafic real**, nu pe trafic aleatoriu.
