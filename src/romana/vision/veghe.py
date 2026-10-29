@@ -12,11 +12,13 @@ camerei)?
 Semnele (pragurile alese pe jurnalele 21–29.10 cu `--reluare` și pe jurnalele de erori ale viziunii din 26 și 28.10):
   * proces        – `run_vision` nu mai rulează;
   * fără cadre    – niciun cadru prelucrat de STARE_VECHE s. Întreruperile scurte ale fluxului se refac singure: o
-                    reconectare durează ≈30–120 s (30 s până expiră citirea, apoi redeschiderea și tamponul de 8 s);
+                    întrerupere cu citire expirată a oprit cadrele 33–73 s (30 s până expiră citirea, apoi redeschiderea
+                    și tamponul de 8 s); cel mai lung gol din 21–29.10, afară de opriri: 144 s (28.10, 00:30);
                     pauzele de cel puțin 10 s doar se notează în CSV, cu playlistul citit la începutul lor (un ultim
-                    segment mult în urmă arată spre cameră, unul la zi spre noi) și cu urmele din jurul lor: octeții
-                    primiți prin rețea (descărcarea oprită = rețeaua tace, de la ≈8 s – tamponul de redare – înaintea
-                    pauzei) și CPU-ul lui `run_vision` (prelucrarea oprită, cu rețeaua mergând);
+                    segment mult în urmă arată spre cameră, unul la zi spre livrare sau spre noi) și cu urmele din jurul
+                    lor: octeții primiți prin rețea (descărcarea oprită = rețeaua tace de dinaintea pauzei până la ≈2–8 s
+                    înaintea sfârșitului ei – reancorarea redării) și CPU-ul lui `run_vision` (prelucrarea oprită, cu
+                    rețeaua mergând);
   * pauze         – cel puțin PRAG_PAUZE pauze de peste PAUZA s între cadre în FEREASTRA_PAUZE s: redare sacadată, ca în
                     21–22.10, când imaginea „mergea 2 s și stătea 4 s”;
   * rata mică     – în ultimele DURATA_FPS s, cel puțin 75% din citiri au rata cadrelor prelucrate (media glisantă din
@@ -69,17 +71,17 @@ LOG_DIR = OUTPUT_DIR / "logs"
 FEREASTRA = 600          # s; fereastra metricilor din jurnal
 PASTRARE = 960           # s; punctele mai vechi nu mai pot intra în fereastră
 CADRE_PIERDERE = 30      # cadre prelucrate fără detecție după care o urmărire se închide și se scrie (5 s la 6 cadre/s)
-PRAG_LUNGI = 0.15        # pași lungi: pe 29.10 median 3,4%, max 12,4% (cu lanțul de noapte în paralel); episoadele 60–100%
+PRAG_LUNGI = 0.15        # pași lungi: pe 29.10 median 3,3%, max 13,2% (lanțul de noapte în paralel); încetinirile 15–100%
 MIN_PASI = 300           # sub atâția pași în fereastră nu se judecă
 PRAG_FPS = 3.5           # cadre/s; normal ≈6, cu lanțul de noapte ≈4,5–5,3, pe 28.10 03:46–04:28 ≈1,4
 DURATA_FPS = 180         # s de citiri pentru rata mică
-STARE_VECHE = 180        # s fără niciun cadru prelucrat; întreruperile din 26 și 28.10 s-au refăcut în cel mult ≈2 min
-PAUZA = 2.5              # s; normal starea are cel mult ≈1,2 s
+STARE_VECHE = 180        # s fără niciun cadru prelucrat; cel mai lung gol din 21–29.10, afară de opriri: 144 s (28.10)
+PAUZA = 2.5              # s; normal starea are ≤ 1,2 s, rar până la 2 s
 FEREASTRA_PAUZE = 300    # s
 PRAG_PAUZE = 10          # pauze în FEREASTRA_PAUZE; sacadarea din 21–22.10 ar da ≈50
 EPISOD = 120             # s; creșterile contorului de reconectări mai apropiate fac parte din același episod
 MAX_EPISOADE = 4         # în 30 de minute
-STAGNARE = 300           # s fără nicio traiectorie nouă; pe 25–29.10, cel mult 1,9 min (afară de opriri)
+STAGNARE = 300           # s fără traiectorii noi; pe 25–29.10 cel mult 2,7 min (încetinirea din 28.10), afară de opriri
 MIN_PUNCTE_MINUT = 5     # puncte ale unui vehicul oprit într-un minut, ca să-i judecăm pozițiile
 PRAG_IDENTICE = 0.5      # ponderea vehiculelor oprite cu poziții identice; pe 21–29.10 cel mult 3,7%
 MIN_OPRITE = 10
@@ -427,9 +429,10 @@ class Urme:
 
 def urme_pauza(s, t0: float, t1: float) -> str:
     """Rețeaua și CPU-ul în jurul pauzei [t0, t1]. Descărcarea oprită: cel mai lung gol al rețelei (< 5% din ritmul de
-    dinainte) ține cât pauza plus ≈8 s și începe înaintea ei; normal, între două segmente, rețeaua tace ≈4–5 s.
-    Prelucrarea oprită: rețeaua merge, iar CPU-ul arată unde (≈100% = un nucleu ocupat în interpretor; puțin = placa
-    grafică sau discul)."""
+    dinainte) începe înaintea pauzei (marja tamponului de redare plus tăcerea dintre segmente) și se încheie cu ≈2–8 s
+    înaintea sfârșitului ei, fiindcă după reancorare cadrele noi se redau abia la 8 s după sosire (mai devreme dacă
+    segmentele restante sosesc dintr-odată); normal, între două segmente, rețeaua tace ≈4–5 s. Prelucrarea oprită:
+    rețeaua merge, iar CPU-ul arată unde (≈100% = un nucleu ocupat în interpretor; puțin = placa grafică sau discul)."""
     s = list(s)
 
     def la(t):                           # ultima citire de dinaintea lui t

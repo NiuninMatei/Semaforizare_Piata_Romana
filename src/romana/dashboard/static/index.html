@@ -195,7 +195,16 @@ async function actualizeaza(){
     $("debite").innerHTML=k.map(b=>`<tr><td>${NUME[b]}</td><td class="n">${ins[b]??"–"}</td><td class="n">${outs[b]??"–"}</td></tr>`).join("")+
       Object.keys(ped).map(b=>`<tr><td>Pietoni pe trecerea ${NUME[b]||b}</td><td class="n" colspan="2">${ped[b]} pers/h</td></tr>`).join("")+
       `<tr><td colspan="3" class="sub">Interval curent: ${Math.round((c.secunde_interval||0)/60)} min. Debitele se stabilizează după ~5 min.</td></tr>`;
-  } else { $("p-cam").className="punct err"; $("s-cam").textContent="camera: modulul de viziune nu rulează"; $("s-fps").textContent=""; $("s-urm").textContent=""; $("cadru-gol").style.display="grid" }
+  } else {
+    // starea veche de cel mult 3 minute = o microînghețare sau o întrerupere scurtă a fluxului (§ 4.6): modulul rulează
+    const v=c?Math.round(c._varsta_s):null, scurt=v!==null&&v<180;
+    $("p-cam").className="punct "+(scurt?"atent":"err");
+    $("s-cam").textContent=scurt?`camera: fără cadre noi de ${v} s (fluxul sau prelucrarea stă)`:"camera: modulul de viziune nu rulează";
+    $("s-fps").textContent=""; $("s-urm").textContent="";
+    $("cadru-gol").innerHTML=scurt?`Imaginea s-a oprit de ${v} s: fluxul camerei sau prelucrarea stă.<br>De obicei revine singură în mai puțin de un minut.`
+      :"Nu primesc imagini de la modulul de viziune.<br>Porniți-l cu <b>scripts\\2_viziune_live.bat</b>; imaginea apare aici în câteva secunde.";
+    $("cadru-gol").style.display="grid"
+  }
   // simulare
   if(sim){
     $("faza").textContent=sim.faza_nume.split("(")[0].trim();
