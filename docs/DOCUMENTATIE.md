@@ -63,7 +63,8 @@ implementabilă de planuri și agenți pentru cazurile reale de trafic ale pieț
 intens, după debitul măsurat de cameră) primește strategia care câștigă pe datele lui, iar un selector o activează
 după traficul măsurat. Programul semafoarelor e singurul lucru schimbat; geometria și semafoarele rămân cele reale.
 Candidați sunt deopotrivă planurile fixe clasice, programele din planuri fixe pe cazuri și agenții de învățare prin
-întărire. Câștigă cel mai bun, verificat pe o zi nevăzută, iar ceilalți rămân documentați ca încercări (§ 9.9). În
+întărire. Câștigă cel mai bun, verificat pe o zi nevăzută, iar ceilalți rămân documentați ca încercări (§ 9.9). Pe
+ziua de test, miercuri 28.10, a câștigat planul fix scurt 12/14/12, aceleași faze cu durate mai scurte (§ 9.10). În
 calcul intră toți participanții observați pe cameră: autoturisme, autobuze și troleibuze, camioane, motociclete,
 bicicliști și pietoni.
 
@@ -75,7 +76,7 @@ bicicliști și pietoni.
 | R2 | Direcțiile **din care vin** și **spre care se îndreaptă** vehiculele, cât mai aproape de adevăr | 10 zone poligonale (intrare/ieșire pe fiecare braț) calibrate pe traiectorii reale; matrice O–D pe intervale de 15 min; 10 zone pe trecerile de pietoni, corectate pe 28.10 (§ 4.4) |
 | R3 | Transformarea datelor în flux de trafic simulat în SUMO, nu trafic aleator | estimare O–D Furness + `routeSampler.py` pe viraje, pe tipuri de vehicule (inclusiv biciclete); pietoni din numărătorile de pe treceri; trafic de fond doar ca fracțiune declarată |
 | R4 | Model AI care recunoaște semafoarele intersecției și le controlează | cele 16 semafoare fizice ale pieței sunt identificate automat după coordonate și grupate într-un controler, ca automatul real; agent PPO care alege ordinea și durata fazelor reale; agenții sunt candidați alături de planurile fixe, în programul pe cazuri de trafic (§ 9.9) |
-| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe seed-urile de test 1–10 (alegerile pe seed-urile de validare 11–15), pentru toți participanții (vehicule, bicicliști, pietoni); fluidizarea optimă se caută pe cazuri de trafic: fiecare caz primește strategia care câștigă pe el, plan fix sau agent, aleasă pe validare și verificată pe o zi nevăzută (§ 9.9) |
+| R5 | Antrenare până la fluidizarea optimă a intersecției | antrenare pe mai multe scenarii, în paralel; evaluare față de 4 linii de bază pe seed-urile de test 1–10 (alegerile pe seed-urile de validare 11–15), pentru toți participanții (vehicule, bicicliști, pietoni); fluidizarea optimă se caută pe cazuri de trafic: fiecare caz primește strategia care câștigă pe el, plan fix sau agent, aleasă pe validare și verificată pe o zi nevăzută (§ 9.9); pe ziua de test a câștigat planul fix 12/14/12, același în toate cazurile (§ 9.10) |
 | R6 | Extindere la intersecțiile principale conexe | varianta „coridor”: Piața Romană + cei 4 vecini imediați care o alimentează, controlați simultan |
 | R7 | Documentație în limba română, cu surse și licențe | acest document; note de subsol; § 14 |
 | R8 | Evoluție vizibilă pe GitHub, pe borne | commit + push la fiecare bornă (§ 12) |
@@ -409,6 +410,7 @@ din `data/trajectories/` ies practic aceleași cifre):
 | joi 22.10, 07:00–19:00 | 11–22% | 0,8–1,4 |
 | joi 22.10, de la 20:00 | 2–3% | 3,7–4,5 |
 | duminică 25.10 și luni 26.10 | 1–6% | 2,4–5,2 |
+| miercuri 28.10 (ziua de test, § 9.10), 00:00–24:00 | 1–6% | 2,1–4,9 |
 
 Un vehicul oprit la semafor este detectat în fiecare cadru, deci densitatea nu scade din cauza aglomerației, ci doar
 a înregistrării. Schimbarea coincide cu tamponul de redare de 8 s pentru fluxul HLS, introdus pe 22.10 seara pentru
@@ -423,6 +425,14 @@ Dacia vest ≈1 050, Dacia est ≈650) – de aproximativ două ori vârfurile d
 duminica 25.10, înregistrată continuu, părea „mai aglomerată” decât zilele lucrătoare (4 683 de vehicule/h la vârf) –
 un semnal care ar fi trebuit să atragă atenția mai devreme. Pentru o colectare nouă: `romana.vision.calitate` pe
 jurnalul zilei, înainte de orice scenariu.
+
+**Imaginea înghețată (28.10, ≈03:40–04:30).** Golurile și densitatea nu văd o imagine înghețată: fluxul livrează
+același cadru, detectorul găsește în fiecare cadru vehiculele parcate, iar traiectoriile rămân dense. Pe 28.10,
+noaptea, s-a întâmplat exact asta (§ 9.10). Pe 15 minute, vehiculele urmărite au scăzut de 4–5 ori, 80–85% dintre
+ele stăteau pe loc, iar durata lor mediană a urcat de la 3–5 s la 20–40 s. Semnul se vede pe jurnalul brut: multe
+traiectorii fixe și puține în mișcare. Jurnalul colectării nu a înregistrat atunci nicio întrerupere a fluxului,
+deci înghețarea a venit de la sursă, nu de la conexiune. O verificare automată a vehiculelor în mișcare, pe
+intervale de 15 minute, ar trebui să excludă asemenea intervale din alegerea ferestrelor (§ 10).
 
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
@@ -953,9 +963,9 @@ aici +21%, +22% pe toată validarea). Pe seed-urile de test 1–10:
 | planul fix actual | **−16,0%** (noaptea −14,1%, prânz −3,1%, vârfuri −14,8% / −28,0%, dimineața −20,0%) | 0,00001 / 0,000002 | **42 / 50** |
 | actuated | **−18,4%** | <0,000001 / <0,000001 | 46 / 50 |
 
-Programul realist este varianta implicită a modului „Program pe tipuri de trafic” din geamănul live
-(`VARIANTA_PROGRAM = "realist"` în `bridge/live_twin.py`; varianta pentru participanți disciplinați rămâne
-disponibilă ca `"marginea_sus"`).
+Programul realist a fost varianta implicită a modului „Program pe tipuri de trafic” din geamănul live până pe
+29.10 (`VARIANTA_PROGRAM = "realist"` în `bridge/live_twin.py`). Atunci l-a înlocuit câștigătorul testului din
+28.10, planul fix 12/14/12 (§ 9.10). Varianta pentru participanți disciplinați rămâne disponibilă ca `"marginea_sus"`.
 
 **Programul realist pe duminică** (zi nevăzută, participanți indisciplinați, 5 scenarii × 10 seed-uri de test,
 `docs/rezultate/robustete_indisciplinat_duminica*.csv`; dimineața de duminică intră în banda lejeră): −4,4% față
@@ -1037,7 +1047,8 @@ informație utilă pentru administratorul drumului.
 ### 9.7 Concluzie
 
 Punctele 1–5 rezumă rezultatele pe calibrările anterioare (21, 22 și 25.10; geamănul cu capacitate implicită,
-§ 6.4). Punctul 6 rezumă testul pe cererea calibrată și pe ziua nouă, cu geamănul care trece debitul real.
+§ 6.4). Punctul 6 rezumă testul pe cererea calibrată și pe ziua nouă, cu geamănul care trece debitul real, iar
+punctul 7 testul final, după regula „cel mai bun câștigă”.
 
 1. **Inteligența artificială pe infrastructura existentă merită, folosită inteligent.** Pe calibrările anterioare,
    un program pe tipuri de trafic a redus timpul pierdut de toți participanții, față de programul actual, cu
@@ -1065,8 +1076,14 @@ Punctele 1–5 rezumă rezultatele pe calibrările anterioare (21, 22 și 25.10;
    medie, planul fix.** Cel mai constant este agentul oficial reantrenat pe cererea calibrată (E13): −9,5% / −9,7%
    față de planul fix, câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu
    participanți indisciplinați e la egalitate cu agentul oficial. Programul realist rămâne mai bun decât actuated,
-   dar componenta lui pentru traficul greu (E3) nu se transferă pe ziua nouă cu participanți indisciplinați. Dacă
-   E13 îl înlocuiește se decide pe testul din 28.10, după protocolul fixat dinainte.
+   dar componenta lui pentru traficul greu (E3) nu se transferă pe ziua nouă cu participanți indisciplinați.
+7. **Testul final (miercuri 28.10, § 9.10): câștigă planul fix scurt 12/14/12.** Pe ziua nevăzută, după regula
+   fixată dinainte, toți cei trei candidați bat semnificativ programul realist, cu ≈6–7% din pierderea totală:
+   planul 12/14/12, programul din planuri fixe pe cazuri și E13. Între ei, diferențele nu sunt semnificative, așa că
+   regula alege candidatul cel mai simplu, planul 12/14/12, care a trecut în geamănul live. Ciclul scurt (≈53 s în loc
+   de ≈91 s) câștigă prin pietoni: −12% față de planul fix actual, în timp ce vehiculele pierd puțin (+1–2%). Înainte
+   de o aplicare reală, verzile lui scurte trebuie verificate față de timpii de degajare a pietonilor (§ 10). Cea mai
+   bună combinație implementabilă găsită pe datele reale e deci cea mai simplă: aceleași faze, cu durate mai scurte.
 
 ### 9.8 Reevaluarea pe cererea calibrată (26.10.2026)
 
@@ -1256,13 +1273,141 @@ noaptea de 27–28.10, tot înainte de orice prelucrare):
   alege live după debitul intervalului curent de 15 minute, deci lângă un prag programul poate comuta mai des decât în
   evaluare, unde cazul vine din media orei. Autorul a aprobat ca trecerea să se facă automat și să fie documentată. Capacitatea calibrată e deja implicită în
   geamănul live din 28.10 (§ 6.4). Dacă un plan fix câștigă, verzile lui scurte ar trebui verificate, înainte de o
-  aplicare reală, față de timpii de degajare a pietonilor (§ 10).
+  aplicare reală, față de timpii de degajare a pietonilor (§ 10). Rezultatul testului: § 9.10.
 
 Limitele testului din 26.10: o singură zi lucrătoare (10 seed-uri; tabelul de mai sus, pe seed-urile 1–5), iar agenții sunt
 antrenați pe geamănul cu capacitate implicită. Ziua de test a contribuit la calibrare (factorii de corecție, timpul
 de reacție). Reantrenarea pe ziua de luni cu capacitatea calibrată (E14) nu a întrecut E13 (§ 9.5); reantrenarea pe
 mai multe zile rămâne un pas următor (§ 10). Planurile fixe scurte și agenții folosesc același verde minim de 10 s,
 fără timpul de degajare a pietonilor (§ 10).
+
+### 9.10 Testul pe miercuri 28.10: câștigă planul fix scurt 12/14/12
+
+Testul s-a făcut automat, după protocolul din § 9.9, în noaptea de 28 spre 29.10. Lanțul a pornit la 00:15, s-a
+încheiat la 02:27 și a rulat fără intervenție manuală. Pașii au fost: verificarea continuității, renumărarea cu
+zonele corectate, publicarea jurnalului, scenariile, rularea strategiilor, analizele și regula de decizie
+(`romana.control.decizie`). Fișierele sunt în `docs/rezultate/`: `test_28_*.csv` și `decizie_2026-10-28*.json`
+(Anexa A).
+
+- **Ziua de test.** Ziua de 28.10 a fost înregistrată continuu, de la 00:00 la 24:00. Golurile de peste 1 s apar la
+  1–6% din traiectorii, iar densitatea e de 2,1–4,9 puncte/s, ca pe 25–26.10 (§ 4.6). Renumărarea cu zonele din
+  28.10 dă 58 557 de intrări, 24 029 de viraje complete și 26 904 pietoni, în 96 de intervale de 15 minute. Jurnalul
+  publicat are 157 572 de traiectorii de vehicule. `scenarii_zi` a ales patru ferestre (debitul echilibrat, § 5.4):
+  liniștit 03:30–04:30 (56 veh/h), dimineața 07:30–08:30 (4 093 veh/h), vârful 12:15–13:15 (4 934 veh/h) și seara
+  17:30–18:30 (3 010 veh/h). Lor li se adaugă vârful ×1,2 (5 921 veh/h) și liniștitul ×0,8 (44 veh/h). Cu cele două
+  comportamente rezultă 12 scenarii, iar pe seed-urile 1–10, 120 de perechi. Cele șapte strategii rulate sunt planul
+  fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12. Ele însumează 840 de simulări, ≈2 h pe 11
+  procese. Programele pe cazuri (programul realist, `TOD_DEBIT`) se compun din rulările componentelor, după cazul
+  fiecărui scenariu.
+- **Fereastra liniștită a căzut pe o înghețare a imaginii.** Pe 26.10, cu înregistrarea pornită la 09:11, fereastra
+  liniștită fusese seara, la 1 213 veh/h. Pe 28.10, cu toată ziua înregistrată, ea a ajuns noaptea. Verificarea de
+  după test, pe jurnalul brut de traiectorii, arată însă că între ≈03:40 și 04:30 imaginea camerei a înghețat. Pe
+  15 minute, vehiculele urmărite scad de la 150–240 la 40–50. Dintre ele, 80–85% stau pe loc: sunt mașinile parcate,
+  urmărite câte 20–40 s, iar deplasarea mediană e practic zero. Înainte de 03:30 și după 04:30 imaginea e normală,
+  cu ≈190–450 veh/h (debitul echilibrat). Scenariile „liniștit” (56 și 44 veh/h) nu sunt deci trafic real, iar cazul
+  lejer nu e reprezentat în acest test. Metricile de continuitate din § 4.6 nu văd înghețarea, pentru că un cadru
+  înghețat dă detecții dense. Efectul asupra deciziei e neglijabil: noaptea are sub 1,1 h pierdute pe simulare,
+  0,05% din total. Fără cele 40 de perechi de noapte, regula alege tot planul 12/14/12, mai clar: p = 0,000005 față
+  de programul realist (indisciplinați 0,0004, disciplinați 0,002), iar `TOD_DEBIT` rămâne la egalitate cu el
+  (p = 0,47). Media schimbărilor relative pe perechi dă însă nopții aceeași greutate ca vârfului. De aceea, alături de
+  pierderea totală (criteriul regulii), se dă mai jos și media pe cele 80 de perechi fără noapte.
+- **Decizia.** Toți cei trei candidați sunt eligibili:
+
+  | Candidatul (de la cel mai simplu) | Pierderea totală (h) | Față de programul realist | Diferența medie pe pereche | Mai bun în (fără noapte) | Wilcoxon p: reunite / indisciplinați / disciplinați |
+  |---|---|---|---|---|---|
+  | planul fix 12/14/12 | 57 526 | −6,9% | −35,6 h | 60 / 120 (57 / 80) | 0,001 / 0,022 / 0,023 |
+  | `TOD_DEBIT` (16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens) | 57 364 | −7,2% | −37,0 h | 60 / 120 (60 / 80) | 0,0002 / 0,033 / 0,002 |
+  | E13 (`ppo_romana_cal`) | 58 123 | −6,0% | −30,7 h | 74 / 120 (56 / 80) | 0,0001 / 0,048 / 0,0006 |
+  | programul realist (în vigoare) | 61 802 | – | – | – | – |
+
+  Cea mai mică pierdere totală o are `TOD_DEBIT`. Față de planul 12/14/12, diferența e însă de 0,3% și
+  nesemnificativă (Wilcoxon p = 0,90), deci regula alege candidatul mai simplu: **planul fix 12/14/12**
+  (`VARIANTA_PROGRAM = "plan_scurt"`). Nici E13 nu se deosebește semnificativ de el (p = 0,82). Pe 29.10, geamănul
+  live a trecut pe planul 12/14/12 (§ 5.5), iar dispeceratul îl afișează la modul „Program pe cazuri de trafic”
+  (§ 8). Trecerea automată fusese aprobată de autor.
+- **Toate strategiile**, pe cele 120 de perechi:
+
+  | Strategia | Pierderea totală (h) | Față de planul fix | Față de programul realist | Fără noapte: media pe perechi față de planul fix (mai bun în) |
+  |---|---|---|---|---|
+  | planul 16/10/12 (raportat, nu candidat) | 56 747 | −7,9% | −8,2% | −8,1% (66 / 80) |
+  | `TOD_DEBIT` | 57 364 | −6,9% | −7,2% | −7,4% (63 / 80) |
+  | **planul 12/14/12 (câștigătorul)** | **57 526** | **−6,7%** | **−6,9%** | **−6,2% (59 / 80)** |
+  | agentul oficial (raportat, nu candidat) | 57 823 | −6,2% | −6,4% | −5,1% (65 / 80) |
+  | E13 | 58 123 | −5,7% | −6,0% | −4,8% (56 / 80) |
+  | planul fix de referință 36/28/12 | 61 647 | – | −0,3% | – |
+  | programul realist | 61 802 | +0,3% | – | +1,6% (43 / 80) |
+  | E3 | 61 804 | +0,3% | 0,0% | – |
+  | actuated | 67 871 | +10,1% | +9,8% | +13,1% (5 / 80) |
+
+  Pe comportamente, câștigătorul dă față de programul realist −8,3% cu participanți indisciplinați (28 461 h față de
+  31 036 h) și −5,5% cu participanți disciplinați (29 065 h față de 30 766 h). Programul realist e practic egal cu
+  planul fix, pentru că la trafic mediu și intens folosește E3, care pe ziua nouă nu mai câștigă (§ 9.9).
+- **Pe cazuri de trafic** (după debit, pragurile 2 400 / 4 100 veh/h; pierderea totală în ore):
+
+  | Cazul (ferestrele) | Programul realist | Planul fix | 12/14/12 | `TOD_DEBIT` | E13 | Agentul oficial | 16/10/12 |
+  |---|---|---|---|---|---|---|---|
+  | lejer (noaptea, 44–56 veh/h, imaginea înghețată) | 30,2 | 32,5 | 32,4 | 33,0 | 30,7 | 30,2 | 33,0 |
+  | mediu (seara, 3 010; dimineața, 4 093) | 20 122 | 19 828 | 17 913 | 17 751 | 18 335 | 18 403 | 17 751 |
+  | intens (vârful, 4 934, și vârful ×1,2) | 41 650 | 41 787 | 39 580 | 39 580 | 39 758 | 39 390 | 38 963 |
+
+  Față de programul realist, planul 12/14/12 câștigă 11,0% la trafic mediu și 5,0% la trafic intens. Noaptea, cei doi
+  agenți sunt cu ≈2 h mai buni pe toate cele 40 de simulări.
+- **Câștigul vine de la pietoni.** Pierderea pe tipuri de participanți (ore, 120 de perechi):
+
+  | Tipul | Planul fix | Programul realist | 12/14/12 | E13 |
+  |---|---|---|---|---|
+  | autoturisme | 21 719 | 22 599 | 22 097 | 22 865 |
+  | autobuze și troleibuze | 674 | 709 | 685 | 713 |
+  | camioane | 1 340 | 1 389 | 1 352 | 1 393 |
+  | motociclete și bicicliști | 67 | 79 | 70 | 81 |
+  | pietoni | 37 847 | 37 026 | 33 322 | 33 071 |
+  | total | 61 647 | 61 802 | 57 526 | 58 123 |
+
+  Față de planul fix actual, câștigul planului 12/14/12 vine în întregime de la pietoni (−12,0%). Cu un ciclu de ≈53 s
+  în loc de ≈91 s, ei așteaptă mai puțin la treceri. Vehiculele pierd puțin: +1,7% autoturismele și autobuzele, +0,9%
+  camioanele. Față de programul realist, planul e mai bun pentru autoturisme (−2,2%), autobuze (−3,3%), camioane
+  (−2,6%), bicicliști și pietoni (−10,0%), iar motocicletele rămân practic la fel (39 h față de 38 h). Agenții câștigă
+  tot prin pietoni: față de planul fix,
+  E13 are pietonii la −12,6% și vehiculele la +4…+6%.
+- **Măsura pe persoană** (raportată, § 9.9) dă același câștigător la toate cele trei ipoteze de ocupare: planul
+  12/14/12. Față de programul realist, el dă −6,0%, −5,6% și −5,2% din orele-persoană pierdute, la 20, 40 și 70 de
+  călători pe autobuz. Și aici e la egalitate cu `TOD_DEBIT` (p = 0,49 / 0,80 / 0,91). E13 rămâne eligibil la 20 și
+  40 de călători, dar nu și la 70 (p = 0,056). Pietonii sunt 46%, 39% și 32% din orele-persoană, iar călătorii din
+  autobuze și troleibuze 18%, 30% și 43%.
+- **Regula inițială pentru E13** ar fi fost îndeplinită. Față de programul realist, E13 dă −30,7 h pe pereche (−6,0%
+  din total), cu p = 0,0001 pe perechile reunite, și e mai bun în ambele comportamente (p = 0,048 / 0,0006). Prin
+  urmare, E13 ar fi înlocuit programul realist. După regula „cel mai bun câștigă”, adoptată înainte de test, el e
+  echivalent cu planul 12/14/12 și pierde la simplitate.
+- **Strategiile raportate care nu erau candidați.** Planul 16/10/12 singur are cea mai mică pierdere totală a zilei:
+  56 747 h, cu 1,4% sub planul 12/14/12. Agentul oficial singur are 57 823 h. Niciunul nu se deosebește semnificativ
+  de planul 12/14/12 (p = 0,51, respectiv 0,34). Lista candidaților s-a fixat înainte de test, iar schimbarea ei după
+  rezultate ar însemna alegerea pe datele de test. Pe validare (26.10), 12/14/12 fusese mai bun decât 16/10/12 la
+  trafic intens. Pe 28.10 ordinea s-a inversat, deci diferența dintre cele două planuri scurte e în zgomotul de la o
+  zi la alta. Concluzia robustă e alta: **ciclurile scurte (≈53 s) bat ciclul actual (≈91 s) și programul realist**,
+  iar între ele, ca și între ele și agenți, diferențele nu sunt semnificative.
+- **Față de validare.** Pe validare (26.10, seed-urile 11–15, fără noapte), planul 12/14/12 dăduse −9,3% față de
+  planul fix (media pe perechi). Pe ziua de test, fără noapte, dă −6,2% (59 / 80), iar din pierderea totală −6,7%.
+  Sensul e același, iar efectul e ceva mai mic, cum e de așteptat pe o zi nevăzută.
+- **Reverificarea pragurilor** (cerința autorului). Ferestrele zilei se împart între cazuri ca pe 26.10: liniștit la
+  lejer, seara (și dimineața, pe 28.10) la mediu, vârful la intens. Dimineața (4 093 veh/h) stă însă cu 7 veh/h sub
+  pragul de 4 100, deci o dimineață puțin mai aglomerată ar trece la „intens”. Pe 28.10, aceleași planuri scurte sunt
+  cele mai bune și la trafic mediu, și la trafic intens, la 1–2% unul de altul. Datele nu cer deci o treaptă
+  intermediară, iar pragurile rămân 2 400 / 4 100 veh/h. Pentru câștigător ele nu contează, pentru că planul 12/14/12
+  nu comută. Pe ziua de test nu e acoperit cazul lejer real: nici noaptea (imaginea înghețată), nici intervalul
+  1 200–2 400 veh/h (seara târziu). Faptul că planul câștigător nu comută are și un avantaj practic: o înghețare a
+  imaginii, ca aceea din noaptea de 28.10, ar coborî debitul măsurat aproape la zero și ar comuta un program pe cazuri
+  pe „lejer”, dar nu schimbă un plan fix.
+- **Ce urmează.** Confirmarea se face pe joi 29.10: lanțul pornește automat pe 30.10, la 00:15. Planul 12/14/12 rămâne
+  în geamănul live, afară de cazul în care pe 29.10 iese semnificativ mai slab decât programul realist. Înainte de o
+  aplicare reală, verzile de 12–14 s trebuie verificate față de timpii de degajare a pietonilor pe fiecare trecere.
+  Cea mai lungă trecere, de 12,8 m, cere ≈11 s la 1,2 m/s (§ 10). Câștigul vine tocmai de la pietoni, deci această
+  verificare e condiția de bază a transferului.
+
+Limitele testului: o singură zi lucrătoare nouă (plus confirmarea de pe 29.10). Cazul lejer nu e reprezentat de
+trafic real, pentru că fereastra liniștită a căzut pe o înghețare a imaginii. Agenții sunt antrenați pe geamănul cu
+capacitatea implicită. Verdele minim pentru pietoni nu este impus
+separat (§ 10). Geamănul live comută după debitul de la 15 minute. Pentru câștigător asta nu contează, pentru că el
+nu comută.
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
@@ -1279,8 +1424,9 @@ fără timpul de degajare a pietonilor (§ 10).
   pe cele două calibrări anterioare (marginile de jos și de sus, § 5.1) rămân raportate pentru transparență.
 * **Brațele îndepărtate** (Catargiu, Dacia vest, Căderea Bastiliei) apar mici în imagine; virajele urmărite complet
   sunt ≈25–40% din intrări (§ 4.3), deci proporțiile de viraj se sprijină parțial pe distribuția a priori (§ 5.1).
-* **Patru zile de date** (trei zile lucrătoare de octombrie și o duminică), cu vreme rece: vara, ploaia puternică
-  sau evenimentele speciale nu sunt acoperite. Dintre zilele lucrătoare, doar 26.10 a fost înregistrată continuu,
+* **Cinci zile de date** (patru zile lucrătoare de octombrie și o duminică), cu vreme rece: vara, ploaia puternică
+  sau evenimentele speciale nu sunt acoperite. Dintre zilele lucrătoare, doar 26.10 și 28.10 au fost înregistrate
+  continuu (28.10 de la 00:00 la 24:00, ziua de test din § 9.10; din 27.10 există doar noaptea, 00:00–06:04),
   iar 21–22.10 sunt subnumărate (§ 4.6). Pe duminică, vârful a depășit volumele de antrenare, iar agenții AI
   au pierdut din avantaj (§ 9.3) – reantrenarea periodică pe date noi ar fi necesară într-o utilizare reală.
 * **Comportamentul participanților** din simulare este cel al modelelor SUMO; indisciplina (trecerea pe roșu,
@@ -1298,7 +1444,9 @@ fără timpul de degajare a pietonilor (§ 10).
   lungă trecere comandată de semaforul pieței are 12,8 m, adică ≈11 s la 1,2 m/s. Pe geamănul calibrat, cele mai
   bune planuri fixe au verzi de 10–16 s (§ 9.9), unele la limita acestui timp, iar agenții folosesc aproape mereu chiar
   verdele minim (mediana 11 s, § 9.9). O aplicare reală ar cere verzi minime pe fază, calculate după lungimea
-  trecerilor, atât pentru planurile fixe, cât și pentru agenți.
+  trecerilor, atât pentru planurile fixe, cât și pentru agenți. Câștigătorul testului final, planul 12/14/12, câștigă
+  tocmai prin timpul de așteptare al pietonilor (§ 9.10). De aceea, această verificare e prima condiție a unei
+  aplicări reale.
 * **Programul real al automatului** nu este public. Grupurile de semnal și planul fix de referință (§ 6.3) sunt
   reconstruite din geometria OSM și din conflictele dintre mișcări, nu preluate de la PMB/BTMS; duratele
   36 / 28 / 12 s sunt ipoteze declarate.
@@ -1326,7 +1474,9 @@ fără timpul de degajare a pietonilor (§ 10).
   România (27.10.2026), limitat la scopul academic și necomercial, cu sursa indicată (§ 14.1); o folosire
   comercială (de exemplu într-un produs pentru administrația drumului) ar cere un acord nou.
 
-Lucrări viitoare: testul agentului E13 pe ziua de miercuri 28.10, după protocolul fixat în § 9.9; reantrenarea
+Lucrări viitoare: confirmarea câștigătorului (planul 12/14/12) pe joi 29.10, după protocolul din § 9.9; detectarea
+automată a imaginii înghețate (vehiculele în mișcare pe 15 minute) și excluderea acelor intervale din alegerea
+ferestrelor (§ 4.6); reantrenarea
 agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); verzi minime
 pe fază, calculate după trecerile de pietoni, pentru planurile fixe și pentru agenți, apoi reantrenarea și
 reevaluarea cu ele; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
@@ -1485,6 +1635,10 @@ cu actuated (`ACTUATED`), iar actuated nu apare ca strategie; rândurile „Actu
 | § 9.9, verificarea pe 10 seed-uri (E13 −9,2% / −7,9% față de planul fix; −3,9% față de programul realist pe 120 de perechi) | `romana.control.analiza docs\rezultate\capacitate_indisciplinat_26.csv docs\rezultate\capacitate_indisciplinat_26_6_10.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --referinte FIX REALIST ACTUATED` (la fel cu fișierele `capacitate_normal_26*`; pentru perechile reunite, toate cele patru fișiere și `--referinte FIX REALIST`) |
 | § 9.5 / § 9.9, validarea E14 (−6,3% față de planul fix; +2,2% față de E13) | `romana.control.analiza docs\rezultate\validare_e14.csv --referinte FIX ppo_romana_cal` (o strategie dată ca referință nu mai apare și ca strategie comparată: E13 față de planul fix se obține cu `--referinte FIX`) |
 | § 9.9, grila de planuri fixe pe geamănul calibrat (12/14/12: −9,3% față de planul fix, −0,9% față de E13; `TOD_FIX`: −10,8% / −2,3%) | `romana.control.analiza docs\rezultate\grila_calibrat.csv docs\rezultate\validare_e14.csv --program TOD_FIX=lejer:PLAN_16_10_12,moderat:PLAN_16_10_12,greu:PLAN_12_14_12 --strategii PLAN_12_14_12 TOD_FIX --referinte FIX ppo_romana_cal` (fără `--strategii` și cu `--referinte FIX` apar toate cele 23 de planuri; alegerea pe bandă s-a făcut după media pe scenarii a diferențelor procentuale, ca în `romana.control.validare`) |
+| § 9.10, decizia pe miercuri 28.10 (tabelul candidaților, câștigătorul) | `romana.control.decizie docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv --out outputs\validare\decizie.json` (rezultatul publicat: `docs\rezultate\decizie_2026-10-28.json`; debitele scenariilor vin din `sumo\demand\zi_2026-10-28_rezumat.json`) |
+| § 9.10, toate strategiile: pierderea totală, pe comportamente, pe cazuri de trafic, pe tipuri de participanți și fără noapte | `romana.control.totaluri docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv` |
+| § 9.10, testele pe perechi ale tuturor strategiilor (ex. 16/10/12 față de 12/14/12: p = 0,51) | `romana.control.analiza docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3 --program TOD_DEBIT=lejer:PLAN_16_10_12,moderat:PLAN_16_10_12,greu:PLAN_12_14_12 --benzi "<câmpul benzi_analiza din decizie_2026-10-28.json>" --referinte FIX REALIST TOD_DEBIT PLAN_12_14_12` (pe fiecare comportament: un singur fișier și `--pe-scenarii`) |
+| § 9.10, măsura pe persoană (20 / 40 / 70 de călători pe autobuz) | `romana.control.ocupare docs\rezultate\test_28_indisciplinat.csv docs\rezultate\test_28_normal.csv --autobuz 40 --out outputs\validare\test_28_persoane_40.csv`, apoi `romana.control.decizie outputs\validare\test_28_persoane_40.csv --out outputs\validare\decizie_persoane_40.json` (publicat: `decizie_2026-10-28_persoane_40.json`; la fel cu 20 și 70) |
 | Corectarea câmpului `seeduri_validare` din alegerile existente | `romana.control.validare --corecteaza-alegeri docs\rezultate` |
 
 **Simulările.** Strategiile și seed-urile sunt exact cele din fișierul publicat; numărul de simulări în paralel se dă
@@ -1494,7 +1648,7 @@ cu `--procese N` (implicit 4).
 |---|---|---|
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
 | `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
-| `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2[1256].jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
+| `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2[12568].jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
 | `capacitate_baleiaj.csv` (§ 6.4) | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` și, separat (rândul adăugat pe 27.10, fără al doilea rând „standard”), `zi_2026-10-26_varf_x1_2 t08g25=0.8:2.5:0.5` |
 | `localizare_varf_capacitate.csv` (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare capacitate_zi_2026-10-26_varf capacitate_zi_2026-10-26_varf_x1_2 capacitate_indisciplinat_zi_2026-10-26_varf capacitate_indisciplinat_zi_2026-10-26_varf_x1_2 zi_2026-10-26_varf --out outputs\localizare_capacitate.csv` |
 | scenariile `capacitate_*` (§ 6.4) | arborele curent | `romana.bridge.indisciplinat --scenarii "sumo\scenarios\zi_2026-10-2[56]_*.sumocfg" --vtypes vtypes_capacitate.add.xml --prefix capacitate_` și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix capacitate_indisciplinat_` |
@@ -1507,6 +1661,7 @@ cu `--procese N` (implicit 4).
 | `validare_e14.csv` (§ 9.5) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_cal.zip models\cand_romana_e14_100k.zip models\cand_romana_e14_200k.zip models\ppo_romana_e14.zip --scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\validare_e14.csv`; punctele intermediare nu sunt publicate: `cand_romana_e14_100k` și `cand_romana_e14_200k` sunt `outputs\train\romana_e14\checkpoints\romana_e14_901344_steps.zip` și `romana_e14_1001344_steps.zip` |
 | `grila_calibrat.csv` (§ 9.9) | arborele curent | `romana.control.validare` cu cele 23 de planuri `PLAN_a_b_12`, pentru (a, b) = (28, 22), (28, 28), (28, 36), (36, 22), (36, 36), (44, 22), (44, 28), (44, 36), (20, 14), (20, 18), (20, 22), (24, 14), (24, 18), (24, 22), (28, 14), (28, 18), (12, 10), (12, 14), (12, 18), (16, 10), (16, 14), (16, 18), (20, 10), și `--scenarii "capacitate_*zi_2026-10-26_*" --seeds 11-15 --out outputs\validare\grila_calibrat.csv`; rulată pe 28.10 în trei tranșe (8 + 8 + 7 planuri, fiecare rafinare în jurul celui mai bun plan de până atunci), reunite; simulările sunt deterministe, iar planul fix a ieșit identic în toate tranșele |
 | `durate_verde_agenti.csv` (§ 9.9) | arborele curent | `romana.control.durate_verde models\ppo_romana_cal.zip models\ppo_romana.zip --scenarii capacitate_zi_2026-10-26_linistit capacitate_zi_2026-10-26_pranz capacitate_zi_2026-10-26_varf --seed 11 --out outputs\durate_verde.csv` |
+| `test_28_indisciplinat.csv`, `test_28_normal.csv` (§ 9.10) | arborele curent | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_cal.zip PLAN_12_14_12 PLAN_16_10_12 --scenarii "indisciplinat_zi_2026-10-28_*" --seeds 1-10 --fara-alegere --procese 11 --out outputs\validare\test_28_indisciplinat.csv --compara docs\rezultate\test_28_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-28_*"`, cu `test_28_normal` (≈1 h fiecare pe 11 procese) |
 | `localizare_varf_calibrat.csv` (§ 9.6) | arborele curent, tipurile vechi | `romana.control.localizare zi_2026-10-21_varf zi_2026-10-22_varf indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf --out outputs\localizare_varf.csv` (aceleași valori ca fișierul publicat) |
 | `robustete_indisciplinat.csv`, `robustete_indisciplinat_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii indisciplinat_zi_2026-10-21_pranz indisciplinat_zi_2026-10-21_varf indisciplinat_zi_2026-10-22_varf indisciplinat_zi_2026-10-22_linistit indisciplinat_zi_2026-10-22_dimineata --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat.csv --compara docs\rezultate\robustete_indisciplinat.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_6_10` în cele două nume de fișier |
 | `robustete_indisciplinat_duminica.csv`, `robustete_indisciplinat_duminica_6_10.csv` (§ 9.4) | `e1d0f77` | `romana.control.validare ACTUATED models\ppo_romana.zip models\ppo_romana_zn3.zip --scenarii indisciplinat_zi_2026-10-25_dimineata indisciplinat_zi_2026-10-25_linistit indisciplinat_zi_2026-10-25_linistit_x0_8 indisciplinat_zi_2026-10-25_varf indisciplinat_zi_2026-10-25_varf_x1_2 --seeds 1-5 --fara-alegere --out outputs\validare\robustete_indisciplinat_duminica.csv --compara docs\rezultate\robustete_indisciplinat_duminica.csv`; seed-urile 6–10: `--seeds 6-10`, cu `robustete_indisciplinat_duminica_6_10` |
@@ -1622,6 +1777,14 @@ că a intrat în test ca referință raportată (§ 9.9).
 ca fluidizarea să se construiască pe cazuri de trafic din date reale, cu cea mai bună strategie pe fiecare caz,
 plan fix sau agent AI, nu cu un singur agent impus dinainte (§ 1). Înainte de testul din 28.10 s-au fixat regula
 „cel mai bun câștigă”, cazurile după debitul măsurat de cameră și variantele din geamănul live (§ 9.9).
+
+**Etapa 10 – testul final (noaptea de 28 spre 29.10).** Lanțul testului a rulat singur, între 00:15 și 02:27:
+verificarea înregistrării, renumărarea, scenariile, 840 de simulări și regula de decizie. Toți cei trei candidați
+au bătut programul realist, iar între ei diferențele nu au fost semnificative, deci a câștigat cel mai simplu:
+planul fix 12/14/12, care a trecut în geamănul live (§ 9.10). Câștigul vine de la pietoni, prin ciclul mai scurt.
+Verificarea de după test a găsit o înghețare a imaginii în noaptea zilei de test (≈03:40–04:30), pe care a căzut
+fereastra liniștită. Decizia nu se schimbă fără ea, iar semnul înghețării e acum descris în § 4.6. Confirmarea se
+face pe joi 29.10.
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -1993,6 +2156,8 @@ reface, celelalte da.
 | `capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv` | aceleași strategii pe seed-urile 6–10, rulate după fixarea protocolului (§ 9.9) | arborele curent | `romana.control.validare --seeds 6-10 --fara-alegere` |
 | `durate_verde_agenti.csv` | duratele de verde ale lui E13 și ale agentului oficial pe trei scenarii de validare (luni 26.10, seed 11): mediana pe fază, numărul de verzi, ciclul median (§ 9.9) | arborele curent | `romana.control.durate_verde` |
 | `grila_calibrat.csv` | grila de 23 de planuri fixe pe geamănul calibrat (§ 9.9): luni 26.10, ambele comportamente, seed-urile 11–15, plus planul fix | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
+| `test_28_indisciplinat.csv`, `test_28_normal.csv` | testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13, planurile 12/14/12 și 16/10/12, seed-urile 1–10, cu pierderea pe tipuri de participanți (`pierdere_h_<tip>`) | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |
+| `decizie_2026-10-28.json`, `decizie_2026-10-28_persoane_20.json` / `_40` / `_70` | decizia după regula „cel mai bun câștigă” (§ 9.10): debitele și cazurile scenariilor, candidații cu testele lor, primii doi, câștigătorul și varianta live; la fel pe măsura pe persoană, cu 20 / 40 / 70 de călători pe autobuz (fișierele intermediare pe persoană nu sunt publicate: le reface `romana.control.ocupare`) | – (din fișierele de test) | `romana.control.decizie`, `romana.control.ocupare` |
 | `validare_e14.csv` + `_alegere.json` | validarea agentului E14 (§ 9.5) pe luni 26.10, ambele comportamente, seed-urile 11–15: planul fix, actuated, agentul oficial, E3, E13 și trei candidați E14 (punctele de la +100 000 și +200 000 de pași și modelul final) | arborele curent | `romana.control.validare` (dintre candidați e publicat doar modelul final, `ppo_romana_e14`) |
 | `test_reantrenare_indisciplinat.csv`, `test_reantrenare_normal.csv` | testul agenților aleși E12 (`cand_romana_cal3_100k`) și E13 (`ppo_romana_cal`), seed-urile 1–5; celelalte strategii vin din `calibrat_*.csv` | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere --fara-fix` |
 | `validare_zone_noi`, `validare_e2_e3`, `validare_clasice`, `validare_nou_*`, `validare_greu*`, `validare_moderat_e8`, `validare_lejer_e9` (23–25.10), fiecare cu `_alegere.json` unde există | validările pentru marginea de sus (seed-urile 11–13, apoi 11–15), din care s-au ales agenții, planurile și componentele programului; în `_alegere.json`: scorul mediu al fiecărei strategii față de planul fix, strategia aleasă, seed-urile (cele prezente în CSV) și scenariile | `7a79502` | `romana.control.validare` (seed-urile din alegeri corectate cu `--corecteaza-alegeri`; testele pe seed-urile 1–10 nu au fișier de alegere) |

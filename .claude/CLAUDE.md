@@ -36,7 +36,26 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
+## Stare curentă (29.10.2026, ~03:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10
+
+- **Testul pe 28.10 (lanțul scratchpad\test28.py, 29.10 00:15–02:27, toți pașii exit 0):** ziua 28 completă
+  (96 de intervale, 58 557 intrări; calitatea 1–6% goluri), publicată în data/; 12 scenarii × seed-urile 1–10 × 7
+  strategii = 840 de simulări (`docs/rezultate/test_28_*.csv`). `romana.control.decizie` → **PLAN_12_14_12**
+  (`decizie_2026-10-28.json`): toți trei candidații eligibili față de REALIST (12/14/12 −6,9% din total, p = 0,0013;
+  TOD_DEBIT −7,2%; E13 −6,0%), TOD_DEBIT = 12/14/12 (p = 0,90) → cel mai simplu. Pe persoană (20/40/70): același.
+  Regula inițială: E13 ar fi trecut (p = 0,0001). Raportate: 16/10/12 singur 56 747 h (cel mai mic total, ns față de
+  12/14/12, p = 0,51), oficialul singur 57 823 h. **Câștigul vine de la pietoni** (−12% vs fix; vehiculele +1–2%).
+- **Aplicat (aprobarea autorului):** `live_twin.py` `VARIANTA_PROGRAM = "plan_scurt"`, outputs/live/command.json
+  `{"mod":"program"}`, eticheta din dispecerat; § 9.10 nou, § 9.7 punctul 7, § 1/§ 2/§ 4.6/§ 9.4/§ 10/§ 12.1, Anexa A,
+  § 11.8, README; modul nou `romana.control.totaluri` (tabelele § 9.10); `decizie` afișează diferențele în ore.
+- **Imaginea înghețată 28.10 ≈03:40–04:30** (fereastra „liniștit” 03:30–04:30, 56 veh/h, a căzut pe ea; 80–85%
+  traiectorii fixe, durate 20–40 s) – documentat în § 4.6 / § 9.10; decizia fără noapte: aceeași (p = 0,000005).
+  `calitate` nu o vede; de adăugat o verificare a vehiculelor în mișcare pe 15 min (înainte de test29, doar raportată).
+- **De făcut:** verificarea independentă a § 9.10 (workflow); rezumatul pentru autor la 08:00; ziua: zonele de
+  vehicule reverificate pe date; 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10
+  „Confirmarea”; până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.
+
+## Stare anterioară (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
 
 - **28.10, ~01:00:** Webcam România și-a dat **acordul scris** (e-mail, 27.10, 20:27): analiza automată în scop
   academic, necomercial, cu sursa „Webcam România – https://webcamromania.ro”, și publicarea a 1–2 capturi cu
