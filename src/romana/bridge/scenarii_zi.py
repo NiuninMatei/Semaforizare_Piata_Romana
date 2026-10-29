@@ -8,15 +8,15 @@ Pentru o zi colectată (data/counts/numaratori_AAAA-LL-ZZ.csv):
   3. pentru fiecare se construiește scenariul cu build_demand (Furness + routeSampler);
   4. se adaugă scenariile de sensibilitate: vârf × 1,2 și liniștit × 0,8 (incertitudinea măsurării).
 Ferestrele se aleg pe grila completă de 15 min: un sfert de oră fără date (de exemplu o oprire a colectării) rămâne
-gol, iar nicio fereastră nu trece peste el. Cu --fara-inghetate, intervalele de 15 min suspecte de imagine înghețată
-(`romana.vision.calitate`, § 4.6) nu intră în nicio fereastră; cu --exclude HH:MM-HH:MM se scot explicit și alte
-intervale (de exemplu sferturile de oră atinse de o repornire a colectării). Implicit nu se exclude nimic, ca la
-zilele prelucrate până acum.
+gol, iar nicio fereastră nu trece peste el. Cu --fara-incetinite, intervalele de 15 min în care prelucrarea camerei a
+încetinit (prea puține cadre pe secundă, deci vehicule pierdute; `romana.vision.calitate`, § 4.6) nu intră în nicio
+fereastră; cu --exclude HH:MM-HH:MM se scot explicit și alte intervale (de exemplu sferturile de oră atinse de o
+repornire a colectării). Implicit nu se exclude nimic, ca la zilele prelucrate până acum.
 
 Exemple:
   python -m romana.bridge.scenarii_zi --zi 2026-10-21
   python -m romana.bridge.scenarii_zi --zi 2026-10-21 --doar-analiza
-  python -m romana.bridge.scenarii_zi --zi 2026-10-28 --doar-analiza --fara-inghetate
+  python -m romana.bridge.scenarii_zi --zi 2026-10-28 --doar-analiza --fara-incetinite
   python -m romana.bridge.scenarii_zi --zi 2026-10-29 --doar-analiza --exclude 08:30-09:30
 """
 from __future__ import annotations
@@ -30,14 +30,14 @@ from romana.bridge import build_demand
 from romana.common import COUNTS_DIR, DEMAND_DIR, TRAJ_DIR, TRAJ_RAW_DIR, save_json
 
 
-def intervale_inghetate(zi: str) -> set[pd.Timestamp]:
-    """Începuturile intervalelor de 15 min suspecte de imagine înghețată, din jurnalul de traiectorii al zilei."""
-    from romana.vision.calitate import inghetate, quality
+def intervale_incetinite(zi: str) -> set[pd.Timestamp]:
+    """Începuturile intervalelor de 15 min cu prelucrarea camerei încetinită, din jurnalul de traiectorii al zilei."""
+    from romana.vision.calitate import incetinite, quality
     for d in (TRAJ_RAW_DIR, TRAJ_DIR):
         f = d / f"traiectorii_{zi}.jsonl.gz"
         if f.exists():
-            return {pd.Timestamp(f"{zi} {k}") for k, *_ in inghetate(quality(f)[1])}
-    print(f"[scenarii_zi] fără jurnal de traiectorii pentru {zi}: nu se pot exclude intervalele înghețate")
+            return {pd.Timestamp(f"{zi} {k}") for k, *_ in incetinite(quality(f)[1])}
+    print(f"[scenarii_zi] fără jurnal de traiectorii pentru {zi}: nu se pot exclude intervalele încetinite")
     return set()
 
 
@@ -119,8 +119,8 @@ def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--zi", required=True, help="AAAA-LL-ZZ")
     ap.add_argument("--doar-analiza", action="store_true", help="doar profilul orar, fără scenarii")
-    ap.add_argument("--fara-inghetate", action="store_true",
-                    help="exclude din ferestre intervalele suspecte de imagine înghețată (§ 4.6)")
+    ap.add_argument("--fara-incetinite", action="store_true",
+                    help="exclude din ferestre intervalele cu prelucrarea camerei încetinită (§ 4.6)")
     ap.add_argument("--exclude", action="append", default=[], metavar="HH:MM-HH:MM",
                     help="exclude din ferestre sferturile de oră dintre cele două ore (de ex. o oprire a colectării); "
                          "se poate repeta")
@@ -129,19 +129,19 @@ def main(argv=None) -> None:
     df = pd.read_csv(path, parse_dates=["inceput", "sfarsit"])
     prof = hourly_profile(df)
     profil = prof["echilibrat_veh_h"].dropna()        # profilul complet, pentru rezumat (debitele ferestrelor)
-    inghet = intervale_inghetate(args.zi) if args.fara_inghetate else set()
+    incet = intervale_incetinite(args.zi) if args.fara_incetinite else set()
     alese = intervale_date(args.zi, args.exclude)
-    if inghet:
-        print("Intervale excluse (imagine înghețată):", ", ".join(f"{t:%H:%M}" for t in sorted(inghet)))
+    if incet:
+        print("Intervale excluse (prelucrare încetinită):", ", ".join(f"{t:%H:%M}" for t in sorted(incet)))
     if alese:
         print("Intervale excluse (--exclude):", ", ".join(f"{t:%H:%M}" for t in sorted(alese)))
-    prof = exclude(prof, inghet | alese)
+    prof = exclude(prof, incet | alese)
     print(prof[["intrare", "iesire", "echilibrat_veh_h", "pietoni_h", "ora_glisanta_veh_h"]].round(0).to_string())
     windows = alege_ferestre(prof, args.zi)
     summary = {"zi": args.zi, "profil": {str(k): round(v, 1) for k, v in profil.items()},
                "ferestre": {k: [str(a), str(b)] for k, (a, b) in windows.items()}}
-    if args.fara_inghetate:
-        summary["inghetate_excluse"] = [str(t) for t in sorted(inghet)]
+    if args.fara_incetinite:
+        summary["incetinite_excluse"] = [str(t) for t in sorted(incet)]
     if alese:
         summary["intervale_excluse"] = [str(t) for t in sorted(alese)]
     print("\nFerestre alese:", {k: f"{a:%H:%M}–{b:%H:%M}" for k, (a, b) in windows.items()})
