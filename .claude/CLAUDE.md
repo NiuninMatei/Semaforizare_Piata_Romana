@@ -50,7 +50,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   § 11.8, README; modul nou `romana.control.totaluri` (tabelele § 9.10); `decizie` afișează diferențele în ore.
 - **Imaginea înghețată 28.10 ≈03:40–04:30** (fereastra „liniștit” 03:30–04:30, 56 veh/h, a căzut pe ea; 80–85%
   traiectorii fixe, durate 20–40 s) – documentat în § 4.6 / § 9.10; decizia fără noapte: aceeași (p = 0,000005).
-  `calitate` nu o vede; de adăugat o verificare a vehiculelor în mișcare pe 15 min (înainte de test29, doar raportată).
+  `calitate` o caută acum pe 15 min (vehiculele în mișcare față de ±2 h + traiectorii fixe; `--out-15min`): pe 28.10
+  exact 03:45/04:00/04:15, pe 25–26.10 nimic, pe 29.10 până la 02:50 nimic. Doar raportată; excluderea din
+  `scenarii_zi` = de întrebat autorul (schimbă metoda între test și confirmare; pe 28.10 decizia nu se schimbă).
 - **De făcut:** verificarea independentă a § 9.10 (workflow); rezumatul pentru autor la 08:00; ziua: zonele de
   vehicule reverificate pe date; 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10
   „Confirmarea”; până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.

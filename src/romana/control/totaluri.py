@@ -12,6 +12,7 @@ Exemplu:
 from __future__ import annotations
 
 import argparse
+import math
 
 import pandas as pd
 
@@ -43,7 +44,11 @@ def main(argv=None) -> None:
     args = ap.parse_args(argv)
 
     scenarii = sorted(load_results(args.fisiere)["scenariu"].unique())
-    cazuri = {s: caz(v, args.praguri) for s, v in debite(scenarii).items()}
+    q = debite(scenarii)
+    lipsa = [s for s, v in q.items() if not math.isfinite(v)]
+    if lipsa:   # caz(NaN) ar da tăcut „moderat”
+        raise SystemExit(f"[totaluri] fereastră fără debit în profil: {lipsa}")
+    cazuri = {s: caz(v, args.praguri) for s, v in q.items()}
     bands = [(b, [s for s, c in cazuri.items() if c == b]) for b in ("lejer", "moderat")] + [("greu", [])]
     programe = args.program or PROGRAME
     p = perechi(args.fisiere, None, programe, bands)
