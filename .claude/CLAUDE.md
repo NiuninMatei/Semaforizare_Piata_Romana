@@ -53,8 +53,15 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   `calitate` o caută acum pe 15 min (vehiculele în mișcare față de ±2 h + traiectorii fixe; `--out-15min`): pe 28.10
   exact 03:45/04:00/04:15, pe 25–26.10 nimic, pe 29.10 până la 02:50 nimic. Doar raportată; excluderea din
   `scenarii_zi` = de întrebat autorul (schimbă metoda între test și confirmare; pe 28.10 decizia nu se schimbă).
-- **De făcut:** verificarea independentă a § 9.10 (workflow); rezumatul pentru autor la 08:00; ziua: zonele de
-  vehicule reverificate pe date; 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10
+- **29.10, 03:00–04:30:** verificarea independentă (4 agenți) – cifrele confirmate, protocolul respectat, corecturi
+  comise (04a6e1f); `romana.control.treceri`: cu 12/14/12 nicio trecere nu are sub 12 s de verde pe ciclu (faza
+  de pietoni, ca în planul de referință; trecerile din două faze 29–31 s în loc de 45–53 s); **sensibilitatea pietonală** (`sens_pietoni_28_*.csv`): 12/14/18 vs
+  36/28/18 −7,9% din total (92/120, p < 0,000001), 12/14/18 ≈ 12/14/12 (p = 0,96) – ghidurile europene: 1,2 m/s
+  (RiLSA, TRL; nicio normă românească publică găsită). Zonele de vehicule pe traiectoriile din 28.10: 94% din
+  vehiculele în mișcare ating o zonă; restul = fragmente pe inel + 96 / 489 traiectorii/zi în colțurile de jos (< 1%)
+  – partea cu imaginea (fundal median, OSM) rămâne pentru ziua, la lumină (scratchpad\zone_vehicule28.py).
+- **De făcut:** rezumatul pentru autor la 08:00 (întrebarea: excluderea intervalelor înghețate în `scenarii_zi`
+  înainte de confirmare?); ziua: zonele de vehicule reverificate și pe imagine; 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10
   „Confirmarea”; până pe 30.10 09:30 totul oprit, comis, împins, explicația cap-coadă.
 
 ## Stare anterioară (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
