@@ -13,7 +13,8 @@ Semnele (pragurile alese pe jurnalele 21–29.10 cu `--reluare` și pe jurnalele
   * proces        – `run_vision` nu mai rulează;
   * fără cadre    – niciun cadru prelucrat de STARE_VECHE s. Întreruperile scurte ale fluxului se refac singure: o
                     reconectare durează ≈30–120 s (30 s până expiră citirea, apoi redeschiderea și tamponul de 8 s);
-                    ele doar se notează în CSV;
+                    pauzele de cel puțin 10 s doar se notează în CSV, cu playlistul citit la începutul lor (un ultim
+                    segment mult în urmă arată spre cameră, unul la zi spre noi);
   * pauze         – cel puțin PRAG_PAUZE pauze de peste PAUZA s între cadre în FEREASTRA_PAUZE s: redare sacadată, ca în
                     21–22.10, când imaginea „mergea 2 s și stătea 4 s”;
   * rata mică     – în ultimele DURATA_FPS s, cel puțin 75% din citiri au rata cadrelor prelucrate (media glisantă din
@@ -46,6 +47,7 @@ import json
 import re
 import subprocess
 import sys
+import threading
 import time
 import urllib.request
 import zlib
@@ -184,7 +186,7 @@ class StareLive:
         self.pauza_din = None          # începutul pauzei în curs
         self.episoade = deque()        # începuturile episoadelor de reconectare
         self.rec0, self.ultima_rec = None, -1e9
-        self.evenimente = []           # pauzele lungi încheiate (pentru CSV)
+        self.evenimente = []           # pauzele lungi încheiate (începutul, durata), pentru CSV
 
     def adauga(self, acum: float, stare: dict) -> list[tuple[str, str]]:
         varsta = acum - stare["timestamp"]
@@ -196,8 +198,7 @@ class StareLive:
             self.pauze.append(acum)
         elif varsta < PAUZA and self.pauza_din is not None:
             if stare["timestamp"] - self.pauza_din >= 10:
-                self.evenimente.append(f"{datetime.fromtimestamp(self.pauza_din):%H:%M:%S} fără cadre "
-                                       f"{stare['timestamp'] - self.pauza_din:.0f} s")
+                self.evenimente.append((self.pauza_din, stare["timestamp"] - self.pauza_din))
             self.pauza_din = None
         while self.pauze and self.pauze[0] < acum - FEREASTRA_PAUZE:
             self.pauze.popleft()
@@ -382,8 +383,25 @@ CSV_CAP = ["ora", "fps", "varsta_stare_s", "reconectari", "episoade_flux_30min",
            "fara_traiectorii_s", "evenimente"]
 
 
+def _eveniment(pauza: tuple[float, float], playlist: dict | None) -> str:
+    """O pauză încheiată, cu playlistul citit la începutul ei: un ultim segment mult în urmă (normal 5–9 s) arată spre
+    fluxul camerei; unul la zi arată spre noi (descărcarea sau prelucrarea)."""
+    t, d = pauza
+    text = f"{datetime.fromtimestamp(t):%H:%M:%S} fără cadre {d:.0f} s"
+    if playlist is None:
+        return text + " (playlist: necitit)"
+    urme = [c.get("ultimul_segment_in_urma_s") for c in playlist.get("citiri", [])]
+    return text + f" (playlist: ultimul segment în urmă {', '.join(f'{u:.0f}' for u in urme if u is not None) or '?'} s, " \
+                  f"avansează: {playlist.get('avanseaza')})"
+
+
 def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
     proc = proces_viziune()
+    try:
+        url = load_json("camera.json")["stream_url"]
+    except Exception:
+        url = None
+    playlist_pauze = {}                # începutul pauzei → playlistul citit atunci (într-un fir separat)
     _spune(f"[veghe] pornită la {datetime.now():%H:%M:%S}, până la {pana_la:%d.%m %H:%M}; run_vision: PID "
            f"{proc.pid if proc else '–'}" + (f"; ignorate: {', '.join(sorted(fara))}" if fara else ""))
     start = time.time()
@@ -404,7 +422,12 @@ def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
             nou = None                 # fișierul e înlocuit atomic: o citire ratată nu e o problemă
         if nou:
             stare = nou
+            in_pauza = live.pauza_din is not None
             semne += live.adauga(acum, stare)
+            if url and not in_pauza and live.pauza_din is not None:
+                # la începutul unei pauze: e fluxul camerei în urmă, sau noi? (citirea durează ≈8 s, nu oprește bucla)
+                k = live.pauza_din
+                threading.Thread(target=lambda: playlist_pauze.__setitem__(k, _playlist(url)), daemon=True).start()
         if acum - ultima_imagine >= 15:
             ultima_imagine = acum
             try:
@@ -444,7 +467,8 @@ def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
                         round(dif, 2) if dif is not None else "", m["pasi"],
                         round(100 * m["lungi"], 1) if m["pasi"] else "", round(m["pas_median"], 3) if m["pasi"] else "",
                         m["gata"], m["misc"], m["st"], round(100 * m["identice"], 1) if m["st"] else "",
-                        round(acum - ultima_crestere), "; ".join(live.evenimente)]
+                        round(acum - ultima_crestere),
+                        "; ".join(_eveniment(e, playlist_pauze.get(e[0])) for e in live.evenimente)]
                 try:
                     nou_csv = not log_csv.exists()
                     with open(log_csv, "a", newline="", encoding="utf-8") as fo:
