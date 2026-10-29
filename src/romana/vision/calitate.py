@@ -41,30 +41,46 @@ PAS_LUNG = 0.5          # s; un pas mai lung între două puncte înseamnă cadr
 PRAG_PASI_LUNGI = 0.4   # încetinit: cel puțin 40% dintre pași mai lungi de PAS_LUNG
 
 
+def inregistrari(path: Path):
+    """Traiectoriile din jurnal, citite ca în `recount`: un ultim bloc sau o ultimă linie incompletă se sare (lanțul de
+    noapte citește ziua încheiată cât timp colectarea mai poate adăuga o traiectorie începută înainte de miezul nopții)."""
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        while True:
+            try:
+                line = fh.readline()
+            except (EOFError, OSError):       # fișier în curs de scriere: ultimul bloc e incomplet
+                return
+            if not line:
+                return
+            try:
+                d = json.loads(line)
+            except json.JSONDecodeError:      # ultima linie poate fi incompletă dacă procesul a fost oprit
+                continue
+            yield d
+
+
 def quality(path: Path) -> tuple[dict[str, list], dict[str, list]]:
     """oră → [intervale, intervale > 1 s, durata totală (s), puncte, traiectorii];
     interval de 15 min (HH:MM) → [traiectorii, în mișcare, duratele lor (s), pașii dintre puncte (s)]."""
     per = defaultdict(lambda: [0, 0, 0.0, 0, 0])
     per15 = defaultdict(lambda: [0, 0, [], []])
-    with gzip.open(path, "rt", encoding="utf-8") as fh:
-        for line in fh:
-            d = json.loads(line)
-            if d.get("tip") == PEDESTRIAN or len(d["p"]) < 2:
-                continue
-            ts = np.array([q[0] for q in d["p"]])
-            dt = np.diff(ts)
-            t0 = datetime.fromtimestamp(d["t0"])
-            r = per[t0.strftime("%H")]
-            r[0] += len(dt)
-            r[1] += int((dt > 1.0).sum())
-            r[2] += float(ts[-1] - ts[0])
-            r[3] += len(ts)
-            r[4] += 1
-            q = per15[f"{t0.hour:02d}:{t0.minute // 15 * 15:02d}"]
-            q[0] += 1
-            q[1] += int(np.hypot(d["p"][-1][1] - d["p"][0][1], d["p"][-1][2] - d["p"][0][2]) >= MISCARE_MIN)
-            q[2].append(float(ts[-1] - ts[0]))
-            q[3].append(dt)
+    for d in inregistrari(path):
+        if d.get("tip") == PEDESTRIAN or len(d["p"]) < 2:
+            continue
+        ts = np.array([q[0] for q in d["p"]])
+        dt = np.diff(ts)
+        t0 = datetime.fromtimestamp(d["t0"])
+        r = per[t0.strftime("%H")]
+        r[0] += len(dt)
+        r[1] += int((dt > 1.0).sum())
+        r[2] += float(ts[-1] - ts[0])
+        r[3] += len(ts)
+        r[4] += 1
+        q = per15[f"{t0.hour:02d}:{t0.minute // 15 * 15:02d}"]
+        q[0] += 1
+        q[1] += int(np.hypot(d["p"][-1][1] - d["p"][0][1], d["p"][-1][2] - d["p"][0][2]) >= MISCARE_MIN)
+        q[2].append(float(ts[-1] - ts[0]))
+        q[3].append(dt)
     return per, per15
 
 
