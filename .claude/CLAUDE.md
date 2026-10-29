@@ -88,12 +88,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   imagine (§ 4.3).
 - **29.10, 14:50–16:30 – veghea fluxului de cadre** (cererea autorului: orice „înghețare” se analizează pe loc, singur,
   până la cauză; rezolv dacă e la noi, mă adaptez dacă vine din teren – memoria anomalii-verificare-directa):
-  `romana.vision.veghe` (+ `scripts\2d_veghe.bat`, 12 teste, 62 în total) citește state.json la 1 s, previzualizarea la
+  `romana.vision.veghe` (+ `scripts\2d_veghe.bat`; 62 de teste în total) citește state.json la 1 s, previzualizarea la
   15 s (doar în memorie), jurnalul la 60 s; iese cu cod 2 și `outputs/logs/veghe_alerta_*.json` (procese, performanța
   CPU, GPU, coada `viziune_*.err`, playlistul HLS). Praguri pe `--reluare` 21–29.10 (`docs/rezultate/veghe_reluare.csv`)
   și pe `viziune_*.err` din 26 / 28.10 (întreruperi de 30–120 s refăcute singure → „fără cadre” abia la 3 min, 4 episoade
-  de reconectare în 30 min); verificată de 2 agenți (wf_5610ffb0-a9d), observațiile lor aplicate. **Rulează în fundal
-  (task bk7duao2x, pornită 15:57) până pe 30.10, 09:05; dimineața: întâi TaskStop, apoi oprirea colectării.** La alertă:
+  de reconectare în 30 min); verificată de 2 agenți (wf_5610ffb0-a9d), observațiile lor aplicate; din 16:27 notează la
+  fiecare pauză și playlistul camerei (prima pauză, 16:23, 16 s, cauză nestabilită). **Rulează în fundal (task
+  bli1pjvgp, PIDs 5908 / 3052) până pe 30.10, 09:05; dimineața o oprește întâi `oprire30.ps1`.** La alertă:
   analiza întâi (diagnosticul), apoi rezolvarea, apoi adaptarea; repornire cu `--fara <semn>` dacă semnul e analizat.
   Descoperiri (§ 4.6): încetiniri scurte pe 25–28.10, toate în timpul calculelor grele (28.10 00:58–01:10 = sfârșitul
   validării, încheiată la 01:11); prioritatea scăzută din scripturile de noapte nu se aplica (ctypes fără tipuri,
@@ -110,8 +111,11 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **De făcut:** 30.10 00:15 test29.py (confirmarea: `--confirma PLAN_12_14_12`) → § 9.10 „Confirmarea” (și golul
   din 29.10 în § 4.6); după miezul nopții, `veghe --reluare` pe 29.10 întreagă → rândurile 29.10 din
   `veghe_reluare.csv` și cifrele din § 4.6; ce a arătat veghea în noaptea cu lanțul; până pe 30.10 09:30 totul oprit
-  (întâi veghea), comis, împins, explicația cap-coadă (schița: scratchpad\explicatie_cap_coada.md, lista:
-  scratchpad\dupa_confirmare.md).
+  (întâi veghea), comis, împins, explicația cap-coadă. **Planul complet al nopții și al dimineții (refăcut după
+  pre-mortemul cu 3 agenți, wf_0d54bbeb-51a):** `C:\Users\Matei\AppData\Local\Temp\claude\C--Users-Matei-Documents-GitHub-Semaforizare-Piata-Romana\8ef09c01-dd8e-42e5-be89-50bed1c571fe\scratchpad\dupa_confirmare.md`
+  (în același director: test29.py și test29_log.txt, oprire30.ps1 = oprirea de dimineață, repara_jurnal.py = repararea
+  membru cu membru, copiaza29.py, combina_reluare.py, explicatie_cap_coada.md = schița explicației). Treziri: 23:50,
+  00:45, 03:30, 06:30, 08:20, 08:40. Codul de pe drumul lanțului e înghețat până la test29_gata.txt.
 
 ## Stare anterioară (28.10.2026, ~13:00) – „cel mai bun câștigă”, cazurile după debit, testul pe 28.10
 

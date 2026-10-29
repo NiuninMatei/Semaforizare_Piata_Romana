@@ -512,7 +512,10 @@ lanțul testului rulând în paralel. Singurul semn al zilei e oprirea planifica
 prima zi. Pe zilele normale, pozițiile identice ajung la cel mult 3,7%, iar cel mai lung timp fără traiectorii noi e de
 1,6 minute în afara încetinirilor (2,7 minute în cea din 28.10). Fac excepție opririle, repornirile și capătul fiecărui
 jurnal, după miezul nopții, unde mai sosesc doar traiectoriile lungi începute în acea zi. Veghea rulează din 29.10,
-15:16 (versiunea verificată, de la 15:57), până în 30.10, 09:05.
+15:16 (versiunea verificată, de la 15:57), până în 30.10, 09:05. Pauzele de cel puțin 10 s se notează în CSV, iar din
+16:27 fiecare are lângă ea și playlistul citit la începutul ei. Un ultim segment mult în urmă arată spre fluxul camerei,
+unul la zi spre noi. Prima pauză notată, pe 29.10 la 16:23, a durat 16 s. N-a avut reconectare, erori ale fluxului sau
+evenimente Windows, iar cauza ei n-a putut fi stabilită.
 
 Ferestrele de 10 minute arată și încetiniri mai scurte, pe care sferturile de oră le diluează: 28.10, 00:58–01:10
 (până la 85% pași lungi, pasul median 0,68 s; de la 00:40, pasul median era deja 0,24–0,29 s), adică ultimele minute
@@ -1721,7 +1724,7 @@ rezultatele se pot reproduce fără a colecta date noi.
 
 | Pas | Comandă | Ce trebuie să se vadă |
 |---|---|---|
-| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (56 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi`) |
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (62 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi`) |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | SUMO-GUI cu ora de vârf din 21.10.2026 și agentul AI la semaforul pieței |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu planul fix |
 | Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | prânzul din 21.10 (altă oră: `--scenariu`), cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
