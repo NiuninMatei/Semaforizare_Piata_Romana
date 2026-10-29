@@ -435,8 +435,10 @@ sunt toate din 22:28–22:54, niciunul din 03:30–04:45. Câteva erori de conex
 Înghețarea a venit deci, cel mai probabil, de la sursă, nu de la conexiune. De pe 29.10, `romana.vision.calitate` caută și acest semn,
 pe intervale de 15 minute (opțiunea `--out-15min` scrie tabelul). Un interval e suspect când are sub 30% din
 vehiculele în mișcare ale intervalelor din jur (±2 h) și cel puțin 75% traiectorii fixe. Pe 28.10 ies suspecte
-exact 03:45, 04:00 și 04:15, iar pe 25.10 și 26.10 niciun interval. Deocamdată suspiciunea doar se raportează:
-excluderea acestor intervale din alegerea ferestrelor rămâne un pas următor (§ 10).
+exact 03:45, 04:00 și 04:15, iar pe 25.10 și 26.10 niciun interval. Opțiunea `--fara-inghetate` din
+`romana.bridge.scenarii_zi` scoate aceste intervale din alegerea ferestrelor. Pe 28.10, fereastra liniștită s-ar
+muta astfel pe 02:45–03:45, iar pe 26.10 nu se schimbă nimic. Opțiunea e oprită implicit, ca zilele deja prelucrate
+să rămână reproductibile.
 
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
@@ -1518,9 +1520,9 @@ nu comută.
   România (27.10.2026), limitat la scopul academic și necomercial, cu sursa indicată (§ 14.1); o folosire
   comercială (de exemplu într-un produs pentru administrația drumului) ar cere un acord nou.
 
-Lucrări viitoare: confirmarea câștigătorului (planul 12/14/12) pe joi 29.10, după protocolul din § 9.9; detectarea
-automată a imaginii înghețate (vehiculele în mișcare pe 15 minute) și excluderea acelor intervale din alegerea
-ferestrelor (§ 4.6); reantrenarea
+Lucrări viitoare: confirmarea câștigătorului (planul 12/14/12) pe joi 29.10, după protocolul din § 9.9; excluderea
+implicită a intervalelor cu imagine înghețată din alegerea ferestrelor (`scenarii_zi --fara-inghetate`, § 4.6) și un
+prag validat pe mai multe zile; reantrenarea
 agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); verzi minime
 pe fază, calculate după trecerile de pietoni, pentru planurile fixe și pentru agenți, apoi reantrenarea și
 reevaluarea cu ele; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
