@@ -93,10 +93,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   CPU, GPU, coada `viziune_*.err`, playlistul HLS). Praguri pe `--reluare` 21–29.10 (`docs/rezultate/veghe_reluare.csv`)
   și pe `viziune_*.err` din 26 / 28.10 (întreruperi de 30–120 s refăcute singure → „fără cadre” abia la 3 min, 4 episoade
   de reconectare în 30 min); verificată de 2 agenți (wf_5610ffb0-a9d), observațiile lor aplicate; din 16:27 notează la
-  fiecare pauză și playlistul camerei. Pauzele serii (16:23, 16 s; 17:46, 11 s, cu playlistul la zi → la noi) sunt
-  goluri reale în jurnal; astfel de micro-înghețări de 10–30 s apar de câteva ori pe zi din 21.10 (≈0,1% din cadre;
-  § 4.6, „Micro-înghețările”). Din 29.10, 23:58 veghea notează la pauze și urmele rețelei (octeții primiți) și CPU-ul
-  lui `run_vision`: descărcarea oprită vs prelucrarea oprită. **Rulează în fundal (task b2ix8zzyb, PIDs 8036 / 12068,
+  fiecare pauză și playlistul camerei. Pauzele serii (16:23, 16 s; 17:46, 12 s; playlistul la zi → nu camera, ci
+  livrarea, rețeaua sau noi) sunt goluri reale în jurnal; microînghețări de 10–30 s apar de câteva ori pe zi (≈0,1–0,2%;
+  § 4.6, „Microînghețările”); golurile de 8 s = reancorări ale redării în încetiniri, nu reconectări; unele goluri
+  coincid cu Wi-Fi / DNS-ul laptopului (26.10 10:15, 11:21; 28.10 12:37); 25.10 10:35–11:33 run_vision fusese coborât
+  din afară (de mine) – verificare adversarială wf_bfd4efa6-fc4 (8 agenți). Dispeceratul: la stare veche < 3 min arată
+  „fără cadre noi de N s”, nu „modulul nu rulează”. Din 29.10, 23:58 veghea notează la pauze și urmele rețelei
+  (octeții primiți) și CPU-ul lui `run_vision`: descărcarea oprită vs prelucrarea oprită. **Rulează în fundal (task b2ix8zzyb, PIDs 8036 / 12068,
   `--log outputs\logs\veghe_2026-10-29.csv`) până pe 30.10, 09:05; dimineața o oprește întâi `oprire30.ps1`.** La alertă:
   analiza întâi (diagnosticul), apoi rezolvarea, apoi adaptarea; repornire cu `--fara <semn>` dacă semnul e analizat.
   Descoperiri (§ 4.6): încetiniri scurte pe 25–28.10, toate în timpul calculelor grele (28.10 00:58–01:10 = sfârșitul

@@ -454,7 +454,7 @@ mai probabilă e încărcarea calculatorului: validarea E14 (multe simulări în
 fluxului camerei ar arăta asemănător, iar în noaptea de 29.10 un lanț la fel de greu (testul, 00:15–02:27, 11
 procese) a încetinit colectarea doar ușor: pasul median a fost 0,19–0,22 s în loc de 0,17 s, fără niciun interval
 încetinit. Validarea din 28.10, 00:25–01:11, părea la fel pe sferturi de oră, dar pe ferestre de 10 minute se vede că
-a încetinit puternic colectarea în ultimele ei minute (mai jos, „Veghea fluxului de cadre”).
+a încetinit puternic colectarea în ultimele ei minute (mai jos, „Încetinirile văzute pe ferestre de 10 minute”).
 
 Episoade de același fel apar și pe 27.10, 01:15–02:45, cu o revenire scurtă pe la 02:15–02:30 (sfertul 02:15 rămâne
 sub prag; tot în timpul calculelor de noapte), pe 26.10, 16:45–17:00, și, mai scurt, pe 25.10, 02:55–03:08 (sub prag,
@@ -497,11 +497,18 @@ Instantaneul ajută la separarea cauzelor de la noi (prelucrarea) de cele din te
 
 Codul a fost verificat de doi agenți independenți înainte de noapte. După observațiile lor, pragurile fluxului au fost
 calibrate pe jurnalele de erori ale viziunii. Pe 26 și 28.10, fluxul camerei s-a întrerupt de câteva ori (conexiuni
-eșuate, citiri expirate după 30 s) și s-a refăcut singur în 30–120 s. Pe 28.10 au fost trei întreruperi în 25 de minute,
-între ≈22:30 și 23:00. Contorul de reconectări crește la fiecare încercare eșuată, de aceea creșterile apropiate formează un
+eșuate, citiri expirate după 30 s) și s-a refăcut singur: cele cinci întreruperi cu oră în jurnalul de erori au oprit
+imaginea 33–73 s. Pe 26.10, cele de la 10:15 și 11:21 (a doua, de 9,5 s) au coincis cu reconectări ale Wi-Fi-ului
+laptopului (jurnalul Windows), deci au venit, foarte probabil, din rețeaua locală, nu de la cameră. Pe 28.10 au fost
+trei întreruperi în 25 de minute, între ≈22:30 și 23:00, plus trei episoade de 2–3 minute (00:23–00:26, 00:29–00:33 și
+18:36–18:40), cu doar câteva secunde de imagine între goluri. Cel mai lung gol fără niciun cadru, de 144 s (28.10,
+00:30), rămâne sub pragul de 3 minute. Erorile de dinainte de 22:28 nu au oră în jurnal, deci aceste trei episoade sunt
+doar probabil reconectări (cauza lor, prelucrarea sau serverul camerei, nu e stabilită). Contorul de reconectări crește la fiecare încercare eșuată, de aceea creșterile apropiate formează un
 singur episod. Media glisantă a ratei din `run_vision` supraestimează rata când pașii sunt amestecați, iar semnul din
 jurnal o dublează. O imagine înghețată, dar recodată de cameră (cadre aproape identice), nu are încă un prag: diferența
-dintre previzualizări se notează pe minut, pentru calibrare. Ziua, ea e de ≈18–21 de niveluri de gri la 15 s.
+dintre previzualizări se notează pe minut, pentru calibrare. Ziua (29.10, 15:58–17:10), ea e de ≈20–25 de niveluri de
+gri la 15 s (mediana 23). Urmează mai ales traficul: seara, deși e întuneric, rămâne ≈19–25, iar între 22:00 și 01:00
+scade la ≈13–17 (cel mai mic 10).
 
 Pragurile au fost alese prin trecerea jurnalelor brute din 21–29.10 prin aceleași reguli (`--reluare`; metricile pe
 minut în `docs/rezultate/veghe_reluare.csv`; o traiectorie ajunge în jurnal la 30 de cadre prelucrate după ultima
@@ -510,44 +517,79 @@ lanțul testului rulând în paralel. Singurul semn al zilei e oprirea planifica
 (08:33–08:46), văzută după 6 minute. Toate episoadele cunoscute sunt prinse: pe 28.10, încetinirea e semnalată la
 03:53, la 7 minute după început. Sacadarea din 21–22.10 apare aproape toată ziua, deci problema ar fi fost văzută din
 prima zi. Pe zilele normale, pozițiile identice ajung la cel mult 3,7%, iar cel mai lung timp fără traiectorii noi e de
-1,6 minute în afara încetinirilor (2,7 minute în cea din 28.10). Fac excepție opririle, repornirile și capătul fiecărui
+cel mult 1,5 minute în afara încetinirilor și a golurilor de cadre (1,6 minute în încetinirile din 27.10, 2,7 minute în
+cea din 28.10 și 2,4 minute la golul de cadre de 144 s din 28.10, 00:30). Fac excepție opririle, repornirile și capătul fiecărui
 jurnal, după miezul nopții, unde mai sosesc doar traiectoriile lungi începute în acea zi. Veghea rulează din 29.10,
 15:16 (versiunea verificată, de la 15:57), până în 30.10, 09:05. Pauzele de cel puțin 10 s se notează în CSV, iar din
 16:27 fiecare are lângă ea și playlistul citit la începutul ei. Un ultim segment mult în urmă arată spre fluxul camerei,
-unul la zi spre noi. Seara au fost două pauze: la 16:23, de 16 s, și la 17:46, de 11 s. La a doua, playlistul era la zi
-(ultimul segment în urmă cu 6 și 8 s, secvența avansa): camera din teren trimitea normal, întârzierea a fost la noi.
-Amândouă sunt goluri reale în jurnal, de 16,2 și 11,4 s fără niciun punct, cu 45 și 63 de urmăriri care continuă peste
-gol. N-au avut reconectări, erori ale fluxului, deconectări Wi-Fi sau evenimente Windows.
+unul la zi spre livrarea segmentelor sau spre noi. În după-amiaza și seara de 29.10, veghea a notat două pauze: la
+16:23, de 16 s, și la 17:46, de 12 s (ea le măsoară pe starea live, scrisă cel mult o dată pe secundă, deci cu până la
+≈1 s în plus față de jurnal). La a doua, playlistul era la zi (ultimul segment în urmă cu 6 și 8 s, secvența avansa):
+camera din teren trimitea normal, iar întârzierea a fost după ea – la livrarea segmentului, pe drumul prin rețea, la
+descărcare sau la prelucrare –, fără să se poată spune unde. Amândouă sunt goluri reale în jurnal, de 16,2 și 11,4 s
+fără niciun punct, cu 45 și 63 de urmăriri care continuă peste gol. N-au avut reconectări, erori ale fluxului,
+deconectări Wi-Fi sau evenimente Windows.
 
-**Micro-înghețările (verificate pe 30.10, noaptea).** Jurnalele tuturor zilelor arată astfel de goluri, de 10–30 s, de
-câteva ori pe zi, încă din prima zi: de exemplu 21.10 la 16:18 (11 s), 28.10 la 12:37 (18 s), 29.10 la 07:06 (26 s) și
-la 12:43 (22 s). Ele înseamnă ≈0,1% din cadrele unei zile și nu schimbă numărătorile, dar pe dispecerat imaginea stă pe
-loc câteva secunde. Fluxul sosește în segmente de ≈3,8 MB la 6 s, fiecare descărcat într-o secundă; între ele rețeaua
-tace ≈5 s. Tamponul de redare de 8 s acoperă doar câteva secunde de întârziere peste cele 6 s ale unui segment. Un
-segment care întârzie mai mult oprește imaginea cam cât întârzierea. De aceea, din 29.10, 23:58, veghea notează la
-fiecare pauză și urmele din minutele dinainte: octeții primiți prin rețea și CPU-ul lui `run_vision`. O descărcare
-oprită (rețeaua tace mult peste cele 5 s obișnuite, începând înaintea pauzei) se deosebește astfel de o prelucrare
-oprită (rețeaua merge). Golurile de 8,2–8,5 s, grupate pe 25.10 dimineața și în noaptea spre 27.10, sunt foarte
-probabil reconectări rapide: după o citire eșuată, cititorul se redeschide în mai puțin de o secundă, iar tamponul se
-umple din nou în 8 s. Contorul de reconectări nu era urmărit atunci. Perechile de goluri de 19–45 s din noaptea spre
-29.10 (00:26, 01:35, 03:24) sunt probabil tot reconectări: jurnalul de erori al acelei rulări are, după întreruperile
-din 28.10 seara, conexiuni eșuate la serverul camerei, dar fără oră.
+**Microînghețările (verificate pe 30.10, noaptea).** Jurnalele zilelor întregi arată astfel de goluri, de 10–30 s, de
+câteva ori pe zi: de exemplu 26.10 la 19:40 (18 s), 28.10 la 12:37 (18 s), 29.10 la 07:06 (26 s) și la 12:43 (22 s).
+Le avea și colectarea de dinaintea tamponului de redare (21.10 la 16:18, 11 s). Golurile izolate de zi însumează
+≈0,1–0,2% din timpul înregistrat (cu întreruperile și încetinirile, până la ≈0,4%). Efectul asupra numărătorilor e
+neglijabil, dar nu nul: cam jumătate dintre goluri reiau imaginea de unde a rămas, celelalte sar înainte și pierd câteva
+traversări. În dispecerat, imaginea stă pe loc tot atât, iar la golurile de peste ≈15 s e acoperită de mesajul „Nu
+primesc imagini de la modulul de viziune”. Fluxul sosește în segmente de ≈3,8 MB la 6 s, fiecare descărcat într-o
+secundă; între ele rețeaua tace ≈5 s. Tamponul de redare de 8 s acoperă doar câteva secunde de întârziere peste cele
+6 s ale unui segment. Dacă un segment întârzie mai mult, imaginea se oprește când tamponul se golește. După o oprire de
+cel mult 3 s, redarea se reia imediat și recuperează întârzierea sărind peste o parte din cadre; după una mai lungă, se
+reancorează pe cel mai nou cadru și se reia abia după ce tamponul se umple din nou (până la 8 s). Așadar, un segment
+care întârzie mult oprește imaginea cam cât întârzierea lui, nu cu 8 s mai puțin, iar microînghețările cu prelucrarea
+la ritm normal au cel puțin ≈11 s (3 s plus cele 8 s ale reancorării). Unele coincid cu probleme ale rețelei
+laptopului: rezolvarea numelor (DNS) a expirat pe 28.10 la 12:37:18, chiar în golul de la 12:37, și pe 25.10 la 11:55,
+tot într-un gol (jurnalul Windows). De aceea, din 29.10, 23:58, veghea notează la fiecare pauză și urmele din minutele
+dinainte: octeții primiți prin rețea și CPU-ul lui `run_vision`. O descărcare oprită (rețeaua tace mult peste cele 5 s
+obișnuite, începând înaintea pauzei) se deosebește astfel de o prelucrare oprită (rețeaua merge); o descărcare doar
+încetinită se vede ca un ritm mic, fără rafale.
 
-Ferestrele de 10 minute arată și încetiniri mai scurte, pe care sferturile de oră le diluează: 28.10, 00:58–01:10
-(până la 85% pași lungi, pasul median 0,68 s; de la 00:40, pasul median era deja 0,24–0,29 s), adică ultimele minute
-ale validării din acea noapte, care s-a încheiat la 01:11, exact când rata și-a revenit; 26.10, 12:25–12:36,
-13:10–13:17 și 21:11–21:18 (16–24%); 27.10, 02:41–03:13, 03:47–03:58, 04:34–04:44 și 05:28–05:46; 25.10, mai multe
-episoade între 07:47 și 11:08, cu scurte reveniri între ele, plus două scurte, la 12:56 și 14:39. După orele fișierelor scrise atunci, fiecare coincide cu
-calcule grele pe același calculator: antrenările E4–E9 și evaluările (25.10), lucrul pentru zonele noi, cu cadre și
-clipuri luate din același flux și prelucrate cu YOLO pe aceeași placă grafică (26.10), experimentele de capacitate
-(§ 6.4) și reantrenările E12/E13 (noaptea de 27.10), validările (28.10). Pe 29.10 nu apare niciunul, deși testul din
-acea noapte a rulat tot la prioritate normală. Cauza „calcule grele în paralel” devine astfel mult mai probabilă, dar
-rămâne nesigură, fiindcă din acele momente nu există înregistrări de CPU și memorie. Tot pe 29.10 s-a aflat că
-prioritatea scăzută cerută de scripturile lanțurilor de noapte nu se aplica: apelul `SetPriorityClass(GetCurrentProcess(),
-…)` prin `ctypes` primea identificatorul procesului trunchiat (tipul implicit al `ctypes`, de 32 de biți) și întorcea 0
-(verificat direct). Calculele de noapte din 28.10 și testul din noaptea de 29.10 au rulat deci la prioritate normală.
-Lanțul de confirmare din noaptea de 30.10 are prioritatea setată din afară (verificat), iar `run_vision` se ridică de
-acum singur peste normal (procesul în curs, de pe 29.10, 15:16).
+Golurile de 8,0–8,5 s (unul pe 22.10, la 21:48, și 41 de la 25.10 încoace; niciunul pe 29.10) cad toate în încetiniri,
+cele mai multe chiar la începutul lor, când rata cadrelor scăzuse la ≈1–2 pe secundă: 25.10 la 02:55–02:58 și între
+07:42 și 10:46, 26.10 între 16:37 și 17:05 și la 21:07–21:08, noaptea spre 27.10, 28.10 la 00:53–00:55 și la 03:48.
+Vin câte unul–trei, de obicei la ≈30–65 s unul de altul. Ele sunt, foarte probabil, reancorări ale redării, nu
+reconectări: când cadrele ajung în tampon mai încet decât în timp real (decodarea încetinită de calculele grele), cel
+mai nou cadru rămâne tot mai în urmă, iar când întârzie cu peste 3 s, redarea se reancorează pe el și îl arată abia
+după 8 s. Imaginea stă deci 8 s plus un pas și continuă de unde a rămas: toate cele 26 de vehicule în mișcare chiar
+dinaintea acestor goluri (25–27.10) sunt regăsite după ele, față de ≈86% la cadrele obișnuite din aceleași ferestre.
+Mai departe în încetinire, pauzele devin de ≈5–6 s, iar imaginea sare înainte (după ele se mai regăsesc doar ≈1/3
+dintre vehiculele în mișcare; probabil segmente sărite de FFmpeg). O reconectare rapidă ar putea da și ea ≈8 s, dar
+jurnalul de erori al rulării din noaptea spre 27.10, cu 16 astfel de goluri, nu are niciun rând după 26.10, 23:20 (el
+prinde doar erorile FFmpeg, nu și avertismentele, deci argumentul e doar de sprijin), iar reconectările sigure, cu
+citiri expirate, au oprit imaginea 33–73 s. Contorul de reconectări nu era urmărit atunci. Perechile de goluri de
+19–45 s din noaptea spre 29.10 (00:26, 01:35, 03:24) au căzut toate în timpul calculelor grele rulate la prioritate
+normală (validările testului, apoi sensibilitatea pietonală). Cauza lor (prelucrarea sau serverul camerei) nu e
+stabilită.
+
+**Încetinirile văzute pe ferestre de 10 minute.** Ferestrele de 10 minute arată și încetiniri mai scurte, pe care
+sferturile de oră le diluează: 28.10, 00:58–01:10 (până la 85% pași lungi, pasul median 0,68 s; de la 00:40, pasul
+median era deja 0,24–0,29 s), adică ultimele minute ale validării din acea noapte, care s-a încheiat la 01:11, exact
+când rata și-a revenit; 26.10, 12:25–12:36, 13:10–13:17 și 21:11–21:18 (15–25% pași lungi); 27.10, 02:41–03:13,
+03:47–03:58, 04:34–04:44 și 05:28–05:46; 25.10, mai multe episoade între 07:47 și 11:08, cu reveniri între ele, plus
+două scurte, la 12:56 și 14:39. Orele sunt cele ale semnelor din reluare: fereastra privește 10 minute în urmă, deci
+încetinirile încep cu 1–7 minute mai devreme. După orele fișierelor scrise atunci, fiecare coincide cu calcule grele pe
+același calculator: antrenările E8–E9, validările E7–E9 și evaluările (25.10; în plus, între ≈10:35 și ≈11:33, toate
+procesele Python, inclusiv `run_vision`, au fost trecute din afară la prioritate scăzută și pe 8–9 din cele 12 nuclee
+logice), antrenarea E11 (10:21–13:37) și lucrul pentru zonele noi, cu cadre și clipuri luate din același flux și
+prelucrate în paralel, la prânz și cu YOLO pe aceeași placă grafică (26.10), validarea și testul agenților E12/E13,
+evaluările cu capacitatea calibrată și experimentele de capacitate (noaptea de 27.10, § 9.9 și § 6.4; reantrenarea
+E12/E13, încheiată la 01:01, nu a lăsat niciun semn), validările (28.10). Pe 29.10 nu apare niciunul, deși testul din
+acea noapte a rulat tot la prioritate normală: calculele grele nu încetinesc deci colectarea de fiecare dată.
+Coincidențele fac totuși din ele cauza cea mai probabilă, dar nesigură, fiindcă din acele momente nu există înregistrări
+continue de CPU și memorie. Tot pe 29.10 s-a aflat că prioritatea scăzută cerută de scripturile lanțurilor de noapte nu
+se aplica: apelul `SetPriorityClass(GetCurrentProcess(), …)` prin `ctypes`, fără tipuri declarate, primea 0xFFFFFFFF în
+locul pseudo-handle-ului procesului curent (−1 pe 64 de biți). Tipul implicit al `ctypes` (int, de 32 de biți) trunchia
+rezultatul lui `GetCurrentProcess()`, iar ca argument valoarea era extinsă la 64 de biți cu zerouri, nu cu semnul;
+`SetPriorityClass` întorcea 0, cu eroarea 6 („handle invalid”; verificat direct). Calculele de noapte din 28.10 și
+testul din noaptea de 29.10 au rulat deci la prioritate normală. Lanțul de confirmare din noaptea de 30.10 are
+prioritatea setată din afară (verificat), iar `run_vision` se ridică de acum singur peste normal, la pornire. Procesul
+de colectare pornit pe 29.10 la 08:46, înaintea acestei schimbări, a rulat la prioritate normală până la 15:16, când a
+fost ridicat din afară (verificat).
 
 **Prânzul numărătorii de referință (26.10).** Minut cu minut, între 11:50 și 12:30, colectarea live a prelucrat mai
 puține cadre: pasul median 0,20–0,40 s în loc de 0,17 s, cu până la 31% pași lungi într-un minut. Asta s-a întâmplat și
@@ -555,7 +597,8 @@ puține cadre: pasul median 0,20–0,40 s în loc de 0,17 s, cu până la 31% pa
 clipuri a mers în schimb la rata întreagă (0,17 s, 2,7% pași lungi). Probabil asta explică o parte din diferența dintre
 numărarea live a acelei ore și numărarea automată pe clipuri (§ 5.4). Cât anume nu s-a măsurat, fiindcă o rată redusă
 nu se poate simula fără imagini. Cauza probabilă e chiar lucrul pentru numărătoarea de referință, care rula în paralel:
-înregistrarea clipurilor din același flux și prelucrarea lor. Factorii de corecție (§ 4.3) raportează referința la
+înregistrarea clipurilor din același flux și prelucrarea lor, peste antrenarea E11 (10:21–13:37), care singură
+încetinise colectarea doar puțin (pasul median 0,19–0,21 s pe ferestre de 10 minute, între 10:30 și 11:50). Factorii de corecție (§ 4.3) raportează referința la
 numărarea automată cu rata întreagă, adică la ce face colectarea în zilele fără încetiniri, cum sunt ziua de test 28.10
 (afară de noapte) și ziua de confirmare 29.10.
 
@@ -1698,7 +1741,9 @@ nu comută.
 
 Lucrări viitoare: confirmarea câștigătorului (planul 12/14/12) pe joi 29.10, după protocolul din § 9.9; excluderea
 implicită a intervalelor cu prelucrarea încetinită din alegerea ferestrelor (`scenarii_zi --fara-incetinite`, § 4.6),
-cu pragul validat pe mai multe zile, și rata de cadre scrisă direct în jurnalul colectării; reantrenarea
+cu pragul validat pe mai multe zile, și rata de cadre scrisă direct în jurnalul colectării; o redare care, după o
+întârziere a fluxului, își reface tamponul treptat, în loc să oprească imaginea 8 s, și colectarea pe o conexiune prin
+cablu, nu prin Wi-Fi (unele microînghețări coincid cu probleme ale rețelei laptopului, § 4.6); reantrenarea
 agenților pe mai multe zile cu capacitatea calibrată (pe o singură zi, E14 nu a întrecut E13, § 9.5); verzi minime
 pe fază, calculate după trecerile de pietoni, pentru planurile fixe și pentru agenți, apoi reantrenarea și
 reevaluarea cu ele; lămurirea cozii de intrare de pe Calea Victoriei, la marginea rețelei (§ 9.6); recompensă cu prioritate
@@ -1814,7 +1859,7 @@ semaforul.
 | viziunea are sub 2 cadre/s | fără GPU, verificați `runtime: "openvino"` în `config/camera.json`; cu GPU NVIDIA: `runtime: "pytorch"`, `--device 0` |
 | `Cannot use optimization (scipy not installed)` | `pip install scipy` în `.venv` |
 | camera nu răspunde | fluxul public poate fi temporar indisponibil; geamănul digital trece automat pe profilul de referință și afișează asta |
-| imaginea pare înghețată sau numărătorile scad brusc | `2d_veghe.bat` arată pe loc dacă rata cadrelor prelucrate a scăzut (calcule grele în paralel: rulați-le la prioritate scăzută) sau dacă fluxul camerei nu mai avansează; diagnosticul în `outputs\logs\veghe_alerta_*.json`, explicațiile în § 4.6 |
+| imaginea pare înghețată sau numărătorile scad brusc | o oprire de 10–30 s, de câteva ori pe zi, e o microînghețare și trece singură (dispeceratul arată atunci „fără cadre noi de N s”; § 4.6); altfel, `2d_veghe.bat` arată pe loc dacă rata cadrelor prelucrate a scăzut (calcule grele în paralel: rulați-le la prioritate scăzută) sau dacă fluxul camerei nu mai avansează; diagnosticul în `outputs\logs\veghe_alerta_*.json`, explicațiile în § 4.6 |
 
 ### 11.8 Reproducerea rezultatelor și a calibrării
 
@@ -2034,7 +2079,7 @@ se schimbă fără ferestrele de noapte. Confirmarea se face pe joi 29.10.
 | O15 | Prea multe documente | o singură documentație (acest document); README scurt pentru pagina GitHub |
 | P1 | Viziunea se oprea când dispeceratul citea imaginea | scriere atomică, citiri simultane tolerate |
 | P2 | Geamănul revenea pe date de rezervă la începutul fiecărui interval de 15 min | păstrează ultimele debite bune ale camerei |
-| P3 | Imaginea camerei mergea 2 s și stătea 4 s (camera trimite bucăți de 6 s) | tampon de redare de 8 s: cadre la 0,17 s, fără pauze; abia pe 27.10 s-a văzut că opririle afectaseră și numărarea din 21–22.10 (§ 4.6) |
+| P3 | Imaginea camerei mergea 2 s și stătea 4 s (camera trimite bucăți de 6 s) | tampon de redare de 8 s: cadre la 0,17 s, fără pauzele regulate (rămân câteva microînghețări de 10–30 s pe zi); abia pe 27.10 s-a văzut că opririle afectaseră și numărarea din 21–22.10 (§ 4.6) |
 | P4 | Fereastra camerei tăia imaginea | fereastră redimensionabilă |
 | P5 | SUMO-GUI pornea cu toată rețeaua | vederea pornește centrată pe piață |
 | P6 | Programul live comuta după intrările camerei, iar pragurile erau pe altă unitate | comutarea pe aceeași măsură ca scenariile (§ 9.2) |
