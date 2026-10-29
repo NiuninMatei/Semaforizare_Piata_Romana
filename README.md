@@ -76,21 +76,23 @@ indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Prog
 −6,4%. Pe 10 seed-uri, E13 dă −9,2% / −7,9%. Strategia geamănului live s-a decis pe testul din 28.10, după
 protocolul fixat dinainte în § 9.9 (mai jos). Reantrenarea lui E13 pe ziua de luni (E14) nu l-a întrecut (§ 9.5). O grilă de
 23 de planuri fixe pe geamănul calibrat arată că ciclurile scurte câștigă: planul 12/14/12 (ciclu ≈53 s) dă pe validare
-−9,3% față de planul fix, la nivelul lui E13 (diferență nesemnificativă). Intră în test ca referință raportată; verzile
+−9,3% față de planul fix, la nivelul lui E13 (diferență nesemnificativă). Intră în test, după decizia „cel mai bun
+câștigă”, ca primul candidat (§ 9.9); verzile
 lui de 12–14 s sunt însă la limita timpului de degajare a pietonilor, pe care modelul nu îl impune (§ 10). Din 28.10,
 geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
 live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
 
 **Testul final (miercuri 28.10, § 9.10).** Cei trei candidați au fost planul 12/14/12, programul din planuri fixe pe
 cazuri (`TOD_DEBIT`) și E13. Ei s-au comparat cu programul în vigoare, programul realist, pe o zi lucrătoare
-nevăzută, înregistrată de la 00:00 la 24:00: 12 scenarii, seed-urile 1–10, participanți disciplinați și
+nevăzută, înregistrată de la 00:10 la 24:00: 12 scenarii, seed-urile 1–10, participanți disciplinați și
 indisciplinați, 840 de simulări. Toți trei îl bat semnificativ, cu −6,0…−7,2% din pierderea totală (Wilcoxon
 p între 0,0001 și 0,0013), iar între ei diferențele nu sunt semnificative. Regula alege de aceea candidatul cel mai simplu,
 **planul fix 12/14/12** (ciclu ≈53 s în loc de ≈91 s), care a trecut în geamănul live. Câștigul vine de la pietoni,
 care așteaptă mai puțin (−12% față de planul fix de referință), în timp ce vehiculele pierd puțin (+1–2%). Față de
 programul realist, câștigă și vehiculele (−2…−3%), și pietonii (−10%). Măsura pe persoană (20, 40 sau 70 de călători pe autobuz)
-dă același câștigător. Înainte de o aplicare reală, verzile de 12–14 s trebuie verificate față de timpii de degajare
-a pietonilor (§ 10). În noaptea zilei de test, imaginea camerei a înghețat ≈50 de minute (≈03:40–04:30), iar
+dă același câștigător. Planul nu scurtează verdele minim al niciunei treceri de pietoni față de planul de referință
+(12 s, în faza de pietoni). Mai trebuie verificată doar această fază de 12 s după normele de proiectare, pe trecerea
+cea mai lungă, de 12,8 m (§ 9.10, `romana.control.treceri`). În noaptea zilei de test, imaginea camerei a înghețat ≈50 de minute (≈03:40–04:30), iar
 fereastra liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 9.10). Confirmarea se face pe joi 29.10.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
@@ -178,7 +180,7 @@ previzualizarea estompată, suprascrisă continuu (§ 4.5, § 14.1). Pașii comp
 | `config/` | `camera.json` (fluxul, detectorul, zonele), `network.json` (semafoarele, grupurile de semnal, fazele), `demand.json` (cererea și calibrarea ei) |
 | `data/` | `counts/` (numărători la 15 min; pietonii doar aici, agregat), `trajectories/` (traiectoriile vehiculelor, fără imagini și identificatori), `osm/` (extrasul OpenStreetMap) |
 | `sumo/` | `net/` (rețeaua), `demand/` (un dosar pentru fiecare scenariu `zi_*` și `referinta_*` – scenariile `indisciplinat_*` folosesc aceleași dosare `zi_*`, cu `vtypes_indisciplinat.add.xml` –, plus `vtypes.add.xml` și `zi_*_rezumat.json`; unele dosare păstrează fișiere vechi – contează doar ce listează `.sumocfg`), `scenarios/` (`zi_*` = date reale, cu cererea calibrată din 26.10, § 5.4; `indisciplinat_*` = testul de robustețe, pe rutele scenariilor `zi_*`; `referinta_*` = scenariile ipotetice inițiale; `capacitate_*` = rutele scenariilor `zi_*` din 25–26.10, cu `vtypes_capacitate*.add.xml` (din 28.10, aceleași valori ca `vtypes.add.xml` / `vtypes_indisciplinat.add.xml`), păstrate pentru reproducerea § 9.9 și a validării E14 (§ 6.4); scenariile marginilor de jos și de sus, pe care s-au obținut rezultatele, sunt în istoricul git, la `e1d0f77` / `7a79502`) |
-| `models/` | 19 agenți PPO: `.zip` (Stable-Baselines3; conține pickle – doar din surse de încredere), `.npz` (aceeași politică, preferată la rulare, fără PyTorch; lipsește la trei), `.json` (scenariile, hiperparametrii, setările citite la rulare). Programul folosește `ppo_romana`, `ppo_romana_zn3` (E3), `ppo_romana_lejer` (E9); restul sunt experimente (§ 9.5) |
+| `models/` | 19 agenți PPO: `.zip` (Stable-Baselines3; conține pickle – doar din surse de încredere), `.npz` (aceeași politică, preferată la rulare, fără PyTorch; lipsește la trei), `.json` (scenariile, hiperparametrii, setările citite la rulare). Varianta live, planul fix 12/14/12, nu folosește niciun model; celelalte variante ale programului folosesc `ppo_romana`, `ppo_romana_zn3` (E3), `ppo_romana_lejer` (E9) și `ppo_romana_cal` (E13); restul sunt experimente (§ 9.5) |
 | `scripts/` | de la `0_instalare` la `10_documentatie_pdf` (`8_`, `9_` = demonstrații), `PORNESTE_TOT`, `_mediu.bat` (`.venv` și `PYTHONPATH=src`) |
 | `docs/` | `DOCUMENTATIE.md` / `.pdf`; `rezultate/` (evaluările și validările – Anexa A; cele mai vechi sunt în istoricul git; `rezultate/referinta/` = numărătoarea de referință din 26.10, fără imagini); `antrenare/` (jurnale din Borna 4, ale unor modele scoase între timp); `corespondenta_commituri.txt` (§ 12.5) |
 | `tests/`, `legacy/` | testele (numărarea, statisticile, validarea, scenariile indisciplinate, referința, calibrarea camerei); ciorna inițială (până la 18.10.2026), cu raportul de audit |
@@ -187,7 +189,7 @@ previzualizarea estompată, suprascrisă continuu (§ 4.5, § 14.1). Pașii comp
 ## Documentația
 
 Totul este într-un singur document: **[docs/DOCUMENTATIE.md](docs/DOCUMENTATIE.md)** (și [PDF](docs/DOCUMENTATIE.pdf), cu
-pagini numerotate). În 5 minute: § 9.2, § 9.4, § 9.7, § 10. Profesor sau student: § 1–3, § 8 (euristicile Nielsen), § 12
+pagini numerotate). În 5 minute: § 9.10, § 9.7, § 10. Profesor sau student: § 1–3, § 8 (euristicile Nielsen), § 12
 (jurnalul), § 13. Inginer de trafic: § 5, § 6, § 7.4, § 9, § 10. Programator: § 4, § 7, § 11, Anexa A. Drepturi și date
 personale: § 4.5, § 12.5, § 14.1.
 
@@ -196,9 +198,9 @@ personale: § 4.5, § 12.5, § 14.1.
 | Limită | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare −3,2% (marginea de sus), practic zero la marginea de jos (+0,4%, p = 0,62), −18,4% cu participanți indisciplinați; duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | cinci zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11) și miercuri 28.10 (00:00–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9) și miercurea, testul final (§ 9.10); joi 29.10 e ziua de confirmare. Cazul lejer real nu e acoperit de testul final (fereastra liniștită a căzut pe o înghețare a imaginii) |
+| Puține date | cinci zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11) și miercuri 28.10 (00:10–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9) și miercurea, testul final (§ 9.10); joi 29.10 e ziua de confirmare. Cazul lejer real nu e acoperit de testul final (fereastra liniștită a căzut pe o înghețare a imaginii) |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
-| Geamănul live | simulează participanți disciplinați; comutarea lui automată nu a fost evaluată: cifrele programului sunt compuse din rulările componentelor, după tipul scenariului |
+| Geamănul live | simulează participanți disciplinați. Varianta implicită din 29.10, planul 12/14/12, nu comută, deci e exact strategia evaluată. Pentru variantele care comută (de exemplu programul realist), comutarea live nu a fost evaluată: cifrele lor sunt compuse din rulările componentelor, după cazul scenariului |
 | Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; pentru cele marcate „tipurile vechi”, doar tipurile de vehicule din `75592d3`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
 | Transferul în realitate | agenții observă coada și vehiculele de pe fiecare bandă de intrare și pietonii care așteaptă, exacte în simulare; pe stradă ar trebui detectoare pe fiecare bandă, detecția pietonilor, integrare cu BTMS și validare cu operatorul (§ 10) |
 

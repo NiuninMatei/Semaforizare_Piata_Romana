@@ -6,7 +6,9 @@ mediu între ele (pragurile vin din ziua de validare, luni 26.10). Programele pe
 
 Câștigă candidatul cu cea mai mică pierdere totală de timp pe toate perechile (scenariu × seed, ambele comportamente),
 dacă (a) e semnificativ mai bun decât strategia în vigoare (testul Wilcoxon bilateral pe perechi, p < 0,05, cu
-diferența medie negativă) și (b) nu e semnificativ mai slab în niciun comportament luat separat. Dacă primii doi
+diferența medie în ore pe pereche negativă, adică pierderea totală mai mică) și (b) nu e semnificativ mai slab în
+niciun comportament luat separat (aceeași măsură, în ore). Media schimbărilor relative pe perechi se afișează doar
+informativ: ea dă scenariilor de noapte, cu pierderi aproape nule, aceeași greutate ca vârfului. Dacă primii doi
 candidați eligibili nu se deosebesc semnificativ (p ≥ 0,05), câștigă cel mai simplu de pus în practică: ordinea din
 listă (planul fix, programul din planuri fixe, agentul). Fără niciun candidat eligibil, rămâne strategia în vigoare.
 Cu --confirma X, pe o zi nouă se verifică doar dacă X e semnificativ mai slab decât strategia în vigoare.
@@ -123,11 +125,15 @@ def main(argv=None) -> None:
            "debite": {s: round(v) for s, v in q.items()}, "cazuri": cazuri, "benzi_analiza": benzi}
     if args.confirma:
         e = evaluare(args.confirma)
-        g = e["fata_de_in_vigoare"]
+        g, i, d = e["fata_de_in_vigoare"], e["indisciplinati"], e["disciplinati"]
+        e["dif_totala_pct"] = (e["pierdere_totala_h"] / p[ref].sum() - 1) * 100
         slab = g["p_wilcoxon"] < 0.05 and g["dif_medie_h"] > 0
         rez.update({"confirmare": e, "verdict": "neconfirmat: revenire la " + ref if slab else "confirmat"})
-        print(f"\n{args.confirma} față de {ref}: {g['dif_medie_pct']:+.1f}% ({g['dif_medie_h']:+.2f} h/pereche), "
-              f"mai bun în {g['mai_bun']}/{g['n']}, p Wilcoxon = {g['p_wilcoxon']:.6f} → {rez['verdict']}")
+        print(f"\nîn vigoare: {ref}, pierdere totală {p[ref].sum():.1f} h")
+        print(f"{args.confirma} total {e['pierdere_totala_h']:.1f} h ({e['dif_totala_pct']:+.1f}%) | față de {ref}: "
+              f"{g['dif_medie_h']:+.2f} h/pereche (medie relativă {g['dif_medie_pct']:+.1f}%), mai bun în "
+              f"{g['mai_bun']}/{g['n']}, p Wilcoxon = {g['p_wilcoxon']:.6f} | indisc. {i['dif_medie_h']:+.2f} h "
+              f"(p = {i['p_wilcoxon']:.4f}), disc. {d['dif_medie_h']:+.2f} h (p = {d['p_wilcoxon']:.4f}) → {rez['verdict']}")
     else:
         evals = [evaluare(x) for x in args.candidati]
         print(f"\nîn vigoare: {ref}, pierdere totală {p[ref].sum():.1f} h")
