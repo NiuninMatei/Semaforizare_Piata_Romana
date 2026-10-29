@@ -514,8 +514,24 @@ prima zi. Pe zilele normale, pozițiile identice ajung la cel mult 3,7%, iar cel
 jurnal, după miezul nopții, unde mai sosesc doar traiectoriile lungi începute în acea zi. Veghea rulează din 29.10,
 15:16 (versiunea verificată, de la 15:57), până în 30.10, 09:05. Pauzele de cel puțin 10 s se notează în CSV, iar din
 16:27 fiecare are lângă ea și playlistul citit la începutul ei. Un ultim segment mult în urmă arată spre fluxul camerei,
-unul la zi spre noi. Prima pauză notată, pe 29.10 la 16:23, a durat 16 s. N-a avut reconectare, erori ale fluxului sau
-evenimente Windows, iar cauza ei n-a putut fi stabilită.
+unul la zi spre noi. Seara au fost două pauze: la 16:23, de 16 s, și la 17:46, de 11 s. La a doua, playlistul era la zi
+(ultimul segment în urmă cu 6 și 8 s, secvența avansa): camera din teren trimitea normal, întârzierea a fost la noi.
+Amândouă sunt goluri reale în jurnal, de 16,2 și 11,4 s fără niciun punct, cu 45 și 63 de urmăriri care continuă peste
+gol. N-au avut reconectări, erori ale fluxului, deconectări Wi-Fi sau evenimente Windows.
+
+**Micro-înghețările (verificate pe 30.10, noaptea).** Jurnalele tuturor zilelor arată astfel de goluri, de 10–30 s, de
+câteva ori pe zi, încă din prima zi: de exemplu 21.10 la 16:18 (11 s), 28.10 la 12:37 (18 s), 29.10 la 07:06 (26 s) și
+la 12:43 (22 s). Ele înseamnă ≈0,1% din cadrele unei zile și nu schimbă numărătorile, dar pe dispecerat imaginea stă pe
+loc câteva secunde. Fluxul sosește în segmente de ≈3,8 MB la 6 s, fiecare descărcat într-o secundă; între ele rețeaua
+tace ≈5 s. Tamponul de redare de 8 s acoperă doar câteva secunde de întârziere peste cele 6 s ale unui segment. Un
+segment care întârzie mai mult oprește imaginea cam cât întârzierea. De aceea, din 29.10, 23:58, veghea notează la
+fiecare pauză și urmele din minutele dinainte: octeții primiți prin rețea și CPU-ul lui `run_vision`. O descărcare
+oprită (rețeaua tace mult peste cele 5 s obișnuite, începând înaintea pauzei) se deosebește astfel de o prelucrare
+oprită (rețeaua merge). Golurile de 8,2–8,5 s, grupate pe 25.10 dimineața și în noaptea spre 27.10, sunt foarte
+probabil reconectări rapide: după o citire eșuată, cititorul se redeschide în mai puțin de o secundă, iar tamponul se
+umple din nou în 8 s. Contorul de reconectări nu era urmărit atunci. Perechile de goluri de 19–45 s din noaptea spre
+29.10 (00:26, 01:35, 03:24) sunt probabil tot reconectări: jurnalul de erori al acelei rulări are, după întreruperile
+din 28.10 seara, conexiuni eșuate la serverul camerei, dar fără oră.
 
 Ferestrele de 10 minute arată și încetiniri mai scurte, pe care sferturile de oră le diluează: 28.10, 00:58–01:10
 (până la 85% pași lungi, pasul median 0,68 s; de la 00:40, pasul median era deja 0,24–0,29 s), adică ultimele minute
@@ -1724,7 +1740,7 @@ rezultatele se pot reproduce fără a colecta date noi.
 
 | Pas | Comandă | Ce trebuie să se vadă |
 |---|---|---|
-| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (62 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi`) |
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (64 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi`) |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | SUMO-GUI cu ora de vârf din 21.10.2026 și agentul AI la semaforul pieței |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu planul fix |
 | Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | prânzul din 21.10 (altă oră: `--scenariu`), cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
