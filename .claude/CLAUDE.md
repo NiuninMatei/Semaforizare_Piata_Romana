@@ -79,6 +79,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   BelowNormal a lanțului setată din afară (cea din script nu se aplicase); keep-awake activ. Autorul doarme (după
   tura de noapte) și a lăsat restul în grija mea; întrebarea despre excludere retrasă (premisa era greșită); zonele
   de vehicule pe imagine – ziua, la lumină.
+- **29.10, ≈09:45–11:30 – auditul de coerență al documentației** (4 cititori + 4 verificatori adversariali): 48 de
+  probleme confirmate, toate corectate. Cele importante: efectul corecturii trecerilor pe 26.10 = +4% pietoni (nu +6%);
+  § 4.6 Magheru 1 424 vs 558/h (12–18), sfertul 21:30 = 88 vs 347 intrări; § 5.4 are acum ziua 28.10 (listă + tabel) și
+  definiția debitului echilibrat; referința de la prânz (≈6 200 veh/h) vs scenariul calibrat al aceleiași ore (3 381)
+  – diferență nelămurită, declarată; § 9.2 / § 9.7 limitate explicit la calibrările anterioare; § 6.4 excepțiile de la
+  „9.1–9.8 istorice” (E14, § 9.6 a doua parte); 50 de teste, 83 de scenarii, ≈250 MB; zonele de vehicule verificate pe
+  imagine (§ 4.3).
 - **Pașii de reluare folosiți (pentru o altă repornire):** (1) `run_vision` fără fereastră: `$env:PYTHONPATH="src"; Start-Process
   .venv\Scripts\python.exe -ArgumentList '-m','romana.vision.run_vision' -RedirectStandardOutput
   outputs\logs\viziune_2026-10-29.log -RedirectStandardError outputs\logs\viziune_2026-10-29.err -WindowStyle Hidden
