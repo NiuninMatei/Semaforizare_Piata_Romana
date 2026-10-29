@@ -51,6 +51,9 @@ class TestPrelucrareIncetinita(unittest.TestCase):
             f = Path(d) / "traiectorii_2026-10-28.jsonl.gz"
             with gzip.open(f, "wt", encoding="utf-8") as fh:
                 fh.write("\n".join(json.dumps(r) for r in recs) + "\n")
+            bloc = gzip.compress((json.dumps(recs[1]) + "\n").encode())
+            with open(f, "ab") as fh:                       # jurnal în curs de scriere: ultimul bloc e incomplet
+                fh.write(bloc[:len(bloc) // 2])
             _, p = quality(f)
         self.assertEqual(p["03:45"][:2], [2, 1])
         self.assertEqual(pasi(p["03:45"]), (1.0, 1.0))      # câte un pas de 1 s pe traiectorie
