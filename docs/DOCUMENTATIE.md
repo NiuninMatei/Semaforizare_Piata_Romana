@@ -453,15 +453,17 @@ mai probabilă e încărcarea calculatorului: validarea E14 (multe simulări în
 încetinirea a început ușor pe la 03:00, iar rata normală a revenit pe la 04:45. Cauza nu e sigură: o sacadare a
 fluxului camerei ar arăta asemănător, iar în noaptea de 29.10 un lanț la fel de greu (testul, 00:15–02:27, 11
 procese) a încetinit colectarea doar ușor: pasul median a fost 0,19–0,22 s în loc de 0,17 s, fără niciun interval
-încetinit. La fel, validarea din 28.10, 00:25–01:11.
+încetinit. Validarea din 28.10, 00:25–01:11, părea la fel pe sferturi de oră, dar pe ferestre de 10 minute se vede că
+a încetinit puternic colectarea în ultimele ei minute (mai jos, „Veghea fluxului de cadre”).
 
 Episoade de același fel apar și pe 27.10, 01:15–02:45, cu o revenire scurtă pe la 02:15–02:30 (sfertul 02:15 rămâne
 sub prag; tot în timpul calculelor de noapte), pe 26.10, 16:45–17:00, și, mai scurt, pe 25.10, 02:55–03:08 (sub prag,
 pentru că se împarte între două sferturi de oră). Pe 21, 22 și 29.10 (până la 09:15) nu apar. Dintre ferestrele
 folosite în teste, doar cea liniștită din 28.10 (03:30–04:30) a căzut pe o încetinire: debitul ei măsurat (56 veh/h)
 e subestimat, iar decizia e aceeași fără ferestrele de noapte (§ 9.10). Celelalte ferestre ale zilei de test nu sunt
-încetinite (pasul median 0,17–0,23 s, cel mult 9% pași lungi). Nici ferestrele zilei de validare 26.10 nu sunt
-(0,17–0,31 s, cel mult 16% pași lungi): la prânz și seara târziu rata e puțin sub cea normală, dar departe de prag.
+încetinite (pasul median 0,17–0,23 s, cel mult 9% pași lungi). Nici ferestrele zilei de validare 26.10 nu trec pragul
+(0,17–0,31 s, cel mult 16% pași lungi pe oră), dar la prânz rata a fost vizibil sub cea normală (mai jos, „Prânzul
+numărătorii de referință”).
 
 De pe 29.10, `romana.vision.calitate` caută direct acest semn, pe intervale de 15 minute (opțiunea `--out-15min` scrie
 tabelul): un interval e încetinit când cel puțin 40% dintre pașii traiectoriilor de vehicule depășesc 0,5 s. Pe
@@ -470,6 +472,73 @@ lungi); celelalte 375 au sub 30% (mediana 6%). Opțiunea `--fara-incetinite` din
 ferestrelor. Pe 28.10, fereastra liniștită s-ar muta astfel pe 02:45–03:45, iar pe 26.10 nu se schimbă nimic.
 Opțiunea e oprită implicit, ca zilele deja prelucrate să rămână reproductibile. Calculele grele rulează de acum la
 prioritate scăzută cât timp camera colectează.
+
+**Veghea fluxului de cadre (29.10).** `calitate` găsește o problemă abia după încheierea zilei. La cererea autorului,
+orice semn de felul „imaginii înghețate” trebuie văzut și analizat pe loc. De aceea, `romana.vision.veghe`
+(`scripts\2d_veghe.bat`) rulează lângă `run_vision`, fără să-l atingă. În fiecare secundă citește starea live
+(`outputs/live/state.json`: rata cadrelor prelucrate, ora ultimului cadru, reconectările fluxului), la 15 s
+previzualizarea estompată (doar în memorie), iar la fiecare minut traiectoriile noi din jurnal. La primul semn de
+problemă se oprește. Întâi scrie alerta, apoi un instantaneu de diagnostic: procesele după CPU (plus rândul lui
+`run_vision`), performanța procesorului, memoria, placa grafică pe procese, ultimele rânduri din jurnalul de erori al
+viziunii și playlistul HLS al camerei, citit de două ori la 8 s distanță (avansează? cât de în urmă e ultimul segment?).
+Instantaneul ajută la separarea cauzelor de la noi (prelucrarea) de cele din teren (fluxul camerei). Semnele sunt:
+
+| Semn | Prag |
+|---|---|
+| `run_vision` nu mai rulează | imediat |
+| niciun cadru prelucrat | 3 minute; întreruperile scurte ale fluxului se refac singure și doar se notează |
+| pauze de peste 2,5 s între cadre (redare sacadată) | 10 în 5 minute |
+| rata cadrelor prelucrate (normal ≈6/s) | sub 3,5/s în cel puțin 75% din citirile ultimelor 3 minute |
+| episoade de reconectare a fluxului | 4 în 30 de minute |
+| nicio traiectorie nouă | 5 minute |
+| pași de peste 0,5 s între punctele vehiculelor | cel puțin 15% în ultimele 10 minute |
+| previzualizarea nu se schimbă deloc, deși se prelucrează cadre (cadre identice) | 4 citiri la rând (1 minut) |
+| vehicule oprite cu poziții identice punct cu punct (se vede după ce înghețarea trece) | cel puțin jumătate |
+
+Codul a fost verificat de doi agenți independenți înainte de noapte. După observațiile lor, pragurile fluxului au fost
+calibrate pe jurnalele de erori ale viziunii. Pe 26 și 28.10, fluxul camerei s-a întrerupt de câteva ori (conexiuni
+eșuate, citiri expirate după 30 s) și s-a refăcut singur în 30–120 s. Pe 28.10 au fost trei întreruperi în 25 de minute,
+între ≈22:30 și 23:00. Contorul de reconectări crește la fiecare încercare eșuată, de aceea creșterile apropiate formează un
+singur episod. Media glisantă a ratei din `run_vision` supraestimează rata când pașii sunt amestecați, iar semnul din
+jurnal o dublează. O imagine înghețată, dar recodată de cameră (cadre aproape identice), nu are încă un prag: diferența
+dintre previzualizări se notează pe minut, pentru calibrare. Ziua, ea e de ≈18–21 de niveluri de gri la 15 s.
+
+Pragurile au fost alese prin trecerea jurnalelor brute din 21–29.10 prin aceleași reguli (`--reluare`; metricile pe
+minut în `docs/rezultate/veghe_reluare.csv`; o traiectorie ajunge în jurnal la 30 de cadre prelucrate după ultima
+detecție, ca în `run_vision`). Pe 29.10 nu apare niciun semn fals: pașii lungi au mediana 3,3% și maximul 13,2%, cu
+lanțul testului rulând în paralel. Singurul semn al zilei e oprirea planificată de dimineață
+(08:33–08:46), văzută după 6 minute. Toate episoadele cunoscute sunt prinse: pe 28.10, încetinirea e semnalată la
+03:53, la 7 minute după început. Sacadarea din 21–22.10 apare aproape toată ziua, deci problema ar fi fost văzută din
+prima zi. Pe zilele normale, pozițiile identice ajung la cel mult 3,7%, iar cel mai lung timp fără traiectorii noi e de
+1,6 minute în afara încetinirilor (2,7 minute în cea din 28.10). Fac excepție opririle, repornirile și capătul fiecărui
+jurnal, după miezul nopții, unde mai sosesc doar traiectoriile lungi începute în acea zi. Veghea rulează din 29.10,
+15:16 (versiunea verificată, de la 15:57), până în 30.10, 09:05.
+
+Ferestrele de 10 minute arată și încetiniri mai scurte, pe care sferturile de oră le diluează: 28.10, 00:58–01:10
+(până la 85% pași lungi, pasul median 0,68 s; de la 00:40, pasul median era deja 0,24–0,29 s), adică ultimele minute
+ale validării din acea noapte, care s-a încheiat la 01:11, exact când rata și-a revenit; 26.10, 12:25–12:36,
+13:10–13:17 și 21:11–21:18 (16–24%); 27.10, 02:41–03:13, 03:47–03:58, 04:34–04:44 și 05:28–05:46; 25.10, mai multe
+episoade între 07:47 și 11:08, cu scurte reveniri între ele, plus două scurte, la 12:56 și 14:39. După orele fișierelor scrise atunci, fiecare coincide cu
+calcule grele pe același calculator: antrenările E4–E9 și evaluările (25.10), lucrul pentru zonele noi, cu cadre și
+clipuri luate din același flux și prelucrate cu YOLO pe aceeași placă grafică (26.10), experimentele de capacitate
+(§ 6.4) și reantrenările E12/E13 (noaptea de 27.10), validările (28.10). Pe 29.10 nu apare niciunul, deși testul din
+acea noapte a rulat tot la prioritate normală. Cauza „calcule grele în paralel” devine astfel mult mai probabilă, dar
+rămâne nesigură, fiindcă din acele momente nu există înregistrări de CPU și memorie. Tot pe 29.10 s-a aflat că
+prioritatea scăzută cerută de scripturile lanțurilor de noapte nu se aplica: apelul `SetPriorityClass(GetCurrentProcess(),
+…)` prin `ctypes` primea identificatorul procesului trunchiat (tipul implicit al `ctypes`, de 32 de biți) și întorcea 0
+(verificat direct). Calculele de noapte din 28.10 și testul din noaptea de 29.10 au rulat deci la prioritate normală.
+Lanțul de confirmare din noaptea de 30.10 are prioritatea setată din afară (verificat), iar `run_vision` se ridică de
+acum singur peste normal (procesul în curs, de pe 29.10, 15:16).
+
+**Prânzul numărătorii de referință (26.10).** Minut cu minut, între 11:50 și 12:30, colectarea live a prelucrat mai
+puține cadre: pasul median 0,20–0,40 s în loc de 0,17 s, cu până la 31% pași lungi într-un minut. Asta s-a întâmplat și
+în timpul ambelor clipuri: 0,22–0,28 s la clipul 1 (11:58) și 0,26–0,35 s la clipul 2 (12:19). Lanțul rulat apoi pe
+clipuri a mers în schimb la rata întreagă (0,17 s, 2,7% pași lungi). Probabil asta explică o parte din diferența dintre
+numărarea live a acelei ore și numărarea automată pe clipuri (§ 5.4). Cât anume nu s-a măsurat, fiindcă o rată redusă
+nu se poate simula fără imagini. Cauza probabilă e chiar lucrul pentru numărătoarea de referință, care rula în paralel:
+înregistrarea clipurilor din același flux și prelucrarea lor. Factorii de corecție (§ 4.3) raportează referința la
+numărarea automată cu rata întreagă, adică la ce face colectarea în zilele fără încetiniri, cum sunt ziua de test 28.10
+(afară de noapte) și ziua de confirmare 29.10.
 
 **Golurile din colectare (29.10).** O oprire a colectării lasă sferturi de oră fără date. Fereastra glisantă de o oră
 din `scenarii_zi` număra însă rânduri, nu minute, așa că unea sferturile de o parte și de alta a golului într-o „oră”
@@ -623,7 +692,9 @@ Luni 26.10 (colectată de la 09:11, deci fără vârful de dimineață) este pri
 continuă (§ 4.6); zilele 21–22.10 sunt subnumărate, iar vârfurile lor (≈2 500 de vehicule/h) sunt aproximativ
 jumătate din cel de luni (≈5 000). Numărătoarea de referință de la prânz dă ≈6 200 de vehicule/h (§ 4.3), dar
 scenariul calibrat al aceleiași ore, `zi_2026-10-26_pranz`, are doar 3 381: numărarea live de atunci (Magheru
-≈900–1 160 veh/h, brut) e mult sub numărarea automată pe clipuri (≈2 800 veh/h), iar diferența nu e încă lămurită.
+≈900–1 160 veh/h, brut) e mult sub numărarea automată pe clipuri (≈2 800 veh/h), iar diferența nu e lămurită complet:
+în acea oră, colectarea live a prelucrat mai puține cadre decât lanțul rulat pe clipuri, ceea ce explică probabil o
+parte din ea (§ 4.6, „Prânzul numărătorii de referință”).
 
 Marginile de jos și de sus sunt calibrările anterioare (§ 5.1; scenariile lor se regăsesc în istoricul git, la
 commiturile `e1d0f77` și `7a79502`, § 11.8); pe
@@ -1650,7 +1721,7 @@ rezultatele se pot reproduce fără a colecta date noi.
 
 | Pas | Comandă | Ce trebuie să se vadă |
 |---|---|---|
-| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (50 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită (`calitate`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi`) |
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | `OK` (56 de teste: numărarea O–D, pietoni, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi`) |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | SUMO-GUI cu ora de vârf din 21.10.2026 și agentul AI la semaforul pieței |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu planul fix |
 | Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | prânzul din 21.10 (altă oră: `--scenariu`), cu planul fix, Max-Pressure și agentul AI, pe categorii de participanți |
@@ -1662,6 +1733,7 @@ rezultatele se pot reproduce fără a colecta date noi.
 |---|---|---|---|
 | 1 | `1_construieste_retea.bat` | regenerează rețeaua SUMO din extrasul OSM (`data\osm`) | ~2 min |
 | 2 | `2_viziune_live.bat` | analiza live a camerei (fereastră cu zonele, `q` = oprire); scrie `data\counts` și jurnalul local `data\trajectories_brute` (versiunea publicabilă, doar vehiculele: `recount --publica`) | cât se dorește (o zi întreagă pentru un profil complet) |
+| 2d | `2d_veghe.bat [--pana-la "AAAA-LL-ZZ HH:MM"]` | veghea fluxului de cadre, lângă analiza live: se oprește cu `ALERTĂ` și un diagnostic în `outputs\logs\veghe_alerta_*.json` la primul semn de problemă (rata cadrelor, imagine înghețată, jurnal oprit; § 4.6); metricile pe minut în `outputs\logs\veghe_<zi>.csv` | cât rulează analiza live |
 | 2b | `2b_calibrare_zone.bat` | redesenarea zonelor dacă operatorul mută camera | ~5 min |
 | 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără ziua din jurnalul local de traiectorii (după o recalibrare a zonelor); pe o clonă fără `data\trajectories_brute` se renumără doar vehiculele din jurnalul publicat – folosiți atunci `--out` cu alt director, ca pietonii din `data\counts` să nu se piardă | ~5 min |
 | 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf și ora liniștită, adaugă dimineața, prânzul și seara dacă sunt acoperite complet de date și nu se suprapun cu vârful, apoi construiește scenariile SUMO (plus vârful ×1,2 și liniștitul ×0,8) | ~5 min |
@@ -1696,7 +1768,7 @@ semaforul.
 | Director / fișier | Conținut |
 |---|---|
 | `docs/DOCUMENTATIE.md` | documentația (acest document); `docs/DOCUMENTATIE.pdf` – aceeași, cu pagini numerotate (`scripts\10_documentatie_pdf.bat`) |
-| `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`), calibrarea camerei pe rețea (`calibrare_camera.py`) și calitatea înregistrării (`calitate.py`) |
+| `src/romana/vision/` | cameră → detecție → urmărire → numărare (`od_counter.py`, `recount.py`); numărătoarea de referință (`referinta.py`), calibrarea camerei pe rețea (`calibrare_camera.py`), calitatea înregistrării (`calitate.py`) și veghea fluxului de cadre (`veghe.py`) |
 | `src/romana/bridge/` | estimarea O–D, cererea SUMO, scenariile zilei, scenariile cu participanți indisciplinați (`indisciplinat.py`), geamănul digital live |
 | `src/romana/network/` | construirea replicii fidele a rețelei din OSM |
 | `src/romana/control/` | controlerul sigur de semafor, mediul Gymnasium, PPO, liniile de bază, evaluarea, validarea pe seed-uri (`validare.py`), statisticile pe perechi (`analiza.py`), localizarea întârzierilor la vârf (`localizare.py`), duratele de verde ale agenților (`durate_verde.py`), regula „cel mai bun câștigă”, cu cazurile de trafic după debit (`decizie.py`), măsura pe persoană, cu ocupări declarate (`ocupare.py`), pierderea totală pe cazuri de trafic și pe tipuri de participanți (`totaluri.py`), verdele pe treceri (`treceri.py`) și capacitatea geamănului (`capacitate.py`) |
@@ -1723,6 +1795,7 @@ semaforul.
 | viziunea are sub 2 cadre/s | fără GPU, verificați `runtime: "openvino"` în `config/camera.json`; cu GPU NVIDIA: `runtime: "pytorch"`, `--device 0` |
 | `Cannot use optimization (scipy not installed)` | `pip install scipy` în `.venv` |
 | camera nu răspunde | fluxul public poate fi temporar indisponibil; geamănul digital trece automat pe profilul de referință și afișează asta |
+| imaginea pare înghețată sau numărătorile scad brusc | `2d_veghe.bat` arată pe loc dacă rata cadrelor prelucrate a scăzut (calcule grele în paralel: rulați-le la prioritate scăzută) sau dacă fluxul camerei nu mai avansează; diagnosticul în `outputs\logs\veghe_alerta_*.json`, explicațiile în § 4.6 |
 
 ### 11.8 Reproducerea rezultatelor și a calibrării
 
@@ -1786,6 +1859,7 @@ cu `--procese N` (implicit 4 la `validare`, 1 la `evaluate`; `5_evalueaza.bat` t
 | scenariile `indisciplinat_*` (§ 9.4) | arborele curent | `romana.bridge.indisciplinat --verifica` (verifică, fără să scrie, că sunt exact copiile scenariilor `zi_*` cu `vtypes_indisciplinat.add.xml`; fără `--verifica` le regenerează lângă sursă) |
 | `calibrat_indisciplinat.csv`, `calibrat_normal.csv` (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare ACTUATED PLAN_46_48_12 models\ppo_romana.zip models\ppo_romana_zn3.zip models\ppo_romana_lejer.zip --scenarii "indisciplinat_zi_2026-10-2[12]_*" --seeds 1-5 --fara-alegere --out outputs\validare\calibrat_indisciplinat.csv --compara docs\rezultate\calibrat_indisciplinat.csv`; participanți disciplinați: `--scenarii "zi_2026-10-2[12]_*"`, cu `calibrat_normal` în loc de `calibrat_indisciplinat` |
 | `calitate_inregistrare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.calitate data\trajectories\traiectorii_2026-10-2[12568].jsonl.gz --out outputs\calitate.csv` (fișierul publicat e din jurnalele brute locale; pe cele publicate cifrele sunt practic aceleași) |
+| `veghe_reluare.csv` (§ 4.6) | – (din jurnalele de traiectorii) | `romana.vision.veghe --reluare data\trajectories_brute\traiectorii_2026-10-28.jsonl.gz --out outputs\veghe_28.csv`, la fel pentru 21, 22, 25, 26, 27 și 29, cu coloana `zi` adăugată (jurnalele brute sunt locale; pe cele publicate, fără pietoni și cu fragmentele reunite, coloanele traiectoriilor și timpul fără traiectorii noi ies altfel) |
 | `capacitate_baleiaj.csv` (§ 6.4) | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate zi_2026-10-26_varf t10s0=1.0:2.5:0 t10g20=1.0:2.0:0.5 t09g25=0.9:2.5:0.5 t09g20=0.9:2.0:0.5 t08g25=0.8:2.5:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3 --out outputs\capacitate.csv`, apoi `zi_2026-10-26_varf_x1_2 t09g20=0.9:2.0:0.5 t08g20=0.8:2.0:0.5 t08s3=0.8:2.0:0.3` și, separat (rândul adăugat pe 27.10, fără al doilea rând „standard”), `zi_2026-10-26_varf_x1_2 t08g25=0.8:2.5:0.5` |
 | `localizare_varf_capacitate.csv` (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare capacitate_zi_2026-10-26_varf capacitate_zi_2026-10-26_varf_x1_2 capacitate_indisciplinat_zi_2026-10-26_varf capacitate_indisciplinat_zi_2026-10-26_varf_x1_2 zi_2026-10-26_varf --out outputs\localizare_capacitate.csv` |
 | scenariile `capacitate_*` (§ 6.4) | arborele curent | `romana.bridge.indisciplinat --scenarii "sumo\scenarios\zi_2026-10-2[56]_*.sumocfg" --vtypes vtypes_capacitate.add.xml --prefix capacitate_` și `--vtypes vtypes_capacitate_indisciplinat.add.xml --prefix capacitate_indisciplinat_` |
@@ -2180,6 +2254,7 @@ utilizare ai resurselor folosite efectiv în proiect.
 | FFmpeg (prin OpenCV) | LGPL-2.1-or-later[^ffmpeg] |
 | Flask | BSD-3-Clause[^flask] |
 | Python-Markdown (exportul PDF) | BSD-3-Clause[^markdown-py] |
+| psutil (veghea fluxului de cadre, prioritatea colectării) | BSD-3-Clause[^psutil] |
 | Eclipse Paho MQTT (client) / Mosquitto (broker opțional, neinclus) | EPL-2.0 OR EDL-1.0 (BSD-3-Clause); proiectul folosește opțiunea EDL-1.0[^mosquitto] |
 | Fluxul video al camerei Piața Romană (sursa: Webcam România) | drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România declară că nu deține drepturi asupra fluxurilor; analizat în memorie, în scop academic și necomercial, cu acordul scris al Webcam România din 27.10.2026, care permite și publicarea a 1–2 capturi cu persoanele estompate; folosit: un singur cadru, din 28.10.2026 (figurile 4.1 și 4.2)[^webcam][^webcam-termeni] |
 | Google Street View (doar verificarea vizuală a rețelei, § 10) | Termenii suplimentari Google Maps / Google Earth; nicio informație preluată, nicio captură publicată[^streetview] |
@@ -2248,6 +2323,7 @@ utilizare ai resurselor folosite efectiv în proiect.
 [^pytorch]: A. Paszke et al., „PyTorch: An Imperative Style, High-Performance Deep Learning Library”, NeurIPS 2019; https://github.com/pytorch/pytorch, versiunea 2.14 (licență BSD-3-Clause; expresia din metadatele pachetului: Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT).
 [^pydata]: C. R. Harris et al., „Array programming with NumPy”, *Nature* 585:357–362, 2020, doi:10.1038/s41586-020-2649-2 (BSD-3-Clause); pandas, https://pandas.pydata.org (BSD-3-Clause); P. Virtanen et al., „SciPy 1.0”, *Nature Methods* 17:261–272, 2020, doi:10.1038/s41592-019-0686-2 (BSD-3-Clause); J. D. Hunter, „Matplotlib: A 2D Graphics Environment”, *Computing in Science & Engineering* 9(3):90–95, 2007, doi:10.1109/MCSE.2007.55 (Matplotlib License, de tip PSF, https://matplotlib.org/stable/project/license.html).
 [^markdown-py]: Python-Markdown 3.8.1, https://github.com/Python-Markdown/markdown (BSD-3-Clause).
+[^psutil]: G. Rodola, *psutil* 7.2.2, https://github.com/giampaolo/psutil (BSD-3-Clause).
 [^python]: Python Software Foundation, *Python 3.12*, https://docs.python.org/3/license.html (PSF-2.0).
 [^streetview]: Google, Street View (Google Maps), consultat pe 23.10.2026 doar pentru verificarea vizuală a rețelei. Termeni: Google Maps/Google Earth Additional Terms of Service, https://www.google.com/help/terms_maps/. Din Street View nu s-a preluat nicio informație în rețeaua OSM/SUMO și nu se publică nicio captură.
 [^windy]: Windy.com, Webcams, https://www.windy.com/webcams, consultat 21.10.2026; nefolosit (afișează aceeași cameră Webcam România).
@@ -2285,6 +2361,7 @@ reface, celelalte da.
 | `scenarii_referinta/` | evaluarea pe scenariile ipotetice inițiale (`referinta_*`) | `a845bf9`, cu codul de atunci | `romana.control.evaluate` din acel commit |
 | `calibrat_normal.csv`, `calibrat_indisciplinat.csv` | reevaluarea pe cererea calibrată, participanți disciplinați / indisciplinați, seed-urile de test 1–5 (§ 9.8) | arborele curent, tipurile vechi | `romana.control.validare --seeds 1-5 --fara-alegere` |
 | `calitate_inregistrare.csv` | continuitatea urmăririi pe ore și zile (§ 4.6): traiectorii, goluri > 1 s, densitatea punctelor | – | `romana.vision.calitate` |
+| `veghe_reluare.csv` | regulile din jurnal ale vegherii fluxului de cadre, trecute peste jurnalele brute din 21, 22 și 25–29.10 (29.10 până la 16:00), minut cu minut (§ 4.6): pașii vehiculelor din ultimele 10 minute (număr, % peste 0,5 s, pasul median), traiectoriile încheiate (toate tipurile, agregat), cele în mișcare, vehiculele oprite și cele cu poziții identice, timpul fără traiectorii noi, semnele; `zi` = jurnalul, `ora` = momentul evaluării (rândurile cu data zilei următoare țin de traiectoriile începute în ziua jurnalului și încheiate după miezul nopții) | – | `romana.vision.veghe --reluare`, câte o zi |
 | `capacitate_baleiaj.csv` | capacitatea geamănului pe vârful de luni și ×1,2 pentru variante ale parametrilor de șofer (§ 6.4): vehicule introduse, neintroduse, intrări pe brațe | arborele curent, tipurile vechi (rândurile „standard”) | `romana.control.capacitate` |
 | `localizare_varf_capacitate.csv` | aceeași analiză ca în `localizare_varf_calibrat.csv` (rândul următor), pe vârful de luni și vârful ×1,2, cu capacitatea calibrată (ambele comportamente), plus vârful de luni cu parametrii impliciți, pentru comparație (§ 9.6) | arborele curent (rândul `zi_2026-10-26_varf`: tipurile vechi) | `romana.control.localizare` |
 | `localizare_varf_calibrat.csv` | unde se pierde timpul la vârf (§ 9.6): vehicul-ore oprite pe zone și vehiculele neintroduse pe muchia de plecare (stradă, capăt vest / est), planul fix actual, seed 1, pe cele 4 vârfuri calibrate | arborele curent, tipurile vechi | `romana.control.localizare` |
