@@ -14,7 +14,9 @@ Semnele (pragurile alese pe jurnalele 21–29.10 cu `--reluare` și pe jurnalele
   * fără cadre    – niciun cadru prelucrat de STARE_VECHE s. Întreruperile scurte ale fluxului se refac singure: o
                     reconectare durează ≈30–120 s (30 s până expiră citirea, apoi redeschiderea și tamponul de 8 s);
                     pauzele de cel puțin 10 s doar se notează în CSV, cu playlistul citit la începutul lor (un ultim
-                    segment mult în urmă arată spre cameră, unul la zi spre noi);
+                    segment mult în urmă arată spre cameră, unul la zi spre noi) și cu urmele din jurul lor: octeții
+                    primiți prin rețea (descărcarea oprită = rețeaua tace, de la ≈8 s – tamponul de redare – înaintea
+                    pauzei) și CPU-ul lui `run_vision` (prelucrarea oprită, cu rețeaua mergând);
   * pauze         – cel puțin PRAG_PAUZE pauze de peste PAUZA s între cadre în FEREASTRA_PAUZE s: redare sacadată, ca în
                     21–22.10, când imaginea „mergea 2 s și stătea 4 s”;
   * rata mică     – în ultimele DURATA_FPS s, cel puțin 75% din citiri au rata cadrelor prelucrate (media glisantă din
@@ -82,6 +84,7 @@ MIN_PUNCTE_MINUT = 5     # puncte ale unui vehicul oprit într-un minut, ca să-
 PRAG_IDENTICE = 0.5      # ponderea vehiculelor oprite cu poziții identice; pe 21–29.10 cel mult 3,7%
 MIN_OPRITE = 10
 CITIRI_IDENTICE = 4      # citiri ale previzualizării (la 15 s) fără nicio diferență
+URME = 400               # s de urme (octeții primiți, CPU-ul lui run_vision) păstrate pentru pauzele lungi
 SEMNE = {"proces": "proces", "cadre": "fără cadre", "pauze": "pauze", "rata": "rata mică", "reconectari": "reconectări",
          "jurnal": "jurnal oprit", "pasi": "pași lungi", "imagine": "imagine identică"}
 
@@ -383,16 +386,78 @@ CSV_CAP = ["ora", "fps", "varsta_stare_s", "reconectari", "episoade_flux_30min",
            "fara_traiectorii_s", "evenimente"]
 
 
-def _eveniment(pauza: tuple[float, float], playlist: dict | None) -> str:
+def _eveniment(pauza: tuple[float, float], playlist: dict | None, urme: str | None = None) -> str:
     """O pauză încheiată, cu playlistul citit la începutul ei: un ultim segment mult în urmă (normal 5–9 s) arată spre
-    fluxul camerei; unul la zi arată spre noi (descărcarea sau prelucrarea)."""
+    fluxul camerei; unul la zi arată spre noi (descărcarea sau prelucrarea, deosebite de `urme`)."""
     t, d = pauza
     text = f"{datetime.fromtimestamp(t):%H:%M:%S} fără cadre {d:.0f} s"
     if playlist is None:
-        return text + " (playlist: necitit)"
-    urme = [c.get("ultimul_segment_in_urma_s") for c in playlist.get("citiri", [])]
-    return text + f" (playlist: ultimul segment în urmă {', '.join(f'{u:.0f}' for u in urme if u is not None) or '?'} s, " \
-                  f"avansează: {playlist.get('avanseaza')})"
+        text += " (playlist: necitit"
+    else:
+        urma = [c.get("ultimul_segment_in_urma_s") for c in playlist.get("citiri", [])]
+        text += f" (playlist: ultimul segment în urmă {', '.join(f'{u:.0f}' for u in urma if u is not None) or '?'} s, " \
+                f"avansează: {playlist.get('avanseaza')}"
+    return text + (f"; {urme})" if urme else ")")
+
+
+class Urme:
+    """O dată pe secundă: octeții primiți pe toate plăcile de rețea (fluxul camerei e aproape tot traficul) și timpul de
+    procesor al lui `run_vision`, pe ultimele URME s."""
+
+    def __init__(self):
+        self.s = deque()                 # (ora, octeți primiți, timp CPU run_vision sau None)
+
+    def adauga(self, acum: float, proc) -> None:
+        import psutil
+        try:
+            rx = psutil.net_io_counters().bytes_recv
+        except Exception:
+            return
+        cpu = None
+        if proc is not None:
+            try:
+                c = proc.cpu_times()
+                cpu = c.user + c.system
+            except Exception:
+                pass
+        self.s.append((acum, rx, cpu))
+        while self.s and self.s[0][0] < acum - URME:
+            self.s.popleft()
+
+
+def urme_pauza(s, t0: float, t1: float) -> str:
+    """Rețeaua și CPU-ul în jurul pauzei [t0, t1]. Descărcarea oprită: cel mai lung gol al rețelei (< 5% din ritmul de
+    dinainte) ține cât pauza plus ≈8 s și începe înaintea ei; normal, între două segmente, rețeaua tace ≈4–5 s.
+    Prelucrarea oprită: rețeaua merge, iar CPU-ul arată unde (≈100% = un nucleu ocupat în interpretor; puțin = placa
+    grafică sau discul)."""
+    s = list(s)
+
+    def la(t):                           # ultima citire de dinaintea lui t
+        r = [x for x in s if x[0] <= t]
+        return r[-1] if r else None
+
+    a, b, d, c = la(t0 - 75), la(t0 - 15), la(t0), la(t1)
+    if not (a and b and c and d) or b[0] - a[0] < 30 or c[0] <= b[0]:
+        return "urme: prea puține"
+    rx0 = (b[1] - a[1]) / (b[0] - a[0])
+    rx1 = (c[1] - b[1]) / (c[0] - b[0])
+    fer = [x for x in s if t0 - 30 <= x[0] <= t1]
+    gol, inceput, cel_mai, inceput_max = 0.0, None, 0.0, None
+    for (ta, ra, _), (tb, rb, _) in zip(fer, fer[1:]):
+        if (rb - ra) / max(tb - ta, 1e-3) < 0.05 * rx0:
+            if inceput is None:
+                inceput, gol = ta, 0.0
+            gol += tb - ta
+            if gol > cel_mai:
+                cel_mai, inceput_max = gol, inceput
+        else:
+            inceput = None
+    text = (f"rețea: {rx0 / 1024:.0f} kB/s înainte, {rx1 / 1024:.0f} kB/s de la −15 s, cel mai lung gol {cel_mai:.0f} s"
+            + (f" (de la {inceput_max - t0:+.0f} s)" if inceput_max is not None else ""))
+    if None not in (a[2], b[2], c[2], d[2]) and c[0] > d[0]:
+        text += (f"; CPU run_vision: {100 * (c[2] - d[2]) / (c[0] - d[0]):.0f}% în pauză, "
+                 f"{100 * (b[2] - a[2]) / (b[0] - a[0]):.0f}% înainte")
+    return text
 
 
 def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
@@ -405,7 +470,7 @@ def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
     _spune(f"[veghe] pornită la {datetime.now():%H:%M:%S}, până la {pana_la:%d.%m %H:%M}; run_vision: PID "
            f"{proc.pid if proc else '–'}" + (f"; ignorate: {', '.join(sorted(fara))}" if fara else ""))
     start = time.time()
-    fer, live = Fereastra(), StareLive(start)
+    fer, live, urme = Fereastra(), StareLive(start), Urme()
     poz = {f: f.stat().st_size if f.exists() else 0 for f in jurnale_curente(datetime.now())}
     ultima_crestere, ultima_eval, ultima_imagine = start, start, 0.0
     stare, m, img0, dif, identice, semne_img = None, None, None, None, 0, []
@@ -416,6 +481,7 @@ def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
             proc = proces_viziune()
             if not proc:
                 semne.append(("proces", "proces: run_vision nu mai rulează"))
+        urme.adauga(acum, proc)
         try:
             nou = json.loads((LIVE_DIR / "state.json").read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
@@ -468,7 +534,8 @@ def veghe(pana_la: datetime, log_csv: Path | None, fara: set[str]) -> int:
                         round(100 * m["lungi"], 1) if m["pasi"] else "", round(m["pas_median"], 3) if m["pasi"] else "",
                         m["gata"], m["misc"], m["st"], round(100 * m["identice"], 1) if m["st"] else "",
                         round(acum - ultima_crestere),
-                        "; ".join(_eveniment(e, playlist_pauze.get(e[0])) for e in live.evenimente)]
+                        "; ".join(_eveniment(e, playlist_pauze.get(e[0]), urme_pauza(urme.s, e[0], e[0] + e[1]))
+                                  for e in live.evenimente)]
                 try:
                     nou_csv = not log_csv.exists()
                     with open(log_csv, "a", newline="", encoding="utf-8") as fo:

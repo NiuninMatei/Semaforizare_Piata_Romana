@@ -10,7 +10,7 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
-from romana.vision.veghe import Fereastra, StareLive, _eveniment, membri_noi, semne_jurnal
+from romana.vision.veghe import Fereastra, StareLive, _eveniment, membri_noi, semne_jurnal, urme_pauza
 
 T0 = datetime(2026, 10, 29, 3, 0).timestamp()
 
@@ -134,6 +134,34 @@ class TestStareLive(unittest.TestCase):
             return lambda sec: sum(min(3, (sec - s0) // 2 + 1) for s0 in range(60, 60 + 150 * n, 150) if sec >= s0)
         self.assertIn("reconectari", stare_live(self.NORMAL, reconectari=rec(4)))
         self.assertNotIn("reconectari", stare_live(self.NORMAL, reconectari=rec(3)))
+
+
+def urme(gol_retea=(), cpu_pauza=1.2, pauza=(200, 212)) -> list[tuple]:
+    """Citiri pe secundă: un segment de 3 MB descărcat în 2 s la fiecare 6 s (rețeaua tace ≈4 s între ele) și CPU-ul
+    lui run_vision de 1,2 nuclee, cu `cpu_pauza` nuclee în timpul pauzei; în secundele `gol_retea` nu sosește nimic."""
+    s, rx, cpu = [], 0.0, 0.0
+    for sec in range(400):
+        if sec % 6 < 2 and sec not in gol_retea:
+            rx += 1.5e6
+        cpu += cpu_pauza if pauza[0] < sec <= pauza[1] else 1.2       # consumul din secunda (sec − 1, sec]
+        s.append((T0 + sec, rx, cpu))
+    return s
+
+
+class TestUrmePauza(unittest.TestCase):
+    def test_descarcarea_oprita(self):
+        # rețeaua tace 20 s, de la 8 s înaintea pauzei de 12 s (tamponul de redare), iar CPU-ul scade
+        text = urme_pauza(urme(gol_retea=range(192, 212), cpu_pauza=0.05), T0 + 200, T0 + 212)
+        self.assertRegex(text, r"cel mai lung gol 2\d s \(de la -1\d s\)")
+        self.assertIn("CPU run_vision: 5% în pauză, 120% înainte", text)
+
+    def test_prelucrarea_oprita(self):
+        # rețeaua merge normal (golurile dintre segmente, ≈4 s), un nucleu ocupat în pauză
+        text = urme_pauza(urme(cpu_pauza=1.0), T0 + 200, T0 + 212)
+        self.assertRegex(text, r"cel mai lung gol [45] s")
+        self.assertIn("100% în pauză", text)
+        self.assertIn("prea puține", urme_pauza(urme()[-20:], T0 + 395, T0 + 399))
+        self.assertIn("necitit; rețea:", _eveniment((T0 + 200, 12), None, text))
 
 
 if __name__ == "__main__":
