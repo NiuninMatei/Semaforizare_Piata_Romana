@@ -1,0 +1,134 @@
+{
+ "zi": [
+  "2026-10-28"
+ ],
+ "praguri": [
+  2400.0,
+  4100.0
+ ],
+ "in_vigoare": "REALIST",
+ "debite": {
+  "indisciplinat_zi_2026-10-28_dimineata": 4093,
+  "indisciplinat_zi_2026-10-28_linistit": 56,
+  "indisciplinat_zi_2026-10-28_linistit_x0_8": 44,
+  "indisciplinat_zi_2026-10-28_seara": 3010,
+  "indisciplinat_zi_2026-10-28_varf": 4934,
+  "indisciplinat_zi_2026-10-28_varf_x1_2": 5921,
+  "zi_2026-10-28_dimineata": 4093,
+  "zi_2026-10-28_linistit": 56,
+  "zi_2026-10-28_linistit_x0_8": 44,
+  "zi_2026-10-28_seara": 3010,
+  "zi_2026-10-28_varf": 4934,
+  "zi_2026-10-28_varf_x1_2": 5921
+ },
+ "cazuri": {
+  "indisciplinat_zi_2026-10-28_dimineata": "moderat",
+  "indisciplinat_zi_2026-10-28_linistit": "lejer",
+  "indisciplinat_zi_2026-10-28_linistit_x0_8": "lejer",
+  "indisciplinat_zi_2026-10-28_seara": "moderat",
+  "indisciplinat_zi_2026-10-28_varf": "greu",
+  "indisciplinat_zi_2026-10-28_varf_x1_2": "greu",
+  "zi_2026-10-28_dimineata": "moderat",
+  "zi_2026-10-28_linistit": "lejer",
+  "zi_2026-10-28_linistit_x0_8": "lejer",
+  "zi_2026-10-28_seara": "moderat",
+  "zi_2026-10-28_varf": "greu",
+  "zi_2026-10-28_varf_x1_2": "greu"
+ },
+ "benzi_analiza": "lejer=indisciplinat_zi_2026-10-28_linistit,indisciplinat_zi_2026-10-28_linistit_x0_8,zi_2026-10-28_linistit,zi_2026-10-28_linistit_x0_8;moderat=indisciplinat_zi_2026-10-28_dimineata,indisciplinat_zi_2026-10-28_seara,zi_2026-10-28_dimineata,zi_2026-10-28_seara;greu",
+ "primii_doi": {
+  "a": "TOD_DEBIT",
+  "b": "PLAN_12_14_12",
+  "n": 120,
+  "dif_medie_h": -0.24957274999997134,
+  "dif_medie_pct": 0.8825266019529894,
+  "mai_bun": 45,
+  "p_wilcoxon": 0.7956356198096097
+ },
+ "candidati": [
+  {
+   "strategie": "PLAN_12_14_12",
+   "pierdere_totala_h": 88671.26500222221,
+   "fata_de_in_vigoare": {
+    "n": 120,
+    "dif_medie_h": -44.020046337962995,
+    "dif_medie_pct": 3.918826261327155,
+    "mai_bun": 61,
+    "p_wilcoxon": 0.00023609273677757529
+   },
+   "indisciplinati": {
+    "n": 60,
+    "dif_medie_h": -48.0623144074075,
+    "dif_medie_pct": 5.167926377048136,
+    "mai_bun": 29,
+    "p_wilcoxon": 0.018487196819833865
+   },
+   "disciplinati": {
+    "n": 60,
+    "dif_medie_h": -39.97777826851849,
+    "dif_medie_pct": 2.6697261456061745,
+    "mai_bun": 32,
+    "p_wilcoxon": 0.005391096465653226
+   },
+   "eligibil": true,
+   "dif_totala_pct": -5.622351451427288
+  },
+  {
+   "strategie": "TOD_DEBIT",
+   "pierdere_totala_h": 88641.3162722222,
+   "fata_de_in_vigoare": {
+    "n": 120,
+    "dif_medie_h": -44.269619087962965,
+    "dif_medie_pct": 4.434066190826997,
+    "mai_bun": 62,
+    "p_wilcoxon": 9.131132580206667e-05
+   },
+   "indisciplinati": {
+    "n": 60,
+    "dif_medie_h": -37.48668958333339,
+    "dif_medie_pct": 3.742090681785749,
+    "mai_bun": 30,
+    "p_wilcoxon": 0.025709910326428245
+   },
+   "disciplinati": {
+    "n": 60,
+    "dif_medie_h": -51.052548592592544,
+    "dif_medie_pct": 5.126041699868247,
+    "mai_bun": 32,
+    "p_wilcoxon": 0.0010809941395103183
+   },
+   "eligibil": true,
+   "dif_totala_pct": -5.654227513129417
+  },
+  {
+   "strategie": "ppo_romana_cal",
+   "pierdere_totala_h": 90487.05479666663,
+   "fata_de_in_vigoare": {
+    "n": 120,
+    "dif_medie_h": -28.88846471759267,
+    "dif_medie_pct": 2.1850992402879412,
+    "mai_bun": 54,
+    "p_wilcoxon": 0.030126470601393625
+   },
+   "indisciplinati": {
+    "n": 60,
+    "dif_medie_h": -18.49744730555569,
+    "dif_medie_pct": 1.5633320636687702,
+    "mai_bun": 27,
+    "p_wilcoxon": 0.2958623332952982
+   },
+   "disciplinati": {
+    "n": 60,
+    "dif_medie_h": -39.27948212962965,
+    "dif_medie_pct": 2.806866416907112,
+    "mai_bun": 27,
+    "p_wilcoxon": 0.04292481474489162
+   },
+   "eligibil": true,
+   "dif_totala_pct": -3.6897076456366973
+  }
+ ],
+ "castigator": "PLAN_12_14_12",
+ "motiv": "TOD_DEBIT și PLAN_12_14_12 nu se deosebesc semnificativ (p = 0.7956): câștigă cel mai simplu de pus în practică",
+ "varianta_live": "plan_scurt"
+}

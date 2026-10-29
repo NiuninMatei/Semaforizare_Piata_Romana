@@ -139,10 +139,14 @@ def main(argv=None) -> None:
             e["eligibil"] = bool(a_ok and b_ok)
             if e["eligibil"]:
                 eligibili.append(e)
-            print(f"  {e['strategie']:16s} total {e['pierdere_totala_h']:8.1f} h | față de {ref}: "
-                  f"{g['dif_medie_pct']:+6.1f}%, {g['mai_bun']}/{g['n']}, p = {g['p_wilcoxon']:.6f} | "
-                  f"indisc. {i['dif_medie_pct']:+.1f}% (p = {i['p_wilcoxon']:.4f}), "
-                  f"disc. {d['dif_medie_pct']:+.1f}% (p = {d['p_wilcoxon']:.4f}) → {'eligibil' if e['eligibil'] else 'nu'}")
+            # regula se uită la diferențele în ore; media schimbărilor relative pe perechi (în paranteză) dă aceeași
+            # greutate scenariilor de noapte, cu pierderi aproape nule, și poate avea alt semn decât totalul
+            e["dif_totala_pct"] = (e["pierdere_totala_h"] / p[ref].sum() - 1) * 100
+            print(f"  {e['strategie']:16s} total {e['pierdere_totala_h']:8.1f} h ({e['dif_totala_pct']:+.1f}%) | "
+                  f"față de {ref}: {g['dif_medie_h']:+.2f} h/pereche (medie relativă {g['dif_medie_pct']:+.1f}%), "
+                  f"{g['mai_bun']}/{g['n']}, p = {g['p_wilcoxon']:.6f} | "
+                  f"indisc. {i['dif_medie_h']:+.2f} h (p = {i['p_wilcoxon']:.4f}), "
+                  f"disc. {d['dif_medie_h']:+.2f} h (p = {d['p_wilcoxon']:.4f}) → {'eligibil' if e['eligibil'] else 'nu'}")
         if not eligibili:
             castig, motiv = ref, "niciun candidat nu e semnificativ mai bun decât strategia în vigoare"
         else:

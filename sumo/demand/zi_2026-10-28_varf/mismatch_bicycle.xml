@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+
+<!-- generated on 2026-10-29 00:22:34.466803 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<configuration>
+    <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate_bicycle.rou.xml"/>
+    <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-28_varf\viraje_bicycle.xml"/>
+    <output-file value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-28_varf\bicycle.rou.xml"/>
+    <mismatch-output value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-10-28_varf\mismatch_bicycle.xml"/>
+    <prefix value="bicycle_"/>
+    <attributes value="type=&quot;bicycle&quot; departLane=&quot;best&quot;"/>
+    <turn-max-gap value="25"/>
+    <optimize value="full"/>
+</configuration>
+-->
+
+<data>
+    <interval id="deficit" begin="0.0" end="900.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+    </interval>
+    <interval id="deficit" begin="900.0" end="1800.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="448266581#1" to="119238380#1" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="119238380#1" measuredCount="1" deficit="0" GEH="0.00"/>
+    </interval>
+    <interval id="deficit" begin="1800.0" end="2700.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+        <edgeRelation from="-778823268#2" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+    </interval>
+    <interval id="deficit" begin="2700.0" end="3600.0">
+        <edgeRelation from="448266581#1" to="668307633#2" measuredCount="1" deficit="0" GEH="0.00"/>
+    </interval>
+</data>

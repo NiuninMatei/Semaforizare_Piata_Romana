@@ -10,7 +10,9 @@ clasice de semaforizare cu agenți de învățare prin întărire (PPO); un disp
 Răspunsul căutat nu e un singur agent AI, ci **cea mai bună combinație implementabilă pe cazuri reale de trafic**.
 Fiecare caz (lejer, mediu, intens, după debitul măsurat de cameră) primește strategia care câștigă pe el, plan fix sau
 agent. Alegerea se face pe o zi de validare și se verifică pe o zi nevăzută, după o regulă fixată dinainte, „cel mai
-bun câștigă” (§ 9.9).
+bun câștigă” (§ 9.9). **Pe ziua de test (miercuri 28.10) a câștigat planul fix scurt 12/14/12**: aceleași faze, cu
+durate mai scurte, −6,9% din timpul pierdut față de programul în vigoare și −6,7% față de planul fix de referință
+(§ 9.10).
 
 > Totul rulează în simulare: proiectul nu comandă niciun semafor real. Nu este afiliat cu Webcam România sau cu
 > operatorul camerei. Din cameră, depozitul conține doar două imagini dintr-un singur cadru estompat, publicate cu
@@ -71,13 +73,25 @@ Până la acest test, ziua de luni nu fusese folosită la antrenare sau la alege
 cererea calibrată (E13) dă **−9,5% / −9,7%** față de planul fix (participanți indisciplinați / disciplinați; p ≤ 0,001
 la ambele teste). Câștigă în fiecare scenariu și e mai bun decât actuated în toate cele 60 de perechi. Cu participanți
 indisciplinați, e la egalitate cu agentul oficial nereantrenat (−10,0%). Programul realist dă −3,9% (nesemnificativ) /
-−6,4%. Pe 10 seed-uri, E13 dă −9,2% / −7,9%. Dacă E13 devine implicit se decide pe testul din 28.10, după
-protocolul fixat dinainte în § 9.9. Reantrenarea lui pe ziua de luni (E14) nu l-a întrecut (§ 9.5). O grilă de
+−6,4%. Pe 10 seed-uri, E13 dă −9,2% / −7,9%. Strategia geamănului live s-a decis pe testul din 28.10, după
+protocolul fixat dinainte în § 9.9 (mai jos). Reantrenarea lui E13 pe ziua de luni (E14) nu l-a întrecut (§ 9.5). O grilă de
 23 de planuri fixe pe geamănul calibrat arată că ciclurile scurte câștigă: planul 12/14/12 (ciclu ≈53 s) dă pe validare
 −9,3% față de planul fix, la nivelul lui E13 (diferență nesemnificativă). Intră în test ca referință raportată; verzile
 lui de 12–14 s sunt însă la limita timpului de degajare a pietonilor, pe care modelul nu îl impune (§ 10). Din 28.10,
 geamănul calibrat (timpul de reacție 0,8 s) este implicit pentru toată munca nouă: scenariile din arbore, geamănul
 live, antrenarea și testele. Rezultatele obținute înainte rămân în documentație ca istoric.
+
+**Testul final (miercuri 28.10, § 9.10).** Cei trei candidați au fost planul 12/14/12, programul din planuri fixe pe
+cazuri (`TOD_DEBIT`) și E13. Ei s-au comparat cu programul în vigoare, programul realist, pe o zi lucrătoare
+nevăzută, înregistrată de la 00:00 la 24:00: 12 scenarii, seed-urile 1–10, participanți disciplinați și
+indisciplinați, 840 de simulări. Toți trei îl bat semnificativ, cu −6,0…−7,2% din pierderea totală (Wilcoxon
+p între 0,0001 și 0,0013), iar între ei diferențele nu sunt semnificative. Regula alege de aceea candidatul cel mai simplu,
+**planul fix 12/14/12** (ciclu ≈53 s în loc de ≈91 s), care a trecut în geamănul live. Câștigul vine de la pietoni,
+care așteaptă mai puțin (−12% față de planul fix de referință), în timp ce vehiculele pierd puțin (+1–2%). Față de
+programul realist, câștigă și vehiculele (−2…−3%), și pietonii (−10%). Măsura pe persoană (20, 40 sau 70 de călători pe autobuz)
+dă același câștigător. Înainte de o aplicare reală, verzile de 12–14 s trebuie verificate față de timpii de degajare
+a pietonilor (§ 10). În noaptea zilei de test, imaginea camerei a înghețat ≈50 de minute (≈03:40–04:30), iar
+fereastra liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 9.10). Confirmarea se face pe joi 29.10.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
 |---|---|---|
@@ -103,13 +117,16 @@ Datele brute: `docs/rezultate/` (Anexa A).
 **Programul pe tipuri de trafic** folosește pentru fiecare tip de trafic strategia cea mai bună pe validare, iar la
 performanță practic egală pe cea mai simplă (de exemplu planul 46/48/12 în locul agentului E7, statistic echivalent
 pe seed-urile de test 1–5, p = 0,32; § 9.2, § 9.5). În geamănul live comută după debitul camerei (media intrărilor
-și ieșirilor, praguri 1 300 / 2 000 veh/h).
+și ieșirilor, praguri 2 400 / 4 100 veh/h, din ziua de validare 26.10). Câștigătorul testului final, planul 12/14/12,
+e același în toate cazurile, deci nu comută.
 
 | Varianta | Lejer | Moderat (prânz) | Greu (vârf, dimineață) | Unde există |
 |---|---|---|---|---|
+| **plan scurt (câștigătorul testului din 28.10, § 9.10)** | planul fix 12/14/12 s | planul fix 12/14/12 s | planul fix 12/14/12 s | geamănul live (implicită din 29.10, `"plan_scurt"` în `live_twin.py`) |
+| planuri fixe pe cazuri (`TOD_DEBIT`, candidat) | planul fix 16/10/12 s | planul fix 16/10/12 s | planul fix 12/14/12 s | evaluare; geamănul live (`"tod_debit"`) |
 | marginea de sus | agentul E9 (`ppo_romana_lejer`) | agentul E3 (`ppo_romana_zn3`) | planul fix 46/48/12 s | evaluare; geamănul live (`VARIANTA_PROGRAM = "marginea_sus"`) |
 | marginea de jos | actuated (egal cu agentul oficial, mai simplu) | agentul E3 | planul fix de referință | doar evaluare (geamănul nu are mod actuated) |
-| realist (participanți indisciplinați) | agentul oficial (`ppo_romana`) | agentul E3 | agentul E3 | evaluare; geamănul live (implicită, `"realist"` în `live_twin.py`) |
+| realist (participanți indisciplinați) | agentul oficial (`ppo_romana`) | agentul E3 | agentul E3 | evaluare; geamănul live (implicită până pe 29.10, `"realist"`) |
 
 - Pe calibrările anterioare (geamănul cu capacitate implicită), cu participanți disciplinați, în zilele lucrătoare,
   un singur agent AI nu bătea un plan fix bine reglat; pe ziua de luni, cu capacitatea calibrată, E13 singur dă −9,7%,
@@ -179,7 +196,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Limită | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare −3,2% (marginea de sus), practic zero la marginea de jos (+0,4%, p = 0,62), −18,4% cu participanți indisciplinați; duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | patru zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14) și luni 26.10 (de la 09:11), înregistrate continuu. Testele pe zile noi: duminica (§ 9.3) și lunea (§ 9.9); miercuri 28.10 e testul prevăzut de protocolul din § 9.9 (marți 27.10 e înregistrată doar noaptea, 00:00–06:04) |
+| Puține date | cinci zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11) și miercuri 28.10 (00:00–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9) și miercurea, testul final (§ 9.10); joi 29.10 e ziua de confirmare. Cazul lejer real nu e acoperit de testul final (fereastra liniștită a căzut pe o înghețare a imaginii) |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
 | Geamănul live | simulează participanți disciplinați; comutarea lui automată nu a fost evaluată: cifrele programului sunt compuse din rulările componentelor, după tipul scenariului |
 | Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; pentru cele marcate „tipurile vechi”, doar tipurile de vehicule din `75592d3`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
@@ -231,8 +248,9 @@ View, auditul numărării, cererea din intrări și testul cu participanți indi
 model Claude Opus 5.5, prin Claude Code, pe calculatorul autorului. Claude a scris aproape tot codul și documentația și a
 rulat colectarea datelor, antrenarea și evaluarea; commit-urile lui poartă linia `Co-Authored-By: Claude …`.
 
-**Starea proiectului (28.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–28.10 (E10–E14, § 9.5;
-calitatea înregistrării, § 4.6; capacitatea geamănului, § 6.4; testul pe ziua de luni, § 9.9).
+**Starea proiectului (29.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–29.10 (E10–E14, § 9.5;
+calitatea înregistrării, § 4.6; capacitatea geamănului, § 6.4; testul pe ziua de luni, § 9.9; testul final pe
+miercuri 28.10, câștigat de planul fix 12/14/12, § 9.10; confirmarea pe joi 29.10 urmează).
 Pe 26.10 zonele de numărare au fost refăcute pe o numărătoare de referință (două clipuri adnotate de câte doi
 adnotatori AI independenți, instanțe separate ale asistentului Claude, § 4.3), iar cererea a fost calibrată cu factori de corecție pe braț (§ 5.1); `data/counts` și
 scenariile din `sumo/scenarios` au fost refăcute cu cererea calibrată (§ 5.4), iar strategiile au fost reevaluate pe
