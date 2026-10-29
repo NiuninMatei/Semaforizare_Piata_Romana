@@ -51,8 +51,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **Imaginea înghețată 28.10 ≈03:40–04:30** (fereastra „liniștit” 03:30–04:30, 56 veh/h, a căzut pe ea; 80–85%
   traiectorii fixe, durate 20–40 s) – documentat în § 4.6 / § 9.10; decizia fără noapte: aceeași (p = 0,000005).
   `calitate` o caută acum pe 15 min (vehiculele în mișcare față de ±2 h + traiectorii fixe; `--out-15min`): pe 28.10
-  exact 03:45/04:00/04:15, pe 25–26.10 nimic, pe 29.10 până la 02:50 nimic. Doar raportată; excluderea din
-  `scenarii_zi` = de întrebat autorul (schimbă metoda între test și confirmare; pe 28.10 decizia nu se schimbă).
+  exact 03:45/04:00/04:15, pe 25–26.10 nimic, pe 29.10 până la 02:50 nimic. `scenarii_zi --fara-inghetate`
+  (implicit oprită; pe 28.10 liniștit → 02:45–03:45) e gata; folosirea la confirmare (test29.py rulează deja cu
+  versiunea veche – pentru schimbare: TaskStop bftlyvmel + repornire) = de întrebat autorul la 08:00.
 - **29.10, 03:00–04:30:** verificarea independentă (4 agenți) – cifrele confirmate, protocolul respectat, corecturi
   comise (04a6e1f); `romana.control.treceri`: cu 12/14/12 nicio trecere nu are sub 12 s de verde pe ciclu (faza
   de pietoni, ca în planul de referință; trecerile din două faze 29–31 s în loc de 45–53 s); **sensibilitatea pietonală** (`sens_pietoni_28_*.csv`): 12/14/18 vs
