@@ -36,7 +36,36 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (30.10.2026, ~04:00) – confirmat: planul fix 12/14/12 rămâne în geamănul live
+## Stare curentă (30.10.2026, ~09:00) – lucrul pe laptop încheiat: colectarea oprită, totul comis și împins
+
+- **30.10, 08:30: colectarea oprită curat** (scratchpad\oprire30.ps1, programat: veghea întâi, la 08:30:06; `run_vision`
+  prin Ctrl+C → `counter.flush()`, ieșit la 08:30:10; jurnalul zilei: 40 918 fragmente, 0 membri stricați; raportul în
+  outputs/logs/oprire_2026-10-30.txt). Noaptea și dimineața de 30.10 (00:00–08:30) renumărate (11 188 intrări,
+  5 219 viraje, 3 294 pietoni) și publicate (29 378 traiectorii de vehicule), fără scenarii; commit c46a7d6.
+- **Documentația rescrisă (cererea autorului, 30.10, ≈08:05):** poveste explicativă pentru cetățeanul de rând, mai
+  puține paranteze și termeni tehnici, legendă de notații la început, româna îngrijită; numerele capitolelor păstrate
+  (codul și README trimit la ele). Rescrisă pe 20 de bucăți + legenda (scratchpad\rescriere\: ghid_stil.md,
+  rescriere.js, asambleaza.py verifică titlurile, cifrele, trimiterile, notele, tabelele față de original).
+- **Veghea în noaptea și dimineața de 30.10:** o singură alertă (01:58, rată mică = simulările confirmării + aplicația
+  Claude Desktop în timpul lucrului meu activ); de la 03:21 până la oprire, nicio alertă, pauză sau reconectare; o
+  citire de 4,0 cadre/s la 04:34 (publicarea prin GitHub Desktop) și 4,4 la 04:36 (reproducerea). Pe 30.10, 06:35–07:40,
+  cu agenți în fundal și editare activă, rata a stat la ≈6,0 cadre/s: o coboară calculele locale grele (simulări,
+  reluări, PDF) și computer use, mai ales împreună cu aplicația desktop pe placa grafică, nu editarea sau agenții.
+- **Proba geamănului live (30.10, 07:06; § 5.5):** `live_twin --durata 300 --viteza 0` → modul implicit „program”,
+  `plan_scurt`, verdele 12/14/12 s + galben 3 + roșu 2 = ciclu 53 s, pe debitele camerei live (scratchpad\proba_geaman.py).
+- **Informarea GDPR corectată (§ 2, § 4.3, § 4.5, § 14.1, README):** imaginile citite de asistent (capturile de
+  calibrare, foile de contact ale clipurilor) au ajuns spre analiză la Anthropic, iar copii au rămas în jurnalele
+  locale ale sesiunilor Claude Code; Anthropic e trecut la destinatari, copiile intră sub promisiunea de ștergere.
+  § 9.10: între planurile scurte și agenții E13 / oficial diferențele nu sunt semnificative, dar E3 singur pierde
+  +7,4% (p = 2·10⁻⁵).
+- **Explicația cap-coadă** dată autorului în chat pe 30.10 (≈09:15), verificată în două runde (wf_682e326a-2c0: 30 din
+  34 de constatări; wf_ec8f4bfe-191: 15 din 15), schița în scratchpad\explicatie_cap_coada.md.
+- **Rămase pentru autor:** GitHub Support #4909163 (refs/pull/1/head) – doar confirmarea automată; după evaluarea
+  academică, ștergerea jurnalului local complet (data/trajectories_brute, outputs/referinta, outputs/copie_scratchpad_*,
+  copia istoricului original, imaginile din jurnalele sesiunilor; § 4.5). Pentru o reluare: pașii din „Stare anterioară
+  (29.10)”; git = C:\Users\Matei\AppData\Local\GitHubDesktop\app-3.6.7\resources\app\git\cmd\git.exe (nu e în PATH).
+
+## Stare anterioară (30.10.2026, ~04:00) – confirmat: planul fix 12/14/12 rămâne în geamănul live
 
 - **Confirmarea pe 29.10 (lanțul scratchpad\test29.py, 30.10 00:15–03:20, toți pașii exit 0):** ziua 29 completă
   (oprire 08:33–08:46 exclusă cu `--exclude 08:30-09:00`; calitatea 1–3% goluri, niciun interval încetinit); 60 691
