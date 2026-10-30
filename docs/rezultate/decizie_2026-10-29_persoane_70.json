@@ -1,0 +1,138 @@
+{
+ "zi": [
+  "2026-10-29"
+ ],
+ "praguri": [
+  2400.0,
+  4100.0
+ ],
+ "in_vigoare": "REALIST",
+ "debite": {
+  "indisciplinat_zi_2026-10-29_dimineata": 4322,
+  "indisciplinat_zi_2026-10-29_linistit": 442,
+  "indisciplinat_zi_2026-10-29_linistit_x0_8": 354,
+  "indisciplinat_zi_2026-10-29_pranz": 4816,
+  "indisciplinat_zi_2026-10-29_seara": 3340,
+  "indisciplinat_zi_2026-10-29_varf": 5061,
+  "indisciplinat_zi_2026-10-29_varf_x1_2": 6073,
+  "zi_2026-10-29_dimineata": 4322,
+  "zi_2026-10-29_linistit": 442,
+  "zi_2026-10-29_linistit_x0_8": 354,
+  "zi_2026-10-29_pranz": 4816,
+  "zi_2026-10-29_seara": 3340,
+  "zi_2026-10-29_varf": 5061,
+  "zi_2026-10-29_varf_x1_2": 6073
+ },
+ "cazuri": {
+  "indisciplinat_zi_2026-10-29_dimineata": "greu",
+  "indisciplinat_zi_2026-10-29_linistit": "lejer",
+  "indisciplinat_zi_2026-10-29_linistit_x0_8": "lejer",
+  "indisciplinat_zi_2026-10-29_pranz": "greu",
+  "indisciplinat_zi_2026-10-29_seara": "moderat",
+  "indisciplinat_zi_2026-10-29_varf": "greu",
+  "indisciplinat_zi_2026-10-29_varf_x1_2": "greu",
+  "zi_2026-10-29_dimineata": "greu",
+  "zi_2026-10-29_linistit": "lejer",
+  "zi_2026-10-29_linistit_x0_8": "lejer",
+  "zi_2026-10-29_pranz": "greu",
+  "zi_2026-10-29_seara": "moderat",
+  "zi_2026-10-29_varf": "greu",
+  "zi_2026-10-29_varf_x1_2": "greu"
+ },
+ "benzi_analiza": "lejer=indisciplinat_zi_2026-10-29_linistit,indisciplinat_zi_2026-10-29_linistit_x0_8,zi_2026-10-29_linistit,zi_2026-10-29_linistit_x0_8;moderat=indisciplinat_zi_2026-10-29_seara,zi_2026-10-29_seara;greu",
+ "primii_doi": {
+  "a": "PLAN_12_14_12",
+  "b": "TOD_DEBIT",
+  "n": 140,
+  "dif_medie_h": -6.808247186507937,
+  "dif_medie_pct": -1.2546328437907823,
+  "mai_bun": 41,
+  "p_wilcoxon": 0.0017124416457849642
+ },
+ "candidati": [
+  {
+   "strategie": "PLAN_12_14_12",
+   "pierdere_totala_h": 167972.71263444447,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -38.98434165873015,
+    "dif_medie_pct": -2.269844194358315,
+    "mai_bun": 87,
+    "p_wilcoxon": 7.399366979664227e-07
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -35.04115311904773,
+    "dif_medie_pct": -1.7672897867494397,
+    "mai_bun": 40,
+    "p_wilcoxon": 0.004252585810408943
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -42.92753019841257,
+    "dif_medie_pct": -2.77239860196719,
+    "mai_bun": 47,
+    "p_wilcoxon": 2.82371343390653e-05
+   },
+   "eligibil": true,
+   "dif_totala_pct": -3.1469707970294802
+  },
+  {
+   "strategie": "TOD_DEBIT",
+   "pierdere_totala_h": 168925.86724055558,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -32.17609447222221,
+    "dif_medie_pct": -0.838702986328021,
+    "mai_bun": 79,
+    "p_wilcoxon": 4.2475135746485954e-05
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -28.24544672222233,
+    "dif_medie_pct": -1.0027809400749321,
+    "mai_bun": 38,
+    "p_wilcoxon": 0.010814835678362349
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -36.10674222222209,
+    "dif_medie_pct": -0.6746250325811098,
+    "mai_bun": 41,
+    "p_wilcoxon": 0.0011039840617651242
+   },
+   "eligibil": true,
+   "dif_totala_pct": -2.5973820605450504
+  },
+  {
+   "strategie": "ppo_romana_cal",
+   "pierdere_totala_h": 172248.41351166667,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -8.443621107142915,
+    "dif_medie_pct": -0.5424372510272336,
+    "mai_bun": 77,
+    "p_wilcoxon": 0.14027363366050452
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -6.496754587301692,
+    "dif_medie_pct": -1.002510417993271,
+    "mai_bun": 41,
+    "p_wilcoxon": 0.3784512612274419
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -10.39048762698414,
+    "dif_medie_pct": -0.08236408406119658,
+    "mai_bun": 36,
+    "p_wilcoxon": 0.1869461619556121
+   },
+   "eligibil": false,
+   "dif_totala_pct": -0.6816026105550543
+  }
+ ],
+ "castigator": "PLAN_12_14_12",
+ "motiv": "cea mai mică pierdere totală dintre candidații eligibili",
+ "varianta_live": "plan_scurt"
+}
