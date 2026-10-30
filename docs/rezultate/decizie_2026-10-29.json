@@ -1,0 +1,138 @@
+{
+ "zi": [
+  "2026-10-29"
+ ],
+ "praguri": [
+  2400.0,
+  4100.0
+ ],
+ "in_vigoare": "REALIST",
+ "debite": {
+  "indisciplinat_zi_2026-10-29_dimineata": 4322,
+  "indisciplinat_zi_2026-10-29_linistit": 442,
+  "indisciplinat_zi_2026-10-29_linistit_x0_8": 354,
+  "indisciplinat_zi_2026-10-29_pranz": 4816,
+  "indisciplinat_zi_2026-10-29_seara": 3340,
+  "indisciplinat_zi_2026-10-29_varf": 5061,
+  "indisciplinat_zi_2026-10-29_varf_x1_2": 6073,
+  "zi_2026-10-29_dimineata": 4322,
+  "zi_2026-10-29_linistit": 442,
+  "zi_2026-10-29_linistit_x0_8": 354,
+  "zi_2026-10-29_pranz": 4816,
+  "zi_2026-10-29_seara": 3340,
+  "zi_2026-10-29_varf": 5061,
+  "zi_2026-10-29_varf_x1_2": 6073
+ },
+ "cazuri": {
+  "indisciplinat_zi_2026-10-29_dimineata": "greu",
+  "indisciplinat_zi_2026-10-29_linistit": "lejer",
+  "indisciplinat_zi_2026-10-29_linistit_x0_8": "lejer",
+  "indisciplinat_zi_2026-10-29_pranz": "greu",
+  "indisciplinat_zi_2026-10-29_seara": "moderat",
+  "indisciplinat_zi_2026-10-29_varf": "greu",
+  "indisciplinat_zi_2026-10-29_varf_x1_2": "greu",
+  "zi_2026-10-29_dimineata": "greu",
+  "zi_2026-10-29_linistit": "lejer",
+  "zi_2026-10-29_linistit_x0_8": "lejer",
+  "zi_2026-10-29_pranz": "greu",
+  "zi_2026-10-29_seara": "moderat",
+  "zi_2026-10-29_varf": "greu",
+  "zi_2026-10-29_varf_x1_2": "greu"
+ },
+ "benzi_analiza": "lejer=indisciplinat_zi_2026-10-29_linistit,indisciplinat_zi_2026-10-29_linistit_x0_8,zi_2026-10-29_linistit,zi_2026-10-29_linistit_x0_8;moderat=indisciplinat_zi_2026-10-29_seara,zi_2026-10-29_seara;greu",
+ "primii_doi": {
+  "a": "PLAN_12_14_12",
+  "b": "TOD_DEBIT",
+  "n": 140,
+  "dif_medie_h": -5.675363988095238,
+  "dif_medie_pct": -0.8222036645128566,
+  "mai_bun": 31,
+  "p_wilcoxon": 0.24477543370760457
+ },
+ "candidati": [
+  {
+   "strategie": "PLAN_12_14_12",
+   "pierdere_totala_h": 80612.19590277778,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -43.41795073412698,
+    "dif_medie_pct": -4.415538525651792,
+    "mai_bun": 85,
+    "p_wilcoxon": 6.904712115246323e-08
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -42.456016349206365,
+    "dif_medie_pct": -4.6554891331933135,
+    "mai_bun": 43,
+    "p_wilcoxon": 0.0006522625065762354
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -44.37988511904762,
+    "dif_medie_pct": -4.17558791811027,
+    "mai_bun": 42,
+    "p_wilcoxon": 1.6315675785346918e-05
+   },
+   "eligibil": true,
+   "dif_totala_pct": -7.0117238311988235
+  },
+  {
+   "strategie": "TOD_DEBIT",
+   "pierdere_totala_h": 81406.74686111111,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -37.742586746031755,
+    "dif_medie_pct": -3.4983350549520464,
+    "mai_bun": 86,
+    "p_wilcoxon": 2.659516263140231e-07
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -37.18246615079367,
+    "dif_medie_pct": -3.84386548253521,
+    "mai_bun": 42,
+    "p_wilcoxon": 0.0010162081434706431
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -38.30270734126984,
+    "dif_medie_pct": -3.1528046273688832,
+    "mai_bun": 44,
+    "p_wilcoxon": 4.466952122430405e-05
+   },
+   "eligibil": true,
+   "dif_totala_pct": -6.095188521420225
+  },
+  {
+   "strategie": "ppo_romana_cal",
+   "pierdere_totala_h": 83375.63950833332,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -23.67906783730158,
+    "dif_medie_pct": -2.9719977380419293,
+    "mai_bun": 95,
+    "p_wilcoxon": 1.1946781168887882e-05
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -23.367148293650775,
+    "dif_medie_pct": -3.1833498950103394,
+    "mai_bun": 47,
+    "p_wilcoxon": 0.00823546983795317
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -23.990987380952387,
+    "dif_medie_pct": -2.76064558107352,
+    "mai_bun": 48,
+    "p_wilcoxon": 0.000245996344760836
+   },
+   "eligibil": true,
+   "dif_totala_pct": -3.824019361763187
+  }
+ ],
+ "castigator": "PLAN_12_14_12",
+ "motiv": "PLAN_12_14_12 și TOD_DEBIT nu se deosebesc semnificativ (p = 0.2448): câștigă cel mai simplu de pus în practică",
+ "varianta_live": "plan_scurt"
+}

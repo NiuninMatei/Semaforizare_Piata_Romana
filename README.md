@@ -12,7 +12,8 @@ Fiecare caz (lejer, mediu, intens, după debitul măsurat de cameră) primește 
 agent. Alegerea se face pe o zi de validare și se verifică pe o zi nevăzută, după o regulă fixată dinainte, „cel mai
 bun câștigă” (§ 9.9). **Pe ziua de test (miercuri 28.10) a câștigat planul fix scurt 12/14/12**: aceleași faze, cu
 durate mai scurte, −6,9% din timpul pierdut față de programul realist (strategia geamănului live până atunci) și −6,7% față de planul fix de referință
-(§ 9.10).
+(§ 9.10). **Ziua de confirmare (joi 29.10) l-a confirmat**: −7,0% față de programul realist (Wilcoxon p = 7·10⁻⁸) și
+tot −7,0% față de planul fix de referință (p = 1·10⁻¹¹).
 
 > Totul rulează în simulare: proiectul nu comandă niciun semafor real. Nu este afiliat cu Webcam România sau cu
 > operatorul camerei. Din cameră, depozitul conține doar două imagini dintr-un singur cadru estompat, publicate cu
@@ -97,7 +98,14 @@ proiectare, pe trecerea cea mai lungă, de 12,8 m (§ 9.10, `romana.control.trec
 cu faza de pietoni lungită la 18 s în ambele planuri, ciclul scurt rămâne cu 7,9% mai bun decât ciclul actual
 (Wilcoxon p < 0,000001). În noaptea zilei de test, între 03:46 și 04:28, calculatorul a prelucrat de 4–5 ori mai
 puține cadre (cel mai probabil din cauza calculelor rulate în paralel), deci a pierdut vehicule, iar fereastra
-liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 4.6, § 9.10). Confirmarea se face pe joi 29.10.
+liniștită a căzut acolo. Fără ea, decizia e aceeași (§ 4.6, § 9.10).
+
+**Confirmarea (joi 29.10, § 9.10).** Același lanț a rulat singur în noaptea următoare, pe ziua de joi, înregistrată
+întreagă (o oprire de 13 minute, scoasă din alegerea ferestrelor): 14 scenarii, 980 de simulări. Protocolul cerea ca
+planul 12/14/12 să nu iasă semnificativ mai slab decât programul realist. A ieșit semnificativ mai bun: −7,0% din
+pierderea totală (80 612 h față de 86 691 h), mai bun în ambele comportamente (p = 0,0007 / 0,00002) și cu cea mai mică
+pierdere totală dintre candidați (doar programul raportat `TOD_FIX` iese cu 0,6% mai jos, nesemnificativ). Câștigul vine tot de la pietoni (−15% față de planul fix de referință; vehiculele +0,4…+0,6%).
+Pe ambele zile reunite, 260 de perechi: −7,0%, p = 4·10⁻¹⁰. Geamănul live rămâne pe planul 12/14/12.
 
 | Situația simulată | Strategia | Față de planul fix de referință |
 |---|---|---|
@@ -128,7 +136,7 @@ e același în toate cazurile, deci nu comută.
 
 | Varianta | Lejer | Moderat (prânz) | Greu (vârf, dimineață) | Unde există |
 |---|---|---|---|---|
-| **plan scurt (câștigătorul testului din 28.10, § 9.10)** | planul fix 12/14/12 s | planul fix 12/14/12 s | planul fix 12/14/12 s | geamănul live (implicită din 29.10, `"plan_scurt"` în `live_twin.py`) |
+| **plan scurt (câștigătorul testului din 28.10, confirmat pe 29.10, § 9.10)** | planul fix 12/14/12 s | planul fix 12/14/12 s | planul fix 12/14/12 s | geamănul live (implicită din 29.10, `"plan_scurt"` în `live_twin.py`) |
 | planuri fixe pe cazuri (`TOD_DEBIT`, candidat) | planul fix 16/10/12 s | planul fix 16/10/12 s | planul fix 12/14/12 s | evaluare; geamănul live (`"tod_debit"`) |
 | marginea de sus | agentul E9 (`ppo_romana_lejer`) | agentul E3 (`ppo_romana_zn3`) | planul fix 46/48/12 s | evaluare; geamănul live (`VARIANTA_PROGRAM = "marginea_sus"`) |
 | marginea de jos | actuated (egal cu agentul oficial, mai simplu) | agentul E3 | planul fix de referință | doar evaluare (geamănul nu are mod actuated) |
@@ -152,7 +160,7 @@ Cerințe: Windows 10/11 (testat pe Windows 11), Python 3.11–3.13 (testat pe 3.
 placa grafică nu e necesară. SUMO 1.28 vine din pip (`eclipse-sumo`); dacă `SUMO_HOME` indică altă instalare, aceea e
 folosită și trebuie să fie tot 1.28 (altfel, în aceeași fereastră, înainte de scripturi: `set SUMO_HOME=` în cmd sau
 `Remove-Item Env:SUMO_HOME` în PowerShell; `PORNESTE_TOT.bat` pornit din acea fereastră moștenește setarea).
-Versiunea curentă are ≈250 MB, din care ≈140 MB jurnalele de traiectorii, deja comprimate (fără istoric: `git clone --depth 1`).
+Versiunea curentă are ≈330 MB, din care ≈200 MB jurnalele de traiectorii, deja comprimate (fără istoric: `git clone --depth 1`).
 
 ```bat
 git clone https://github.com/NiuninMatei/Semaforizare_Piata_Romana.git
@@ -168,7 +176,7 @@ scripts\0_instalare.bat
 | SUMO-GUI: vârful din 21.10 cu agentul oficial, apoi cu planul fix | `scripts\8_simulare_gui.bat`, apoi `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` |
 | Cele 64 de teste automate (numărarea, statisticile pe perechi, validarea, scenariile indisciplinate, referința, calibrarea camerei, prelucrarea încetinită din `calitate`, veghea fluxului de cadre, verdele pe treceri, ferestrele din `scenarii_zi`) | `set PYTHONPATH=src`, apoi `.venv\Scripts\python -m unittest discover tests` (PowerShell: `$env:PYTHONPATH="src"`) |
 | Reproducerea statisticilor din § 9 și a calibrării (§ 11.8), ex. programul realist din § 9.4 | `.venv\Scripts\python -m romana.control.analiza docs\rezultate\robustete_indisciplinat.csv docs\rezultate\robustete_indisciplinat_6_10.csv --program REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3` |
-| O evaluare scurtă. **Atenție:** evaluarea rescrie `docs/rezultate/rezultate_brute.csv`, `rezultate.md` și graficul (refacere: `git checkout -- docs/rezultate`). Fără `--scenarii`, evaluarea ia toate cele 83 de fișiere din `sumo/scenarios` și se oprește imediat cu `FileNotFoundError` la scenariile `capacitate_*` și `indisciplinat_*` (nu au `od_estimat.json`, cerut de planul Webster; folosesc rutele scenariilor `zi_*`); dați întotdeauna explicit scenariile `zi_*` / `referinta_*`, ca în comanda alăturată (cu toate cele 22 de strategii – 4 clasice + 18 modele: 22 × 5 = 110 simulări pe scenariu) | `scripts\5_evalueaza.bat --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategii fix_referinta rl_ppo --model models\ppo_romana.zip --seeds 1` |
+| O evaluare scurtă. **Atenție:** evaluarea rescrie `docs/rezultate/rezultate_brute.csv`, `rezultate.md` și graficul (refacere: `git checkout -- docs/rezultate`). Fără `--scenarii`, evaluarea ia toate cele 97 de fișiere din `sumo/scenarios` și se oprește imediat cu `FileNotFoundError` la scenariile `capacitate_*` și `indisciplinat_*` (nu au `od_estimat.json`, cerut de planul Webster; folosesc rutele scenariilor `zi_*`); dați întotdeauna explicit scenariile `zi_*` / `referinta_*`, ca în comanda alăturată (cu toate cele 22 de strategii – 4 clasice + 18 modele: 22 × 5 = 110 simulări pe scenariu) | `scripts\5_evalueaza.bat --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategii fix_referinta rl_ppo --model models\ppo_romana.zip --seeds 1` |
 | Antrenarea unui agent nou: dați un `--nume` nou (altfel se suprascrie `models/ppo_romana.zip`) și scenariile explicit (implicit intră toate, inclusiv duminica și `indisciplinat_*`; `cmd.exe` nu expandează `*`) | `scripts\4_antreneaza_ai.bat --nume test --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg sumo\scenarios\zi_2026-10-22_varf.sumocfg` |
 | Sistemul live, cu camera: viziunea, geamănul SUMO-GUI și dispeceratul (localhost:8050). La prima rulare se descarcă ponderile YOLO11 și se exportă local în OpenVINO. `config/camera.json` e setat pentru o placă grafică Intel (`"device": "intel:gpu"`); fără ea, `"intel:cpu"` sau ștergeți cheia; cu NVIDIA: întâi PyTorch cu CUDA de pe https://pytorch.org în `.venv` (cum indică `0_instalare.bat`), apoi `"runtime": "pytorch"` și `"device": "0"`. La prima rulare geamănul pornește în modul „Program pe cazuri de trafic”, cu varianta aleasă după regula din § 9.9 (apoi în ultimul mod confirmat din dispecerat, păstrat în `outputs/live/command.json`), și își generează o singură dată rutele candidate (`sumo/demand/candidate*.rou.xml`, neversionate), deci prima pornire durează mai mult; celelalte moduri se aleg din dispecerat și se confirmă | `scripts\PORNESTE_TOT.bat` |
 | Veghea fluxului de cadre lângă sistemul live: se oprește cu o alertă și un diagnostic (`outputs/logs/veghe_alerta_*.json`) dacă rata cadrelor prelucrate scade, dacă imaginea pare înghețată sau dacă jurnalul nu mai crește (§ 4.6) | `scripts\2d_veghe.bat` |
@@ -203,7 +211,7 @@ personale: § 4.5, § 12.5, § 14.1.
 | Limită | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare −3,2% (marginea de sus), practic zero la marginea de jos (+0,4%, p = 0,62), −18,4% cu participanți indisciplinați; duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | cinci zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00, plus ≈1,6 h în seara demonstrației live: 18:41–19:11 și 20:48–21:54), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11) și miercuri 28.10 (00:10–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9) și miercurea, testul final (§ 9.10); joi 29.10 e ziua de confirmare. Cazul lejer real nu e acoperit de testul final (fereastra liniștită a căzut pe o încetinire a prelucrării, § 4.6) |
+| Puține date | șase zile: miercuri 21.10 (de la 11:45) – joi 22.10 (până la 11:00, plus ≈1,6 h în seara demonstrației live: 18:41–19:11 și 20:48–21:54), cu urmărire sacadată, deci subnumărate (§ 4.6); duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11), miercuri 28.10 (00:10–24:00) și joi 29.10 (00:00–24:00), înregistrate continuu (marți 27.10 doar noaptea, 00:00–06:04). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9), miercurea (testul final) și joia (confirmarea, § 9.10). Cazul lejer de zi (1 200–2 400 veh/h) nu intră în scenariile zilelor de test, iar noaptea din 28.10 a căzut pe o încetinire a prelucrării (§ 4.6) |
 | Indisciplina este o ipoteză | aplicată tuturor participanților: autoturismele și camioanele trec pe roșu în primele 2 s și blochează intersecția după 1 s (autobuzele, motocicletele, bicicletele au valori proprii), pietonii traversează pe roșu în primele 5 s și ignoră uneori vehiculele; parametri aleși, nu măsurați, de care depinde cifra de −16% |
 | Geamănul live | simulează participanți disciplinați. Varianta implicită din 29.10, planul 12/14/12, nu comută, deci e exact strategia evaluată. Pentru variantele care comută (de exemplu programul realist), comutarea live nu a fost evaluată: cifrele lor sunt compuse din rulările componentelor, după cazul scenariului |
 | Reproductibilitate parțială | statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`, validările și testele cu `romana.control.validare`, scenariile `indisciplinat_*` cu `romana.bridge.indisciplinat`, factorii de corecție și modelul camerei din `docs/rezultate/referinta/` (§ 11.8); simulările sunt deterministe, dar fișierele mai vechi cer versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`; pentru cele marcate „tipurile vechi”, doar tipurile de vehicule din `75592d3`; cele din 21–22.10 și codul de atunci – Anexa A), iar câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
@@ -255,9 +263,9 @@ View, auditul numărării, cererea din intrări și testul cu participanți indi
 model Claude Opus 5.5, prin Claude Code, pe calculatorul autorului. Claude a scris aproape tot codul și documentația și a
 rulat colectarea datelor, antrenarea și evaluarea; commit-urile lui poartă linia `Co-Authored-By: Claude …`.
 
-**Starea proiectului (29.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–29.10 (E10–E14, § 9.5;
-calitatea înregistrării, § 4.6; capacitatea geamănului, § 6.4; testul pe ziua de luni, § 9.9; testul final pe
-miercuri 28.10, câștigat de planul fix 12/14/12, § 9.10; confirmarea pe joi 29.10 urmează).
+**Starea proiectului (30.10.2026).** Bornele 0–8 sunt încheiate; Borna 9 a continuat pe 26–30.10 (E10–E14, § 9.5;
+calitatea înregistrării și veghea fluxului de cadre, § 4.6; capacitatea geamănului, § 6.4; testul pe ziua de luni,
+§ 9.9; testul final pe miercuri 28.10, câștigat de planul fix 12/14/12, confirmat pe joi 29.10, § 9.10).
 Pe 26.10 zonele de numărare au fost refăcute pe o numărătoare de referință (două clipuri adnotate de câte doi
 adnotatori AI independenți, instanțe separate ale asistentului Claude, § 4.3), iar cererea a fost calibrată cu factori de corecție pe braț (§ 5.1); `data/counts` și
 scenariile din `sumo/scenarios` au fost refăcute cu cererea calibrată (§ 5.4), iar strategiile au fost reevaluate pe

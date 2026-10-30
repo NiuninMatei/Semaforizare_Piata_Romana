@@ -36,7 +36,28 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (29.10.2026, ~16:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10; veghea fluxului de cadre
+## Stare curentă (30.10.2026, ~04:00) – confirmat: planul fix 12/14/12 rămâne în geamănul live
+
+- **Confirmarea pe 29.10 (lanțul scratchpad\test29.py, 30.10 00:15–03:20, toți pașii exit 0):** ziua 29 completă
+  (oprire 08:33–08:46 exclusă cu `--exclude 08:30-09:00`; calitatea 1–3% goluri, niciun interval încetinit); 60 691
+  intrări, 153 462 traiectorii publicate (lanțul a văzut 238 524 din 238 525 de fragmente, ultimul încheiat la 00:46);
+  ferestre: liniștit 03:15 (442 veh/h), dimineața 07:30 (4 322 = intens), prânz 12:00 (4 816), vârf 13:00 (5 061),
+  seara 17:30 (3 340); 14 scenarii, 980 de simulări. `decizie --confirma PLAN_12_14_12` → **confirmat**: 80 612 h vs
+  REALIST 86 691 h (−7,0% din total; −43,4 h/pereche, 85/140, p = 7·10⁻⁸; indisc. p = 0,0007, disc. p = 0,00002).
+  Decizia refăcută pe 29.10 (informativ): același câștigător (12/14/12 are cel mai mic total dintre candidați; doar
+  TOD_FIX raportat are mai puțin, 80 094 h, ns; vs TOD_DEBIT p = 0,24);
+  pe persoană la fel (și semnificativ mai bun decât TOD_DEBIT). Ambele zile reunite (260 perechi): −7,0%, p = 4·10⁻¹⁰.
+  Pietonii −15,4% vs fix, vehiculele +0,4–0,6%. Oficialul semnificativ mai slab decât 12/14/12 (p = 0,007).
+- **Documentat (necomis la 04:00):** § 9.10 „Confirmarea pe joi 29.10” (titlul nou), § 1, § 2 R5, § 4.6 (29.10 întreagă,
+  noaptea 30.10: fără pauze, rata 5,9 → 4,8 cadre/s, alerta 01:56–01:58 = lucrul meu activ + aplicația desktop pe
+  placa grafică), § 5.4, § 9.9, § 10 (șase zile), § 11.5, § 11.8, § 12.1 Etapa 11, Anexa A, README; docs/rezultate:
+  test_29_*, confirmare/decizie_2026-10-29*.json, calitate_inregistrare.csv, veghe_reluare.csv. Verificarea
+  independentă: workflow wf_91ce9f1a-b3a (5 verificatori + contraverificatori).
+- **Veghea:** task bdmzhnek1 (toate semnele, până la 09:05); dimineața, `oprire30.ps1` o oprește întâi. Planul
+  dimineții: scratchpad\dupa_confirmare.md (08:20 → oprire30.ps1, recount 30.10 + --publica, documentația, PDF, commit,
+  push ≈09:05, explicația ≈09:15).
+
+## Stare anterioară (29.10.2026, ~16:30) – testul final: câștigă planul fix 12/14/12, confirmarea pe 29.10; veghea fluxului de cadre
 
 - **Testul pe 28.10 (lanțul scratchpad\test28.py, 29.10 00:15–02:27, toți pașii exit 0):** ziua 28 completă
   (96 de intervale, 58 557 intrări; calitatea 1–6% goluri), publicată în data/; 12 scenarii × seed-urile 1–10 × 7

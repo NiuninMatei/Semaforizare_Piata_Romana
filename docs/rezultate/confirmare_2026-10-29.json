@@ -1,0 +1,70 @@
+{
+ "zi": [
+  "2026-10-29"
+ ],
+ "praguri": [
+  2400.0,
+  4100.0
+ ],
+ "in_vigoare": "REALIST",
+ "debite": {
+  "indisciplinat_zi_2026-10-29_dimineata": 4322,
+  "indisciplinat_zi_2026-10-29_linistit": 442,
+  "indisciplinat_zi_2026-10-29_linistit_x0_8": 354,
+  "indisciplinat_zi_2026-10-29_pranz": 4816,
+  "indisciplinat_zi_2026-10-29_seara": 3340,
+  "indisciplinat_zi_2026-10-29_varf": 5061,
+  "indisciplinat_zi_2026-10-29_varf_x1_2": 6073,
+  "zi_2026-10-29_dimineata": 4322,
+  "zi_2026-10-29_linistit": 442,
+  "zi_2026-10-29_linistit_x0_8": 354,
+  "zi_2026-10-29_pranz": 4816,
+  "zi_2026-10-29_seara": 3340,
+  "zi_2026-10-29_varf": 5061,
+  "zi_2026-10-29_varf_x1_2": 6073
+ },
+ "cazuri": {
+  "indisciplinat_zi_2026-10-29_dimineata": "greu",
+  "indisciplinat_zi_2026-10-29_linistit": "lejer",
+  "indisciplinat_zi_2026-10-29_linistit_x0_8": "lejer",
+  "indisciplinat_zi_2026-10-29_pranz": "greu",
+  "indisciplinat_zi_2026-10-29_seara": "moderat",
+  "indisciplinat_zi_2026-10-29_varf": "greu",
+  "indisciplinat_zi_2026-10-29_varf_x1_2": "greu",
+  "zi_2026-10-29_dimineata": "greu",
+  "zi_2026-10-29_linistit": "lejer",
+  "zi_2026-10-29_linistit_x0_8": "lejer",
+  "zi_2026-10-29_pranz": "greu",
+  "zi_2026-10-29_seara": "moderat",
+  "zi_2026-10-29_varf": "greu",
+  "zi_2026-10-29_varf_x1_2": "greu"
+ },
+ "benzi_analiza": "lejer=indisciplinat_zi_2026-10-29_linistit,indisciplinat_zi_2026-10-29_linistit_x0_8,zi_2026-10-29_linistit,zi_2026-10-29_linistit_x0_8;moderat=indisciplinat_zi_2026-10-29_seara,zi_2026-10-29_seara;greu",
+ "confirmare": {
+  "strategie": "PLAN_12_14_12",
+  "pierdere_totala_h": 80612.19590277778,
+  "fata_de_in_vigoare": {
+   "n": 140,
+   "dif_medie_h": -43.41795073412698,
+   "dif_medie_pct": -4.415538525651792,
+   "mai_bun": 85,
+   "p_wilcoxon": 6.904712115246323e-08
+  },
+  "indisciplinati": {
+   "n": 70,
+   "dif_medie_h": -42.456016349206365,
+   "dif_medie_pct": -4.6554891331933135,
+   "mai_bun": 43,
+   "p_wilcoxon": 0.0006522625065762354
+  },
+  "disciplinati": {
+   "n": 70,
+   "dif_medie_h": -44.37988511904762,
+   "dif_medie_pct": -4.17558791811027,
+   "mai_bun": 42,
+   "p_wilcoxon": 1.6315675785346918e-05
+  },
+  "dif_totala_pct": -7.0117238311988235
+ },
+ "verdict": "confirmat"
+}
