@@ -6,6 +6,9 @@ Fluxul de lucru, pe unul sau mai multe clipuri scurte (câteva minute) ale camer
                  poligoanele de numărare desenate; imaginile din afara bucății (1 s înainte și după) au chenar
                  gri și eticheta CONTEXT, cele din bucată chenar verde. Adnotatorii (doi independenți, un al
                  treilea ca arbitru la diferențe peste max(2; 15%)) numără pe foi câte obiecte trec în bucată.
+     `felii`   – feliile timp-spațiu, o alternativă mult mai ieftină la foi: din fiecare cadru se ia aceeași linie
+                 de pixeli, iar liniile se pun una lângă alta, deci o singură imagine arată toate vehiculele care
+                 o traversează într-o bucată, ca pete separate, pe banda lor (`referinta_lot` le trimite la adnotare).
   2. `viziune` – rulează exact lanțul live (`run_vision`: același detector, aceeași rezoluție, aceleași cadre
                  pe secundă, ByteTrack) pe clipul salvat, cu jurnalul de traiectorii, numărătorile și cadrul de
                  previzualizare redirecționate într-un director separat – nu atinge data/ și nici dispeceratul.
@@ -135,6 +138,73 @@ def contact_sheets(targets: list[dict], clip: str, out: Path, chunk_s: float = 3
                                 [cv2.IMWRITE_JPEG_QUALITY, 88])
         print(f"[foi] {tg['id']} gata")
     print(f"[foi] durata clipului {duration:.1f} s; {n_chunks} bucăți de {chunk_s:g} s → {out}")
+    return n_chunks
+
+
+# ---------------------------------------------------------------- 1 bis. feliile timp-spațiu
+
+def _harta_linie(linie: list, W: int, H: int, grosime: int = 3) -> tuple:
+    """Hărțile `cv2.remap` pentru pixelii de-a lungul unei linii normalizate: un rând pe pixel de lungime, `grosime` coloane."""
+    a, b = np.array([linie[0] * W, linie[1] * H], float), np.array([linie[2] * W, linie[3] * H], float)
+    lungime = float(np.hypot(*(b - a)))
+    normala = np.array([-(b - a)[1], (b - a)[0]]) / lungime
+    puncte = a + np.outer(np.linspace(0, 1, max(2, int(round(lungime)))), b - a)
+    harta = puncte[:, None, :] + (np.arange(grosime) - (grosime - 1) / 2)[None, :, None] * normala
+    return harta[..., 0].astype(np.float32), harta[..., 1].astype(np.float32)
+
+
+def _rand_felie(coloane: np.ndarray, s0: float, fps: float, pe_rand: float, scara_t: int, scara_y: int, repere: list):
+    """Un rând al feliei, de `pe_rand` secunde: rigla de secunde deasupra, reperele de pe linie pe ambele margini."""
+    import cv2
+
+    p = cv2.resize(coloane, None, fx=scara_t, fy=scara_y, interpolation=cv2.INTER_NEAREST)
+    lipsa = max(0, int(round(pe_rand * fps * scara_t)) - p.shape[1])
+    p = cv2.copyMakeBorder(p, 26, 4, 8, 8 + lipsa, cv2.BORDER_CONSTANT, value=(25, 25, 25))
+    for s in np.arange(np.ceil(s0), s0 + pe_rand, 1.0):
+        c = 8 + int(round((s - s0) * fps * scara_t))
+        cv2.line(p, (c, 16), (c, 26), (255, 255, 255), 1)
+        cv2.putText(p, f"{s:.0f}", (c + 2, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
+    for r in repere:
+        y = 26 + int(round(r * coloane.shape[0] * scara_y))
+        cv2.line(p, (0, y), (8, y), (0, 0, 255), 2)
+        cv2.line(p, (p.shape[1] - 9, y), (p.shape[1] - 1, y), (0, 0, 255), 2)
+    return p
+
+
+def time_slices(targets: list[dict], clip: str, out: Path, chunk_s: float = 30, pe_rand: float = 15,
+                scara_t: int = 6, scara_y: int = 3) -> int:
+    """Feliile timp-spațiu: out/<id>/b<k>_l<j>.jpg pentru fiecare țintă, bucată și linie din „felii”.
+
+    Din fiecare cadru se ia aceeași linie de pixeli (media pe 3 pixeli grosime), iar liniile se pun una lângă alta: vehiculele care o
+    traversează apar ca pete separate, pe banda lor, cu toate cadrele clipului într-o singură imagine. Clipul se citește o dată, secvențial."""
+    import cv2
+
+    cap = cv2.VideoCapture(clip)
+    fps = cap.get(cv2.CAP_PROP_FPS) or 18.0
+    W, H = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    linii = [(tg["id"], j, _harta_linie(f["linie"], W, H), []) for tg in targets for j, f in enumerate(tg["felii"])]
+    k = 0
+    while True:
+        ok, cadru = cap.read()
+        if not ok:
+            break
+        for _, _, (hx, hy), coloane in linii:
+            coloane.append(cv2.remap(cadru, hx, hy, cv2.INTER_LINEAR).mean(axis=1).astype(np.uint8))
+        k += 1
+    cap.release()
+    n_chunks = int(np.ceil(k / fps / chunk_s))
+    repere = {(tg["id"], j): f.get("repere", []) for tg in targets for j, f in enumerate(tg["felii"])}
+    for id_tinta, j, _, coloane in linii:
+        (out / id_tinta).mkdir(parents=True, exist_ok=True)
+        imagine, timpi = np.stack(coloane, axis=1), np.arange(k) / fps
+        for b in range(n_chunks):
+            randuri = []
+            for s0 in np.arange(b * chunk_s, (b + 1) * chunk_s, pe_rand):
+                m = (timpi >= s0 - 1e-9) & (timpi < s0 + pe_rand - 1e-9)
+                if m.any():
+                    randuri.append(_rand_felie(imagine[:, m], s0, fps, pe_rand, scara_t, scara_y, repere[id_tinta, j]))
+            cv2.imwrite(str(out / id_tinta / f"b{b}_l{j}.jpg"), np.vstack(randuri), [cv2.IMWRITE_JPEG_QUALITY, 90])
+    print(f"[felii] {k} cadre, {k / fps:.1f} s; {n_chunks} bucăți de {chunk_s:g} s → {out}")
     return n_chunks
 
 
@@ -311,6 +381,12 @@ def main(argv=None) -> None:
     a.add_argument("--pe-foaie", type=int, default=12)
     a.add_argument("--coloane", type=int, default=3)
     a.add_argument("--latime-imagine", type=int, default=800)
+    fl = sub.add_parser("felii", help="feliile timp-spațiu pentru adnotare, pe ținte, bucăți și linii")
+    fl.add_argument("tinte", help="TINTE.json, cu „felii”: [{„linie”: [xa, ya, xb, yb], „repere”: [fracțiuni de pe linie]}]")
+    fl.add_argument("clip")
+    fl.add_argument("--out", default=str(REF_DIR / "felii"))
+    fl.add_argument("--bucata", type=float, default=30, help="secunde pe bucată (implicit 30)")
+    fl.add_argument("--pe-rand", type=float, default=15, help="secunde pe rând de imagine (implicit 15)")
     v = sub.add_parser("viziune", allow_abbrev=False,
                        help="lanțul live pe un clip salvat (argumentele în plus merg la run_vision)")
     v.add_argument("clip")
@@ -344,6 +420,9 @@ def main(argv=None) -> None:
         targets = json.loads(Path(args.tinte).read_text(encoding="utf-8-sig"))
         contact_sheets(targets, args.clip, Path(args.out), args.bucata, args.dt, args.pe_foaie, args.coloane,
                        args.latime_imagine)
+    elif args.cmd == "felii":
+        targets = json.loads(Path(args.tinte).read_text(encoding="utf-8-sig"))
+        time_slices(targets, args.clip, Path(args.out), args.bucata, args.pe_rand)
     elif args.cmd == "viziune":
         run_offline(args.clip, Path(args.out) if args.out else REF_DIR / Path(args.clip).stem, args.interval, extra)
     elif args.cmd == "numara":
