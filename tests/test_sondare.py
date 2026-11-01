@@ -25,7 +25,7 @@ HASH_M1 = "f7986e77a3a7dc04a0319fdb4230629a7f129ad7a02a97824d9fa0056e1c0b84"
 BROWSERE = (r"C:\Program Files\Google\Chrome\Application\chrome.exe", r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
             shutil.which("chromium") or "", shutil.which("google-chrome") or "")
 BROWSER = next((b for b in BROWSERE if b and Path(b).exists()), None)
-NODE = next((n for n in (str(RADACINA / ".venv" / "nodejs" / "node.exe"), shutil.which("node") or "") if n and Path(n).exists()), None)
+NODE = next((n for n in (shutil.which("node") or "", r"C:\Program Files\nodejs\node.exe") if n and Path(n).exists()), None)
 
 RASPUNS = """Sondare dispecerat Piața Romană, v1
 Grup {grup}, ordine {ordine}, ecran 1536x730, {sfarsit}
