@@ -726,12 +726,16 @@ Măsurile luate sunt următoarele.
   intră în Git, nu se publică și se șterg după numărătoarea de referință. Foile de contact citite de adnotatori fac
   același drum ca mai sus, inclusiv spre analiză la Anthropic. Acordul din 27.10.2026 (§ 14.1) nu pomenește clipurile:
   salvarea lor temporară este decizia autorului, ca parte a analizei automate, și nu lărgește ce se publică.
-* **Sondarea cu oameni.** Patru persoane apropiate autorului folosesc dispeceratul pe calculatorul lui (§ 8). Temeiul este
-  consimțământul lor, conform art. 6 alin. (1) lit. a) GDPR, dat pe un ecran separat, și se pot opri oricând. Răspunsurile,
-  clicurile și timpii rămân local, în `outputs/sondare`, sub coduri. Sunt pseudonimizate, nu anonime, fiindcă autorul știe cine
-  a participat. Ce citește asistentul Claude ajunge la Anthropic. Nu se înregistrează imagine sau sunet, iar asistentul nu face
-  capturi de ecran în timpul sesiunilor. Se publică doar totaluri, de la cel puțin trei persoane. Datele se șterg după evaluarea
-  academică, odată cu jurnalul local, sau mai devreme, la cerere.
+* **Sondarea cu oameni.** Persoanele invitate de autor folosesc dispeceratul pe propriul calculator, într-o pagină publică (§ 8).
+  Temeiul este consimțământul lor, conform art. 6 alin. (1) lit. a) GDPR, dat pe un ecran separat, și se pot opri oricând. Pagina nu
+  cere nume, cont sau adresă de e-mail, nu folosește cookie-uri, iar o regulă de securitate a browserului oprește orice cerere pe care
+  ar face-o singură. Răspunsurile, apăsările și timpii stau în fila persoanei. La final, persoana vede tot ce s-a notat și, dacă vrea,
+  trimite textul printr-un formular Google al autorului, care nu colectează adrese de e-mail; adresa formularului apare doar în
+  linkurile de invitație, nu în depozit. Cine găsește singur pagina o poate încerca, dar nu are ce trimite. GitHub, care găzduiește
+  pagina, notează adresa IP a vizitatorilor, iar Google o vede la deschiderea formularului. Răspunsurile sunt pseudonimizate, nu
+  anonime, fiindcă participanții sunt puțini și autorul poate bănui al cui e un răspuns. Ce citește asistentul Claude ajunge la Anthropic.
+  Nu se înregistrează imagine sau sunet. Răspunsurile primite stau în foaia de calcul a formularului și în `outputs/sondare`; se publică
+  doar totaluri pe grup, de la cel puțin trei persoane. Datele se șterg după evaluarea academică sau mai devreme, la cerere.
 * **Imaginile publicate.** Singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru, din
   28.10.2026, ora 09:30. Același cadru apare și în prezentarea bornei M1 (`docs/prezentari/`). Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
   plăcuțelor de înmatriculare la toate vehiculele și textul publicitar suprapus de cameră. Pe oameni i-a găsit
@@ -1864,13 +1868,20 @@ bibliotecă Python pentru aplicații web, iar pagina propriu-zisă este scrisă 
 de dezvoltare pentru interfață (framework). Principiul de proiectare este **automatizarea conduce, omul
 supervizează**: sistemul schimbă singur fazele, iar operatorul vede ce vede algoritmul și poate prelua oricând controlul.
 
-**Sondarea cu oameni (`romana.dashboard.sondare`).** Lângă dispecerat stă un ghid care îi spune persoanei, pas cu pas, ce să facă,
-de la deschiderea ecranului până la închiderea lui. Sunt 4 sarcini pe fiecare variantă: cine schimbă culorile semaforului, unde e
-coada cea mai lungă, verde pe Bulevardul Dacia, înapoi la calculator. După fiecare, ecranul se acoperă și persoana răspunde din ce a
-văzut. Situațiile sunt simulate, ca toți să aibă aceleași, deci comenzile nu ajung la geamăn. Variantele sunt cea de la borna M1,
-păstrată neschimbată în `static/m1`, și cea curentă, în ordine alternată. Sondarea e formativă: arată ce nu se înțelege pe ecran,
-nu cât de bun e ecranul în general. Din patru persoane apropiate autorului, cu autorul alături, se dau doar totaluri de forma
-„x din 4” și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
+**Sondarea cu oameni (`romana.dashboard.sondare`).** O pagină publică, deschisă cu un link, fără instalare: în stânga un ghid care îi
+spune persoanei, pas cu pas, ce să facă, de la deschiderea ecranului până la închiderea lui, iar în dreapta dispeceratul. Laptopul care
+colectează nu e implicat, fiindcă toată pagina rulează în browserul persoanei; cu sesiuni pe laptop, colectarea ar fi trebuit oprită
+în zilele de test, iar o demonstrație în Chrome pe același calculator a coborât rata de la ≈6,0 la ≈4,9 cadre/s. Sunt 4 sarcini pe
+fiecare variantă: cine schimbă culorile semaforului, unde e coada cea mai lungă, verde pe Bulevardul Dacia, înapoi la calculator. După
+fiecare, ecranul se acoperă și persoana răspunde din ce a văzut. Situațiile sunt simulate, ca toți să aibă aceleași și răspunsul corect
+să se știe, deci comenzile nu ajung la geamăn. Reacția la o comandă durează aici 5–10 s, iar în geamănul adevărat poate ajunge la ≈24 s.
+Imaginea camerei e fotografia publicată, cu persoanele și plăcuțele estompate: o cameră în direct ar arăta traficul adevărat, care poate
+contrazice schema simulată, așa că persoana poate vedea piața în direct separat, pe site-ul Webcam România. Variantele sunt cea de la
+borna M1, păstrată neschimbată în `static/m1`, și cea curentă, în ordine alternată. La final, persoana vede tot ce s-a notat și decide
+dacă trimite (§ 4.5). Sondarea e formativă și nesupravegheată: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general,
+iar locul în care s-a blocat cineva se vede doar din timpi și apăsări. Se dau doar totaluri pe grup, de forma „x din 4”, persoanele
+apropiate autorului separat de colegi, și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
+Pagina nu se deosebește de restul codului: `--pachet` o construiește în `docs/sondare` din sursele din `static/`, iar GitHub Pages o servește.
 
 *Captura dispeceratului se reface ca figură proprie, fără imaginea camerei.*
 
@@ -3319,7 +3330,7 @@ număr.
 | 5 | `5_evalueaza.bat --scenarii <fișierele zi_* / referinta_*>` | compară strategiile între ele. Opțiunile `--seeds` și `--seed-start` stabilesc câte seed-uri se folosesc și care este primul dintre ele; un seed este valoarea care pornește generatorul de numere aleatoare al simulării. Alte opțiuni: `--planuri 46,48,12`, `--adauga`. Scenariile se dau cale cu cale, ca în § 11.3, pentru că `cmd.exe` nu înlocuiește `*` cu lista fișierelor. Fără `--scenarii`, scriptul se oprește cu `FileNotFoundError` înainte de orice simulare, la scenariile `capacitate_*` și `indisciplinat_*`, care nu au fișierul `od_estimat.json`. Scriptul rescrie fișierele publicate `rezultate_brute.csv`, `rezultate.md` și `comparatie_strategii.png` din `docs\rezultate\`; refacerea lor este descrisă în § 11.8 | ~1 h |
 | 6 | `6_geaman_digital.bat` | pornește geamănul digital, adică replica virtuală a intersecției: simularea din SUMO-GUI, alimentată **în timp real** de cameră, cu semaforul condus de strategia aleasă în dispecerat | continuu |
 | 7 | `7_dashboard.bat` | deschide dispeceratul, interfața web a operatorului, la http://localhost:8050 | continuu |
-| 7b | `7_sondare.bat [--proba]` | sondarea dispeceratului cu oameni (§ 8): ghid, sarcini și întrebări pe același ecran | ≈15–30 min de persoană |
+| 7b | `7_sondare.bat` | sondarea dispeceratului cu oameni (§ 8), pe acest calculator, pentru probe; pagina adevărată e pe GitHub Pages, cu `--linkuri`, `--rezumat`, `--publica` pentru invitații și rezultate | ≈15 min de persoană |
 | – | `PORNESTE_TOT.bat` | pornește pașii 2, 6 și 7 în trei ferestre: sistemul complet, în timp real | continuu |
 | 10 | `10_documentatie_pdf.bat` | transformă documentația în PDF, cu pagini numerotate (`docs\DOCUMENTATIE.pdf`) | ~1 min |
 

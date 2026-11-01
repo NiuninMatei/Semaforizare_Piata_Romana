@@ -3,37 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Browserul oprește orice cerere pe care pagina ar face-o singură: nimic nu pleacă decât dacă persoana apasă „Trimite”. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'; frame-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="robots" content="noindex">
 <title>Sondare dispecerat</title>
 <style>
-:root{--fond:#e7e9e4;--hartie:#f6f7f4;--cerneala:#1f2a33;--gri:#4d5862;--linie:#c9cec7;--albastru:#1d5fa8;--verde:#1d7a47;--rosu:#b3261e}
+:root{--fond:#e7e9e4;--hartie:#f6f7f4;--cerneala:#1f2a33;--gri:#4d5862;--linie:#c9cec7;--albastru:#1d5fa8}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{display:grid;grid-template-columns:minmax(380px,27vw) minmax(0,1fr);background:var(--fond);color:var(--cerneala);font:21px/1.5 "Segoe UI",system-ui,sans-serif}
 #ghid{background:var(--hartie);border-right:2px solid var(--linie);padding:24px 26px;overflow:auto;height:100%}
 #ghid>*+*{margin-top:14px}
+#ghid.lung p{font-size:18px;line-height:1.4}
+#ghid.lung .butoane{position:sticky;bottom:-24px;background:var(--hartie);padding:12px 0}
 #progres,#cod{color:var(--gri);font-size:18px;font-weight:600}
 h1{font-size:28px;line-height:1.25;margin:0;font-weight:700}
 p{margin:0}
 .butoane{display:flex;flex-direction:column;gap:12px}
-button{font:600 22px/1.25 "Segoe UI",system-ui,sans-serif;padding:15px 18px;border-radius:8px;border:2px solid var(--cerneala);background:#fff;color:var(--cerneala);cursor:pointer;text-align:left;width:100%}
-button:hover{background:#e9eef4}
-button.principal{background:var(--albastru);border-color:var(--albastru);color:#fff;text-align:center}
-button.principal:hover{background:#174c87}
-button.secundar{font-weight:500;font-size:19px;text-align:center;padding:12px 18px}
+button,.buton{font:600 22px/1.25 "Segoe UI",system-ui,sans-serif;padding:15px 18px;border-radius:8px;border:2px solid var(--cerneala);background:#fff;color:var(--cerneala);cursor:pointer;text-align:left;width:100%;display:block;text-decoration:none}
+button:hover,.buton:hover{background:#e9eef4}
+button.principal,.buton.principal{background:var(--albastru);border-color:var(--albastru);color:#fff;text-align:center}
+button.principal:hover,.buton.principal:hover{background:#174c87}
+button.secundar,.buton.secundar{font-weight:500;font-size:19px;text-align:center;padding:12px 18px}
 button.oprire{font-weight:400;font-size:16px;text-align:center;padding:6px 10px;border:1px solid var(--linie);color:var(--gri);background:transparent;width:auto;margin-top:26px}
-button:focus-visible{outline:4px solid var(--albastru);outline-offset:2px}
+.buton.simplu{display:inline;width:auto;padding:0;border:0;background:none;font:inherit;font-size:17px;color:var(--albastru);text-decoration:underline}
+button:focus-visible,.buton:focus-visible{outline:4px solid var(--albastru);outline-offset:2px}
 #scena{position:relative;height:100%;min-width:0;overflow:hidden}
 #gol{height:100%;display:grid;place-items:center;text-align:center;color:var(--gri);padding:40px;font-size:24px}
 iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
 #acoperit{position:absolute;inset:0;background:var(--fond);display:none;place-items:center;text-align:center;color:var(--gri);padding:40px;font-size:26px}
 #acoperit.vizibil{display:grid}
 textarea{font:inherit;width:100%;min-height:140px;padding:12px;border:2px solid var(--cerneala);border-radius:8px}
-.stare{padding:10px 14px;border-radius:8px;font-size:19px;color:#fff}
-.stare.merge{background:var(--verde)}
-.stare.oprita{background:var(--rosu)}
-.stare.fixa{background:var(--gri)}
+textarea.text-final{font-size:15px;line-height:1.4;height:34vh;border:1px solid var(--linie);background:#fff;resize:vertical}
+#nota:empty{display:none}
+#nota{font-weight:600}
 #indemn{color:var(--gri)}
-#eroare{display:none;padding:12px 14px;border-radius:8px;background:var(--rosu);color:#fff}
+@media (max-width:899px){
+  body{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,45vh) minmax(0,1fr);font-size:18px}
+  #ghid{border-right:0;border-bottom:2px solid var(--linie);padding:14px 16px}
+  h1{font-size:22px}
+  button,.buton{font-size:18px;padding:10px 12px}
+}
 </style>
 </head>
 <body>
@@ -42,130 +52,8 @@ textarea{font:inherit;width:100%;min-height:140px;padding:12px;border:2px solid 
   <div id="gol">Aici se va deschide ecranul de supraveghere.</div>
   <div id="acoperit">Răspundeți în stânga, din ce ați văzut.<br>Ecranul revine imediat.</div>
 </div>
-<script>
-const $=id=>document.getElementById(id);
-const PAUZA_CLIC=700, INDEMN_DUPA=180000;
-let pas=null, blocat=false, cazut=false, indemn=null;
-
-function fara(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function aldin(s){return fara(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")}
-async function trimite(url,corp){
-  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(corp||{})});
-  if(!r.ok) throw new Error(r.status);
-  return r.json();
-}
-function eroare(){
-  const e=$("eroare");
-  if(e){e.style.display="block";e.textContent="Nu găsesc programul de pe calculator. Chemați, vă rugăm, persoana care v-a invitat."}
-}
-// Al doilea clic al unui dublu clic nu trebuie să răspundă și la pasul nou, care apare chiar sub cursor.
-function apasa(fn){
-  return async ()=>{
-    if(blocat) return;
-    blocat=true;
-    try{ await fn() }catch(e){ eroare(); blocat=false }
-  };
-}
-async function raspunde(corp){ arata(await trimite("/sondare/raspuns",{id:pas.id,...corp})) }
-function rama(){return document.querySelector("#scena iframe")}
-function deschide(versiune){
-  if(rama()) return;
-  const f=document.createElement("iframe");
-  f.title="Ecranul de supraveghere";
-  f.src=`/d/${versiune}/`;
-  f.addEventListener("load",()=>{
-    f.contentDocument.addEventListener("click",e=>{
-      const a=e.target.closest("a");
-      if(a) e.preventDefault();             // legăturile din subsol nu scot persoana din ecran
-      const b=e.target.closest("button,a,input,select");
-      const eticheta=b?(b.textContent||b.id||b.tagName).trim():"în afara butoanelor";
-      trimite("/sondare/clic",{eticheta}).catch(()=>{});
-    },true);
-  });
-  $("scena").insertBefore(f,$("acoperit"));
-  $("gol").style.display="none";
-}
-function inchide(){
-  const f=rama();
-  if(f) f.remove();
-  $("gol").style.display="grid";
-  $("gol").textContent="Ecranul de supraveghere e închis.";
-}
-function pregatesteRama(p){
-  const f=rama();
-  if(!f) return;
-  f.inert=!!p.acoperit;                     // sub acoperire nu se ajunge nici cu tastatura
-  try{
-    f.contentDocument.getElementById("confirm")?.classList.remove("vizibil");   // o confirmare rămasă nu trece la sarcina următoare
-    if(p.tip==="sarcina") f.contentWindow.scrollTo(0,0);                        // fiecare sarcină pornește de sus
-  }catch(e){}
-}
-function buton(text,clasa,fn){
-  const b=document.createElement("button");
-  b.type="button"; b.textContent=text;
-  if(clasa) b.className=clasa;
-  b.onclick=apasa(fn);
-  return b;
-}
-function intrebaOprirea(zona,oprire){
-  oprire.remove();
-  const t=document.createElement("p"); t.textContent="Sigur vă opriți? Ce ați răspuns până acum rămâne salvat.";
-  zona.appendChild(t);
-  zona.appendChild(buton("Da, mă opresc aici","secundar",async()=>{ inchide(); arata(await trimite("/sondare/renunta")) }));
-  zona.appendChild(buton("Nu, continui","secundar",async()=>{ arata(await trimite("/sondare/raspuns",{id:"__nimic__"})) }));
-  setTimeout(()=>{blocat=false},PAUZA_CLIC);
-}
-function arata(p){
-  pas=p;
-  clearTimeout(indemn);
-  const g=$("ghid"); g.innerHTML="";
-  const adauga=(tag,html)=>{const e=document.createElement(tag);e.innerHTML=html;g.appendChild(e);return e};
-  if(p.proba) adauga("div","PROBĂ: răspunsurile nu se amestecă.").id="cod";
-  if(p.colectare||p.tip==="sfarsit") adauga("div",`Participant: ${fara(p.cod)}`).id="cod";
-  if(p.sarcina) adauga("div",`${p.runda?"A doua variantă":"Prima variantă"} · sarcina ${p.sarcina} din ${p.sarcini}`).id="progres";
-  if(p.titlu) adauga("h1",fara(p.titlu));
-  (p.text||[]).forEach(t=>adauga("p",aldin(t)));
-  if(p.colectare){
-    const mesaj={merge:"Colectarea merge: imaginea din ecran se va mișca.",fixa:"Probă cu figura publicată: imaginea din ecran stă pe loc.",oprita:"Colectarea nu merge, deci imaginea din ecran nu se va mișca. Opriți-vă aici și spuneți-i lui Claude."};
-    adauga("div",mesaj[p.colectare]).className="stare "+p.colectare;
-  }
-  const zona=document.createElement("div"); zona.className="butoane"; g.appendChild(zona);
-  if(p.tip==="info") zona.appendChild(buton(p.buton,"principal",()=>raspunde({})));
-  else if(p.tip==="alegere") p.optiuni.forEach(o=>zona.appendChild(buton(o,"",()=>raspunde({valoare:o}))));
-  else if(p.tip==="deschide") zona.appendChild(buton(p.buton,"principal",()=>{deschide(p.versiune);return raspunde({})}));
-  else if(p.tip==="inchide") zona.appendChild(buton(p.buton,"principal",()=>{inchide();return raspunde({})}));
-  else if(p.tip==="sarcina"){
-    zona.appendChild(buton("Am terminat","principal",()=>raspunde({})));
-    zona.appendChild(buton("Nu reușesc","secundar",()=>raspunde({nu_reuseste:true})));
-    indemn=setTimeout(()=>{ const e=document.createElement("p"); e.id="indemn"; e.textContent="Dacă vi se pare greu, puteți apăsa „Nu reușesc”."; zona.after(e) },INDEMN_DUPA);
-  } else if(p.tip==="text"){
-    const t=document.createElement("textarea"); t.setAttribute("aria-label",p.titlu); t.maxLength=1000; zona.appendChild(t);
-    zona.appendChild(buton(p.buton,"principal",()=>raspunde({valoare:t.value.trim()})));
-  } else if(p.tip==="sfarsit") zona.appendChild(buton(p.buton,"principal",async()=>{arata(await trimite("/sondare/urmatorul"))}));
-  if(!p.colectare&&!p.fara_oprire){
-    const oprire=buton("Mă opresc aici","oprire",()=>intrebaOprirea(zona,oprire));
-    g.appendChild(oprire);
-  }
-  const er=document.createElement("div"); er.id="eroare"; g.appendChild(er);
-  // Pagina reîncărcată: ecranul se redeschide dacă pasul îl cere; altfel rămâne închis.
-  if(p.ecran) deschide(p.versiune); else if(p.tip!=="deschide"&&rama()) inchide();
-  pregatesteRama(p);
-  $("acoperit").classList.toggle("vizibil",!!p.acoperit);
-  g.scrollTop=0;
-  blocat=true;
-  setTimeout(()=>{blocat=false},PAUZA_CLIC);
-}
-// Dacă programul dispare și revine, pagina se reîncarcă, ca imaginea din ecran să pornească din nou.
-setInterval(async()=>{
-  try{
-    const r=await fetch("/sondare/pas",{cache:"no-store"});
-    if(!r.ok) throw new Error(r.status);
-    if(cazut) location.reload();
-  }catch(e){ cazut=true; eroare() }
-},5000);
-fetch("/sondare/pas",{cache:"no-store"}).then(r=>r.json()).then(arata).catch(()=>{
-  $("ghid").innerHTML='<div id="eroare"></div>'; cazut=true; eroare();
-});
-</script>
+<script src="date.js"></script>
+<script src="logica.js"></script>
+<script src="ecran.js"></script>
 </body>
 </html>
