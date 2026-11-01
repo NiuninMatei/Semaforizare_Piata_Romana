@@ -25,8 +25,7 @@ from __future__ import annotations
 
 import argparse
 import csv
-import gzip
-import json
+import sys
 from collections import defaultdict
 from datetime import datetime
 from glob import glob
@@ -35,6 +34,7 @@ from pathlib import Path
 import numpy as np
 
 from romana.vision.od_counter import PEDESTRIAN
+from romana.vision.repara import citeste_inregistrari
 
 MISCARE_MIN = 0.02      # deplasarea netă minimă (coordonate normalizate) a unui vehicul „în mișcare”
 PAS_LUNG = 0.5          # s; un pas mai lung între două puncte înseamnă cadre pierdute (normal ≈0,17–0,2 s)
@@ -42,21 +42,10 @@ PRAG_PASI_LUNGI = 0.4   # încetinit: cel puțin 40% dintre pași mai lungi de P
 
 
 def inregistrari(path: Path):
-    """Traiectoriile din jurnal, citite ca în `recount`: un ultim bloc sau o ultimă linie incompletă se sare (lanțul de
-    noapte citește ziua încheiată cât timp colectarea mai poate adăuga o traiectorie începută înainte de miezul nopții)."""
-    with gzip.open(path, "rt", encoding="utf-8") as fh:
-        while True:
-            try:
-                line = fh.readline()
-            except (EOFError, OSError):       # fișier în curs de scriere: ultimul bloc e incomplet
-                return
-            if not line:
-                return
-            try:
-                d = json.loads(line)
-            except json.JSONDecodeError:      # ultima linie poate fi incompletă dacă procesul a fost oprit
-                continue
-            yield d
+    """Traiectoriile din jurnal, citite ca în `recount`, membru cu membru (`repara`): un membru stricat, un ultim membru
+    încă incomplet sau o linie care nu e o traiectorie se sare, fără să se piardă restul zilei (lanțul de noapte citește
+    ziua încheiată cât timp colectarea mai poate adăuga o traiectorie începută înainte de miezul nopții)."""
+    yield from citeste_inregistrari(path)
 
 
 def quality(path: Path) -> tuple[dict[str, list], dict[str, list]]:
@@ -102,6 +91,11 @@ def incetinite(per15: dict[str, list]) -> list[tuple]:
 
 
 def main() -> None:
+    for flux in (sys.stdout, sys.stderr):   # diacriticele merg și când ieșirea e redirecționată fără UTF-8 (cp1250)
+        try:
+            flux.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("jurnale", nargs="+", help="fișiere traiectorii_AAAA-LL-ZZ.jsonl.gz (se acceptă tipare)")
     ap.add_argument("--out", help="CSV: zi, ora, traiectorii, goluri_peste_1s_pct, densitate_puncte_s")

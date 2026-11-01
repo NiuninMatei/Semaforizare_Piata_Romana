@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import sys
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -26,23 +27,15 @@ import numpy as np
 
 from romana.common import COUNTS_DIR, TRAJ_DIR, TRAJ_RAW_DIR, load_json
 from romana.vision.od_counter import PEDESTRIAN, ODCounter, Params, classify, load_zones, write_csv
+from romana.vision.repara import citeste_inregistrari
 
 
 def read_trajectories(files: list[Path]):
+    """(t0, tip, puncte) din jurnale, în ordine. Citirea e cea sigură, membru cu membru (`repara`): un membru stricat,
+    un ultim membru încă incomplet sau o linie care nu e o traiectorie se sare, fără să se piardă restul zilei."""
     for f in files:
-        with gzip.open(f, "rt", encoding="utf-8") as fh:
-            while True:
-                try:
-                    line = fh.readline()
-                except (EOFError, OSError):       # fișier în curs de scriere: ultimul bloc e incomplet
-                    break
-                if not line:
-                    break
-                try:
-                    r = json.loads(line)
-                except json.JSONDecodeError:      # ultima linie poate fi incompletă dacă procesul a fost oprit
-                    continue
-                yield r["t0"], r["tip"], [(r["t0"] + t, x, y) for t, x, y in r["p"]]
+        for r in citeste_inregistrari(f):
+            yield r["t0"], r["tip"], [(r["t0"] + t, x, y) for t, x, y in r["p"]]
 
 
 def _velocity(pts: list, end: bool, window: float = 1.0) -> np.ndarray:
@@ -147,7 +140,8 @@ def publish(src: Path, dst: Path) -> None:
     tracks = stitch([(vt, pts) for _, vt, pts in read_trajectories([src])])
     dst.parent.mkdir(parents=True, exist_ok=True)
     n = 0
-    with gzip.open(dst, "wt", encoding="utf-8") as f:
+    tmp = dst.with_name(dst.name + ".tmp")       # o oprire în timpul scrierii nu lasă un jurnal publicat tăiat
+    with gzip.open(tmp, "wt", encoding="utf-8") as f:
         for vt, pts in sorted(tracks, key=lambda r: r[1][0][0]):
             if vt == PEDESTRIAN:
                 continue
@@ -156,6 +150,7 @@ def publish(src: Path, dst: Path) -> None:
                                 "p": [[round(t - t0, 2), round(x, 4), round(y, 4)] for t, x, y in pts]},
                                separators=(",", ":")) + "\n")
             n += 1
+    tmp.replace(dst)
     print(f"[publicare] {src.name}: {n} traiectorii de vehicule → {dst}")
 
 
@@ -227,6 +222,11 @@ def flow_image(files: list[Path], zones, background, out_png: Path, cell=(0.015,
 
 
 def main(argv=None) -> None:
+    for flux in (sys.stdout, sys.stderr):   # diacriticele merg și când ieșirea e redirecționată fără UTF-8 (cp1250)
+        try:
+            flux.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     cam = load_json("camera.json")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--zi", nargs="*", help="zile AAAA-LL-ZZ (implicit toate)")

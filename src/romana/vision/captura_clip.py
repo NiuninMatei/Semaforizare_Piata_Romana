@@ -26,8 +26,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from romana.common import OUTPUT_DIR
+from romana.vision.repara import citeste_linii
 
-CLIPURI = OUTPUT_DIR / "referinta" / "clipuri"
+CLIPURI =OUTPUT_DIR / "referinta" / "clipuri"
 PREVIZUALIZARE = OUTPUT_DIR / "live" / "frame.jpg"
 URL_IMPLICIT = "https://s5.webcamromania.ro/piataromanab/tracks-v1/mono.m3u8"
 JURNAL_BRUT = Path(__file__).resolve().parents[3] / "data" / "trajectories_brute"
@@ -213,19 +214,18 @@ def jurnal(nume: str, dosar: Path = CLIPURI, brut: Path = JURNAL_BRUT) -> tuple[
     n = 0
     with gzip.open(iesire / "traiectorii_clip.jsonl.gz", "wt", encoding="utf-8") as g:
         for zi in sorted(zile):
-            try:
-                with gzip.open(brut / f"traiectorii_{zi}.jsonl.gz", "rt", encoding="utf-8", errors="ignore") as f:
-                    for linie in f:
-                        m = re.match(r'\{"t0":\s*([0-9.]+)', linie)
-                        if not m or not t0 - 3600 <= float(m.group(1)) <= t1:
-                            continue
-                        o = json.loads(linie)
-                        p = o.get("p") or []
-                        if p and t0 <= float(o["t0"]) + p[0][0] < t1:
-                            g.write(linie)
-                            n += 1
-            except EOFError:                     # jurnalul zilei încă se scrie: ultimul membru poate fi neîncheiat
-                pass
+            cale = brut / f"traiectorii_{zi}.jsonl.gz"
+            if not cale.exists():
+                continue
+            for linie in citeste_linii(cale):    # jurnalul zilei încă se scrie: citirea sigură sare peste ce e neîncheiat
+                m = re.match(r'\{"t0":\s*([0-9.]+)', linie)
+                if not m or not t0 - 3600 <= float(m.group(1)) <= t1:
+                    continue
+                o = json.loads(linie)
+                p = o.get("p") or []
+                if p and t0 <= float(o["t0"]) + p[0][0] < t1:
+                    g.write(linie if linie.endswith("\n") else linie + "\n")
+                    n += 1
     return iesire, n, t0
 
 
