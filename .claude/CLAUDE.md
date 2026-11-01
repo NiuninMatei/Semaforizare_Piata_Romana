@@ -36,7 +36,15 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (30.10.2026, ~09:00) – lucrul pe laptop încheiat: colectarea oprită, totul comis și împins
+## Stare curentă (01.11.2026, ~09:30) – borna M1 prezentată, pregătirea pentru M2
+
+- **M1 prezentată pe 01.11.2026, 08:00** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
+  `outputs/prezentare/surse_m1`. Profesorul a glumit că 24 de pagini sunt prea multe, deci prezentările următoare vor fi
+  mult mai scurte. L-a întrebat ce urmează; răspunsul autorului: mai multe date de antrenament (fără obligație).
+- **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
+- **Bugetul:** săptămânala se resetează vineri 06.11, 23:00; graficul și calibrarea sunt în memoria buget-tokeni.
+
+## Stare anterioară (30.10.2026, ~09:00) – lucrul pe laptop încheiat: colectarea oprită, totul comis și împins
 
 - **30.10, 08:30: colectarea oprită curat** (scratchpad\oprire30.ps1, programat: veghea întâi, la 08:30:06; `run_vision`
   prin Ctrl+C → `counter.flush()`, ieșit la 08:30:10; jurnalul zilei: 40 918 fragmente, 0 membri stricați; raportul în

@@ -51,11 +51,12 @@ f) Fișierele ciornei generate automat de osmWebWizard.py (Eclipse SUMO 1.28.0):
 Excluse din oricare dintre licențele de mai sus (rămân ale titularilor lor):
 - citatele din surse terțe (presă, pagina și termenii Webcam România, termenii Ultralytics, Anthropic
   și Google, ghidurile OSMF), preluate cu indicarea sursei (art. 35 din Legea nr. 8/1996);
-- subseturile de fonturi Microsoft încorporate în docs/DOCUMENTATIE.pdf;
+- subseturile de fonturi Microsoft încorporate în docs/DOCUMENTATIE.pdf și în docs/prezentari/*.pdf;
 - mărcile comerciale menționate;
 - orice imagine din camera Piața Romană: drepturile aparțin operatorului camerei. Singurele din depozit,
   docs/imagini/camera_piata_romana.jpg și docs/imagini/camera_zone.jpg (din același cadru, 28.10.2026,
-  reproduse și în docs/DOCUMENTATIE.pdf, figurile 4.1 și 4.2), sunt publicate cu acordul scris al Webcam
+  reproduse și în docs/DOCUMENTATIE.pdf, figurile 4.1 și 4.2, iar același cadru apare și în
+  docs/prezentari/Prezentare_M1.pdf), sunt publicate cu acordul scris al Webcam
   România (§ 6 de mai jos) și poartă LicenseRef-Toate-drepturile-rezervate (LICENSES/, REUSE.toml).
   Capturile publicate anterior, cu persoane neestompate, au fost eliminate din tot istoricul depozitului pe
   26.10.2026 (docs/DOCUMENTATIE.md, § 12.5; docs/corespondenta_commituri.txt); eventualele copii păstrate de
@@ -196,7 +197,8 @@ publicitar suprapus de cameră estompate și cu sursa indicată pe imagine.
 Numărătorile sunt fapte agregate. Traiectoriile (doar ale vehiculelor) sunt fără imagini și fără
 identificatori (pseudonimizate); traiectoriile individuale ale pietonilor nu sunt publicate, ci doar
 numărătorile agregate (versiunile vechi care le conțineau au fost eliminate din istoric pe 26.10.2026).
-În afara celor două imagini, depozitul nu conține imagini sau video din cameră. Proiectul nu este
+Prezentarea docs/prezentari/Prezentare_M1.pdf folosește același cadru, cu aceeași estompare și cu sursa indicată.
+În afara acestui cadru, depozitul nu conține imagini sau video din cameră. Proiectul nu este
 afiliat cu Webcam România sau cu operatorul camerei și nu este susținut de aceștia.
 
 
