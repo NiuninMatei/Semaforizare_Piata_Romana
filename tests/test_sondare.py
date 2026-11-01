@@ -134,6 +134,23 @@ class TestPachet(unittest.TestCase):
             self.assertTrue(cale.exists(), nume)
             self.assertEqual(cale.read_bytes().replace(b"\r\n", b"\n").decode("utf-8"), continut, f"{nume}: rulați --pachet")
         self.assertTrue((s.DOCS / ".nojekyll").exists())
+        for f in (s.STATIC / "fonturi").iterdir():
+            self.assertEqual((s.PACHET / "fonturi" / f.name).read_bytes().replace(b"\r\n", b"\n"), f.read_bytes().replace(b"\r\n", b"\n"), f.name)
+
+    def test_fonturile_au_diacriticele_romanesti(self):
+        css = (s.STATIC / "fonturi" / "fonturi.css").read_text(encoding="utf-8")
+        for fam, greutati in (("Barlow", (400, 500, 600)), ("Barlow Semi Condensed", (500, 600, 700))):
+            for g in greutati:
+                self.assertEqual(css.count(f"font-family:'{fam}';font-style:normal;font-weight:{g};"), 2, (fam, g))
+        for nume in re.findall(r"url\(([^)]+)\)", css):
+            self.assertTrue((s.STATIC / "fonturi" / nume).exists(), nume)
+        self.assertIn("U+0100-02BA", css)         # ă, ș, ț
+
+    def test_de_unde_vin_fonturile_nu_face_versiunile_diferite(self):
+        sursa = s.VERSIUNI["m1"].read_text(encoding="utf-8").replace("\r\n", "\n")
+        local = s.RE_FONTURI.sub('<link href="/static/fonturi/fonturi.css" rel="stylesheet">\n', sursa)
+        self.assertNotEqual(sursa, local)
+        self.assertEqual(s.ecran_static(sursa, "x"), s.ecran_static(local, "x"))
 
     def test_nicio_pagina_nu_cere_ceva_din_afara(self):
         for nume, continut in s.continut_pachet().items():
@@ -145,7 +162,7 @@ class TestPachet(unittest.TestCase):
         for nume, continut in s.continut_pachet().items():
             if nume.endswith(".html"):
                 self.assertIn('http-equiv="Content-Security-Policy"', continut, nume)
-                for parte in ("default-src 'none'", "connect-src 'none'", "script-src 'self'", "form-action 'none'"):
+                for parte in ("default-src 'none'", "connect-src 'none'", "script-src 'self'", "form-action 'none'", "font-src 'self'"):
                     self.assertIn(parte, continut, nume)
                 self.assertNotIn("<script>", continut, f"{nume}: script în pagină")
 

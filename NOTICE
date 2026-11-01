@@ -168,8 +168,9 @@ Componentă (versiunea testată) – licență – sursă:
 - pyproj 3.8.0 (instalat, neimportat în src/) – MIT – https://github.com/pyproj4/pyproj
 - httpx 0.28.1 – BSD-3-Clause – https://github.com/encode/httpx
 - nvidia-ml-py 13.615.71 – BSD – https://pypi.org/project/nvidia-ml-py/
-- Fonturile Barlow și Barlow Semi Condensed (J. Tribby) – SIL OFL 1.1; legate din Google Fonts,
-  neincluse – https://fonts.google.com/specimen/Barlow
+- Fonturile Barlow și Barlow Semi Condensed (J. Tribby, The Barlow Project Authors) – SIL OFL 1.1, text în
+  LICENSES/OFL-1.1.txt; incluse în src/romana/dashboard/static/fonturi și docs/sondare/fonturi, subseturile latin
+  și latin-ext, de la Google Fonts – https://fonts.google.com/specimen/Barlow
 - Python 3.12 – PSF-2.0 – https://docs.python.org/3/license.html
 
 Dependențele tranzitive (lap, Pillow, PyYAML, polars, requests, certifi etc.) au licențe permisive

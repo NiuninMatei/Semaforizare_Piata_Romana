@@ -50,6 +50,13 @@ precedence = "closest"
 SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
+# Fonturile Barlow și Barlow Semi Condensed, incluse ca paginile să nu ceară nimic din afară
+[[annotations]]
+path = ["src/romana/dashboard/static/fonturi/*.woff2", "docs/sondare/fonturi/*.woff2"]
+precedence = "override"
+SPDX-FileCopyrightText = "2017 The Barlow Project Authors (https://github.com/jpt/barlow)"
+SPDX-License-Identifier = "OFL-1.1"
+
 # D. Datele proprii derivate din camera publică (alegerea autorului: ODbL, ca cererea care le încorporează;
 #    acordată în măsura în care asupra datelor există drepturi de autor sau drepturi sui generis); tot aici,
 #    traiectoriile vehiculelor din cele două clipuri ale numărătorii de referință (26.10.2026)
