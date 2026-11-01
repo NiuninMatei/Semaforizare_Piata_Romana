@@ -100,7 +100,8 @@ bun la vârf și mai slab la trafic lejer. Pe seed-urile de test 1–10, 46/48/1
 **Testul pe o zi nouă (§ 9.9).** Înregistrarea din 21–22.10 s-a dovedit sacadată, deci acele zile sunt subnumărate:
 camera a numărat mai puțini participanți decât au trecut în realitate (§ 4.6). Prima zi lucrătoare înregistrată
 continuu este luni 26.10, cu un vârf de ≈5 000 veh/h prin piață. Ca să poată trece acest debit, geamănul a fost
-calibrat: timpul de reacție al șoferilor a fost fixat la 0,8 s, valoare aleasă pe vârful aceleiași zile (§ 6.4). Mai
+calibrat: intervalul de timp pe care șoferii simulați îl păstrează față de vehiculul din față a fost fixat la 0,8 s, valoare
+aleasă pe vârful aceleiași zile (§ 6.4). Mai
 jos, această variantă apare ca „geamănul calibrat” sau „capacitatea calibrată”, iar cea veche, cu parametrii impliciți
 ai SUMO, ca „capacitatea implicită”. Până la acest test, ziua de luni nu fusese folosită nici la antrenare, nici la
 alegerea strategiilor.
@@ -123,7 +124,7 @@ timpul de care are nevoie un pieton care pornește la sfârșitul verdelui ca s�
 acest timp. Verificarea trecerilor, făcută după test (§ 9.10), a arătat că singura problemă rămasă este faza de pietoni
 de 12 s, aceeași în toate planurile. Cu această fază lungită la 18 s, câștigul se păstrează.
 
-Din 28.10, geamănul calibrat, cu timpul de reacție de 0,8 s, este implicit pentru toată munca nouă: scenariile din
+Din 28.10, geamănul calibrat, cu intervalul de 0,8 s, este implicit pentru toată munca nouă: scenariile din
 versiunea curentă a depozitului, geamănul în timp real, antrenarea și testele. Rezultatele obținute înainte rămân în
 documentație ca istoric.
 
