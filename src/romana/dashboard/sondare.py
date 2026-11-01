@@ -149,7 +149,7 @@ def pasi(ordine: tuple[str, str] = ("m1", "m2")) -> list[dict]:
             "Vă mulțumim că ne ajutați. Verificăm dacă un ecran pentru supravegherea semafoarelor din Piața Romană este ușor de înțeles. "
             "Este un proiect universitar.",
             "**Testăm ecranul, nu pe dumneavoastră.** Dacă ceva nu merge sau nu se înțelege, vina e a ecranului, iar asta vrem să aflăm.",
-            "Durează în jur de 15 minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”."],
+            "Durează între 10 și 20 de minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”."],
          "buton": "Mai departe"},
         {"id": "acord", "tip": "info", "lung": True, "titlu": "Ce se întâmplă cu răspunsurile",
          "text_invitat": [
@@ -202,6 +202,12 @@ CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline';
 # Versiunea M1 ia fonturile de la Google, cea curentă din static/fonturi; în pagina publică vin amândouă din pachet.
 RE_FONTURI = re.compile(r'<link rel="preconnect" href="https://fonts\.googleapis\.com">\n<link href="https://fonts\.googleapis\.com/[^"]*" rel="stylesheet">\n'
                         r'|<link href="/static/fonturi/fonturi\.css" rel="stylesheet">\n')
+# Panoul camerei, în sondaj: o fotografie fixă nu are flux, cadre pe secundă sau vehicule urmărite, iar debitele din test nu vin de la cameră.
+TITLU_CAMERA = "Piața Romană, fotografie fixă"
+TITLU_DEBITE = "Debite de trafic"
+ALT_CAMERA = "Fotografie a Pieței Romane, cu persoanele și plăcuțele estompate"
+NOTA_CAMERA = '<div class="sub" style="margin-top:10px">Pentru acest test, o fotografie fixă în locul camerei în direct.</div>\n'
+STIL_CAMERA = "<style>.cam .stare,#sursa{display:none}</style>"
 SUBSOL_CAMERA = ("Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, "
                  "persoanele estompate, afișată doar local.")
 SUBSOL_PUBLIC = ("Imaginea camerei: Webcam România – https://webcamromania.ro; drepturile aparțin operatorului camerei. "
@@ -215,12 +221,19 @@ def _inlocuieste(text: str, vechi: str, nou: str) -> str:
 
 
 def ecran_static(html: str, versiune: str) -> tuple[str, str]:
-    """Dispeceratul, pentru pagina statică: (HTML-ul, scriptul lui). Ecranul rămâne același; se schimbă doar de unde vin datele și fotografia."""
+    """Dispeceratul, pentru pagina statică: (HTML-ul, scriptul lui). Se schimbă doar de unde vin datele, fonturile și imaginea, plus panoul
+    camerei, la fel în ambele versiuni; butoanele, schema, graficul și tabelul rămân cele ale versiunii."""
     html = html.replace("\r\n", "\n")
     html, n = RE_FONTURI.subn('<link href="fonturi/fonturi.css" rel="stylesheet">\n', html)
     if n != 1:
         raise SystemExit("Dispeceratul s-a schimbat: legătura spre fonturi nu mai e aceeași; actualizați `ecran_static`.")
-    html = _inlocuieste(html, '<meta charset="utf-8">\n', f'<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="{CSP}">\n')
+    html = _inlocuieste(html, '<meta charset="utf-8">\n', f'<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="{CSP}">\n{STIL_CAMERA}\n')
+    for tipar, nou in ((r'<h2 id="t-cam">.*?</h2>', f'<h2 id="t-cam">{TITLU_CAMERA}</h2>'), (r'<h2 id="t-deb">.*?</h2>', f'<h2 id="t-deb">{TITLU_DEBITE}</h2>'),
+                       (r'<img id="cadru" alt="[^"]*">', f'<img id="cadru" alt="{ALT_CAMERA}">')):
+        html, n = re.subn(tipar, nou, html)
+        if n != 1:
+            raise SystemExit(f"Dispeceratul s-a schimbat: „{tipar}” apare de {n} ori; actualizați `ecran_static`.")
+    html = _inlocuieste(html, '<div class="stare">', NOTA_CAMERA + '<div class="stare">')
     html = _inlocuieste(html, SUBSOL_CAMERA, SUBSOL_PUBLIC)
     m = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
     if len(m) != 1:

@@ -1876,9 +1876,10 @@ fiecare variantă: cine schimbă culorile semaforului, unde e coada cea mai lung
 fiecare, ecranul se acoperă și persoana răspunde din ce a văzut. Situațiile sunt simulate, ca toți să aibă aceleași și răspunsul corect
 să se știe, deci comenzile nu ajung la geamăn. Reacția la o comandă durează aici 5–10 s, iar în geamănul adevărat poate ajunge la ≈24 s.
 Imaginea camerei e fotografia publicată, cu persoanele și plăcuțele estompate: o cameră în direct ar arăta traficul adevărat, care poate
-contrazice schema simulată, așa că persoana poate vedea piața în direct separat, pe site-ul Webcam România. Variantele sunt cea de la
+contrazice schema simulată, așa că persoana poate vedea piața în direct separat, pe site-ul Webcam România. În ambele variante, panoul
+camerei spune că e o fotografie fixă și nu mai arată indicatorii de flux, cadre pe secundă sau vehicule urmărite, care ar fi falși. Variantele sunt cea de la
 borna M1, păstrată neschimbată în `static/m1`, și cea curentă, în ordine alternată. La final, persoana vede tot ce s-a notat și decide
-dacă trimite (§ 4.5). Sondarea e formativă și nesupravegheată: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general,
+dacă trimite (§ 4.5). Autorul a parcurs pagina în 10 minute, deci pagina anunță 10–20 de minute. Sondarea e formativă și nesupravegheată: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general,
 iar locul în care s-a blocat cineva se vede doar din timpi și apăsări. Se dau doar totaluri pe grup, de forma „x din 4”, persoanele
 apropiate autorului separat de colegi, și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
 Pagina nu se deosebește de restul codului: `--pachet` o construiește în `docs/sondare` din sursele din `static/`, iar GitHub Pages o servește.
@@ -3301,7 +3302,7 @@ fără a colecta date noi. Jurnalul de traiectorii păstrează drumurile vehicul
 
 | Pasul | Comanda | Ce trebuie să apară |
 |---|---|---|
-| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | mesajul `OK` la sfârșitul celor 64 de teste. Ele verifică numărarea pe origine și destinație (O–D), pietonii, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, recunoașterea prelucrării încetinite (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi` |
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | mesajul `OK` la sfârșitul celor peste 460 de teste; cele ale sondării folosesc Node.js din `.venv\nodejs` și Chrome, iar fără ele sunt sărite. Ele verifică numărarea pe origine și destinație (O–D), pietonii, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, recunoașterea prelucrării încetinite (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi` |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | fereastra grafică a simulatorului, SUMO-GUI, cu ora de vârf din 21.10.2026; semaforul pieței este condus de agentul AI |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu semaforul pe planul fix |
 | Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | ora de prânz din 21.10, simulată cu planul fix, cu Max-Pressure, un algoritm clasic fără învățare, și cu agentul AI; rezultatele apar pe categorii de participanți. Pentru altă oră se adaugă `--scenariu` |
@@ -3330,7 +3331,7 @@ număr.
 | 5 | `5_evalueaza.bat --scenarii <fișierele zi_* / referinta_*>` | compară strategiile între ele. Opțiunile `--seeds` și `--seed-start` stabilesc câte seed-uri se folosesc și care este primul dintre ele; un seed este valoarea care pornește generatorul de numere aleatoare al simulării. Alte opțiuni: `--planuri 46,48,12`, `--adauga`. Scenariile se dau cale cu cale, ca în § 11.3, pentru că `cmd.exe` nu înlocuiește `*` cu lista fișierelor. Fără `--scenarii`, scriptul se oprește cu `FileNotFoundError` înainte de orice simulare, la scenariile `capacitate_*` și `indisciplinat_*`, care nu au fișierul `od_estimat.json`. Scriptul rescrie fișierele publicate `rezultate_brute.csv`, `rezultate.md` și `comparatie_strategii.png` din `docs\rezultate\`; refacerea lor este descrisă în § 11.8 | ~1 h |
 | 6 | `6_geaman_digital.bat` | pornește geamănul digital, adică replica virtuală a intersecției: simularea din SUMO-GUI, alimentată **în timp real** de cameră, cu semaforul condus de strategia aleasă în dispecerat | continuu |
 | 7 | `7_dashboard.bat` | deschide dispeceratul, interfața web a operatorului, la http://localhost:8050 | continuu |
-| 7b | `7_sondare.bat` | sondarea dispeceratului cu oameni (§ 8), pe acest calculator, pentru probe; pagina adevărată e pe GitHub Pages, cu `--linkuri`, `--rezumat`, `--publica` pentru invitații și rezultate | ≈15 min de persoană |
+| 7b | `7_sondare.bat` | sondarea dispeceratului cu oameni (§ 8), pe acest calculator, pentru probe; pagina adevărată e pe GitHub Pages, cu `--linkuri`, `--rezumat`, `--publica` pentru invitații și rezultate | 10–20 min de persoană |
 | – | `PORNESTE_TOT.bat` | pornește pașii 2, 6 și 7 în trei ferestre: sistemul complet, în timp real | continuu |
 | 10 | `10_documentatie_pdf.bat` | transformă documentația în PDF, cu pagini numerotate (`docs\DOCUMENTATIE.pdf`) | ~1 min |
 
