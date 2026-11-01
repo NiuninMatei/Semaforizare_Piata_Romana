@@ -10,6 +10,8 @@ const q = new URLSearchParams(location.search);
 const potrivit = (nume, re) => { const v = q.get(nume); return v && re.test(v) ? v : null; };
 const LINK = {grup: potrivit("g", /^[a-z]$/), ordine: potrivit("o", /^[12]$/), formular: potrivit("f", /^[\w-]{20,}$/), intrare: potrivit("e", /^\d{5,}$/)};
 const INVITAT = !!(LINK.formular && LINK.intrare);
+const TELEFON = window.innerWidth < 900;     // ghidul stă deasupra dispeceratului, nu în stânga lui
+const loc = t => (TELEFON ? D.PE_TELEFON.reduce((s, [a, b]) => s.split(a).join(b), t) : t);
 let ses = null, blocat = false, indemn = null, ascuns_de_la = null;
 
 function fara(s) { return String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c])); }
@@ -188,8 +190,8 @@ function arata() {
     arataFinal(g, adauga);
   } else {
     if (p.titlu) adauga("h1", fara(p.titlu));
-    [...(p.text || []), ...((INVITAT ? p.text_invitat : p.text_deschis) || [])].forEach(t => adauga("p", aldin(t)));
-    if (p.id === "bun_venit" && window.innerWidth < 900) adauga("p", aldin("**Pagina e făcută pentru un calculator.** Pe telefon se vede greu, dar puteți încerca."));
+    [...(p.text || []), ...((INVITAT ? p.text_invitat : p.text_deschis) || [])].forEach(t => adauga("p", aldin(loc(t))));
+    if (p.id === "bun_venit" && TELEFON) adauga("p", aldin("**Pagina e făcută pentru un calculator.** Pe telefon se vede greu, dar puteți încerca."));
     const zona = document.createElement("div");
     zona.className = "butoane";
     g.appendChild(zona);
@@ -237,6 +239,7 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+$("acoperit").innerHTML = loc($("acoperit").innerHTML);
 ses = incarca();
 salveaza();
 arata();

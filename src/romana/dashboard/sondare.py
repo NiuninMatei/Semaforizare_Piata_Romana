@@ -75,6 +75,10 @@ ALEGE_CONDUCE = {"calculator": "Un calculator, singur", "om": "Un om, de la aces
 AM_VAZUT = ["Da, clar", "Da, dar nu eram sigur(ă)", "Nu"]
 CAT_DE_USOR = ["Foarte greu", "Greu", "Nici greu, nici ușor", "Ușor", "Foarte ușor"]
 AJUTOR = ["Nu", "Doar la mouse sau la citit", "Da, la înțelegerea sarcinilor"]
+# Pe un ecran îngust, ghidul stă deasupra dispeceratului.
+PE_TELEFON = [("în partea din dreapta", "în partea de jos"), ("partea din dreapta", "partea de jos"), ("Partea din dreapta", "Partea de jos"),
+              ("ecranul din dreapta", "ecranul de jos"), ("În stânga primiți", "Sus primiți"), ("Răspundeți în stânga", "Răspundeți sus"),
+              ("Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului", "Dacă jos nu se vede tot, derulați cu degetul")]
 NUME_SARCINA = {1: "cine schimbă culorile", 2: "cea mai lungă coadă", 3: "verde pe Dacia", 4: "înapoi la calculator"}
 
 
@@ -188,7 +192,7 @@ def date_pagina() -> dict:
     return {"VERSIUNE": VERSIUNE_PAGINA, "FAZE": FAZE, "PLAN": PLAN, "GALBEN": GALBEN, "ROSU": ROSU, "VERDE_MIN": VERDE_MIN,
             "PAS_COMANDA": PAS_COMANDA, "VERDE_PE_DACIA": VERDE_PE_DACIA, "VERDE_PE_MAGHERU": VERDE_PE_MAGHERU, "AUTOMATE": AUTOMATE,
             "COZI": COZI, "INTRARI": INTRARI, "IESIRI": IESIRI, "ALEGE_CONDUCE": ALEGE_CONDUCE, "LUNGIME_TEXT": LUNGIME_TEXT,
-            "URL_PROIECT": URL_PROIECT, "PASI": pasi()}
+            "URL_PROIECT": URL_PROIECT, "PE_TELEFON": PE_TELEFON, "PASI": pasi()}
 
 
 # ---------------------------------------------------------------- pachetul static
