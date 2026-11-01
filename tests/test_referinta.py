@@ -100,6 +100,38 @@ class ReferintaTest(unittest.TestCase):
             self.assertEqual(n, 2)
             self.assertEqual(sorted(p.name for p in (Path(tmp) / "foi" / "T").glob("*.jpg")), ["b0_f0.jpg", "b1_f0.jpg"])
 
+    def test_felie_timp_spatiu_pe_un_clip_sintetic(self):
+        import cv2
+
+        with tempfile.TemporaryDirectory() as tmp:
+            clip = str(Path(tmp) / "sintetic.mp4")
+            w = cv2.VideoWriter(clip, cv2.VideoWriter_fourcc(*"mp4v"), 10, (320, 180))
+            if not w.isOpened():
+                self.skipTest("codecul mp4v nu este disponibil")
+            for k in range(40):                                    # pătratul trece prin x=160 pe la t=3 s
+                f = np.full((180, 320, 3), 60, np.uint8)
+                cv2.rectangle(f, (5 * k, 80), (5 * k + 20, 100), (255, 255, 255), -1)
+                w.write(f)
+            w.release()
+            tg = [{"id": "T", "felii": [{"linie": [0.5, 0.3, 0.5, 0.7], "repere": [0.5]}]}]
+            n = R.time_slices(tg, clip, Path(tmp) / "felii", chunk_s=2, pe_rand=2)
+            self.assertEqual(n, 2)
+            b0, b1 = (cv2.imread(str(Path(tmp) / "felii" / "T" / f"b{b}_l0.jpg")) for b in (0, 1))
+            self.assertEqual(b0.shape, b1.shape)
+            # 72 de pixeli pe linie × 3, plus rigla; pătratul stă pe rândurile 26–46 ale liniei, între t=2,8 și t=3,2
+            self.assertEqual(b1.shape[0], 26 + 72 * 3 + 4)
+            self.assertGreater(b1[26 + 36 * 3, 8 + 10 * 6 + 3].mean(), 200)
+            self.assertLess(b1[26 + 36 * 3, 8 + 2 * 6 + 3].mean(), 100)
+            self.assertLess(b0[26 + 36 * 3, 8 + 10 * 6 + 3].mean(), 100)
+            self.assertGreater(b1[26 + 36 * 3, 3, 2], 150)     # reperul de la jumătatea liniei, roșu, pe margine
+
+    def test_harta_liniei_are_un_rand_pe_pixel(self):
+        hx, hy = R._harta_linie([0.5, 0.0, 0.5, 0.5], 100, 200)
+        self.assertEqual(hx.shape, (100, 3))
+        self.assertAlmostEqual(float(hy[0, 1]), 0.0)
+        self.assertAlmostEqual(float(hy[-1, 1]), 100.0)
+        self.assertEqual([round(float(v)) for v in hx[0]], [51, 50, 49])
+
 
 class CalibrareCameraTest(unittest.TestCase):
     def test_omografia_se_recupereaza(self):
