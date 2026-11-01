@@ -726,6 +726,12 @@ Măsurile luate sunt următoarele.
   intră în Git, nu se publică și se șterg după numărătoarea de referință. Foile de contact citite de adnotatori fac
   același drum ca mai sus, inclusiv spre analiză la Anthropic. Acordul din 27.10.2026 (§ 14.1) nu pomenește clipurile:
   salvarea lor temporară este decizia autorului, ca parte a analizei automate, și nu lărgește ce se publică.
+* **Sondarea cu oameni.** Patru persoane apropiate autorului folosesc dispeceratul pe calculatorul lui (§ 8). Temeiul este
+  consimțământul lor, conform art. 6 alin. (1) lit. a) GDPR, dat pe un ecran separat, și se pot opri oricând. Răspunsurile,
+  clicurile și timpii rămân local, în `outputs/sondare`, sub coduri. Sunt pseudonimizate, nu anonime, fiindcă autorul știe cine
+  a participat. Ce citește asistentul Claude ajunge la Anthropic. Nu se înregistrează imagine sau sunet, iar asistentul nu face
+  capturi de ecran în timpul sesiunilor. Se publică doar totaluri, de la cel puțin trei persoane. Datele se șterg după evaluarea
+  academică, odată cu jurnalul local, sau mai devreme, la cerere.
 * **Imaginile publicate.** Singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru, din
   28.10.2026, ora 09:30. Același cadru apare și în prezentarea bornei M1 (`docs/prezentari/`). Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
   plăcuțelor de înmatriculare la toate vehiculele și textul publicitar suprapus de cameră. Pe oameni i-a găsit
@@ -1139,6 +1145,18 @@ calculatorului, a fost pusă după 08:30. Aceeași oprire, aplicată de probă p
 dimineață 07:30–08:30 neschimbată, vehicul cu vehicul. Pe 29.10, lanțul de confirmare a rulat
 `scenarii_zi --exclude 08:30-09:00`: sferturile 08:30 și 08:45 au ieșit din alegere, iar fereastra de dimineață
 07:30–08:30 a rămas întreagă (§ 9.10).
+
+**Citirea sigură și repornirea automată (1.11.2026).** Jurnalul zilei este scris din multe bucăți comprimate separat. O oprire
+bruscă, de exemplu o pană de curent, poate lăsa o bucată neterminată sau stricată. Cititorul vechi se oprea la ea și pierdea
+ce urma, uneori fără niciun semn. `romana.vision.repara` citește bucată cu bucată, sare doar peste cele stricate și le numără.
+Pe fișierele întregi nu schimbă nimic: numărătorile din 29 și 30.10 ies identice, octet cu octet.
+
+`romana.vision.paznic`, pornit cu `scripts\2e_paznic.bat`, repornește colectarea dacă procesul lipsește la două verificări la
+rând sau dacă nu mai dă semne de viață de 5 minute, iar camera răspunde. Dacă problema e la cameră sau la rețea, doar așteaptă,
+fiindcă `run_vision` se reconectează singur. Înaintea oricărei opriri voite se pune fișierul `outputs/live/fara_repornire`,
+altfel paznicul pornește colectarea la loc. Paznicul se lansează direct, nu printr-un alt shell, iar după oprirea lui se
+verifică dacă a dispărut. Fiecare repornire se notează în `outputs/logs/reporniri_<zi>.csv`, iar prelucrarea de noapte scoate
+din ferestrele scenariilor sferturile de oră atinse.
 
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
@@ -1845,6 +1863,14 @@ Dispeceratul este consola operatorului: pagina web din care un om urmărește in
 bibliotecă Python pentru aplicații web, iar pagina propriu-zisă este scrisă în HTML și JavaScript simplu, fără un cadru
 de dezvoltare pentru interfață (framework). Principiul de proiectare este **automatizarea conduce, omul
 supervizează**: sistemul schimbă singur fazele, iar operatorul vede ce vede algoritmul și poate prelua oricând controlul.
+
+**Sondarea cu oameni (`romana.dashboard.sondare`).** Lângă dispecerat stă un ghid care îi spune persoanei, pas cu pas, ce să facă,
+de la deschiderea ecranului până la închiderea lui. Sunt 4 sarcini pe fiecare variantă: cine schimbă culorile semaforului, unde e
+coada cea mai lungă, verde pe Bulevardul Dacia, înapoi la calculator. După fiecare, ecranul se acoperă și persoana răspunde din ce a
+văzut. Situațiile sunt simulate, ca toți să aibă aceleași, deci comenzile nu ajung la geamăn. Variantele sunt cea de la borna M1,
+păstrată neschimbată în `static/m1`, și cea curentă, în ordine alternată. Sondarea e formativă: arată ce nu se înțelege pe ecran,
+nu cât de bun e ecranul în general. Din patru persoane apropiate autorului, cu autorul alături, se dau doar totaluri de forma
+„x din 4” și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
 
 *Captura dispeceratului se reface ca figură proprie, fără imaginea camerei.*
 
@@ -3216,14 +3242,17 @@ număr.
 | 1 | `1_construieste_retea.bat` | regenerează rețeaua SUMO din extrasul OpenStreetMap (OSM) aflat în `data\osm` | ~2 min |
 | 2 | `2_viziune_live.bat` | analizează în timp real imaginea camerei, într-o fereastră cu zonele desenate; tasta `q` oprește analiza. Scrie numărătorile în `data\counts` și jurnalul local în `data\trajectories_brute`. Versiunea care se poate publica, doar cu vehiculele, se obține cu `recount --publica` | cât se dorește; pentru un profil complet, o zi întreagă |
 | 2d | `2d_veghe.bat [--pana-la "AAAA-LL-ZZ HH:MM"]` | supraveghează fluxul de cadre, adică imaginile succesive primite de la cameră, în paralel cu analiza în timp real. La primul semn de problemă se oprește cu mesajul `ALERTĂ` și scrie un diagnostic în `outputs\logs\veghe_alerta_*.json`. Printre semnele urmărite se numără scăderea ratei cadrelor, imaginea înghețată și jurnalul oprit (§ 4.6). Măsurătorile, minut cu minut, ajung în `outputs\logs\veghe_<zi>.csv` | cât rulează analiza în timp real |
+| 2e | `2e_paznic.bat [--pana-la "AAAA-LL-ZZ HH:MM"]` | repornește colectarea dacă procesul lipsește sau tace, iar camera răspunde (§ 4.6) | continuu |
 | 2b | `2b_calibrare_zone.bat` | redesenează zonele de numărare dacă operatorul mută camera | ~5 min |
 | 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără o zi din jurnalul local de traiectorii, de exemplu după ce zonele au fost redesenate. Pe o copie a depozitului fără `data\trajectories_brute` se renumără doar vehiculele din jurnalul publicat; folosiți atunci `--out` cu alt director, ca pietonii din `data\counts` să nu se piardă | ~5 min |
 | 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf și ora cea mai liniștită a zilei. Adaugă dimineața, prânzul și seara, dacă sunt acoperite complet de date și nu se suprapun cu vârful. Apoi construiește scenariile SUMO, plus două variante de sensibilitate: vârful ×1,2 și liniștitul ×0,8 | ~5 min |
+| 3c | `3c_lant_zilnic.bat --bucla --ora 00:15 --pana-la "AAAA-LL-ZZ HH:MM"` | prelucrează singur, în fiecare noapte, ziua precedentă, cu rolurile din § 9.11; rezultatele rămân în `outputs/lant/` | noapte de noapte |
 | 3 | `3_genereaza_cerere.bat --nume X --de-la "..." --pana-la "..."` | construiește un singur scenariu, pe un interval de timp ales de utilizator | ~1 min |
 | 4 | `4_antreneaza_ai.bat --nume X --pasi 500000 --medii 8 --scenarii <fișierele .sumocfg, enumerate>` | antrenează un agent PPO, adică un program de inteligență artificială care învață în simulare, prin încercări, să conducă semaforul (§ 7.3). Alte opțiuni: `--continua`, `--lr`, `--bc-plan`, `--coridor`. Fără un `--nume` nou se suprascrie `models\ppo_romana.zip`. Fișierele de scenariu se enumeră unul câte unul: caracterul `*` nu este înlocuit cu lista fișierelor nici de `cmd.exe`, nici de `train` | 1–3 h pe laptopul de test |
 | 5 | `5_evalueaza.bat --scenarii <fișierele zi_* / referinta_*>` | compară strategiile între ele. Opțiunile `--seeds` și `--seed-start` stabilesc câte seed-uri se folosesc și care este primul dintre ele; un seed este valoarea care pornește generatorul de numere aleatoare al simulării. Alte opțiuni: `--planuri 46,48,12`, `--adauga`. Scenariile se dau cale cu cale, ca în § 11.3, pentru că `cmd.exe` nu înlocuiește `*` cu lista fișierelor. Fără `--scenarii`, scriptul se oprește cu `FileNotFoundError` înainte de orice simulare, la scenariile `capacitate_*` și `indisciplinat_*`, care nu au fișierul `od_estimat.json`. Scriptul rescrie fișierele publicate `rezultate_brute.csv`, `rezultate.md` și `comparatie_strategii.png` din `docs\rezultate\`; refacerea lor este descrisă în § 11.8 | ~1 h |
 | 6 | `6_geaman_digital.bat` | pornește geamănul digital, adică replica virtuală a intersecției: simularea din SUMO-GUI, alimentată **în timp real** de cameră, cu semaforul condus de strategia aleasă în dispecerat | continuu |
 | 7 | `7_dashboard.bat` | deschide dispeceratul, interfața web a operatorului, la http://localhost:8050 | continuu |
+| 7b | `7_sondare.bat [--proba]` | sondarea dispeceratului cu oameni (§ 8): ghid, sarcini și întrebări pe același ecran | ≈15–30 min de persoană |
 | – | `PORNESTE_TOT.bat` | pornește pașii 2, 6 și 7 în trei ferestre: sistemul complet, în timp real | continuu |
 | 10 | `10_documentatie_pdf.bat` | transformă documentația în PDF, cu pagini numerotate (`docs\DOCUMENTATIE.pdf`) | ~1 min |
 
