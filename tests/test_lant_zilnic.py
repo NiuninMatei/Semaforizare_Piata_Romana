@@ -434,6 +434,18 @@ class TestLant(Cutie):
             self.assertEqual(c[c.index("--benzi") + 1], BENZI_PROBA)
             self.assertNotIn(L.BENZI, c)
 
+    def test_desigilarea_ramane_la_reluare(self):
+        zi = "2026-11-05"
+        self.jurnal_sintetic(zi)
+        with mock.patch.object(L, "zi_scrisa_live", return_value=False):
+            self.coduri["test_normal"] = 1
+            self.assertEqual(L.lant(zi, desigilat=True), 1)
+            self.assertTrue(self.stare(zi)["desigilat"])
+            self.coduri.clear()
+            self.assertEqual(L.lant(zi, reia=True), 0)
+        self.assertEqual(self.stare(zi)["rezultat"], "gata")
+        self.assertTrue(self.stare(zi)["desigilat"])
+
     def test_fara_simulari(self):
         self.assertEqual(L.lant(ZI, fara_simulari=True), 0)
         self.assertEqual(self.rulate, NUME_PASI[:6])
