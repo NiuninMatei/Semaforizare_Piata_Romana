@@ -140,6 +140,31 @@ class TestRezultate(unittest.TestCase):
         json.dumps(L.SCHEMA)
 
 
+class TestCredit(unittest.TestCase):
+    def setUp(self):
+        self.d = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.d, True)
+        (self.d / "f.jpg").write_bytes(b"x" * 300_000)
+        self.c = L.cerere("x", [self.d / "f.jpg"], "regula", "claude-opus-5-5", "xhigh")
+
+    def test_estimarea_acopera_cererea_cea_mai_scumpa_masurata(self):
+        # cea mai scumpă măsurată pe felii, la xhigh: ≈47 000 de tokeni de ieșire, 0,5 USD
+        self.assertGreater(L.estimare_cerere_usd(self.c), 0.5)
+        self.assertLess(L.estimare_cerere_usd(self.c), 1.0)
+
+    def test_lotul_e_refuzat_inainte_de_plafon(self):
+        e = L.estimare_cerere_usd(self.c)
+        self.assertAlmostEqual(L.verifica_credit([self.c], 100.0), e)
+        with self.assertRaises(SystemExit):
+            L.verifica_credit([self.c], L.CREDIT_USD - L.REZERVA_USD - e / 2)
+
+    def test_cheltuiala_ia_costul_real_apoi_estimarea(self):
+        (self.d / "a.json").write_text(json.dumps({"cost_usd": 1.5, "estimare_usd": 9.0}), encoding="utf-8")
+        (self.d / "b.json").write_text(json.dumps({"estimare_usd": 2.0}), encoding="utf-8")
+        (self.d / "c.json").write_text(json.dumps({}), encoding="utf-8")
+        self.assertAlmostEqual(L.credit_cheltuit(self.d), 3.5)
+
+
 class TestCheia(unittest.TestCase):
     def test_cheia_nu_sta_in_depozit(self):
         self.assertNotIn(L.RADACINA, L.CHEIE.parents)

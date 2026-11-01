@@ -34,6 +34,10 @@ MAX_TOKENI = 120_000                  # gândirea intră în ieșire: pilotul a 
 PRET_USD_PE_MILION = {"claude-opus-5-5": (4.0, 20.0), "claude-sonnet-5-5": (2.0, 10.0), "claude-haiku-5-5": (0.10, 0.50)}
 REDUCERE_LOT = 0.5
 OCTETI_PE_LOT = 200_000_000           # limita API e de 256 MB pe lot
+CREDIT_USD = 200.0                    # creditul promoțional, până pe 23.11.2026 (UTC); când se termină, cererile se opresc
+REZERVA_USD = 2.0                     # nu se trimite nimic peste credit minus rezervă: un lot întrerupt lasă lucrul neterminat
+IMAGINE_OCTETI_PE_TOKEN = 190         # măsurat: o foaie de ≈560 KB ≈ 2 500 de tokeni, o felie de ≈290 KB ≈ 1 950; luat acoperitor
+IESIRE_MAXIMA_PE_EFORT = {"low": 8_000, "medium": 12_000, "high": 16_000, "xhigh": 60_000, "max": 120_000}   # tokeni de ieșire, peste cei măsurați
 ROLURI = ("Lucrează metodic, imagine cu imagine.",
           "Lucrează independent și sceptic: verifică de două ori fiecare imagine, mai ales vehiculele parțial ascunse.")
 SCHEMA = {
@@ -214,12 +218,40 @@ def _salveaza_lot(lot_id: str, meta: dict) -> Path:
     return cale
 
 
+def estimare_cerere_usd(cerere_lot: dict) -> float:
+    """Cât poate costa o cerere: intrarea o știm din mărimea imaginilor, ieșirea o luăm pe cea mai lungă măsurată pe efortul dat."""
+    p = cerere_lot["params"]
+    intrare = 1000 + sum(len(b["source"]["data"]) * 3 // 4 // IMAGINE_OCTETI_PE_TOKEN for b in p["messages"][0]["content"] if b["type"] == "image")
+    return cost_usd(p["model"], intrare, IESIRE_MAXIMA_PE_EFORT.get(p["output_config"]["effort"], MAX_TOKENI))
+
+
+def credit_cheltuit(dosar: Path | None = None) -> float:
+    """Cheltuiala din metadatele loturilor: cele încheiate, la cost real, cele în lucru, la estimarea de la trimitere."""
+    total = 0.0
+    for f in (dosar or LOTURI).glob("*.json"):
+        m = json.loads(f.read_text(encoding="utf-8"))
+        total += m.get("cost_usd", m.get("estimare_usd", 0.0))
+    return total
+
+
+def verifica_credit(cereri: list[dict], cheltuit: float, credit: float = CREDIT_USD, rezerva: float = REZERVA_USD) -> float:
+    """Oprește lotul înainte de plafon: o cerere fără credit eșuează la mijloc, iar lucrul rămâne neterminat. Întoarce estimarea lotului."""
+    estimare = sum(estimare_cerere_usd(c) for c in cereri)
+    if cheltuit + estimare > credit - rezerva:
+        raise SystemExit(f"Lot refuzat: {cheltuit:.2f} USD cheltuiți + {estimare:.2f} USD estimați trec de {credit - rezerva:.2f} USD (creditul minus rezerva). "
+                         "Micșorați lotul sau folosiți alt model.")
+    return estimare
+
+
 def trimite(cereri: list[dict], meta: dict) -> list[str]:
+    estimare = verifica_credit(cereri, credit_cheltuit())
+    print(f"credit: {credit_cheltuit():.2f} USD cheltuiți, lotul costă cel mult ≈{estimare:.2f} USD")
     client = client_api()
     id_uri = []
     for parte in imparte_pe_loturi(cereri):
         lot = client.messages.batches.create(requests=parte)
-        _salveaza_lot(lot.id, {**meta, "cereri": [c["custom_id"] for c in parte], "model": parte[0]["params"]["model"]})
+        _salveaza_lot(lot.id, {**meta, "cereri": [c["custom_id"] for c in parte], "model": parte[0]["params"]["model"],
+                               "estimare_usd": round(sum(estimare_cerere_usd(c) for c in parte), 4)})
         print(f"lot {lot.id}: {len(parte)} cereri, {lot.processing_status}")
         id_uri.append(lot.id)
     return id_uri
