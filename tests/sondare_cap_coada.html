@@ -56,6 +56,8 @@ const FORMULAR = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     const cadru = await asteapta(() => { const c = ecran().contentDocument.getElementById("cadru"); return c.naturalWidth > 0 && c; }, "fotografia din ecran");
     verifica("fotografia e cea publicată", cadru.src.endsWith("/docs/imagini/camera_piata_romana.jpg"), cadru.src);
     verifica("ecranul din prima rundă e m1", ecran().src.endsWith("m1.html"), ecran().src);
+    await ecran().contentDocument.fonts.load("600 16px 'Barlow Semi Condensed'", "ăîșț");
+    verifica("fonturile dispeceratului vin din pachet", ecran().contentDocument.fonts.check("600 16px 'Barlow Semi Condensed'", "ăîșț"));
     // o pagină reîncărcată continuă de unde a rămas
     await new Promise(gata => { rama.onload = gata; rama.contentWindow.location.reload(); });
     await asteapta(() => ecran() && ecran().contentDocument.getElementById("faza").textContent !== "—", "ecranul, după reîncărcare");

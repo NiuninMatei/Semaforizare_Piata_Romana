@@ -28,6 +28,7 @@ import functools
 import http.server
 import json
 import re
+import shutil
 import statistics as st
 import threading
 import webbrowser
@@ -192,11 +193,11 @@ def date_pagina() -> dict:
 
 # ---------------------------------------------------------------- pachetul static
 
-CSP = ("default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'; frame-src 'self'; "
+CSP = ("default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; frame-src 'self'; "
        "connect-src 'none'; form-action 'none'; base-uri 'none'")
-# Fără fonturi din rețea: numele din ecran se potrivesc pe fonturile de pe calculatorul persoanei.
-FONTURI = ('<style>@font-face{font-family:Barlow;src:local("Segoe UI"),local("Helvetica Neue"),local("Arial")}'
-           '@font-face{font-family:"Barlow Semi Condensed";src:local("Segoe UI Semibold"),local("Helvetica Neue"),local("Arial")}</style>')
+# Versiunea M1 ia fonturile de la Google, cea curentă din static/fonturi; în pagina publică vin amândouă din pachet.
+RE_FONTURI = re.compile(r'<link rel="preconnect" href="https://fonts\.googleapis\.com">\n<link href="https://fonts\.googleapis\.com/[^"]*" rel="stylesheet">\n'
+                        r'|<link href="/static/fonturi/fonturi\.css" rel="stylesheet">\n')
 SUBSOL_CAMERA = ("Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, "
                  "persoanele estompate, afișată doar local.")
 SUBSOL_PUBLIC = ("Imaginea camerei: Webcam România – https://webcamromania.ro; drepturile aparțin operatorului camerei. "
@@ -212,11 +213,10 @@ def _inlocuieste(text: str, vechi: str, nou: str) -> str:
 def ecran_static(html: str, versiune: str) -> tuple[str, str]:
     """Dispeceratul, pentru pagina statică: (HTML-ul, scriptul lui). Ecranul rămâne același; se schimbă doar de unde vin datele și fotografia."""
     html = html.replace("\r\n", "\n")
-    html = _inlocuieste(html, '<link rel="preconnect" href="https://fonts.googleapis.com">\n', "")
-    html, n = re.subn(r'<link href="https://fonts\.googleapis\.com/[^"]*" rel="stylesheet">\n', "", html)
+    html, n = RE_FONTURI.subn('<link href="fonturi/fonturi.css" rel="stylesheet">\n', html)
     if n != 1:
         raise SystemExit("Dispeceratul s-a schimbat: legătura spre fonturi nu mai e aceeași; actualizați `ecran_static`.")
-    html = _inlocuieste(html, '<meta charset="utf-8">\n', f'<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="{CSP}">\n{FONTURI}\n')
+    html = _inlocuieste(html, '<meta charset="utf-8">\n', f'<meta charset="utf-8">\n<meta http-equiv="Content-Security-Policy" content="{CSP}">\n')
     html = _inlocuieste(html, SUBSOL_CAMERA, SUBSOL_PUBLIC)
     m = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
     if len(m) != 1:
@@ -243,11 +243,13 @@ def pachet(destinatie: Path = PACHET) -> Path:
     for nume, text in continut_pachet().items():
         with open(destinatie / nume, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
+    shutil.copytree(STATIC / "fonturi", destinatie / "fonturi", dirs_exist_ok=True)
     return destinatie
 
 
 def versiuni_identice() -> bool:
-    a, b = (VERSIUNI[v].read_bytes().replace(b"\r\n", b"\n") for v in ("m1", "m2"))
+    """Dacă persoana ar vedea același ecran în ambele runde; de unde vin fonturile nu contează."""
+    a, b = (ecran_static(VERSIUNI[v].read_text(encoding="utf-8"), "x") for v in ("m1", "m2"))
     return a == b
 
 
