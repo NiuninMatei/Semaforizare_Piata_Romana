@@ -720,7 +720,7 @@ def _lant(zi: str, exclude, reia: bool, fara_simulari: bool, note, desigilat: bo
     vechi = pasi_vechi if reia else {}
     desigilat = desigilat or (reia and bool(stare_veche.get("desigilat")))    # și bucla reia o zi desigilată cu simulări
     stare = {"zi": zi, "pornit": _iso(), "prioritate": text, "prioritate_aplicata": aplicata, "rezultat": "in_curs",
-             "pasi": dict(vechi)}
+             "pasi": dict(vechi), **({"desigilat": True} if desigilat else {})}
 
     def opreste(motiv: str) -> int:
         stare["rezultat"] = f"oprit: {motiv}"
