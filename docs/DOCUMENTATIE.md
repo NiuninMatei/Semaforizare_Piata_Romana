@@ -266,9 +266,9 @@ Pe lângă cele opt cerințe, sistemul respectă patru cerințe nefuncționale. 
 trebuie să funcționeze:
 
 - **Siguranța.** Agentul nu poate aduce semaforul într-o stare periculoasă.
-- **Confidențialitatea.** Nu se păstrează nicio înregistrare video, iar din imaginile camerei este publicat doar un
+- **Confidențialitatea.** Nu se păstrează înregistrări video pe termen lung, iar din imaginile camerei este publicat doar un
   cadru estompat (§ 4.5). Pe laptop rămân doar previzualizarea estompată, suprascrisă continuu, și, temporar, capturi
-  și clipuri scurte folosite la calibrarea zonelor, șterse după calibrare. Imaginile citite de asistentul Claude au
+  și clipuri scurte folosite la calibrare și la numărătoarea de referință, șterse după folosire. Imaginile citite de asistentul Claude au
   fost trimise spre analiză la Anthropic (§ 4.5).
 - **Reproductibilitatea.** Rețeaua, cererea de trafic și rezultatele se pot reface din scripturi.
 - **Rularea pe un laptop Windows fără placă grafică dedicată.** Detecția rulează pe placa grafică Intel integrată
@@ -714,6 +714,11 @@ Măsurile luate sunt următoarele.
   contact este o singură imagine cu mai multe cadre micșorate ale unui clip, puse unul lângă altul. Prin citire,
   imaginile au fost trimise spre analiză modelului, la Anthropic. Copii ale lor au rămas, ca imagini, în jurnalele
   locale ale sesiunilor Claude Code.
+* **Clipurile din săptămâna 1–7.11.2026.** Ca să se verifice numărarea pe întuneric și pe ploaie, s-au salvat din
+  nou, temporar, câteva clipuri de câteva minute. Regulile sunt aceleași: rămân doar pe calculatorul autorului, nu
+  intră în Git, nu se publică și se șterg după numărătoarea de referință. Foile de contact citite de adnotatori fac
+  același drum ca mai sus, inclusiv spre analiză la Anthropic. Acordul din 27.10.2026 (§ 14.1) nu pomenește clipurile:
+  salvarea lor temporară este decizia autorului, ca parte a analizei automate, și nu lărgește ce se publică.
 * **Imaginile publicate.** Singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru, din
   28.10.2026, ora 09:30. Același cadru apare și în prezentarea bornei M1 (`docs/prezentari/`). Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
   plăcuțelor de înmatriculare la toate vehiculele și textul publicitar suprapus de cameră. Pe oameni i-a găsit
@@ -750,7 +755,7 @@ prezentarea bornei M1. Fluxul
 camerei este public, iar utilizarea lui este strict academică. Webcam România, care publică fluxul, și-a dat acordul
 scris pe 27.10.2026 pentru două lucruri: analiza automată a fluxului în scop academic și necomercial, cu sursa
 indicată, și publicarea a cel mult două capturi cu persoanele estompate (§ 14.1)[^webcam]. Orice altă utilizare cere
-un acord nou: de exemplu, o utilizare comercială, folosirea altor imagini sau a unor imagini cu persoane neestompate.
+un acord nou: de exemplu, o utilizare comercială, publicarea altor imagini sau a unor imagini cu persoane neestompate.
 
 **Informarea persoanelor vizate (art. 14 GDPR).** Persoanele vizate sunt participanții la trafic surprinși de cameră.
 Informarea individuală a trecătorilor este imposibilă (art. 14 alin. (5) lit. b) GDPR). De aceea, informarea este
@@ -763,9 +768,9 @@ publicată aici.
 * **Temeiul legal:** interesul legitim, conform art. 6 alin. (1) lit. f) GDPR, cu garanțiile pentru cercetarea
   științifică prevăzute de art. 89 GDPR și de art. 8 din Legea nr. 190/2018.
 * **Datele:** pozițiile și traiectoriile participanților la trafic, extrase automat din fluxul public al camerei
-  Piața Romană. Cadrele video nu se păstrează.
+  Piața Romană. Cadrele video nu se păstrează, în afara clipurilor temporare de verificare, șterse după folosire.
 * **Destinatarii:** publicul și Anthropic. Numărătorile agregate și traiectoriile vehiculelor sunt publicate deschis în
-  depozitul GitHub. Anthropic, furnizorul asistentului Claude, a primit spre analiză capturile și foile de contact
+  depozitul GitHub. Anthropic, furnizorul asistentului Claude, primește spre analiză capturile și foile de contact
   folosite la calibrarea zonelor și la numărătoarea de referință.
 * **Stocarea:** jurnalul local complet și copiile acestor imagini din jurnalele locale ale sesiunilor asistentului se
   păstrează pe durata proiectului și a evaluării academice, apoi se șterg. Datele publicate rămân în depozit.
@@ -3741,7 +3746,7 @@ imaginilor aparțin operatorului camerei, care nu este identificat public; Webca
 drepturi asupra fluxurilor[^webcam-termeni].
 
 Proiectul analizează fluxul în memorie, iar pentru previzualizarea locală suprascrie continuu un singur cadru
-estompat. Capturile și scurtele clipuri folosite la desenarea zonelor nu sunt acte provizorii, adică nu sunt copii
+estompat. Capturile și scurtele clipuri folosite la desenarea zonelor și la numărătoarea de referință nu sunt acte provizorii, adică nu sunt copii
 trecătoare, făcute automat în cursul unui proces tehnic. Sunt copii păstrate local, numai pe durata calibrării,
 nepublicate, care se șterg după încheierea ei. Copiile celor citite de asistentul Claude au rămas în jurnalele
 locale ale sesiunilor lui și se șterg odată cu jurnalul local complet (§ 4.5).

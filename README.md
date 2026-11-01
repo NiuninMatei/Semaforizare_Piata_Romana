@@ -343,10 +343,10 @@ nu intră sub nicio licență a proiectului (`LicenseRef-Toate-drepturile-rezerv
 
 Modulul de viziune nu înregistrează video. Cadrele sunt analizate în memorie, iar pe disc rămâne doar ultima
 previzualizare pentru dispecerat: o imagine de 960 px, cu persoanele estompate, suprascrisă continuu și nepăstrată în
-git. Capturile și clipurile scurte folosite la calibrarea zonelor și la numărătoarea de referință (26.10) au fost
-stocate doar local și au fost șterse după folosire. Cele citite de asistentul Claude, adică capturile și planșele cu
-cadre din clipuri, au fost însă trimise spre analiză la Anthropic. Copii ale lor au rămas în jurnalele locale ale
-sesiunilor asistentului și urmează să fie șterse odată cu jurnalul local complet (§ 4.3, § 4.5). Singurele imagini
+git. Capturile și clipurile scurte folosite la calibrarea zonelor și la numărătoarea de referință (26.10 și, pentru
+verificarea pe întuneric și pe ploaie, săptămâna 1–7.11) se stochează doar local și se șterg după folosire. Cele citite
+de asistentul Claude, adică capturile și planșele cu cadre din clipuri, sunt însă trimise spre analiză la Anthropic.
+Copii ale lor rămân în jurnalele locale ale sesiunilor asistentului și se șterg odată cu jurnalul local complet (§ 4.3, § 4.5). Singurele imagini
 publicate sunt cele două figuri estompate din `docs/imagini/`, verificate bucată cu bucată înainte de publicare, și
 reproducerile aceluiași cadru din PDF-uri.
 Numerele de înmatriculare nu se citesc.
