@@ -114,7 +114,7 @@ class ReferintaTest(unittest.TestCase):
                 w.write(f)
             w.release()
             tg = [{"id": "T", "felii": [{"linie": [0.5, 0.3, 0.5, 0.7], "repere": [0.5]}]}]
-            n = R.time_slices(tg, clip, Path(tmp) / "felii", chunk_s=2, pe_rand=2)
+            n = R.time_slices(tg, clip, Path(tmp) / "felii", chunk_s=2, pe_rand=2, inaltime=72 * 3)
             self.assertEqual(n, 2)
             b0, b1 = (cv2.imread(str(Path(tmp) / "felii" / "T" / f"b{b}_l0.jpg")) for b in (0, 1))
             self.assertEqual(b0.shape, b1.shape)
