@@ -330,7 +330,8 @@ def main(argv=None) -> None:
             print("CSV:", Path(x.out), len(scrie_csv(rez, Path(x.out))), "rânduri")
         if rez:
             for cid, v in sorted(rez.items()):
-                print(f"  {cid}: {v['numar']} [{v['numar_minim']}–{v['numar_maxim']}], {v['vizibilitate']}")
+                if "numar" in v:                 # și alte unelte folosesc `aduna`, cu alte scheme
+                    print(f"  {cid}: {v['numar']} [{v['numar_minim']}–{v['numar_maxim']}], {v['vizibilitate']}")
     else:
         meta = json.loads((LOTURI / f"{x.lot}.json").read_text(encoding="utf-8"))
         tinte = {t["id"]: t for t in json.loads(Path(meta["tinte"]).read_text(encoding="utf-8-sig"))}
