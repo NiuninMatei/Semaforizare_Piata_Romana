@@ -124,7 +124,7 @@ const DATE_SONDARE = {
 "text": [
 "Vă mulțumim că ne ajutați. Verificăm dacă un ecran pentru supravegherea semafoarelor din Piața Romană este ușor de înțeles. Este un proiect universitar.",
 "**Testăm ecranul, nu pe dumneavoastră.** Dacă ceva nu merge sau nu se înțelege, vina e a ecranului, iar asta vrem să aflăm.",
-"Durează în jur de 15 minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”."
+"Durează între 10 și 20 de minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”."
 ],
 "buton": "Mai departe"
 },

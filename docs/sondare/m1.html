@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; frame-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<style>.cam .stare,#sursa{display:none}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dispecerat Piața Romană</title>
 <link href="fonturi/fonturi.css" rel="stylesheet">
@@ -64,12 +65,13 @@ footer a{color:inherit;text-decoration:underline}
 <main>
   <div class="col">
     <section class="cam" aria-labelledby="t-cam">
-      <h2 id="t-cam">Camera Webcam România, analizată live</h2>
+      <h2 id="t-cam">Piața Romană, fotografie fixă</h2>
       <div style="position:relative">
-        <img id="cadru" alt="Cadrul curent al camerei din Piața Romană, cu zonele de numărare și vehiculele detectate">
+        <img id="cadru" alt="Fotografie a Pieței Romane, cu persoanele și plăcuțele estompate">
         <div class="gol" id="cadru-gol">Nu primesc imagini de la modulul de viziune.<br>Porniți-l cu <b>scripts\2_viziune_live.bat</b>; imaginea apare aici în câteva secunde.</div>
       </div>
-      <div class="stare">
+      <div class="sub" style="margin-top:10px">Pentru acest test, o fotografie fixă în locul camerei în direct.</div>
+<div class="stare">
         <span><i class="punct" id="p-cam"></i><span id="s-cam">camera: necunoscut</span></span>
         <span id="s-fps"></span>
         <span id="s-urm"></span>
@@ -106,7 +108,7 @@ footer a{color:inherit;text-decoration:underline}
       </div>
     </section>
     <section aria-labelledby="t-deb">
-      <h2 id="t-deb">Debite măsurate de cameră</h2>
+      <h2 id="t-deb">Debite de trafic</h2>
       <table><thead><tr><th>Braț</th><th style="text-align:right">intră (veh/h)</th><th style="text-align:right">ies (veh/h)</th></tr></thead><tbody id="debite"><tr><td colspan="3" class="sub">Așteptăm primele măsurători.</td></tr></tbody></table>
     </section>
   </div>

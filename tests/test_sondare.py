@@ -1,5 +1,5 @@
-"""Teste pentru sondarea dispeceratului (`romana.dashboard.sondare`): pașii, pachetul static, citirea răspunsurilor și, într-un
-browser fără fereastră (Edge sau Chrome, dacă există), logica din JavaScript și parcursul complet al paginii adevărate.
+"""Teste pentru sondarea dispeceratului (`romana.dashboard.sondare`): pașii, pachetul static, citirea răspunsurilor, logica din
+JavaScript (cu Node.js sau, dacă lipsește, într-un browser) și, într-un browser fără fereastră (Chrome sau Edge), parcursul complet al paginii.
 
 Rulare:  set PYTHONPATH=src && python -m unittest tests.test_sondare
 """
@@ -22,9 +22,10 @@ from romana.dashboard import sondare as s
 
 RADACINA = Path(__file__).resolve().parents[1]
 HASH_M1 = "f7986e77a3a7dc04a0319fdb4230629a7f129ad7a02a97824d9fa0056e1c0b84"
-BROWSERE = (r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+BROWSERE = (r"C:\Program Files\Google\Chrome\Application\chrome.exe", r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
             shutil.which("chromium") or "", shutil.which("google-chrome") or "")
 BROWSER = next((b for b in BROWSERE if b and Path(b).exists()), None)
+NODE = next((n for n in (str(RADACINA / ".venv" / "nodejs" / "node.exe"), shutil.which("node") or "") if n and Path(n).exists()), None)
 
 RASPUNS = """Sondare dispecerat Piața Romană, v1
 Grup {grup}, ordine {ordine}, ecran 1536x730, {sfarsit}
@@ -177,11 +178,17 @@ class TestPachet(unittest.TestCase):
                     self.assertIn(parte, continut, nume)
                 self.assertNotIn("<script>", continut, f"{nume}: script în pagină")
 
-    def test_ecranul_ramane_acelasi(self):
+    def test_ecranul_se_schimba_doar_la_camera(self):
         sursa = s.VERSIUNI["m1"].read_text(encoding="utf-8").replace("\r\n", "\n")
         pagina, script = s.ecran_static(sursa, "m1")
-        corp = lambda t: re.sub(r"<script.*", "", t[t.index("<body>"):], flags=re.S)
+        def corp(t):
+            t = re.sub(r"<script.*", "", t[t.index("<body>"):], flags=re.S).replace(s.NOTA_CAMERA, "")
+            t = re.sub(r'<h2 id="t-(cam|deb)">.*?</h2>', r"<h2 \1>", t)
+            return re.sub(r'<img id="cadru" alt="[^"]*">', "<img>", t)
         self.assertEqual(corp(pagina), corp(sursa).replace(s.SUBSOL_CAMERA, s.SUBSOL_PUBLIC))
+        for fals in ("analizată live", "Debite măsurate de cameră", "afișată doar local"):
+            self.assertNotIn(fals, pagina)
+        self.assertIn(s.NOTA_CAMERA, pagina)
         original = re.search(r"<script>(.*?)</script>", sursa, flags=re.S)[1].strip() + "\n"
         self.assertEqual(script, original.replace('"/api/video"', json.dumps(s.IMAGINE_PUBLICA)))
 
@@ -306,13 +313,26 @@ class TestRaspuns(Primite):
         self.assertFalse((self.dosar / "public.csv").exists())
 
 
+class VerificaLogica:
+    def verifica_logica(self, o):
+        self.assertGreaterEqual(o["trecute"], 50)
+        for nr, t in enumerate(o["texte"], 1):         # textul scris de JavaScript se citește înapoi în Python
+            r = s.citeste_raspuns(t)
+            self.assertEqual((r["grup"], r["ordine"]), ("a", {1: ("m1", "m2"), 2: ("m2", "m1")}[nr]))
+            self.assertEqual({x["id"] for x in r["pasi"]}, {p["id"] for p in s.pasi() if p.get("eticheta")} - {"r2_incurcat"})
+            pe_id = {x["id"]: x for x in r["pasi"]}
+            self.assertFalse(pe_id["r1_real"]["corect"])
+            self.assertEqual(pe_id["r1_incurcat"]["valoare"], "butonul: unde era?")
+            self.assertTrue(pe_id["r2_coada"]["nu_reuseste"])
+
+
 class Tacut(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
 
-@unittest.skipUnless(BROWSER, "nu există Edge sau Chrome pe acest calculator")
-class TestInBrowser(unittest.TestCase):
+@unittest.skipUnless(BROWSER, "nu există Chrome sau Edge pe acest calculator")
+class TestInBrowser(VerificaLogica, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Tacut, directory=str(RADACINA)))
@@ -335,18 +355,6 @@ class TestInBrowser(unittest.TestCase):
         self.assertGreater(o["trecute"], 0)
         return o
 
-    def test_logica_din_javascript(self):
-        o = self.ruleaza("sondare_logica.html", 20000)
-        self.assertGreaterEqual(o["trecute"], 50)
-        for nr, t in enumerate(o["texte"], 1):         # textul scris de JavaScript se citește înapoi în Python
-            r = s.citeste_raspuns(t)
-            self.assertEqual((r["grup"], r["ordine"]), ("a", {1: ("m1", "m2"), 2: ("m2", "m1")}[nr]))
-            self.assertEqual({x["id"] for x in r["pasi"]}, {p["id"] for p in s.pasi() if p.get("eticheta")} - {"r2_incurcat"})
-            pe_id = {x["id"]: x for x in r["pasi"]}
-            self.assertFalse(pe_id["r1_real"]["corect"])
-            self.assertEqual(pe_id["r1_incurcat"]["valoare"], "butonul: unde era?")
-            self.assertTrue(pe_id["r2_coada"]["nu_reuseste"])
-
     def test_pagina_cap_coada(self):
         o = self.ruleaza("sondare_cap_coada.html", 240000)
         self.assertLess(o["lungime_link"], 7500)
@@ -359,6 +367,19 @@ class TestInBrowser(unittest.TestCase):
         self.assertTrue(pe_id["r2_verde"]["nu_reuseste"])
         self.assertEqual(s.citeste_raspuns(o["text_oprit"])["grup"], "c")
         self.assertFalse(s.citeste_raspuns(o["text_oprit"])["terminat"])
+
+    def test_logica_in_browser(self):
+        self.verifica_logica(self.ruleaza("sondare_logica.html", 20000))
+
+
+@unittest.skipUnless(NODE, "Node.js nu e instalat")
+class TestCuNode(VerificaLogica, unittest.TestCase):
+    def test_logica(self):
+        r = subprocess.run([NODE, str(RADACINA / "tests" / "sondare_logica_node.js")], capture_output=True, timeout=60)
+        self.assertEqual(r.returncode, 0, r.stderr.decode("utf-8", "replace")[-500:])
+        o = json.loads(r.stdout.decode("utf-8"))
+        self.assertEqual(o["esuate"], [])
+        self.verifica_logica(o)
 
 
 if __name__ == "__main__":
