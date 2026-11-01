@@ -109,6 +109,17 @@ class TestPasi(unittest.TestCase):
                 vazute.add(cheie)
                 self.assertNotIn(":", p["eticheta"])
 
+    def test_pe_telefon_textele_nu_spun_dreapta_sau_stanga(self):
+        def pe_telefon(t):
+            for a, b in s.PE_TELEFON:
+                t = t.replace(a, b)
+            return t
+        for p in s.pasi():
+            for t in p.get("text", []):
+                self.assertNotRegex(pe_telefon(t), "dreapta|stânga", p["id"])
+        html = (s.STATIC / "sondare.html").read_text(encoding="utf-8")
+        self.assertNotIn("stânga", pe_telefon(re.search(r'<div id="acoperit">(.*?)</div>', html)[1]))
+
     def test_debitele_nu_dau_raspunsul_la_coada(self):
         for runda in (0, 1):
             cel_mai_mare = max(s.INTRARI[runda], key=s.INTRARI[runda].get)

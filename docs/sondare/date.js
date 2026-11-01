@@ -86,6 +86,36 @@ const DATE_SONDARE = {
 },
 "LUNGIME_TEXT": 300,
 "URL_PROIECT": "https://github.com/NiuninMatei/Semaforizare_Piata_Romana",
+"PE_TELEFON": [
+[
+"în partea din dreapta",
+"în partea de jos"
+],
+[
+"partea din dreapta",
+"partea de jos"
+],
+[
+"Partea din dreapta",
+"Partea de jos"
+],
+[
+"ecranul din dreapta",
+"ecranul de jos"
+],
+[
+"În stânga primiți",
+"Sus primiți"
+],
+[
+"Răspundeți în stânga",
+"Răspundeți sus"
+],
+[
+"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului",
+"Dacă jos nu se vede tot, derulați cu degetul"
+]
+],
 "PASI": [
 {
 "id": "bun_venit",
