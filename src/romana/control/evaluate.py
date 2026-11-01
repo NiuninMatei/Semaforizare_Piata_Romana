@@ -262,7 +262,10 @@ def main(argv=None) -> None:
         report(pd.read_csv(EVAL_DIR / "rezultate.csv"))
         print(f"[OK] {DOCS_RES / 'rezultate.md'}")
         return
-    scen = [Path(s) for s in (args.scenarii or sorted(glob.glob(str(ROOT / "sumo/scenarios/*.sumocfg"))))]
+    from romana.lant_zilnic import ROLURI, ROLURI_SIGILATE     # § 9.11: zilele sigilate nu se simulează din greșeală
+    sigilate = [z for z, r in ROLURI.items() if r in ROLURI_SIGILATE]
+    implicite = [s for s in sorted(glob.glob(str(ROOT / "sumo/scenarios/*.sumocfg"))) if not any(z in Path(s).name for z in sigilate)]
+    scen = [Path(s) for s in (args.scenarii or implicite)]
     models = [Path(m) for m in (args.model if args.model is not None else sorted(glob.glob(str(ROOT / "models/ppo_*.zip"))))]
     plans = [tuple(float(v) for v in p.split(",")) for p in args.planuri]
     tasks = [(sc, c.name, seed) for sc in scen for c in make_controllers(sc, models, plans)

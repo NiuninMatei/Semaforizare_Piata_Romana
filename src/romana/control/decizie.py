@@ -38,24 +38,27 @@ CANDIDATI = ["PLAN_12_14_12", "TOD_DEBIT", "ppo_romana_cal"]   # de la cel mai s
 IN_VIGOARE = "REALIST"
 VARIANTA_LIVE = {"PLAN_12_14_12": "plan_scurt", "TOD_DEBIT": "tod_debit", "ppo_romana_cal": "e13",
                  "REALIST": "realist"}
-RE_SC = re.compile(r"zi_(\d{4}-\d{2}-\d{2})_(.+?)(?:_x(\d)_(\d))?$")
+RE_SC = re.compile(r"(?P<masura>cor_)?zi_(?P<zi>\d{4}-\d{2}-\d{2})_(?P<fereastra>.+?)(?:_x(?P<a>\d)_(?P<b>\d))?$")
 
 
 def debite(scenarii) -> dict[str, float]:
     """Debitul echilibrat (veh/h) al fiecărui scenariu: media profilului de 15 min pe fereastra lui, din rezumatul
-    scris de `scenarii_zi`, înmulțită cu scara scenariilor de sensibilitate (×1,2 / ×0,8)."""
+    măsurii lui, scris de `scenarii_zi`, înmulțită cu scara scenariilor de sensibilitate (×1,2 / ×0,8). Scenariile unei
+    decizii vin dintr-o singură măsură (§ 9.11)."""
     rezumate, out = {}, {}
     for sc in scenarii:
         m = RE_SC.search(sc)
         if not m:
             raise ValueError(f"scenariu fără zi și fereastră în nume: {sc}")
-        zi, fereastra, a, b = m.groups()
-        if zi not in rezumate:
-            rezumate[zi] = json.loads((DEMAND_DIR / f"zi_{zi}_rezumat.json").read_text(encoding="utf-8"))
-        rez = rezumate[zi]
-        t0, t1 = (pd.Timestamp(x) for x in rez["ferestre"][fereastra])
+        nume, a, b = f"{m['masura'] or ''}zi_{m['zi']}", m["a"], m["b"]
+        if nume not in rezumate:
+            rezumate[nume] = json.loads((DEMAND_DIR / f"{nume}_rezumat.json").read_text(encoding="utf-8"))
+        rez = rezumate[nume]
+        t0, t1 = (pd.Timestamp(x) for x in rez["ferestre"][m["fereastra"]])
         prof = pd.Series({pd.Timestamp(k): float(v) for k, v in rez["profil"].items()})
         out[sc] = float(prof[(prof.index >= t0) & (prof.index < t1)].mean()) * (float(f"{a}.{b}") if a else 1.0)
+    if len({n.startswith("cor_") for n in rezumate}) > 1:
+        raise ValueError("scenarii din măsuri diferite: rezultatele nu se adună (§ 9.11)")
     return out
 
 
@@ -121,7 +124,7 @@ def main(argv=None) -> None:
         r["disciplinati"] = compara(p.loc[~indisc, x], p.loc[~indisc, ref])
         return r
 
-    rez = {"zi": sorted({RE_SC.search(s).group(1) for s in q}), "praguri": args.praguri, "in_vigoare": ref,
+    rez = {"zi": sorted({RE_SC.search(s)["zi"] for s in q}), "praguri": args.praguri, "in_vigoare": ref,
            "debite": {s: round(v) for s, v in q.items()}, "cazuri": cazuri, "benzi_analiza": benzi}
     if args.confirma:
         e = evaluare(args.confirma)

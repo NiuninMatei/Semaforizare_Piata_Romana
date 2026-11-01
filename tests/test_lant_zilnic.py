@@ -119,6 +119,23 @@ class TestRoluri(unittest.TestCase):
     def test_o_zi_fara_rol_ramane_ca_inainte(self):
         self.assertEqual(self._seeduri("2026-10-29"), {"1-10"})
 
+    def test_zilele_care_decid_nu_aleg_ferestre_pe_sferturi_incetinite(self):
+        for zi in ("2026-11-04", "2026-11-05", "2026-11-07"):
+            self.assertIn("--fara-incetinite", L.comanda_scenarii(zi))
+        for zi in ("2026-11-01", "2026-10-29"):
+            self.assertNotIn("--fara-incetinite", L.comanda_scenarii(zi))
+
+    def test_o_zi_de_dupa_ultimul_rol_ramane_sigilata(self):
+        self.assertTrue(L.sigilata("2026-11-08"))
+        self.assertFalse(L.sigilata("2026-11-02"))
+        self.assertFalse(L.sigilata("2026-10-29"))
+
+    def test_zilele_fara_antrenare(self):
+        for zi in ("2026-10-28", "2026-10-29", "2026-11-04", "2026-11-05", "2026-11-06", "2026-11-07"):
+            self.assertIn(zi, L.ZILE_FARA_ANTRENARE)
+        for zi in ("2026-10-25", "2026-10-26", "2026-11-01", "2026-11-02", "2026-11-03"):
+            self.assertNotIn(zi, L.ZILE_FARA_ANTRENARE)
+
     def test_desigilarea_cere_o_zi(self):
         with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
             L.main(["--desigileaza"])

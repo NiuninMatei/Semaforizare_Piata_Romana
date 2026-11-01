@@ -99,7 +99,11 @@ def main(argv=None) -> None:
     from stable_baselines3.common.callbacks import CheckpointCallback
     from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 
-    scen = args.scenarii or sorted(glob.glob(str(ROOT / "sumo" / "scenarios" / "*.sumocfg")))
+    scen = args.scenarii
+    if not scen:      # § 9.11: fără listă explicită, zilele închise și cele cu alt rol decât antrenarea rămân afară
+        from romana.lant_zilnic import ZILE_FARA_ANTRENARE
+        scen = [s for s in sorted(glob.glob(str(ROOT / "sumo" / "scenarios" / "*.sumocfg")))
+                if not any(z in Path(s).name for z in ZILE_FARA_ANTRENARE)]
     controlled = ["romana"] + (NEIGHBORS if args.coridor else [])
     name = args.nume or ("coridor" if args.coridor else "romana")
     out = OUTPUT_DIR / "train" / name
