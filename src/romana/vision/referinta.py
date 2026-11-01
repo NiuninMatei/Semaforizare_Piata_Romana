@@ -153,11 +153,13 @@ def _harta_linie(linie: list, W: int, H: int, grosime: int = 3) -> tuple:
     return harta[..., 0].astype(np.float32), harta[..., 1].astype(np.float32)
 
 
-def _rand_felie(coloane: np.ndarray, s0: float, fps: float, pe_rand: float, scara_t: int, scara_y: int, repere: list):
-    """Un rând al feliei, de `pe_rand` secunde: rigla de secunde deasupra, reperele de pe linie pe ambele margini."""
+def _rand_felie(coloane: np.ndarray, s0: float, fps: float, pe_rand: float, scara_t: int, inaltime: int, repere: list):
+    """Un rând al feliei, de `pe_rand` secunde, înalt de `inaltime` pixeli: rigla de secunde deasupra, reperele de pe linie pe ambele margini."""
     import cv2
 
-    p = cv2.resize(coloane, None, fx=scara_t, fy=scara_y, interpolation=cv2.INTER_NEAREST)
+    w = coloane.shape[1] * scara_t
+    p = cv2.resize(cv2.resize(coloane, (w, coloane.shape[0]), interpolation=cv2.INTER_NEAREST), (w, inaltime),
+                   interpolation=cv2.INTER_AREA if inaltime < coloane.shape[0] else cv2.INTER_NEAREST)
     lipsa = max(0, int(round(pe_rand * fps * scara_t)) - p.shape[1])
     p = cv2.copyMakeBorder(p, 26, 4, 8, 8 + lipsa, cv2.BORDER_CONSTANT, value=(25, 25, 25))
     for s in np.arange(np.ceil(s0), s0 + pe_rand, 1.0):
@@ -165,14 +167,14 @@ def _rand_felie(coloane: np.ndarray, s0: float, fps: float, pe_rand: float, scar
         cv2.line(p, (c, 16), (c, 26), (255, 255, 255), 1)
         cv2.putText(p, f"{s:.0f}", (c + 2, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
     for r in repere:
-        y = 26 + int(round(r * coloane.shape[0] * scara_y))
+        y = 26 + int(round(r * inaltime))
         cv2.line(p, (0, y), (8, y), (0, 0, 255), 2)
         cv2.line(p, (p.shape[1] - 9, y), (p.shape[1] - 1, y), (0, 0, 255), 2)
     return p
 
 
 def time_slices(targets: list[dict], clip: str, out: Path, chunk_s: float = 30, pe_rand: float = 15,
-                scara_t: int = 6, scara_y: int = 3) -> int:
+                scara_t: int = 6, inaltime: int = 417) -> int:
     """Feliile timp-spațiu: out/<id>/b<k>_l<j>.jpg pentru fiecare țintă, bucată și linie din „felii”.
 
     Din fiecare cadru se ia aceeași linie de pixeli (media pe 3 pixeli grosime), iar liniile se pun una lângă alta: vehiculele care o
@@ -202,7 +204,7 @@ def time_slices(targets: list[dict], clip: str, out: Path, chunk_s: float = 30, 
             for s0 in np.arange(b * chunk_s, (b + 1) * chunk_s, pe_rand):
                 m = (timpi >= s0 - 1e-9) & (timpi < s0 + pe_rand - 1e-9)
                 if m.any():
-                    randuri.append(_rand_felie(imagine[:, m], s0, fps, pe_rand, scara_t, scara_y, repere[id_tinta, j]))
+                    randuri.append(_rand_felie(imagine[:, m], s0, fps, pe_rand, scara_t, inaltime, repere[id_tinta, j]))
             cv2.imwrite(str(out / id_tinta / f"b{b}_l{j}.jpg"), np.vstack(randuri), [cv2.IMWRITE_JPEG_QUALITY, 90])
     print(f"[felii] {k} cadre, {k / fps:.1f} s; {n_chunks} bucăți de {chunk_s:g} s → {out}")
     return n_chunks
