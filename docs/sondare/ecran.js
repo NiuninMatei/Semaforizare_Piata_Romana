@@ -121,9 +121,15 @@ function adresaFormular(text) {
   return `https://docs.google.com/forms/d/e/${LINK.formular}/viewform?usp=pp_url&entry.${LINK.intrare}=${encodeURIComponent(text)}`;
 }
 function copiaza(text, zona) {
-  const gata = () => { $("nota").textContent = "Textul e copiat. Îl puteți lipi într-un mesaj către persoana care v-a invitat."; blocat = false; };
+  const spune = mesaj => { $("nota").textContent = mesaj; blocat = false; };
+  const gata = () => spune("Textul e copiat. Îl puteți lipi într-un mesaj către persoana care v-a invitat.");
   const camp = zona.querySelector("textarea");
-  const vechi = () => { camp.select(); document.execCommand("copy"); gata(); };
+  const vechi = () => {
+    camp.select();
+    let reusit = false;
+    try { reusit = document.execCommand("copy"); } catch (e) { /* browserul refuză */ }
+    if (reusit) gata(); else spune("Textul e selectat: apăsați Ctrl+C, apoi îl puteți lipi într-un mesaj către persoana care v-a invitat.");
+  };
   if (navigator.clipboard) navigator.clipboard.writeText(text).then(gata, vechi); else vechi();
 }
 function arataFinal(g, adauga) {

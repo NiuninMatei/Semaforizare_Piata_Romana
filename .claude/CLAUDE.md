@@ -48,6 +48,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   prelucrarea de noapte (`romana.lant_zilnic --bucla`, la 00:15; `outputs/lant/<zi>/`). După o repornire a aplicației se pornesc
   din nou: paznicul, veghea, lanțul cu `--reia`.
 - **Înaintea oricărei opriri voite a colectării:** întâi fișierul `outputs/live/fara_repornire`, altfel paznicul o repornește.
+- **Sondarea cu oameni:** pagină publică în `docs/sondare` (GitHub Pages), fără laptop; după orice schimbare în `static/` se refac
+  fișierele cu `python -m romana.dashboard.sondare --pachet`. Linkurile de invitație: `--linkuri`, abia după reparațiile din
+  `static/index.html`; adresa formularului stă doar în `outputs/sondare/formular.json`, niciodată în depozit (§ 4.5, § 8).
 
 ## Reguli operative
 
@@ -63,7 +66,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   local, nu intră în commit, se șterg după folosire (memoria borne-curs).
 - **Rămase pentru autor:** GitHub Support #4909163 (refs/pull/1/head); după evaluarea academică, ștergerea jurnalului local
   complet (data/trajectories_brute, outputs/referinta, outputs/sondare, outputs/copie_scratchpad_*, copia istoricului original,
-  imaginile din jurnalele sesiunilor; § 4.5).
+  imaginile din jurnalele sesiunilor; § 4.5), plus formularul și foaia de calcul ale sondării, din contul Google.
 - **Istoricul stărilor de lucru (până pe 01.11):** `.claude/stare_arhiva.md`; nu se încarcă automat, se citește la nevoie.
 
 # Compact instructions

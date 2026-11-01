@@ -110,7 +110,9 @@ const FORMULAR = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     verifica("formularul primește exact textul afișat", u.searchParams.get("entry.123456") === camp.value);
     rez.lungime_link = trimite.href.length;
     rez.text = camp.value;
-    verifica("are și copierea textului", [...pagina().querySelectorAll("#ghid button")].some(b => b.textContent === "Copiază textul"));
+    await apasa("Copiază textul");
+    const nota = await asteapta(() => pagina().getElementById("nota").textContent, "mesajul de după copiere");
+    verifica("copierea spune ce s-a întâmplat", nota.includes("copiat") || nota.includes("Ctrl+C"), nota);
     // ---- nimic nu pleacă singur
     const resurse = [...rama.contentWindow.performance.getEntriesByType("resource")].map(r => r.name);
     verifica("toate resursele paginii sunt de la aceeași adresă", resurse.every(n => n.startsWith(location.origin)), resurse);
