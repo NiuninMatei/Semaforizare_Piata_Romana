@@ -1,0 +1,157 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Sondarea, cap-coadă</title>
+<!-- Parcurge pagina adevărată din docs/sondare, într-o ramă, ca o persoană: tests/test_sondare.py o rulează într-un browser fără fereastră. -->
+<iframe id="p" style="width:1500px;height:900px;border:0"></iframe>
+<pre id="rezultat"></pre>
+<script>
+"use strict";
+const rama = document.getElementById("p");
+const pagina = () => rama.contentDocument;
+const ecran = () => pagina().querySelector("#scena iframe");
+const esuate = [];
+let trecute = 0;
+const verifica = (nume, cond, detaliu) => { if (cond) trecute += 1; else esuate.push(nume + (detaliu === undefined ? "" : ": " + JSON.stringify(detaliu))); };
+const doarme = ms => new Promise(r => setTimeout(r, ms));
+async function asteapta(cond, ce, ms = 15000) {
+  for (let t = 0; t < ms; t += 100) {
+    try { const v = cond(); if (v) return v; } catch (e) { /* încă se încarcă */ }
+    await doarme(100);
+  }
+  throw new Error("nu a apărut: " + ce);
+}
+async function apasa(text) {
+  const b = await asteapta(() => [...pagina().querySelectorAll("#ghid button")].find(x => x.textContent.trim().startsWith(text)), "butonul " + text);
+  await doarme(800);          // pauza de după un pas, împotriva dublului clic
+  b.click();
+  await doarme(50);
+}
+async function pe_ecran(sel) {
+  const e = await asteapta(() => ecran().contentDocument.querySelector(sel), "pe ecran " + sel);
+  e.click();
+  await doarme(50);
+}
+async function incarca(adresa) {
+  sessionStorage.clear();
+  await new Promise(gata => { rama.onload = gata; rama.src = adresa; });
+}
+async function primaParte() {
+  await apasa("Mai departe");
+  await apasa("Sunt de acord");
+  await apasa("Uneori");
+  await apasa("Mai departe");
+  await apasa("Am înțeles");
+  await apasa("Deschide ecranul");
+}
+const LINK = "../docs/sondare/index.html";
+const FORMULAR = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+(async () => {
+  const rez = {};
+  try {
+    // ---- persoana invitată, de la început până la final
+    await incarca(`${LINK}?g=a&o=1&f=${FORMULAR}&e=123456`);
+    verifica("invitatul nu vede eticheta de probă", !pagina().querySelector("#cod"));
+    await primaParte();
+    await asteapta(() => ecran().contentDocument.getElementById("faza").textContent !== "—", "dispeceratul, cu datele simulate");
+    const cadru = await asteapta(() => { const c = ecran().contentDocument.getElementById("cadru"); return c.naturalWidth > 0 && c; }, "fotografia din ecran");
+    verifica("fotografia e cea publicată", cadru.src.endsWith("/docs/imagini/camera_piata_romana.jpg"), cadru.src);
+    verifica("ecranul din prima rundă e m1", ecran().src.endsWith("m1.html"), ecran().src);
+    // o pagină reîncărcată continuă de unde a rămas
+    await new Promise(gata => { rama.onload = gata; rama.contentWindow.location.reload(); });
+    await asteapta(() => ecran() && ecran().contentDocument.getElementById("faza").textContent !== "—", "ecranul, după reîncărcare");
+    verifica("reîncărcarea păstrează sarcina", pagina().getElementById("ghid").textContent.includes("Cine schimbă acum"));
+    await apasa("Am terminat");
+    verifica("sub întrebare, ecranul e acoperit", pagina().getElementById("acoperit").classList.contains("vizibil") && ecran().inert === true);
+    await apasa("Un calculator");
+    await apasa("Am terminat");
+    await apasa("Dacia vest");
+    await pe_ecran('[data-mod="manual"]');
+    await pe_ecran("#da");
+    await pe_ecran('[data-faza="1"]');
+    await pe_ecran("#da");
+    await asteapta(() => ecran().contentDocument.getElementById("faza-det").textContent.startsWith("verde") && ecran().contentDocument.getElementById("faza").textContent.startsWith("E–V"), "verde pe Dacia", 30000);
+    await apasa("Am terminat");
+    await apasa("Roșu");
+    await apasa("Da, clar");
+    await pe_ecran('[data-mod="program"]');
+    await pe_ecran("#da");
+    await apasa("Am terminat");
+    await apasa("Da, clar");
+    await apasa("Închide ecranul");
+    verifica("ecranul se închide", !ecran());
+    await apasa("O coadă");
+    await apasa("Nu");
+    await apasa("Ușor");
+    (await asteapta(() => pagina().querySelector("#ghid textarea"), "câmpul de text")).value = "butonul: unde era?";
+    await apasa("Mai departe");
+    await apasa("Deschide ecranul");
+    await asteapta(() => ecran() && ecran().src.endsWith("m2.html"), "ecranul din a doua rundă");
+    await apasa("Am terminat");
+    await apasa("Un om");
+    await apasa("Am terminat");
+    await apasa("Magheru");
+    await apasa("Nu reușesc");
+    await apasa("Galben");
+    await apasa("Nu");
+    await apasa("Am terminat");
+    await apasa("Nu");
+    await apasa("Închide ecranul");
+    await apasa("Foarte ușor");
+    await apasa("Mai departe");
+    await apasa("A doua");
+    await apasa("Nu");
+    await apasa("Nu");
+    const camp = await asteapta(() => pagina().getElementById("text-final"), "textul de la final");
+    const trimite = pagina().getElementById("trimite");
+    verifica("invitatul are butonul de trimitere", !!trimite);
+    verifica("trimiterea deschide formularul într-o filă nouă", trimite.target === "_blank" && trimite.rel.includes("noopener") && trimite.rel.includes("noreferrer"));
+    const u = new URL(trimite.href);
+    verifica("adresa formularului", u.origin === "https://docs.google.com" && u.pathname === `/forms/d/e/${FORMULAR}/viewform`, trimite.href);
+    verifica("formularul primește exact textul afișat", u.searchParams.get("entry.123456") === camp.value);
+    rez.lungime_link = trimite.href.length;
+    rez.text = camp.value;
+    verifica("are și copierea textului", [...pagina().querySelectorAll("#ghid button")].some(b => b.textContent === "Copiază textul"));
+    // ---- nimic nu pleacă singur
+    const resurse = [...rama.contentWindow.performance.getEntriesByType("resource")].map(r => r.name);
+    verifica("toate resursele paginii sunt de la aceeași adresă", resurse.every(n => n.startsWith(location.origin)), resurse);
+    const opreste = await new Promise(gata => {
+      pagina().addEventListener("securitypolicyviolation", e => gata(e.violatedDirective), {once: true});
+      rama.contentWindow.fetch("https://example.com/").catch(() => {});
+      setTimeout(() => gata(null), 3000);
+    });
+    verifica("regula browserului oprește cererile din pagină", opreste === "connect-src", opreste);
+    const s = pagina().createElement("script");
+    s.textContent = "window.PATRUNS = 1";
+    pagina().body.appendChild(s);
+    verifica("regula browserului oprește scripturile adăugate", rama.contentWindow.PATRUNS === undefined);
+
+    // ---- proba deschisă: cine găsește singur pagina nu are ce trimite
+    await incarca(LINK);
+    verifica("proba deschisă e scrisă pe pagină", pagina().getElementById("cod").textContent.includes("nimic nu se trimite"));
+    await apasa("Mai departe");
+    verifica("acordul probei spune că nu se trimite nimic", pagina().getElementById("ghid").textContent.includes("nimic din ce faceți aici nu se trimite"));
+    await apasa("Sunt de acord");
+    await apasa("Mă opresc aici");
+    await apasa("Da, mă opresc");
+    await asteapta(() => pagina().getElementById("text-final"), "finalul probei");
+    verifica("proba deschisă nu are buton de trimitere", !pagina().getElementById("trimite"));
+    verifica("proba deschisă nu are copiere", ![...pagina().querySelectorAll("#ghid button")].some(b => b.textContent === "Copiază textul"));
+
+    // ---- o persoană invitată care se oprește poate trimite ce a notat
+    await incarca(`${LINK}?g=c&o=2&f=${FORMULAR}&e=123456`);
+    await primaParte();
+    await asteapta(() => ecran() && ecran().src.endsWith("m2.html"), "ordinea din link");
+    verifica("ordinea 2 începe cu m2", ecran().src.endsWith("m2.html"));
+    await apasa("Mă opresc aici");
+    await apasa("Da, mă opresc");
+    const oprit = await asteapta(() => pagina().getElementById("text-final"), "finalul după oprire");
+    verifica("textul spune că s-a oprit", oprit.value.includes("oprit la r1_conduce") && oprit.value.includes("Grup c, ordine 2"), oprit.value);
+    verifica("ecranul s-a închis la oprire", !ecran());
+    verifica("poate trimite ce a notat", !!pagina().getElementById("trimite"));
+    rez.text_oprit = oprit.value;
+  } catch (e) {
+    esuate.push("întrerupt: " + e.message);
+  }
+  document.getElementById("rezultat").textContent = JSON.stringify({trecute, esuate, ...rez});
+})();
+</script>

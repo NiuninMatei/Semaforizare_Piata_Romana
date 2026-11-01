@@ -43,6 +43,13 @@ precedence = "closest"
 SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
 SPDX-License-Identifier = "CC-BY-4.0"
 
+# Pagina sondării: cod, pus în docs/ doar ca să-l servească GitHub Pages
+[[annotations]]
+path = ["docs/sondare/**", "docs/.nojekyll"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
 # D. Datele proprii derivate din camera publică (alegerea autorului: ODbL, ca cererea care le încorporează;
 #    acordată în măsura în care asupra datelor există drepturi de autor sau drepturi sui generis); tot aici,
 #    traiectoriile vehiculelor din cele două clipuri ale numărătorii de referință (26.10.2026)
