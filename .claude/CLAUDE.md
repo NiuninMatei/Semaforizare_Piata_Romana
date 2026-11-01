@@ -36,15 +36,18 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (01.11.2026, ~13:00) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (01.11.2026, ~15:00) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
 - **Planul și deciziile autorului:** memoriile borne-curs și laptop-disponibil; planul verificat, cu dovezi:
-  `outputs/prezentare/surse_m2/verificare_plan_m2.json`. Bugetul: memoria buget-tokeni.
-- **Colectarea rulează** (`run_vision`, pornit pe 01.11, 09:04; jurnalul brut în `data/trajectories_brute`; veghea în
-  `outputs/logs/veghe_*.csv`).
+  `outputs/prezentare/surse_m2/verificare_plan_m2.json`. Bugetul: memoria buget-tokeni. Regulile zilelor noi: § 9.11.
+- **Rulează în fundal, pornite pe 01.11 (până după M2):** `run_vision` (de la 09:04; jurnalul brut în
+  `data/trajectories_brute`), paznicul (`outputs/logs/paznic_<zi>.log`), veghea (`outputs/logs/veghe_2026-11-01.csv`) și
+  prelucrarea de noapte (`romana.lant_zilnic --bucla`, la 00:15; `outputs/lant/<zi>/`). După o repornire a aplicației se pornesc
+  din nou: paznicul, veghea, lanțul cu `--reia`.
+- **Înaintea oricărei opriri voite a colectării:** întâi fișierul `outputs/live/fara_repornire`, altfel paznicul o repornește.
 
 ## Reguli operative
 
@@ -59,8 +62,8 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   cel mult 1–2 capturi estompate, cu sursa „Webcam România – https://webcamromania.ro”. Clipurile de calibrare rămân doar
   local, nu intră în commit, se șterg după folosire (memoria borne-curs).
 - **Rămase pentru autor:** GitHub Support #4909163 (refs/pull/1/head); după evaluarea academică, ștergerea jurnalului local
-  complet (data/trajectories_brute, outputs/referinta, outputs/copie_scratchpad_*, copia istoricului original, imaginile din
-  jurnalele sesiunilor; § 4.5).
+  complet (data/trajectories_brute, outputs/referinta, outputs/sondare, outputs/copie_scratchpad_*, copia istoricului original,
+  imaginile din jurnalele sesiunilor; § 4.5).
 - **Istoricul stărilor de lucru (până pe 01.11):** `.claude/stare_arhiva.md`; nu se încarcă automat, se citește la nevoie.
 
 # Compact instructions

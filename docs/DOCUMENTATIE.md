@@ -2876,8 +2876,8 @@ schimbarea privește doar afișarea diferențelor în ore. Ferestrele zilelor 21
   | 29.10 | fără seară | 120 | 71 201 | −5,9% | 2·10⁻⁵ | −5,3% | −5,9% |
 
   Seara dă 31% din câștigul față de programul realist: 3 245 din 10 354 h. Câștigul rămâne semnificativ pe zilele reunite,
-  dar pe 28.10 fără seară nu mai este, iar acolo regula ar alege `TOD_DEBIT`. Planul 12/14/12 rămâne în geamăn până la o
-  validare pe zile noi (§ 9.11).
+  dar pe 28.10 fără seară nu mai este, iar acolo regula ar alege `TOD_DEBIT`. Planul 12/14/12 rămâne în geamăn până când un
+  candidat trece regula pe zile noi (§ 9.11).
 - **Toate strategiile.** Tabelul le cuprinde pe toate, pe cele 140 de perechi din 29.10. Un procent negativ înseamnă
   mai puțin timp pierdut decât cu strategia din antetul coloanei. Ultimele două coloane lasă deoparte cele 40 de
   perechi de noapte, ca la testul din 28.10:
@@ -2986,63 +2986,130 @@ Limitele testului și ale confirmării:
 ### 9.11 Regulile pentru zilele noi, scrise înainte de a le vedea (1.11.2026)
 
 **Pe scurt.** Zilele de 28 și 29.10 au ales planul din geamăn, deci nu mai pot fi folosite ca să aleagă altceva. Colectarea
-merge mai departe din 1.11. Regulile de mai jos s-au publicat înainte ca vreo zi nouă să fie prelucrată, ca nicio alegere să
-nu se poată potrivi după rezultat.
+merge mai departe din 1.11. Regulile de mai jos au intrat în istoricul public al depozitului pe 1.11, înainte de prima
+prelucrare a unei zile noi, care pornește pe 2.11, la 00:15. Așa, o alegere potrivită după rezultat se poate vedea în istoric.
+O schimbare făcută după acest moment se trece aici, cu data și motivul, și nu privește zilele deja prelucrate.
 
 **Ce rol are fiecare zi.**
 
 | Zilele | Rolul | Ce se poate face cu ele |
 |---|---|---|
-| 25 și 26.10, 1, 2 și 3.11 | antrenare | antrenarea agenților; rezultatele se pot privi oricum |
-| 4.11 | validare | alegerea candidaților, pe seed-urile 11–15 |
-| 5 și 6.11 | test | doar testul candidaților fixați pe validare, pe seed-urile 1–10 |
-| 7.11 (sâmbătă) | generalizare | aceiași candidați, pe o zi de weekend |
+| 25 și 26.10, 1, 2 și 3.11 | antrenare | antrenarea agenților, grilele de planuri și alcătuirea listei de candidați; rezultatele se pot privi oricum |
+| 4.11 | validare | cernerea candidaților de pe listă, o singură dată, pe seed-urile 11–15 |
+| 5 și 6.11 | test | doar testul candidaților trecuți de validare, pe seed-urile 1–10 |
+| 7.11 (sâmbătă) | generalizare | aceiași candidați, pe o zi de weekend, pe seed-urile 1–10; se raportează și nu schimbă decizia |
 | 28 și 29.10 | închise | nu intră la antrenare, la alegerea unei strategii sau la stabilirea pragurilor |
+| 21, 22, 27 și 30.10 | fără rol | nu mai intră la antrenare, la alegerea unei strategii sau la stabilirea pragurilor |
 
-Rolurile nu depind de vreme. Sunt fixate acum, deși nu se știe ce vreme va fi în acele zile. O zi de validare, de test sau de
-generalizare este completă dacă are toate cele cinci ferestre de scenarii și dacă `romana.vision.calitate` nu găsește în ele
-niciun interval încetinit. Dacă nu este completă, rolul ei trece la următoarea zi completă, iar schimbarea se notează aici, cu
-motivul.
+Rolurile nu depind de vreme: sunt fixate acum, deși nu se știe ce vreme va fi în acele zile. O zi de validare, de test sau de
+generalizare este completă dacă orele 07:30–08:30, 12:00–13:00 și 17:30–18:30 au date în fiecare sfert de oră și dacă
+`romana.vision.calitate` nu găsește în ele niciun interval încetinit. Dacă vârful se suprapune peste una dintre aceste ore,
+`scenarii_zi` o lasă deoparte, ca pe prânzul din 28.10, iar ziua rămâne completă. O zi nu pierde rolul din alt motiv: nici din
+cauza vremii, nici a unui trafic neobișnuit, nici a rezultatelor.
+
+Dacă ziua de validare nu este completă, validarea și cele două zile de test trec, în ordine, pe următoarele zile lucrătoare
+complete. Dacă nu este completă o zi de test, rolul ei trece pe următoarea zi lucrătoare completă fără rol. Generalizarea rămâne
+sâmbăta: dacă 7.11 nu este completă, trece pe 14.11. O zi care și-a pierdut rolul nu mai primește altul și nu intră nici la
+antrenare. Lanțul nu verifică singur aceste condiții, așa că mutarea se scrie aici, cu motivul, și în `ROLURI` din
+`romana.lant_zilnic`, înainte să fie prelucrată ziua care primește rolul.
+
+Pe zilele de validare, de test și de generalizare, din ferestre se scot doar sferturile atinse de o oprire reală a colectării și
+cele încetinite. O excludere dată de mână se trece aici, cu ora opririi, și se comite înainte de a citi simulările zilei.
 
 Prima zi nouă, 1.11, a început abia dimineața: are câteva minute din timpul prezentării bornei M1, apoi date continue de la
 09:05. Nu are deci toate ferestrele, dar rămâne bună pentru antrenare, cu ce are. Sferturile de oră atinse de oprire și de
 repornire, 08:00–09:15, sunt excluse din ferestre.
 
-**Ce se simulează noaptea.** Prelucrarea rulează singură, la 00:15, cu `romana.lant_zilnic`. Rezultatele rămân în
-`outputs/lant/` și nu se copiază singure în documentație.
+**Ce se simulează noaptea.** Prelucrarea rulează singură, la 00:15, cu `romana.lant_zilnic`. Jurnalul fiecărui pas rămâne în
+`outputs/lant/<zi>/`, iar rezultatele simulărilor în `outputs/validare/`, sub numele `test_<zi>_*`, oricare ar fi rolul zilei.
+Nimic nu se copiază singur în documentație. Rezultatele zilelor de validare, de test și de generalizare se copiază în
+`docs/rezultate/`, împreună cu `stare.json`, oricare ar fi ele, ca ordinea pașilor să se poată verifica.
 
-* **Zilele de antrenare:** verificarea jurnalului, calitatea, numărătorile, scenariile și simulările pe seed-urile 1–10.
-  Rezultatele lor sunt doar descriptive: arată cum merg strategiile, dar nu decid nimic.
+* **Zilele de antrenare:** verificarea jurnalului, calitatea, numărătorile, publicarea jurnalului de vehicule, scenariile,
+  simulările pe seed-urile 1–10 și analizele lor. Rezultatele nu decid nimic, dar pot sugera ce intră pe lista de candidați.
 * **Ziua de validare:** la fel, dar pe seed-urile 11–15.
-* **Zilele de test și de generalizare:** doar verificarea jurnalului, calitatea, numărătorile și scenariile. Simulările nu
-  rulează până nu există un candidat fixat pe validare, ca rezultatul să nu poată influența alegerea.
+* **Zilele de test și de generalizare:** doar verificarea jurnalului, calitatea, numărătorile, publicarea jurnalului de vehicule
+  și scenariile, care se comit așa cum au ieșit. Simulările pornesc abia după ce rezultatul validării este comis și numai dacă a
+  rămas cel puțin un candidat, cu `python -m romana.lant_zilnic --zi <zi> --desigileaza --reia`, pentru toate cele trei zile.
+  Lanțul rulează lista lui fixă de strategii; un candidat care nu e în ea și măsura nouă, dacă ea decide, se adaugă cu
+  `romana.control.validare`, pe aceleași seed-uri. Rezultatele se citesc abia când toate sunt gata, nu zi cu zi.
 
 **Două măsuri, ținute separat.** Verificarea bornei M1 a arătat că numărarea are două lipsuri: seara, Lascăr Catargiu aproape
 nu mai este detectat, iar pietonii sunt numărați pe zone, deci unii de două ori. De aceea există două măsuri:
 
-* **Măsura veche** folosește neschimbate fișierele `config/camera.json`, `config/demand.json` și `vtypes*`, așa cum erau pe
-  1.11. Așa, zilele noi rămân comparabile cu testele din 28 și 29.10.
+* **Măsura veche** folosește neschimbate fișierele `config/camera.json`, `config/demand.json` și `vtypes*`, împreună cu codul
+  care numără și simulează, așa cum erau la commitul cu care pornește prelucrarea din 2.11, la 00:15. O schimbare de cod e
+  permisă doar dacă dă aceleași rezultate, octet cu octet, pe zilele vechi. Așa, zilele noi rămân comparabile cu testele din 28
+  și 29.10. Prelucrarea de noapte folosește această măsură.
 * **Măsura nouă**, cu prefixul `cor_`, are zona din aval pe Lascăr Catargiu, pietonii numărați pe persoane și factorii de
-  corecție verificați pe întuneric și pe ploaie. Scenariile ei se fac și pentru 26.10. Nu există încă: intră ca variantă
-  separată, cu fișiere proprii, și schimbă rezultatele vechi doar ca sensibilitate.
+  corecție verificați pe întuneric. Scenariile ei se fac și pentru 25 și 26.10. Nu există încă: intră ca variantă separată, cu
+  fișiere proprii, și schimbă rezultatele vechi doar ca sensibilitate.
 
-Prelucrarea de noapte folosește măsura veche. Rezultatele se pot aduna doar în cadrul aceleiași măsuri. Decizia de la capătul
-acestui drum se ia pe măsura nouă, dacă aceasta este gata înainte să se aleagă vreun candidat pe validare. Altfel, se ia pe
-măsura veche și se spune deschis. Vehiculele corectate se raportează separat de factorul pietonilor, care se încearcă la 1,0,
-1,5, 2,07 și 3,0, fiindcă valoarea lui rămâne o ipoteză.
+Rezultatele se pot aduna doar în cadrul aceleiași măsuri. Decizia se ia pe măsura nouă numai dacă zonele, factorii și codul ei au
+un commit până pe 5.11, la 00:15, termenul listei de candidați. Ele se stabilesc doar din date și clipuri de până pe 3.11, iar
+după acel commit nu se mai schimbă. Ce nu s-a putut verifica până atunci, de exemplu pe ploaie, rămâne ipoteză declarată. Fără
+commit la termen, decizia se ia pe măsura veche, se spune deschis, iar E15 nu intră în această rundă. Termenul nu depinde de
+rezultatele validării.
 
-**Ce poate schimba planul din geamăn.** Planul 12/14/12 rămâne în geamăn. Reluarea testelor din 28 și 29.10 pe măsura nouă este
-doar o sensibilitate și nu poate schimba nimic. Planul se schimbă numai dacă un candidat, ales pe ziua de validare, trece regula
-din § 9.10 pe zilele de test: are cea mai mică pierdere totală, este semnificativ mai bun decât planul în vigoare și nu este
-semnificativ mai slab în niciun comportament; la egalitate, câștigă cel mai simplu. Decizia finală rămâne a autorului. Rezultatul
-se dă și fără scenariile de seară, ca sensibilitate, fiindcă seara a adus 31% din câștigul față de programul realist pe 28–29.10.
+Vehiculele corectate se raportează separat de factorul pietonilor. Factorul se aplică pietonilor numărați pe persoane. Regula se
+aplică la o singură valoare, 3,0, care păstrează cererea de pietoni din testele din 28 și 29.10: 2,5 pe numărările pe zone
+înseamnă ≈3,0 pe persoane. Valorile 1,0, 1,5 și 2,5 sunt doar sensibilități, fiindcă valoarea factorului rămâne o ipoteză, și nu
+pot schimba decizia.
 
-**Pragurile.** Pe măsura nouă, debitele sunt mai mari, deci programele pe cazuri de trafic se raportează întâi cu pragurile vechi,
-2 400 și 4 100 veh/h. Praguri noi se pot fixa doar pe ziua de validare, niciodată pe zilele de test.
+**Cum se aleg candidații.** Lista candidaților se scrie aici, printr-un commit, de la cel mai simplu la cel mai complex, cel mult
+trei. Termenul este 5.11, la 00:15, adică înaintea primei simulări a zilei de validare. După el, lista nu se mai schimbă, nici
+dacă rolurile se mută, iar o strategie nouă nu mai poate intra în această rundă, oricât de bună ar ieși. Pe listă poate intra
+orice strategie, chiar și planul de referință 36/28/12 sau programul realist, ca regula să poată merge și înapoi. Pe ziua de
+validare se aplică, o singură dată, aceeași regulă ca la test, pe măsura de decizie: toate scenariile zilei, ambele
+comportamente, seed-urile 11–15, pierderea totală în ore, față de planul 12/14/12. Testul se deschide doar pentru candidații
+semnificativ mai buni decât planul 12/14/12 și care nu sunt semnificativ mai slabi în niciun comportament. Media procentelor pe
+perechi se dă doar informativ.
 
-**Agentul următor.** Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Se antrenează doar pe
-zilele de antrenare, pe măsura nouă. Dacă nu iese semnificativ mai bun decât planul 12/14/12 pe ziua de validare, testul nu se
-deschide pentru el, iar rezultatul negativ se notează.
+**Ce poate schimba planul din geamăn.** Planul 12/14/12 rămâne în geamăn. Reluarea testelor din 28 și 29.10 pe măsura nouă se
+face abia după termenul listei, este doar o sensibilitate și nu poate schimba nimic. Planul se schimbă numai dacă un candidat
+trecut de validare trece regula pe cele două zile de test reunite, aplicată o singură dată, cu planul 12/14/12 în locul
+programului realist din § 9.10. Eligibil este candidatul semnificativ mai bun decât planul 12/14/12 și care nu este semnificativ
+mai slab în niciun comportament. Dintre cei eligibili câștigă cel cu cea mai mică pierdere totală; dacă primii doi nu se
+deosebesc semnificativ, câștigă cel mai simplu. Comanda este
+`python -m romana.control.decizie <fișierele celor două zile de test> --in-vigoare PLAN_12_14_12 --candidati <lista>`.
+Fișierele `decizie_<zi>.json` și `confirmare_<zi>.json` scrise de lanț compară tot cu programul realist și sunt doar descriptive.
+O strategie care nu e pe listă se raportează, dar nu poate câștiga. Autorul poate refuza o schimbare care a trecut regula,
+spunând de ce. Un candidat care n-a trecut-o nu se adoptă în această rundă.
+
+Regula se aplică pe toate scenariile, cu seara cu tot, și pe validare, și la test. Separat, rezultatul se dă și fără scenariile
+de seară, cu `romana.control.analiza --exclude "*seara*"`, fiindcă seara a adus 31% din câștigul față de programul realist pe
+28–29.10. Această variantă nu schimbă decizia. Dacă alege altceva decât regula, se spune deschis.
+
+Dacă lista e goală sau niciun candidat nu trece de validare, zilele de test și de generalizare rămân fără simulări, planul
+12/14/12 rămâne în geamăn, iar rezultatul se notează aici. La fel, planul rămâne dacă niciun candidat nu trece regula pe zilele
+de test. În ambele cazuri, runda se încheie. O încercare nouă cere zile noi, cu roluri scrise înainte, nu aceleași zile cu alți
+candidați. Dacă după deschiderea zilelor de test se găsește un defect și testul se reface, se publică ambele rezultate și
+defectul se descrie; zilele și lista rămân aceleași.
+
+**Pragurile.** Un program pe cazuri de trafic intră pe listă împreună cu pragurile lui, iar o variantă cu alte praguri este alt
+candidat. Pe măsura nouă, debitele sunt mai mari, deci lista spune dacă programul folosește pragurile vechi, 2 400 și 4 100
+veh/h, sau praguri noi. Praguri noi se calculează din zilele de antrenare, la jumătatea distanței dintre ferestre, ca pe 26.10.
+După termenul listei nu se mai schimbă, nici pe validare, nici pe zilele de test. Măsura nouă are rezumatul ei de debite, separat
+de cel al măsurii vechi, iar `romana.control.decizie` îl citește după prefixul `cor_`.
+
+**Agentul următor.** Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
+la 5 s, deci imitația ajunge la un verde de 15/15/15 s, cu un ciclu de 60 s în loc de 53 s; comparația de la capăt se face tot cu
+planul 12/14/12, rulat exact. Se antrenează doar pe scenariile măsurii noi din zilele de antrenare, cu lista dată explicit, care
+rămâne în fișierul modelului. Modelul se comite până la termenul listei de candidați și intră pe ea ca un singur model, ales doar
+pe zilele de antrenare. Punctele intermediare nu se încearcă pe ziua de validare, iar o reantrenare după ce s-a văzut validarea
+este alt agent, pentru altă rundă. Dacă E15 nu trece de validare, testul nu se deschide pentru el, iar rezultatul negativ se
+notează.
+
+**Ce nu se va putea spune din aceste zile.** Rezultatele arată ce se întâmplă în geamăn, nu pe stradă. Un seed schimbă doar felul
+în care conduc șoferii, nu și traficul zilei, deci valoarea p arată cât de sigur e rezultatul pe cererea acelor zile, nu și pe
+alte zile. Pe 28 și 29.10, planul 12/14/12 are p = 4·10⁻¹⁰ pe 260 de perechi, dar p = 0,02 dacă se numără doar cele 9 ferestre
+observate, iar două zile sunt prea puține pentru un test între zile. Cu mai mulți candidați crește și șansa ca unul să treacă din
+întâmplare, iar regula nu corectează asta. Pierderea totală nu este pierderea unei zile: ea adună câteva ore alese și variante
+ipotetice, iar vârful ×1,2 a dat 31% din orele planului 12/14/12 pe 28–29.10. Câștigul depinde și de factorul pietonilor, care
+rămâne o ipoteză. Câteva zile dintr-o singură săptămână de noiembrie nu spun nimic despre alte anotimpuri, iar o sâmbătă nu spune
+nimic despre duminici. Dacă niciun candidat nu trece, asta nu arată că planul 12/14/12 este cel mai bun, ci doar că nu s-a găsit
+unul mai bun. Nici candidații nu sunt independenți de 28 și 29.10: ei sunt cunoscuți din acele zile, iar E15 pornește de la planul
+ales atunci. Istoricul arată ordinea pașilor, nu și ce a privit cineva pe calculatorul propriu.
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
@@ -3246,7 +3313,7 @@ număr.
 | 2b | `2b_calibrare_zone.bat` | redesenează zonele de numărare dacă operatorul mută camera | ~5 min |
 | 2c | `2c_renumarare.bat --zi AAAA-LL-ZZ` | renumără o zi din jurnalul local de traiectorii, de exemplu după ce zonele au fost redesenate. Pe o copie a depozitului fără `data\trajectories_brute` se renumără doar vehiculele din jurnalul publicat; folosiți atunci `--out` cu alt director, ca pietonii din `data\counts` să nu se piardă | ~5 min |
 | 3b | `3b_scenarii_zi.bat --zi AAAA-LL-ZZ` | găsește ora de vârf și ora cea mai liniștită a zilei. Adaugă dimineața, prânzul și seara, dacă sunt acoperite complet de date și nu se suprapun cu vârful. Apoi construiește scenariile SUMO, plus două variante de sensibilitate: vârful ×1,2 și liniștitul ×0,8 | ~5 min |
-| 3c | `3c_lant_zilnic.bat --bucla --ora 00:15 --pana-la "AAAA-LL-ZZ HH:MM"` | prelucrează singur, în fiecare noapte, ziua precedentă, cu rolurile din § 9.11; rezultatele rămân în `outputs/lant/` | noapte de noapte |
+| 3c | `3c_lant_zilnic.bat --bucla --ora 00:15 --pana-la "AAAA-LL-ZZ HH:MM"` | prelucrează singur, în fiecare noapte, ziua precedentă, cu rolurile din § 9.11; rezultatele rămân în `outputs/validare/`, iar jurnalele pașilor în `outputs/lant/` | noapte de noapte |
 | 3 | `3_genereaza_cerere.bat --nume X --de-la "..." --pana-la "..."` | construiește un singur scenariu, pe un interval de timp ales de utilizator | ~1 min |
 | 4 | `4_antreneaza_ai.bat --nume X --pasi 500000 --medii 8 --scenarii <fișierele .sumocfg, enumerate>` | antrenează un agent PPO, adică un program de inteligență artificială care învață în simulare, prin încercări, să conducă semaforul (§ 7.3). Alte opțiuni: `--continua`, `--lr`, `--bc-plan`, `--coridor`. Fără un `--nume` nou se suprascrie `models\ppo_romana.zip`. Fișierele de scenariu se enumeră unul câte unul: caracterul `*` nu este înlocuit cu lista fișierelor nici de `cmd.exe`, nici de `train` | 1–3 h pe laptopul de test |
 | 5 | `5_evalueaza.bat --scenarii <fișierele zi_* / referinta_*>` | compară strategiile între ele. Opțiunile `--seeds` și `--seed-start` stabilesc câte seed-uri se folosesc și care este primul dintre ele; un seed este valoarea care pornește generatorul de numere aleatoare al simulării. Alte opțiuni: `--planuri 46,48,12`, `--adauga`. Scenariile se dau cale cu cale, ca în § 11.3, pentru că `cmd.exe` nu înlocuiește `*` cu lista fișierelor. Fără `--scenarii`, scriptul se oprește cu `FileNotFoundError` înainte de orice simulare, la scenariile `capacitate_*` și `indisciplinat_*`, care nu au fișierul `od_estimat.json`. Scriptul rescrie fișierele publicate `rezultate_brute.csv`, `rezultate.md` și `comparatie_strategii.png` din `docs\rezultate\`; refacerea lor este descrisă în § 11.8 | ~1 h |

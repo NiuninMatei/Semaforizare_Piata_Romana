@@ -7,7 +7,8 @@ aceleași argumente ca atunci (în afară de zi și de numele ieșirilor):
   2. calitatea înregistrării (`romana.vision.calitate`, § 4.6), renumărarea și publicarea (`romana.vision.recount`);
   3. scenariile zilei (`romana.bridge.scenarii_zi`) și variantele cu participanți indisciplinați
      (`romana.bridge.indisciplinat`);
-  4. testul: `romana.control.validare` pe ambele comportamente, seed-urile 1–10, aceleași strategii ca pe 28–29.10;
+  4. testul: `romana.control.validare` pe ambele comportamente, seed-urile 1–10, 11–15 pe ziua de validare; zilele de test
+     și de generalizare se opresc înaintea acestui pas până la --desigileaza (§ 9.11); aceleași strategii ca pe 28–29.10;
   5. statisticile (`romana.control.analiza`), confirmarea planului ales (`decizie --confirma PLAN_12_14_12`), regula
      aplicată și pe ziua aceasta (informativ), măsura pe persoană (`ocupare`, autobuz cu 20 / 40 / 70 de persoane, cu decizia
      ei) și totalurile (`romana.control.totaluri`, Anexa A).
@@ -118,6 +119,9 @@ ROLURI = {"2026-11-01": "antrenare", "2026-11-02": "antrenare", "2026-11-03": "a
 SEEDURI_TEST = "1-10"
 SEEDURI_ROL = {"validare": "11-15"}
 ROLURI_SIGILATE = ("test", "generalizare")
+# zilele care nu intră la antrenare când lista scenariilor nu e dată explicit
+ZILE_FARA_ANTRENARE = ("2026-10-21", "2026-10-22", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30",
+                       *(z for z, r in ROLURI.items() if r != "antrenare"))
 
 COD_MEMBRI_STRICATI = 2                 # `romana.vision.repara`: jurnal citibil, cu membri stricați
 COD_CAPAT = 3                           # renumărarea a ieșit cu 0, dar nu ajunge până la capătul jurnalului
@@ -158,11 +162,14 @@ def _m(modul: str, *arg: str) -> list[str]:
 
 
 def comanda_scenarii(zi: str, exclude=()) -> list[str]:
-    return _m("romana.bridge.scenarii_zi", "--zi", zi, *[x for e in exclude for x in ("--exclude", e)])
+    # pe zilele care decid, sferturile încetinite nu intră în alegerea ferestrelor (§ 9.11)
+    rol = ["--fara-incetinite"] if ROLURI.get(zi, "antrenare") != "antrenare" else []
+    return _m("romana.bridge.scenarii_zi", "--zi", zi, *rol, *[x for e in exclude for x in ("--exclude", e)])
 
 
 def sigilata(zi: str) -> bool:
-    return ROLURI.get(zi) in ROLURI_SIGILATE
+    # o zi de după ultimul rol poate primi un rol mutat (§ 9.11): rămâne fără simulări până îl primește
+    return ROLURI.get(zi) in ROLURI_SIGILATE or (zi not in ROLURI and zi > max(ROLURI))
 
 
 def pasi(zi: str, exclude=(), fara_simulari: bool = False, desigilat: bool = False) -> list[Pas]:
@@ -708,8 +715,10 @@ def _lant(zi: str, exclude, reia: bool, fara_simulari: bool, note, desigilat: bo
     note(text)
     if zi in ROLURI:
         note(f"rolul zilei (§ 9.11): {ROLURI[zi]}" + (", fără simulări până la desigilare" if sigilata(zi) and not desigilat else ""))
-    pasi_vechi = citeste_stare(zi, note).get("pasi", {})
+    stare_veche = citeste_stare(zi, note)
+    pasi_vechi = stare_veche.get("pasi", {})
     vechi = pasi_vechi if reia else {}
+    desigilat = desigilat or (reia and bool(stare_veche.get("desigilat")))    # și bucla reia o zi desigilată cu simulări
     stare = {"zi": zi, "pornit": _iso(), "prioritate": text, "prioritate_aplicata": aplicata, "rezultat": "in_curs",
              "pasi": dict(vechi)}
 
@@ -821,7 +830,7 @@ def _lant(zi: str, exclude, reia: bool, fara_simulari: bool, note, desigilat: bo
     if esuate:
         stare["rezultat"] = "cu_esecuri: " + ", ".join(esuate)
     else:
-        stare["rezultat"] = "gata_fara_simulari" if fara_simulari else "gata"
+        stare["rezultat"] = "gata_fara_simulari" if fara_simulari or (sigilata(zi) and not desigilat) else "gata"
     scrie_stare(zi, stare, note)
     note(f"lanțul zilei {zi}: {stare['rezultat']}")
     return 1 if esuate else 0
@@ -888,14 +897,13 @@ def prima_zi_buclei(note=None) -> str | None:
 def zile_restante(prima: str, t: datetime, ora: ora_din_zi, pana_la: datetime | None, fara_simulari: bool = False,
                   note=None) -> list[str]:
     """Zilele de la `prima` până la ultima noapte dinaintea momentului `t`, cu jurnal, al căror lanț nu s-a încheiat."""
-    gata = {"gata", "gata_fara_simulari"} if fara_simulari else {"gata"}
     out, z = [], date.fromisoformat(prima)
     while (noapte := datetime.combine(z + timedelta(days=1), ora)) < t and (pana_la is None or noapte <= pana_la):
         zi = z.isoformat()
         if not jurnal(zi).exists():
             if note:
                 note(f"ziua {zi}: fără jurnal, nu e de prelucrat")
-        elif citeste_stare(zi).get("rezultat") not in gata:
+        elif citeste_stare(zi).get("rezultat") not in ({"gata", "gata_fara_simulari"} if fara_simulari or sigilata(zi) else {"gata"}):
             out.append(zi)
         z += timedelta(days=1)
     return out
