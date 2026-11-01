@@ -48,6 +48,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import ctypes
 import json
 import os
 import queue
@@ -583,6 +584,18 @@ def goleste_ecranul(termen: float = 2.0) -> bool:
 
 
 # ---------------------------------------------------------------------------------------------- paznicul
+def tine_treaz() -> bool:
+    """Cere Windowsului să nu adoarmă singur cât rulează firul acesta: colectarea și prelucrarea de noapte au nevoie de
+    calculator treaz. Nu schimbă nicio setare, iar cererea se termină odată cu procesul; capacul închis tot adoarme."""
+    try:
+        cere = ctypes.windll.kernel32.SetThreadExecutionState
+        cere.argtypes = [ctypes.c_uint]
+        cere.restype = ctypes.c_uint
+        return cere(0x80000000 | 0x00000001) != 0      # ES_CONTINUOUS | ES_SYSTEM_REQUIRED
+    except (AttributeError, OSError):                  # în afara Windowsului nu e nimic de cerut
+        return False
+
+
 class Paznic:
     """O verificare = `pas()`, care întoarce hotărârea: ok (nimic de făcut), trezire, anuntata, mai_multe, viu (semn
     proaspăt fără proces văzut), lipsa (procesul nu se vede, încă o verificare), nestiut (poate fi colectarea, nu se poate
@@ -1067,6 +1080,7 @@ def main(argv=None) -> None:
         print(f"[paznic] alt paznic rulează deja (blocat: {s.loguri / 'paznic.lock'}); ies.", flush=True)
         sys.exit(3)
     try:
+        p.nota("calculatorul rămâne treaz cât rulează paznicul" if tine_treaz() else "ATENȚIE: nu pot cere calculatorului să rămână treaz")
         p.bucla(a.pana_la if a.pana_la else time.time() + 86400)
     except KeyboardInterrupt:
         p.nota("paznic oprit cu Ctrl+C; run_vision rămâne cum e")
