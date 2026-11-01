@@ -28,10 +28,11 @@ adică foarte greu de explicat prin întâmplare.
 
 > Totul se petrece în simulare: proiectul nu comandă niciun semafor real. Proiectul nu este afiliat cu Webcam România
 > sau cu operatorul camerei. Din imaginile camerei, depozitul conține doar două imagini făcute dintr-un singur cadru
-> estompat, publicate cu acordul scris al Webcam România (`docs/imagini/`).
+> estompat, publicate cu acordul scris al Webcam România (`docs/imagini/`). Același cadru apare și în prezentarea din
+> `docs/prezentari/`.
 
 Proiect pentru disciplinele *Interfețe om-calculator* și *Internet of Things* · Universitatea Transilvania din Brașov,
-Facultatea de Matematică și Informatică, Informatică ID, anul III · 2026–2027 · Autor: **Niunin Matei-Gabriel**.
+Facultatea de Matematică și Informatică, Informatică ID, anul III, grupa 10LD541 · 2026–2027 · Autor: **Niunin Matei-Gabriel**.
 
 ## Cum funcționează
 
@@ -284,7 +285,7 @@ compleți sunt în § 11.4; pentru `routeSampler` instalați și `scipy` (§ 11.
 | `sumo/` | `net/` – rețeaua. `demand/` – câte un dosar pentru fiecare scenariu `zi_*` și `referinta_*`, plus `vtypes.add.xml`, cu tipurile de vehicule, și `zi_*_rezumat.json`; scenariile `indisciplinat_*` folosesc aceleași dosare `zi_*`, cu `vtypes_indisciplinat.add.xml`. Unele dosare păstrează fișiere vechi: contează doar ce listează `.sumocfg`. `scenarios/` – `zi_*` sunt scenariile din date reale, cu cererea calibrată din 26.10 (§ 5.4); `indisciplinat_*` sunt testul de robustețe, pe rutele scenariilor `zi_*`; `referinta_*` sunt scenariile ipotetice inițiale; `capacitate_*` folosesc rutele scenariilor `zi_*` din 25–26.10, cu `vtypes_capacitate*.add.xml`; din 28.10, aceste fișiere au aceleași valori ca `vtypes.add.xml` / `vtypes_indisciplinat.add.xml`. Scenariile `capacitate_*` sunt păstrate pentru reproducerea § 9.9, a analizei cu capacitatea calibrată din § 9.6 și a validării E14 (§ 6.4). Scenariile marginilor de jos și de sus, pe care s-au obținut rezultatele, sunt în istoricul git, la `e1d0f77` / `7a79502` |
 | `models/` | 19 agenți PPO, în trei feluri de fișiere. `.zip` este formatul Stable-Baselines3; conține date pickle, un format Python care poate rula cod la încărcare, deci se deschide doar din surse de încredere. `.npz` păstrează aceeași politică, adică regula după care agentul alege fazele, într-o formă care nu cere PyTorch, și e varianta preferată la rulare; lipsește la trei agenți. `.json` descrie scenariile, hiperparametrii antrenării și setările citite la rulare. Varianta actuală a geamănului în timp real, planul fix 12/14/12, nu are nevoie de niciun model. Celelalte variante ale programului folosesc `ppo_romana`, `ppo_romana_zn3` (E3), `ppo_romana_lejer` (E9) și `ppo_romana_cal` (E13). Restul sunt experimente (§ 9.5) |
 | `scripts/` | scripturile numerotate de la `0_instalare` la `10_documentatie_pdf`, dintre care `8_` și `9_` sunt demonstrații; `PORNESTE_TOT`; `_mediu.bat`, care activează `.venv` și setează `PYTHONPATH=src` |
-| `docs/` | `DOCUMENTATIE.md` / `.pdf`; `rezultate/` – evaluările și validările (Anexa A), iar cele mai vechi sunt în istoricul git; `rezultate/referinta/` – numărătoarea de referință din 26.10, fără imagini; `antrenare/` – jurnale din Borna 4, ale unor modele scoase între timp; `corespondenta_commituri.txt` (§ 12.5) |
+| `docs/` | `DOCUMENTATIE.md` / `.pdf`; `prezentari/` – prezentările bornelor cursului; `rezultate/` – evaluările și validările (Anexa A), iar cele mai vechi sunt în istoricul git; `rezultate/referinta/` – numărătoarea de referință din 26.10, fără imagini; `antrenare/` – jurnale din Borna 4, ale unor modele scoase între timp; `corespondenta_commituri.txt` (§ 12.5) |
 | `tests/`, `legacy/` | testele automate: numărarea, statisticile, validarea, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, prelucrarea încetinită, verdele pe treceri, ferestrele din `scenarii_zi`; ciorna inițială, făcută până la 18.10.2026, cu raportul de audit |
 | `LICENSE`, `LICENSES/`, `NOTICE`, `REUSE.toml`, `*/LICENTA.txt`; `requirements.txt`; `.claude/` | licențele, atribuirile terților, harta „cale → licență” și notele de licență din `data/`, `sumo/`, `models/`; dependențele Python; notițele de lucru ale lui Claude Code, care nu sunt documentație și pot conține cifre depășite |
 
@@ -299,6 +300,8 @@ abrevierile. Ce merită citit, după interes:
 - inginer de trafic: § 5, § 6, § 7.4, § 9, § 10;
 - programator: § 4, § 7, § 11, Anexa A;
 - drepturi și date personale: § 4.5, § 12.5, § 14.1.
+
+Prezentările bornelor cursului *Interfețe om-calculator*: [M1, 01.11.2026](docs/prezentari/Prezentare_M1.pdf).
 
 ## Limite principale
 
@@ -324,7 +327,7 @@ abrevierile. Ce merită citit, după interes:
 
 Harta completă a licențelor, fișier cu fișier, inclusiv pentru `.gitignore`, `.gitattributes` și `.vscode/`, se află în
 `NOTICE`, `REUSE.toml` și § 14.1. Licențele proiectului nu acoperă citatele din surse terțe, subseturile de fonturi
-Microsoft încorporate în `docs/DOCUMENTATIE.pdf` și mărcile comerciale menționate. Acestea rămân ale titularilor lor.
+Microsoft încorporate în PDF-urile din `docs/` și mărcile comerciale menționate. Acestea rămân ale titularilor lor.
 
 **Imaginile camerei** nu sunt licențiate de proiect. Drepturile asupra lor aparțin operatorului camerei, care nu este
 identificat public; Webcam România declară că nu deține drepturi asupra fluxurilor. Capturile publicate anterior au fost
@@ -333,8 +336,8 @@ eliminate din tot istoricul pe 26.10.2026, iar commiturile au primit identificat
 fluxului în scop academic și necomercial, cu sursa indicată („Webcam România – https://webcamromania.ro”), și pentru
 publicarea a 1–2 capturi cu persoanele estompate (§ 14.1). Pe baza acestui acord, `docs/imagini/` conține două imagini
 dintr-un singur cadru din 28.10.2026. Pe ele sunt estompate persoanele, plăcuțele tuturor vehiculelor și textul
-publicitar al camerei (figurile 4.1 și 4.2). Imaginile nu intră sub nicio licență a proiectului
-(`LicenseRef-Toate-drepturile-rezervate`).
+publicitar al camerei (figurile 4.1 și 4.2). Același cadru apare și în prezentarea din `docs/prezentari/`. Imaginile
+nu intră sub nicio licență a proiectului (`LicenseRef-Toate-drepturile-rezervate`).
 
 ## Confidențialitate
 
@@ -344,7 +347,8 @@ git. Capturile și clipurile scurte folosite la calibrarea zonelor și la număr
 stocate doar local și au fost șterse după folosire. Cele citite de asistentul Claude, adică capturile și planșele cu
 cadre din clipuri, au fost însă trimise spre analiză la Anthropic. Copii ale lor au rămas în jurnalele locale ale
 sesiunilor asistentului și urmează să fie șterse odată cu jurnalul local complet (§ 4.3, § 4.5). Singurele imagini
-publicate sunt cele două figuri estompate din `docs/imagini/`, verificate bucată cu bucată înainte de publicare.
+publicate sunt cele două figuri estompate din `docs/imagini/`, verificate bucată cu bucată înainte de publicare, și
+reproducerile aceluiași cadru din PDF-uri.
 Numerele de înmatriculare nu se citesc.
 
 Se publică numărătorile agregate și traiectoriile vehiculelor, adică clasa, momentul de început și pozițiile

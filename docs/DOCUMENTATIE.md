@@ -4,7 +4,7 @@
 cu date preluate în timp real de pe camera publică Webcam România și simulare în SUMO**
 
 Autor: Niunin Matei-Gabriel · Universitatea Transilvania din Brașov, Facultatea de Matematică și Informatică,
-Informatică ID (învățământ la distanță), anul III · Discipline: *Interfețe om-calculator* și *Internet of Things* ·
+Informatică ID (învățământ la distanță), anul III, grupa 10LD541 · Discipline: *Interfețe om-calculator* și *Internet of Things* ·
 Anul universitar 2026–2027
 
 Documentația: © 2026 Niunin Matei-Gabriel, licența CC BY 4.0 (§ 14.1) · Conține informații din OpenStreetMap,
@@ -715,7 +715,7 @@ Măsurile luate sunt următoarele.
   imaginile au fost trimise spre analiză modelului, la Anthropic. Copii ale lor au rămas, ca imagini, în jurnalele
   locale ale sesiunilor Claude Code.
 * **Imaginile publicate.** Singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru, din
-  28.10.2026, ora 09:30. Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
+  28.10.2026, ora 09:30. Același cadru apare și în prezentarea bornei M1 (`docs/prezentari/`). Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
   plăcuțelor de înmatriculare la toate vehiculele și textul publicitar suprapus de cameră. Pe oameni i-a găsit
   detectorul YOLO11, care a analizat imaginea pe bucăți suprapuse parțial. Fiecare persoană găsită a fost estompată
   cu o margine în jur. La cererea autorului, plăcuțele au fost estompate la toate vehiculele, pentru o imagine
@@ -745,7 +745,8 @@ păstrat, deocamdată, cu o precizie de 0,01 s. De aceea, traiectoriile nu sunt 
 datelor (§ 14.1) nu ar face publicabile date personale.
 
 Prin fișierul `.gitignore`, fișierele video `.ts` și `.mp4` sunt excluse din Git, sistemul care păstrează versiunile
-proiectului. Depozitul și PDF-ul conțin un singur cadru al camerei, estompat, folosit în figurile 4.1 și 4.2. Fluxul
+proiectului. Depozitul și PDF-urile conțin un singur cadru al camerei, estompat, folosit în figurile 4.1 și 4.2 și în
+prezentarea bornei M1. Fluxul
 camerei este public, iar utilizarea lui este strict academică. Webcam România, care publică fluxul, și-a dat acordul
 scris pe 27.10.2026 pentru două lucruri: analiza automată a fluxului în scop academic și necomercial, cu sursa
 indicată, și publicarea a cel mult două capturi cu persoanele estompate (§ 14.1)[^webcam]. Orice altă utilizare cere
@@ -3174,6 +3175,7 @@ Tabelul este harta depozitului: ce conține fiecare director și fiecare fișier
 | `models/` | agenții antrenați: fișierele `.zip`, în formatul bibliotecii Stable-Baselines3, și fișierele `.npz`, pentru rulare fără PyTorch |
 | `docs/rezultate/` | datele brute ale evaluărilor, adică tabele CSV, grafice și tabelul detaliat generat automat, plus numărătoarea de referință (`referinta/`); toate sunt descrise în Anexa A |
 | `docs/imagini/` | cele două imagini ale camerei, figurile 4.1 și 4.2, obținute dintr-un singur cadru estompat din 28.10.2026 și publicate cu acordul scris al Webcam România. Ele nu intră sub licențele proiectului (`LicenseRef-Toate-drepturile-rezervate`, § 14.1) |
+| `docs/prezentari/` | prezentările bornelor cursului, în PDF. Folosesc același cadru estompat al camerei, cu sursa indicată |
 | `docs/img/` | figurile proprii: scheme pe fond neutru, fără imagini ale camerei. Directorul se creează când se refac figurile |
 | `legacy/google_ai_draft/` | ciorna inițială, păstrată împreună cu raportul de audit |
 | `README.md` | prezentarea scurtă, afișată pe pagina GitHub a proiectului |
@@ -3535,6 +3537,14 @@ cu cea a etapelor din § 12.1.
 | B8 | 21.10.2026 | replica fidelă a rețelei, toți participanții, inclusiv pietonii și bicicliștii, strategiile de referință corectate |
 | B9 | 21–30.10.2026 | scenariile din date reale, agenții pe date reale, verificarea în timp real, zonele desenate de autor, renumărarea, specialiștii și programul pe tipuri de trafic, evaluarea statistică, ziua de weekend, cererea calculată din intrări, testul de robustețe, licențele și curățarea istoricului, zonele refăcute pe numărătoarea de referință și cererea calibrată, calitatea înregistrării, capacitatea geamănului, testul pe ziua de luni și protocolul pentru 28.10, acordul Webcam România, regula „cel mai bun câștigă”, testul final pe 28.10, câștigat de planul fix 12/14/12, veghea fluxului de cadre și confirmarea pe 29.10, prelucrată pe 30.10 (§ 4.6, § 9.10) |
 
+**Bornele cursului.** Separat de pașii de mai sus, la disciplina *Interfețe om-calculator* proiectul se prezintă în
+cinci borne, M1–M5. Commit-urile lucrului dintre două prezentări încep cu „Borna M2: …”, „Borna M3: …” și așa mai
+departe, deci formează lista schimbărilor de la o bornă la alta. Prezentările se află în `docs/prezentari/`.
+
+| Bornă | Data | Prezentarea |
+|---|---|---|
+| M1 | 01.11.2026 | proiectul cap-coadă și demonstrația dispeceratului (`docs/prezentari/Prezentare_M1.pdf`) |
+
 ### 12.4 Ce am învățat
 
 1. **Datele bune contează mai mult decât algoritmul.** Cea mai mare schimbare de rezultat nu a venit din AI, ci din
@@ -3766,7 +3776,8 @@ Utilizarea rămâne în limitele acordului: academică, necomercială și cu sur
 Depozitul și PDF-ul conțin două imagini dintr-un singur cadru al camerei, din 28.10.2026, ora 09:30:
 `docs/imagini/camera_piata_romana.jpg` și `docs/imagini/camera_zone.jpg`, adică figurile 4.1 și 4.2. Persoanele,
 plăcuțele de înmatriculare ale tuturor vehiculelor și textul publicitar suprapus de cameră sunt estompate (§ 4.5),
-iar sursa este scrisă pe imagine. Proiectul nu acordă nicio licență asupra acestor imagini, iar ele nu intră sub
+iar sursa este scrisă pe imagine. Prezentarea bornei M1 (`docs/prezentari/Prezentare_M1.pdf`) folosește același cadru,
+inclusiv în captura dispeceratului, cu aceeași estompare și cu sursa indicată. Proiectul nu acordă nicio licență asupra acestor imagini, iar ele nu intră sub
 CC BY 4.0; în `REUSE.toml` sunt marcate cu adnotarea `LicenseRef-Toate-drepturile-rezervate`. Capturile publicate
 anterior, cu persoane neestompate, au fost eliminate din tot istoricul depozitului (§ 12.5).
 
@@ -3790,10 +3801,10 @@ mai sus se aplică în măsura în care asupra acestui conținut există dreptur
   presa, pagina și termenii Webcam România, termenii Ultralytics, Anthropic și Google, precum și ghidurile Fundației
   OpenStreetMap (OSMF);
 * imaginile camerei, ale căror drepturi aparțin operatorului camerei: cele două din `docs/imagini/`, adică
-  figurile 4.1 și 4.2, și capturile vechi, eliminate din istoric, dar încă accesibile pe GitHub prin referința
+  figurile 4.1 și 4.2, reproducerile aceluiași cadru din `docs/prezentari/` și capturile vechi, eliminate din istoric, dar încă accesibile pe GitHub prin referința
   `refs/pull/1/head` (§ 12.5);
 * mărcile comerciale menționate;
-* subseturile de fonturi Microsoft încorporate în PDF, a căror licență permite încorporarea;
+* subseturile de fonturi Microsoft încorporate în PDF-uri, a căror licență permite încorporarea;
 * bibliotecile terțe, care rămân sub licențele lor (§ 14.2) și nu sunt incluse în depozit.
 
 ### 14.2 Resursele folosite și licențele lor
