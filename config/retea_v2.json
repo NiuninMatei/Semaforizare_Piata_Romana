@@ -24,10 +24,10 @@
   "vizibilitate_m": 40,
   "_vizibilitate_m": "Cu valoarea implicită, 4,5 m, un șofer care cedează trecerea încetinește aproape până la oprire chiar dacă nu vine nimeni; pe Dacia est, debitul ieșea la jumătate din cel măsurat de cameră.",
   "treceri_in_etape": {
-    "0": {"treceri": [55, 59], "cedeaza": [35, 36, 47, 48]},
-    "1": {"treceri": [57, 58], "cedeaza": [41, 42, 43, 44, 45, 46]}
+    "0": {"treceri": [55, 59]},
+    "1": {"treceri": [57, 58]}
   },
-  "_treceri_in_etape": "Numere de legătură. Trecerile de pe ieșiri aveau verde doar în faza de pietoni. Ca la orice semafor de oraș, ele au acum verde și în etapa în care pe ieșirea respectivă vin doar vehicule care virează, iar acestea cedează trecerea: 55 Dacia est, 59 Dacia vest în etapa N–S; 57 Magheru, 58 Lascăr Catargiu în etapa E–V.",
+  "_treceri_in_etape": "Numere de legătură. Trecerile de pe ieșiri aveau verde doar în faza de pietoni. Au acum verde și în etapa în care pe ieșirea respectivă vin doar vehicule care virează, iar pietonii trec printre ele: 55 Dacia est, 59 Dacia vest în etapa N–S; 57 Magheru, 58 Lascăr Catargiu în etapa E–V. Jurnalul confirmă: pe Dacia est, pietonii traversează în etapa N–S, începând la ≈15 s după vehiculele care virează, iar pe Magheru în etapa E–V.",
   "tipuri_vehicule": {
     "fisier": "vtypes_v2.add.xml",
     "fisier_indisciplinat": "vtypes_indisciplinat_v2.add.xml",
@@ -36,7 +36,8 @@
     "sigma_indisciplinat": "0.3",
     "minGap": "1.5",
     "jmCrossingGap": "2",
-    "lcKeepRight": "0"
+    "lcKeepRight": "0",
+    "jmIgnoreJunctionFoeProb": "0.5"
   },
-  "_tipuri_vehicule": "tau rămâne valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare: sub el apar coliziuni. Distanța minimă și imperfecțiunea sunt calibrate pe debitul de descărcare măsurat de cameră pe Magheru. jmCrossingGap: un șofer pleacă după ce pietonul i-a eliberat banda, la cel puțin 2 m, nu abia după ce a ajuns aproape de capătul zebrei."
+  "_tipuri_vehicule": "tau rămâne valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare: sub el apar coliziuni. Distanța minimă și imperfecțiunea sunt calibrate pe debitul de descărcare măsurat de cameră pe Magheru. jmCrossingGap: un șofer pleacă după ce pietonul i-a eliberat banda, la cel puțin 2 m, nu abia după ce a ajuns aproape de capătul zebrei. jmIgnoreJunctionFoeProb: la verde, un șofer înaintează printre pietonii deja intrați pe trecere, cum se vede în cameră: chiar la vârful pietonilor, vehiculele de pe Magheru spre Dacia est continuă să treacă. Valoarea e aleasă pe debitul măsurat de cameră pe Magheru, cu planul observat."
 }
