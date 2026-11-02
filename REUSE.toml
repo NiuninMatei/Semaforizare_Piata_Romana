@@ -61,7 +61,7 @@ SPDX-License-Identifier = "OFL-1.1"
 #    acordată în măsura în care asupra datelor există drepturi de autor sau drepturi sui generis); tot aici,
 #    traiectoriile vehiculelor din cele două clipuri ale numărătorii de referință (26.10.2026)
 [[annotations]]
-path = ["data/counts/**", "data/trajectories/**", "data/LICENTA.txt", "docs/rezultate/referinta/clip*/traiectorii/**"]
+path = ["data/counts/**", "data/counts_cor/**", "data/trajectories/**", "data/LICENTA.txt", "docs/rezultate/referinta/clip*/traiectorii/**"]
 precedence = "override"
 SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"
 SPDX-License-Identifier = "ODbL-1.0"
