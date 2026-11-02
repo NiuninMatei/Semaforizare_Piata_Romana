@@ -29,7 +29,7 @@ import gymnasium as gym
 import numpy as np
 
 from romana.common import NET_DIR, sumo_home
-from romana.control.faze import faze_romana
+from romana.control.faze import controler, faze_romana
 from romana.control.signals import (SignalController, action_maps, green_phases_from_program, observation,
                                     upstream_groups, upstream_halting, waiting_total)
 
@@ -78,6 +78,8 @@ def start_sumo(sumocfg: Path, seed: int, gui: bool = False, extra: list[str] | N
            "--no-step-log", "true", "--no-warnings", "true", "--duration-log.disable", "true",
            "--time-to-teleport", "300", "--additional-files",
            ",".join(vtypes + [str(NET_DIR / actuated)])]
+    if actuated.endswith("_v2.add.xml"):      # ciocnirile, și cele din intersecții, se numără; vehiculul nu dispare, ca măsurarea să nu schimbe dinamica (§ 6.5)
+        cmd += ["--collision.check-junctions", "true", "--collision.action", "warn", "--intermodal-collision.action", "warn"]
     if gui:
         cmd += ["--start", "--delay", "50"]
     cmd += extra or []
@@ -129,7 +131,7 @@ class RomanaEnv(gym.Env):
             else:
                 traci.trafficlight.setProgram(tid, "0")
                 greens, names = green_phases_from_program(traci, tid), None
-            self.ctrls.append(SignalController(traci, tid, greens, names))
+            self.ctrls.append(controler(traci, tid, greens, names))
         self.action_maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
         self.upstream = [upstream_groups(traci, c) for c in self.ctrls] if self.upstream_obs else None

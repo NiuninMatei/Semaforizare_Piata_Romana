@@ -3,14 +3,17 @@
   <tlLogic id="romana" type="actuated" programID="actuated" offset="0">
     <param key="max-gap" value="3.0" />
     <param key="detector-gap" value="2.0" />
-    <phase duration="36" minDur="10" maxDur="60" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr" />
-    <phase duration="3" state="yyyyrrryyyrryyyyyyyGGGGGGrrrrrrrrrrGGyyyyGGGGGGGGrryyyyyrrryr" />
+    <phase duration="20" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr" />
+    <phase duration="10" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr" minDur="10" maxDur="64" />
+    <phase duration="6" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr" />
+    <phase duration="3" state="yyyyrrryyyrryyyyyyyGGGGGGrrrrrrrrrrGGyyyyGGGGGGGGrryyyrrrrrrr" />
     <phase duration="2" state="rrrrrrrrrrrrrrrrrrrGGGGGGrrrrrrrrrrGGrrrrGGGGGGGGrrrrrrrrrrrr" />
-    <phase duration="28" minDur="10" maxDur="60" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrGggrG" />
-    <phase duration="3" state="rrrryyyrrryyrrrrrrryyyyyyyyyyyyyyyyyyrrrryyyyyyyyyyrrrrrGggrG" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGggrG" />
-    <phase duration="12" minDur="10" maxDur="60" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGG" />
-    <phase duration="3" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGyyyGy" />
-    <phase duration="2" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGrrrGr" />
+    <phase duration="22" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrGggrG" minDur="10" maxDur="54" />
+    <phase duration="6" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrrrrrr" />
+    <phase duration="3" state="rrrryyyrrryyrrrrrrryyyyyyyyyyyyyyyyyyrrrryyyyyyyyyyrrrrrrrrrr" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="3" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" />
+    <phase duration="2" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" />
   </tlLogic>
 </additional>

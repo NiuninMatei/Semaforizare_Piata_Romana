@@ -24,7 +24,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from romana.common import DEMAND_DIR, MODELS_DIR, NET_DIR, OUTPUT_DIR, load_json
-from romana.control.faze import faze_romana
+from romana.control.faze import controler, faze_romana
 from romana.control.signals import SignalController
 
 LIVE = OUTPUT_DIR / "live"
@@ -149,7 +149,7 @@ def main(argv=None) -> None:
         traci.gui.setZoom("View #0", 700)
 
     greens, names = faze_romana(traci)
-    ctrl = SignalController(traci, "romana", greens, names)
+    ctrl = controler(traci, "romana", greens, names)
     from romana.control.controllers import RLPolicy
 
     rl = None

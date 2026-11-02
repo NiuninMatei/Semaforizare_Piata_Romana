@@ -123,7 +123,7 @@ def make_controller(spec: str):
     return ctrl
 
 
-STARE_SIMULARE = ["teleportari", "ciocniri", "nefinalizate"]
+STARE_SIMULARE = ["teleportari", "ciocniri", "nefinalizate", "ciocniri_vehicule", "ciocniri_pieton_in_miscare"]
 
 
 def run_task(task: tuple) -> tuple:
@@ -138,7 +138,7 @@ def run_task(task: tuple) -> tuple:
     E.EVAL_DIR = Path(eval_dir)      # fișierele tripinfo temporare (șterse după agregare)
     ctrl = make_controller(spec)
     r = E.run_one(Path(sumocfg), ctrl, seed)
-    return (ctrl.name, Path(sumocfg).stem, seed, r["pierdere_totala_h"], *(r.get(c, 0.0) for c in DETALII), r["teleportari"], r["ciocniri"], r["nefinalizate"])
+    return (ctrl.name, Path(sumocfg).stem, seed, r["pierdere_totala_h"], *(r.get(c, 0.0) for c in DETALII), *(r.get(c, 0) for c in STARE_SIMULARE))
 
 
 def run_all(specs: list[str], scenarios: list[Path], seeds: list[int], procese: int,

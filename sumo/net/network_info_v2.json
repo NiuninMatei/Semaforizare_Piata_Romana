@@ -5,14 +5,16 @@
     "rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrGggrG",
     "rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGG",
     "GGGGrrrGGGrrGGGGGGGGGGGGGGGrrrrrrGGGGGGGGGGGGGGGGGGGGGrrrrrrr",
-    "GGGGGGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGrrrrrrr"
+    "GGGGGGGrrrGGrrrGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGrrrrrrr",
+    "rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
   ],
   "phase_names": [
     "N–S: Magheru ↔ Lascăr Catargiu prin centru",
     "E–V: Dacia în jurul insulei",
     "Pietoni: toate trecerile, axa centrală se golește",
     "N–S, cu intrările Dacia deschise (fără dozare)",
-    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)",
+    "Golirea centrului, fără pietoni"
   ],
   "link_group": [
     "intrare_magheru",
@@ -187,5 +189,21 @@
         1623
       ]
     }
+  },
+  "pietoni": {
+    "treceri": [
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60
+    ],
+    "intarziere_s": {
+      "0": 20
+    },
+    "degajare_s": 6,
+    "faza_scurta": 5
   }
 }

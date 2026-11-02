@@ -44,8 +44,10 @@ def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None) -> dict:
     tag = f"{sumocfg.stem}_{ctrl.name}_{seed}"
     ti = EVAL_DIR / f"tripinfo_{tag}.xml"
     EVAL_DIR.mkdir(parents=True, exist_ok=True)
+    v2 = ET.parse(sumocfg).getroot().find("input/net-file").get("value").endswith("_v2.net.xml")
+    ciocniri_xml = EVAL_DIR / f"ciocniri_{tag}.xml"
     start_sumo(sumocfg, seed, extra=["--tripinfo-output", str(ti), "--device.emissions.probability", "1",
-                                     "--tripinfo-output.write-unfinished", "true"])
+                                     "--tripinfo-output.write-unfinished", "true"] + (["--tripinfo-output.write-undeparted", "true", "--collision-output", str(ciocniri_xml)] if v2 else []))
     ctrl.reset(traci)
     end = horizon or int(float(ET.parse(sumocfg).getroot().find("time/end").get("value")))
     lanes = []
@@ -69,10 +71,19 @@ def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None) -> dict:
             ctrl.tick()
     pending = traci.simulation.getMinExpectedNumber()
     traci.close()
-    return {**parse_tripinfo(ti), "coada_medie_romana": float(np.mean(q_samples)),
+    extra = stare_ciocniri(ciocniri_xml) if v2 else {}
+    return {**parse_tripinfo(ti), **extra, "coada_medie_romana": float(np.mean(q_samples)),
             "coada_max_romana": float(np.max(q_samples)), "pietoni_asteapta_medie": float(np.mean(p_samples)),
             "nefinalizate": int(pending), "scenariu": sumocfg.stem, "strategie": ctrl.name, "seed": seed,
             "teleportari": teleportari, "ciocniri": ciocniri}
+
+
+def stare_ciocniri(cale: Path) -> dict:
+    """Ciocnirile unei simulări, pe tipuri: între vehicule și între un vehicul în mișcare și un pieton. Valorile lor intră în pragurile din § 6.5."""
+    cioc = ET.parse(cale).getroot().findall("collision")
+    cale.unlink(missing_ok=True)
+    pieton = [c for c in cioc if c.get("victimType") == "pieton" or c.get("colliderType") == "pieton"]
+    return {"ciocniri_vehicule": len(cioc) - len(pieton), "ciocniri_pieton_in_miscare": sum(float(c.get("colliderSpeed")) > 1 for c in pieton)}
 
 
 def _mean(xs: list[float]) -> float:

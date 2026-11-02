@@ -17,6 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from romana.bridge.od_estimation import factor_brat
 from romana.common import CONFIG_DIR, OUTPUT_DIR, ROOT
 from romana.vision.program_real import BUCATI, CULORI, NUME
 
@@ -66,7 +67,8 @@ def main(argv=None) -> None:
     cale = Path(a.profile) if a.profile else OUTPUT_DIR / "program_real" / f"profile_{a.zi}.json"
     real = json.loads(cale.read_text(encoding="utf-8"))[a.interval]
     factori = json.loads((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8"))["factor_corectie_detectie"]
-    factor = {b: (v["zi"] if isinstance(v, dict) else v) for b, v in factori.items()}
+    mijloc = pd.Timestamp(f"{a.zi} {a.interval.split('-')[0]}") + (pd.Timestamp(f"{a.zi} {a.interval.split('-')[1].replace('24:00', '23:59')}") - pd.Timestamp(f"{a.zi} {a.interval.split('-')[0]}")) / 2
+    factor = {b: factor_brat(v, mijloc) for b, v in factori.items()}       # la fel ca în cerere: după cum e Soarele în mijlocul intervalului
     ev, T, stare = treceri_geaman(a.scenariu, a.plan, a.seed)
     randuri, curbe = [], {}
     Tr = real["ciclu_s"]
