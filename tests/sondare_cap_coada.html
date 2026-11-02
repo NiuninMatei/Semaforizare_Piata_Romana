@@ -144,6 +144,35 @@ const FORMULAR = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     verifica("proba deschisă nu are buton de trimitere", !pagina().getElementById("trimite"));
     verifica("proba deschisă nu are copiere", ![...pagina().querySelectorAll("#ghid button")].some(b => b.textContent === "Copiază textul"));
 
+    // ---- aceleași sarcini pe versiunea reparată: fazele obișnuite nu mai cer confirmare, iar ecranul spune dacă s-a aplicat
+    await incarca(`${LINK}?g=c&o=2&f=${FORMULAR}&e=123456`);
+    await primaParte();
+    await asteapta(() => ecran() && ecran().src.endsWith("m2.html") && ecran().contentDocument.getElementById("faza").textContent !== "—", "versiunea reparată, cu datele simulate");
+    const vizibil2 = ecran().contentDocument.body.innerText;
+    for (const fals of ["flux", "cadre/s", "vehicule urmărite", "măsurate de cameră"]) verifica("în versiunea reparată, sub fotografie nu scrie „" + fals + "”", !vizibil2.includes(fals));
+    verifica("versiunea reparată spune cine conduce", ecran().contentDocument.getElementById("cine-acum").textContent.includes("calculatorul"));
+    await apasa("Am terminat");
+    await apasa("Un calculator");
+    await apasa("Am terminat");
+    await apasa("Dacia vest");
+    await pe_ecran('[data-mod="manual"]');
+    await pe_ecran("#da");
+    await asteapta(() => ecran().contentDocument.querySelector('[data-faza="1"]') && ecran().contentDocument.getElementById("manual").classList.contains("vizibil"), "lista fazelor", 10000);
+    await pe_ecran('[data-faza="1"]');
+    verifica("faza obișnuită nu mai cere confirmare", !ecran().contentDocument.getElementById("confirm").classList.contains("vizibil"));
+    await asteapta(() => ecran().contentDocument.getElementById("faza").textContent.startsWith("Verde pe Bd. Dacia") && ecran().contentDocument.getElementById("faza-det").textContent.startsWith("verde"), "verde pe Dacia, versiunea reparată", 30000);
+    await asteapta(() => ecran().contentDocument.getElementById("rezultat").textContent.includes("Aplicat"), "mesajul că s-a aplicat", 5000);
+    await apasa("Am terminat");
+    await apasa("Roșu");
+    await apasa("Da, clar");
+    await pe_ecran('[data-mod="program"]');
+    await pe_ecran("#da");
+    await apasa("Am terminat");
+    await apasa("Da, clar");
+    await apasa("Mă opresc aici");
+    await apasa("Da, mă opresc");
+    rez.text_m2 = (await asteapta(() => pagina().getElementById("text-final"), "finalul, versiunea reparată")).value;
+
     // ---- o persoană invitată care se oprește poate trimite ce a notat
     await incarca(`${LINK}?g=c&o=2&f=${FORMULAR}&e=123456`);
     await primaParte();

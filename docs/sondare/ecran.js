@@ -70,7 +70,8 @@ function deschide(versiune) {
       const a = e.target.closest("a");
       if (a) e.preventDefault();             // legăturile din subsol nu scot persoana din ecran
       const b = e.target.closest("button,a,input,select");
-      ses.clic(b ? (b.textContent || b.id || b.tagName).trim() : "în afara butoanelor");
+      const nume = b && b.querySelector("b");   // butoanele cu descriere: numele, nu toată fraza
+      ses.clic(b ? ((nume && nume.textContent) || b.textContent || b.id || b.tagName).trim() : "în afara butoanelor");
       salveaza();
     }, true);
   });

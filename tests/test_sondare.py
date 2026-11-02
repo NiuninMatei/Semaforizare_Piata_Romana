@@ -365,6 +365,10 @@ class TestInBrowser(VerificaLogica, unittest.TestCase):
         self.assertTrue(pe_id["r1_automat"]["reusit"])
         self.assertTrue(pe_id["r1_conduce_r"]["corect"] and pe_id["r1_coada_r"]["corect"] and pe_id["r1_verde_r"]["corect"])
         self.assertTrue(pe_id["r2_verde"]["nu_reuseste"])
+        m2 = {x["id"]: x for x in s.citeste_raspuns(o["text_m2"])["pasi"]}
+        self.assertTrue(m2["r1_verde"]["reusit"], "verdele pe Dacia, în versiunea reparată")
+        self.assertTrue(m2["r1_automat"]["reusit"], "revenirea la calculator, în versiunea reparată")
+        self.assertTrue(m2["r1_conduce_r"]["corect"] and m2["r1_coada_r"]["corect"] and m2["r1_verde_r"]["corect"])
         self.assertEqual(s.citeste_raspuns(o["text_oprit"])["grup"], "c")
         self.assertFalse(s.citeste_raspuns(o["text_oprit"])["terminat"])
 

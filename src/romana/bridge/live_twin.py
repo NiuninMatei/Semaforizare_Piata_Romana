@@ -289,6 +289,8 @@ def main(argv=None) -> None:
                 hist = hist[-600:]
                 state = {"timestamp": time.time(), "timp_sim": t, "mod": mode, "mod_program": sub, "sursa": src,
                          "faza": ctrl.current, "faza_nume": ctrl.names[ctrl.current], "etapa": ctrl.stage,
+                         "faza_tinta": ctrl.target if ctrl.stage != "green" else ctrl.current,
+                         "varsta_debite_s": round(time.time() - good_t) if good_cam else None,
                          "verde_s": ctrl.green_time, "faze": ctrl.names, "model_ai": bool(rl),
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
                          "vehicule_in_retea": traci.vehicle.getIDCount(), "vehicule_injectate": n_veh,

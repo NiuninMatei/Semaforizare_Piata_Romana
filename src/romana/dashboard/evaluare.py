@@ -172,6 +172,7 @@ def main(argv=None) -> None:
     ap.add_argument("--versiune", choices=sorted(PAGINI), default="m1")
     ap.add_argument("--capturi", default=None, help="implicit outputs/evaluare/<versiune>")
     ap.add_argument("--out", default=None, help="implicit docs/rezultate/evaluare_<versiune>")
+    ap.add_argument("--doar", default=None, help="la verifica: doar aceste probleme, de exemplu P02,P07, după o corectură a capturilor")
     a = ap.parse_args(argv)
     dosar = Path(a.capturi) if a.capturi else RADACINA / "outputs" / "evaluare" / a.versiune
     if a.comanda == "trimite":
@@ -185,7 +186,11 @@ def main(argv=None) -> None:
         probleme = next(iter(rezultate_loturi(a.loturi).values()))["probleme"]
         fisiere, cod = capturi(dosar), PAGINI[a.versiune].read_text(encoding="utf-8")
         roluri = ("Ai experiență în testarea interfețelor.", "Ești sceptic: cauți motive pentru care problema nu există sau e exagerată.")
-        cereri = [cerere(f"{a.versiune}__verif{g:02d}__{k}", fisiere, prompt_verificare(parte, fisiere, cod, rol), MODEL, EFORT, SCHEMA_VERIFICARE)
+        eticheta = "verif"
+        if a.doar:
+            probleme = [p for p in probleme if p["id"] in a.doar.split(",")]
+            eticheta = "verif_" + a.doar.replace(",", "_")
+        cereri = [cerere(f"{a.versiune}__{eticheta}{g:02d}__{k}", fisiere, prompt_verificare(parte, fisiere, cod, rol), MODEL, EFORT, SCHEMA_VERIFICARE)
                   for g, parte in enumerate(grupuri(probleme)) for k, rol in enumerate(roluri)]
         print(len(probleme), "probleme,", len(cereri), "cereri")
         trimite(cereri, {"mod": "evaluare", "versiune": a.versiune, "efort": EFORT})
