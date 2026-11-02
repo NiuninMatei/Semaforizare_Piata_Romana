@@ -1,5 +1,12 @@
 # Semaforizare Piața Romană
 
+> **Corectură importantă, 2.11.2026.** Rezultatul prezentat mai jos, câștigul planului 12/14/12 (−7%), **nu mai este valabil**. El a fost
+> obținut pe un geamăn în care, din cauza unei alegeri greșite (`tau` = 0,8 s sub pasul de simulare de 1 s) și a avertismentelor oprite,
+> vehiculele se ciocneau și erau teleportate de ≈15 000 de ori pe oră. Geamănul corectat reproduce debitele măsurate de cameră, iar pe el
+> planul 12/14/12 este cel mai slab plan încercat la vârf. Tot din cameră a ieșit și programul real al semaforului: un ciclu de ≈125–155 s,
+> nu de ≈91 s, cât presupuneam. Explicația e în [§ 6.5 din documentație](docs/DOCUMENTATIE.md#65-geamănul-corectat-coliziunile-ascunse-și-programul-real-2112026). Textul de mai jos va fi rescris după
+> testele pe zilele noi; deocamdată rămâne ca istoric.
+
 Cât timp ar câștiga participanții la trafic din Piața Romană, în București, dacă s-ar schimba **doar programul
 semafoarelor existente**, fără nicio lucrare pe stradă? Proiectul caută răspunsul în simulare.
 

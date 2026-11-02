@@ -55,6 +55,7 @@ def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None) -> dict:
     veh_lanes = [ln for ln in lanes if not ln.startswith(":")]
     ped_areas = sorted({ln.rsplit("_", 1)[0] for ln in lanes if ln.startswith(":")})
     q_samples, p_samples = [], []
+    teleportari = ciocniri = 0
     for t in range(end):
         if t % 5 == 0:
             ctrl.act(traci, t)
@@ -62,13 +63,16 @@ def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None) -> dict:
             p_samples.append(sum(1 for e in ped_areas for p in traci.edge.getLastStepPersonIDs(e)
                                  if traci.person.getSpeed(p) < 0.1))
         traci.simulationStep()
+        teleportari += traci.simulation.getStartingTeleportNumber()
+        ciocniri += traci.simulation.getCollidingVehiclesNumber()
         if hasattr(ctrl, "tick"):
             ctrl.tick()
     pending = traci.simulation.getMinExpectedNumber()
     traci.close()
     return {**parse_tripinfo(ti), "coada_medie_romana": float(np.mean(q_samples)),
             "coada_max_romana": float(np.max(q_samples)), "pietoni_asteapta_medie": float(np.mean(p_samples)),
-            "nefinalizate": int(pending), "scenariu": sumocfg.stem, "strategie": ctrl.name, "seed": seed}
+            "nefinalizate": int(pending), "scenariu": sumocfg.stem, "strategie": ctrl.name, "seed": seed,
+            "teleportari": teleportari, "ciocniri": ciocniri}
 
 
 def _mean(xs: list[float]) -> float:

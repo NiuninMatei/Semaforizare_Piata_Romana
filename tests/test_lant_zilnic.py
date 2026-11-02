@@ -1340,6 +1340,7 @@ class TestLiniaDeComanda(Cutie):
 
     def test_uscat_fara_zi_si_fara_jurnal(self):
         ieri = (date.today() - timedelta(days=1)).isoformat()
+        L.jurnal(ieri).unlink(missing_ok=True)      # pe 2.11, ziua de ieri e chiar ziua pregătită în setUp
         self.assertEqual(L.main(["--uscat"]), 0)
         self.assertIn(f"ziua {ieri}", self.ecran.getvalue())
         self.assertIn("LIPSEȘTE", self.ecran.getvalue())

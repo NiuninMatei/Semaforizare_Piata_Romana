@@ -121,6 +121,38 @@ def interval(ev: dict[str, np.ndarray], de_la: float, pana_la: float) -> dict:
             "ferestre": len(cicluri), "brate": {b: curgere(p, T) for b, p in medii.items()}, "profile": {b: [round(float(x), 3) for x in p] for b, p in medii.items()}}
 
 
+CULORI = {"magheru": "#2a78d6", "catargiu": "#eb6834", "dacia_est": "#1baf7a", "dacia_vest": "#eda100"}
+NUME = {"magheru": "Magheru", "catargiu": "Lascăr Catargiu", "dacia_est": "Dacia est", "dacia_vest": "Dacia vest"}
+
+
+def figura(r: dict, titlu: str, cale: Path) -> None:
+    """Profilul pliat al unui interval: câte vehicule trec pe fiecare intrare, în fiecare moment al ciclului."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    T = r["ciclu_s"]
+    fig, ax = plt.subplots(figsize=(9, 3.6))
+    x = np.arange(BUCATI) / BUCATI * T
+    dec = BUCATI // 2 - int(np.argmax(_neteda(np.array(r["profile"]["magheru"]), 25)))     # etapa Magheru–Catargiu la mijlocul figurii
+    for b, c in CULORI.items():
+        y = np.roll(_neteda(np.array(r["profile"][b]), 3), dec)
+        ax.plot(x, y, color=c, linewidth=2, label=NUME[b])
+    ax.set_xlim(0, T)
+    ax.set_ylim(bottom=0)
+    ax.set_xlabel("secunde în ciclu")
+    ax.set_ylabel("vehicule pe secundă")
+    ax.set_title(titlu, fontsize=11, loc="left")
+    ax.grid(axis="y", color="#e4e3df", linewidth=0.8)
+    ax.set_axisbelow(True)
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+    ax.legend(frameon=False, ncol=4, loc="upper center", bbox_to_anchor=(0.5, -0.18), fontsize=9)
+    fig.tight_layout()
+    fig.savefig(cale, dpi=130)
+    plt.close(fig)
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--zi", required=True)
@@ -130,6 +162,7 @@ def main(argv=None) -> None:
     ap.add_argument("--pe-zi", action="store_true", help="ciclul pe fiecare 20 de minute din zi")
     ap.add_argument("--out", default=None, help="CSV cu rezultatele de pe intervale și de pe zi")
     ap.add_argument("--profile", default=None, help="JSON cu profilele pliate ale intervalelor")
+    ap.add_argument("--figura", default=None, help="PNG cu profilul primului interval dat cu --interval")
     a = ap.parse_args(argv)
     zone = load_zones(json.loads(Path(a.camera).read_text(encoding="utf-8")))
     ev = evenimente(Path(a.jurnal) if a.jurnal else TRAJ_DIR / f"traiectorii_{a.zi}.jsonl.gz", zone)
@@ -151,6 +184,10 @@ def main(argv=None) -> None:
         profile[f"{de_la}-{pana_la}"] = {"ciclu_s": r["ciclu_s"], **r["profile"]}
         print(f"  {de_la}–{pana_la}: ciclu {r['ciclu_s']} s ({r['ciclu_min_s']}–{r['ciclu_max_s']}), tărie {r['tarie']}; " +
               "; ".join(f"{b}: curge {c['curge_s']:.0f} s, de la {c['de_la_s']:.0f} s, vârf {c['varf_veh_s']} veh/s, {c['veh_pe_ciclu']:.0f} veh/ciclu" for b, c in r["brate"].items()), flush=True)
+    if a.figura and a.interval:
+        de_la, pana_la = a.interval[0].split("-")
+        r = interval(ev, ore(de_la), ore(pana_la))
+        figura(r, f"{a.zi}, {de_la}–{pana_la}: ciclu de {r['ciclu_s']:.0f} s", Path(a.figura))
     if a.out and randuri:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         with open(a.out, "w", newline="", encoding="utf-8") as f:

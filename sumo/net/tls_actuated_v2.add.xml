@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<additional>
+  <tlLogic id="romana" type="actuated" programID="actuated" offset="0">
+    <param key="max-gap" value="3.0" />
+    <param key="detector-gap" value="2.0" />
+    <phase duration="36" minDur="10" maxDur="60" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr" />
+    <phase duration="3" state="yyyyrrryyyrryyyyyyyGGGGGGrrrrrrrrrrGGyyyyGGGGGGGGrryyyyyrrryr" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrGGGGGGrrrrrrrrrrGGrrrrGGGGGGGGrrrrrrrrrrrr" />
+    <phase duration="28" minDur="10" maxDur="60" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrGggrG" />
+    <phase duration="3" state="rrrryyyrrryyrrrrrrryyyyyyyyyyyyyyyyyyrrrryyyyyyyyyyrrrrrGggrG" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGggrG" />
+    <phase duration="12" minDur="10" maxDur="60" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGG" />
+    <phase duration="3" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGyyyGy" />
+    <phase duration="2" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGrrrGr" />
+  </tlLogic>
+</additional>

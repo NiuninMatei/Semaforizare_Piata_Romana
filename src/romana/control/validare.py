@@ -39,6 +39,7 @@ import glob
 import json
 import os
 import time
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pandas as pd
@@ -122,6 +123,9 @@ def make_controller(spec: str):
     return ctrl
 
 
+STARE_SIMULARE = ["teleportari", "ciocniri", "nefinalizate"]
+
+
 def run_task(task: tuple) -> tuple:
     """O simulare (strategie, scenariu, seed) → (model, scenariu, seed, pierdere_h, pierderile pe tipuri)."""
     spec, sumocfg, seed, eval_dir, quiet = task
@@ -134,7 +138,7 @@ def run_task(task: tuple) -> tuple:
     E.EVAL_DIR = Path(eval_dir)      # fișierele tripinfo temporare (șterse după agregare)
     ctrl = make_controller(spec)
     r = E.run_one(Path(sumocfg), ctrl, seed)
-    return (ctrl.name, Path(sumocfg).stem, seed, r["pierdere_totala_h"], *(r.get(c, 0.0) for c in DETALII))
+    return (ctrl.name, Path(sumocfg).stem, seed, r["pierdere_totala_h"], *(r.get(c, 0.0) for c in DETALII), r["teleportari"], r["ciocniri"], r["nefinalizate"])
 
 
 def run_all(specs: list[str], scenarios: list[Path], seeds: list[int], procese: int,
@@ -149,7 +153,10 @@ def run_all(specs: list[str], scenarios: list[Path], seeds: list[int], procese: 
             res = list(ex.map(run_task, tasks))
     else:
         res = [run_task(t[:4] + (False,)) for t in tasks]
-    return pd.DataFrame(res, columns=COLOANE + DETALII)
+    df = pd.DataFrame(res, columns=COLOANE + DETALII + STARE_SIMULARE)
+    # geamănul corectat (§ 6.5) își raportează și coliziunile; fișierele măsurii vechi rămân identice, octet cu octet
+    v2 = any(ET.parse(s).getroot().find("input/net-file").get("value").endswith("_v2.net.xml") for s in scenarios)
+    return df if v2 else df.drop(columns=STARE_SIMULARE)
 
 
 def relative_table(df: pd.DataFrame, ref: str = REFERINTA) -> pd.DataFrame:

@@ -3,7 +3,7 @@
 Străzile, benzile, trecerile și semafoarele sunt aceleași. Se schimbă, din `config/retea_v2.json`:
   - câteva legături între benzi, pe care OSM nu le spune și netconvert le-a ghicit;
   - cât de departe văd șoferii la legăturile care cedează trecerea;
-  - etapele în care au verde trecerile de pietoni de pe ieșiri, cu vehiculele care virează cedând trecerea;
+  - etapele în care au verde trecerile de pietoni de pe ieșiri: pietonii trec printre vehiculele care virează, ca în imaginile camerei;
   - tipurile de vehicule: `tau` egal cu pasul de simulare, ca să nu apară coliziuni, distanța minimă și imperfecțiunea, calibrate pe cameră.
 
 Scrie, lângă cele vechi: sumo/net/romana_v2.net.xml, network_info_v2.json, tls_actuated_v2.add.xml, sumo/demand/vtypes_v2.add.xml, vtypes_indisciplinat_v2.add.xml.
@@ -30,13 +30,11 @@ VEHICULE = ("passenger", "bus", "truck", "motorcycle")
 
 
 def stari_v2(verzi: list[str], cfg: dict) -> list[str]:
-    """Fazele verzi cu trecerile deschise în etapa lor, iar vehiculele care le taie cedând trecerea („g”)."""
+    """Fazele verzi cu trecerile deschise și în etapa compatibilă, ca verde care se folosește printre vehiculele care virează („g”)."""
     out = list(verzi)
     for faza, e in cfg["treceri_in_etape"].items():
         s = list(out[int(faza)])
         for i in e["treceri"]:
-            s[i] = "G"
-        for i in e["cedeaza"]:
             s[i] = "g"
         out[int(faza)] = "".join(s)
     return out
@@ -104,7 +102,7 @@ def tipuri(cfg: dict) -> None:
                 return s
             s = re.sub(r'tau="[0-9.]+"', f'tau="{v["tau"]}"', s)
             s = re.sub(r'sigma="[0-9.]+"', f'sigma="{sigma}"', s)
-            return s.replace("<vType ", f'<vType minGap="{v["minGap"]}" jmCrossingGap="{v["jmCrossingGap"]}" lcKeepRight="{v["lcKeepRight"]}" ', 1)
+            return s.replace("<vType ", f'<vType minGap="{v["minGap"]}" jmCrossingGap="{v["jmCrossingGap"]}" lcKeepRight="{v["lcKeepRight"]}" jmIgnoreJunctionFoeProb="{v["jmIgnoreJunctionFoeProb"]}" ', 1)
 
         t = re.sub(r"<vType [^>]*>", vtype, t)
         t = t.replace("<additional>", f"<!-- {nota} -->\n<additional>", 1)
