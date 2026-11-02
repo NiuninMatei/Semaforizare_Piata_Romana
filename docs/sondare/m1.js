@@ -44,7 +44,7 @@ function butoane(s){
     if(b.dataset.mod=="ai") b.disabled=!!s&&!s.model_ai, b.title=s&&!s.model_ai?"Nu există model antrenat în models/":""});
   $("manual").classList.toggle("vizibil",mod=="manual");
   if(s&&s.faze&&!$("faze").children.length){
-    $("faze").innerHTML=s.faze.map((f,i)=>`<button data-faza="${i}">${f}</button>`).join("");
+    $("faze").innerHTML=s.faze.slice(0,5).map((f,i)=>`<button data-faza="${i}">${f}</button>`).join("");
     document.querySelectorAll("[data-faza]").forEach(b=>b.onclick=()=>cere("manual",+b.dataset.faza));
   }
   document.querySelectorAll("[data-faza]").forEach(b=>b.setAttribute("aria-pressed",s&&mod=="manual"&&+b.dataset.faza==s.faza));

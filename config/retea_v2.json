@@ -117,14 +117,13 @@
       ]
     }
   },
-  "_treceri_in_etape": "Numere de legătură. Trecerile de pe ieșiri aveau verde doar în faza de pietoni. Au acum verde și în etapa în care pe ieșirea respectivă vin doar vehicule care virează, iar pietonii trec printre ele: 55 Dacia est, 59 Dacia vest în etapa N–S; 57 Magheru, 58 Lascăr Catargiu în etapa E–V. Jurnalul confirmă: pe Dacia est, pietonii traversează în etapa N–S, începând la ≈15 s după vehiculele care virează, iar pe Magheru în etapa E–V.",
+  "_treceri_in_etape": "Numere de legătură. Trecerile de pe ieșiri aveau verde doar în faza de pietoni. Au acum verde și în etapa în care pe ieșirea respectivă vin doar vehicule care virează, iar pietonii trec printre ele: 55 Dacia est, 59 Dacia vest în etapa N–S; 57 Magheru, 58 Lascăr Catargiu în etapa E–V. Jurnalul confirmă: pe Dacia est, pietonii traversează în etapa N–S, începând la ≈15 s după vehiculele care virează, iar pe Magheru în etapa E–V. Atenție: trecerea are response=000 la nod, deci „g” nu face pietonul să cedeze; vehiculele sunt pe „G”, deci au prioritate față de un pieton care abia intră, invers față de convenția netconvert și de regula de circulație. Motivul: în cameră vehiculele curg și în timpul pietonilor. Cu convenția inversă, pierderea crește cu 32–42%, iar Dacia est scade cu 14–18%.",
   "tipuri_vehicule": {
     "fisier": "vtypes_v2.add.xml",
     "fisier_indisciplinat": "vtypes_indisciplinat_v2.add.xml",
-    "tau": "1.0",
-    "jmCrossingGap": "2"
+    "tau": "1.0"
   },
-  "_tipuri_vehicule": "Vehiculele rămân cele din vtypes.add.xml, cu două schimbări. tau revine la valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare: sub el apar coliziuni. jmCrossingGap 2: distanța minimă până la un pieton care merge spre punctul de conflict; dacă e mai departe, vehiculul poate trece; cu valoarea implicită, 10 m, debitul de pe Magheru scade cu ≈5%, iar virajele spre Dacia est se opresc și mai mult decât în cameră, unde curg și în timpul pietonilor. O primă versiune avea și jmIgnoreJunctionFoeProb 0,5, minGap 1,5 și sigma 0,2, alese pe debitul din cameră; primul făcea vehiculele să treacă prin pietoni, deci potrivirea era un artefact, iar cu valorile implicite ale celorlalte două, profilul pe ciclu de pe Magheru se potrivește mai bine (§ 6.5).",
+  "_tipuri_vehicule": "Vehiculele rămân cele din vtypes.add.xml, cu o singură schimbare: tau revine la valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare; sub el apar coliziuni. jmCrossingGap a revenit la valoarea implicită, 10 m: motivul pentru care îl schimbasem nu s-a reprodus; pe două seed-uri, debitul de pe Magheru nu scade la 10 m (+3,3%, +6,1% pe 300–2100 s), iar zgomotul dintre seed-uri ajunge la 14% (a doua revizie, 2.11).",
   "pietoni": {
     "treceri": [
       54,
@@ -139,7 +138,14 @@
       "0": 24
     },
     "degajare_s": 6,
-    "nume_faza_scurta": "Golirea centrului, fără pietoni"
+    "nume_faza_scurta": "Golirea centrului, fără pietoni",
+    "linii_interioare": [
+      15,
+      16,
+      17,
+      18
+    ]
   },
-  "_pietoni": "Din cameră, pe 26.10, la prânz, după-amiaza și seara: pe zebrele de pe Dacia est, trecerile cresc brusc la ≈24 s de la începutul valului de pe Magheru și se termină la ≈70 s; doar 3% din treceri cad în ultimele 20 s dinaintea valului. Pe Magheru, de la ≈60 s la ≈120 s din ciclu. Deci pietonii de pe Dacia pornesc la ≈24 s după vehicule, iar între ultimul pieton și următoarea etapă rămân câteva secunde: degajarea e timpul de traversare al celei mai lungi treceri, 12,8 m la 1,2 m/s, minus cele 5 s de tranziție. Pentru Magheru–Catargiu și Dacia vest, camera vede prea puțini pietoni: același program, prin analogie, ipoteză."
+  "_pietoni": "Din cameră, pe 26.10, la prânz, după-amiaza și seara: pe zebrele de pe Dacia est, trecerile cresc brusc la ≈24 s de la începutul valului de pe Magheru și se termină la ≈70 s; doar 3% din treceri cad în ultimele 20 s dinaintea valului. Pe Magheru, de la ≈60 s la ≈120 s din ciclu. Deci pietonii de pe Dacia pornesc la ≈24 s după vehicule, iar între ultimul pieton și următoarea etapă rămân câteva secunde: degajarea e timpul de traversare al celei mai lungi treceri, 12,8 m la 1,2 m/s, minus cele 5 s de tranziție. Pentru Magheru–Catargiu și Dacia vest, camera vede prea puțini pietoni: același program, prin analogie, ipoteză.",
+  "_pietoni_linii_interioare": "Pe Magheru sunt trei linii de oprire la rând: 0–3, apoi 37–40 după 2,71 m, zebra 56 și 15–18 după încă 0,2 m. Dacă se închid toate deodată, cine a trecut de 37–40 pe galben rămâne oprit pe zebră toată etapa E–V, iar pietonii trec prin el. Linia 15–18 se închide deci după celelalte. E doar program, rețeaua nu se schimbă. Măsurat pe vârful din 26.10: perechi pieton–vehicul oprit pe zebra 56, 314 → 5; debitele rămân în zgomot."
 }

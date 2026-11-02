@@ -47,6 +47,16 @@ def segmente_etapa(stare: str, verde: float, treceri, intarziere: float, degajar
     return [(s, d) for s, d in ((goala, inceput), (stare, sfarsit - inceput), (goala, verde - sfarsit)) if d > 0]
 
 
+def tranzitie(s: str, urm: str, interioare=()) -> tuple[str, str]:
+    """Galbenul și roșul general dintre două stări. O linie de oprire de imediat după o trecere rămâne pe verde în galbenul celorlalte și trece pe galben în roșul general:
+    cine a trecut de linia dinaintea trecerii trebuie să poată ieși de pe ea, nu să rămână oprit pe zebră toată etapa următoare."""
+    g, r = yellow_between(s, urm), all_red_between(s, urm)
+    for i in interioare:
+        if s[i] in "Gg" and urm[i] not in "Gg":
+            g, r = g[:i] + s[i] + g[i + 1:], r[:i] + "y" + r[i + 1:]
+    return g, r
+
+
 def program_fix(stari: list[str], etape: list[tuple[int, float]], pietoni: dict, galben: float = 3, rosu: float = 2) -> list[tuple[str, float]]:
     """Plan fix: [(faza, verde)] → [(stare, durată)], cu fereastra pietonilor și cu tranzițiile sigure acolo unde se schimbă legături de vehicule."""
     seg = [x for f, v in etape for x in ([(pietoni["stare_scurta"], v)] if f == SCURTA else segmente_etapa(stari[f], v, pietoni["treceri"], pietoni["intarziere_s"].get(str(f), 0), pietoni["degajare_s"]))]
@@ -56,7 +66,8 @@ def program_fix(stari: list[str], etape: list[tuple[int, float]], pietoni: dict,
         urm = seg[(k + 1) % len(seg)][0]
         out.append((s, d))
         if s[:n] != urm[:n]:
-            out += [(yellow_between(s, urm), galben), (all_red_between(s, urm), rosu)]
+            g, r = tranzitie(s, urm, pietoni.get("linii_interioare", ()))
+            out += [(g, galben), (r, rosu)]
     return out
 
 
@@ -75,6 +86,7 @@ class SemaforCuPietoni(SignalController):
         self.treceri = set(pietoni["treceri"])
         self.intarziere = {int(k): v for k, v in pietoni["intarziere_s"].items()}
         self.degajare = pietoni["degajare_s"]
+        self.interioare = pietoni.get("linii_interioare", ())
         self.stare_scurta = pietoni["stare_scurta"]
         self.nume_scurta = pietoni["nume_scurta"]
         self.scurta = self.spre_scurta = False     # în etapa scurtă, respectiv spre ea; pentru agent, ea rămâne faza a treia
@@ -94,7 +106,10 @@ class SemaforCuPietoni(SignalController):
         return fara_treceri(self.greens[faza], self.treceri) if self.intarziere.get(faza, 0) > 0 else self.greens[faza]
 
     def can_switch(self) -> bool:
-        return self.stage == "green" and self.ramas_degajare is None and (self.scurta or self.green_time >= self.min_green)
+        if self.stage != "green" or self.ramas_degajare is not None:
+            return False
+        # și la o strategie care schimbă des, pietonii primesc verdele lor: fără asta, un N–S sub 24 s lasă trecerile de pe Dacia fără niciun verde
+        return self.scurta or self.green_time >= max(self.min_green, self.intarziere.get(self.current, 0) + MINIM_PIETONI_S)
 
     def request(self, phase: int, scurta: bool = False) -> None:
         if self.stage != "green" or self.ramas_degajare is not None or (self.scurta and self.green_time < ETAPA_SCURTA_S):
@@ -108,7 +123,7 @@ class SemaforCuPietoni(SignalController):
             phase = URMATOAREA.get(self.current, 0)
             if self.via_scurta and self.current == 1:
                 phase, scurta = 2, True
-        if phase != self.current and self.can_switch():
+        if (phase != self.current or (self.scurta and not scurta)) and self.can_switch():
             self.target = phase
             self.spre_scurta = scurta and phase == 2
             self.sosire = self._inceput(phase, self.spre_scurta)
@@ -129,7 +144,7 @@ class SemaforCuPietoni(SignalController):
         self.ramas_degajare = None
         self.stage, self.stage_time = "yellow", 0
         self.plecare = self.afisata
-        self._arata(yellow_between(self.plecare, self.sosire))
+        self._arata(tranzitie(self.plecare, self.sosire, self.interioare)[0])
 
     def tick(self) -> None:
         self.stage_time += 1
@@ -145,7 +160,7 @@ class SemaforCuPietoni(SignalController):
                 self._arata(self.greens[self.current])
         elif self.stage == "yellow" and self.stage_time >= self.yellow:
             self.stage, self.stage_time = "red", 0
-            self._arata(all_red_between(self.plecare, self.sosire))
+            self._arata(tranzitie(self.plecare, self.sosire, self.interioare)[1])
             if self.all_red == 0:
                 self.tick()
         elif self.stage == "red" and self.stage_time >= self.all_red:

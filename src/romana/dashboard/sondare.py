@@ -242,6 +242,7 @@ def ecran_static(html: str, versiune: str) -> tuple[str, str]:
     script = _inlocuieste(m[0], '"/api/video"', json.dumps(IMAGINE_PUBLICA))
     html = html.replace(f"<script>{m[0]}</script>", f'<script src="punte.js"></script>\n<script src="{versiune}.js"></script>')
     if versiune == "m1":      # versiunea M1 rămâne neschimbată: planul de azi se numește cum îl numea ea pe cel de atunci
+        script = _inlocuieste(script, "s.faze.map(", "s.faze.slice(0,5).map(")      # ca atunci: etapa scurtă nu are buton
         script = script.strip() + "\nMOD.plan_observat = MOD.plan_scurt;"
     return html, script.strip() + "\n"
 

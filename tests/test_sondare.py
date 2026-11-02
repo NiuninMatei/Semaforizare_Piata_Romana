@@ -190,6 +190,7 @@ class TestPachet(unittest.TestCase):
             self.assertNotIn(fals, pagina)
         self.assertIn(s.NOTA_CAMERA, pagina)
         original = re.search(r"<script>(.*?)</script>", sursa, flags=re.S)[1].strip() + "\n"
+        original = original.replace("s.faze.map(", "s.faze.slice(0,5).map(")     # etapa scurtă nu are buton în versiunea M1
         # singura linie în plus: planul de azi se numește în versiunea M1 cum îl numea ea pe cel de atunci
         self.assertEqual(script, original.replace('"/api/video"', json.dumps(s.IMAGINE_PUBLICA)) + "MOD.plan_observat = MOD.plan_scurt;\n")
 

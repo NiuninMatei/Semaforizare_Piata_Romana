@@ -3,8 +3,9 @@ import unittest
 
 import numpy as np
 
-from romana.control.faze import MINIM_PIETONI_S, SCURTA, SemaforCuPietoni, etape_plan, fara_treceri, program_fix, segmente_etapa
-from romana.control.rejucat import ETAPA_SCURTA_S, TRANZITII_S, VERDE_MIN_S, cicluri, valuri
+from romana.bridge.live_twin import turning_ratios
+from romana.control.faze import MINIM_PIETONI_S, SCURTA, SemaforCuPietoni, etape_plan, fara_treceri, program_fix, segmente_etapa, tranzitie
+from romana.control.rejucat import E_V_MAX_S, ETAPA_SCURTA_S, TRANZITII_S, VERDE_MIN_S, acoperire, cicluri, etape_inceput, valuri
 
 TRECERI = {4, 5}
 #        vehicule  treceri
@@ -65,6 +66,36 @@ class TestProgram(unittest.TestCase):
         self.assertEqual(len(etape_plan([60, 40, 0], CONFIG)), 2)
 
 
+class TestLiniiInterioare(unittest.TestCase):
+    CU = {**CONFIG, "linii_interioare": [1]}
+
+    def test_linia_de_dupa_trecere_se_inchide_dupa_celelalte(self):
+        g, r = tranzitie(N_S, E_V, self.CU["linii_interioare"])
+        self.assertEqual((g[0], g[1]), ("y", "G"))
+        self.assertEqual((r[0], r[1]), ("r", "y"))
+
+    def test_nu_ramane_verde_fara_galben(self):
+        for s, _ in program_fix(STARI, [(0, 72), (1, 48), (SCURTA, 3)], self.CU):
+            pass
+        faze = program_fix(STARI, [(0, 72), (1, 48), (SCURTA, 3)], self.CU)
+        for (a, _), (b, _) in zip(faze, faze[1:] + faze[:1]):
+            for x, y in zip(a[:4], b[:4]):
+                self.assertFalse(x == "G" and y == "r", (a, b))
+
+    def test_controlerul_face_la_fel(self):
+        tr = Traci()
+        c = SemaforCuPietoni(tr, "x", STARI, list("abc"), self.CU)
+        for _ in range(31):
+            c.tick()
+        c.request(1)
+        for _ in range(6):
+            c.tick()
+        self.assertEqual((tr.trafficlight.stare[0], tr.trafficlight.stare[1]), ("y", "G"))
+        for _ in range(3):
+            c.tick()
+        self.assertEqual((tr.trafficlight.stare[0], tr.trafficlight.stare[1]), ("r", "y"))
+
+
 class TestSemafor(unittest.TestCase):
     def setUp(self):
         self.tr = Traci()
@@ -80,7 +111,7 @@ class TestSemafor(unittest.TestCase):
         self.assertEqual(self.tr.trafficlight.stare, N_S)
 
     def test_inaintea_galbenului_pietonii_au_timp_sa_termine(self):
-        self.treci(30)
+        self.treci(31)
         self.c.request(1)
         self.assertEqual(self.tr.trafficlight.stare, fara_treceri(N_S, TRECERI))     # vehiculele au verde, pietonii nu
         self.assertEqual(self.c.stage, "green")
@@ -96,10 +127,25 @@ class TestSemafor(unittest.TestCase):
         self.assertEqual((self.c.stage, self.c.current), ("green", 1))
         self.assertEqual(self.tr.trafficlight.stare, E_V)
 
-    def test_fara_pietoni_pe_trecere_nu_mai_e_degajare(self):
-        self.treci(12)                 # sub cele 24 s, pietonii n-au primit verde
+    def test_pietonii_primesc_verdele_lor_si_la_o_cerere_timpurie(self):
+        self.treci(12)                 # sub cele 24 s, pietonii n-au primit verde: cererea așteaptă, oricine ar face-o
         self.c.request(1)
-        self.assertEqual(self.c.stage, "yellow")
+        self.assertEqual(self.c.stage, "green")
+        self.assertIsNone(self.c.ramas_degajare)
+        self.treci(24 + MINIM_PIETONI_S - 12 - 1)
+        self.c.request(1)
+        self.assertIsNone(self.c.ramas_degajare)
+        self.treci(1)
+        self.c.request(1)
+        self.assertEqual(self.c.ramas_degajare, 6)
+
+    def test_din_e_v_nu_exista_intarziere(self):
+        self.treci(31)
+        self.c.request(1)
+        self.treci(6 + 5)
+        self.assertEqual((self.c.current, self.c.stage), (1, "green"))
+        self.treci(self.c.min_green)
+        self.assertTrue(self.c.can_switch())
 
     def test_verdele_minim_ramane(self):
         self.treci(5)
@@ -107,8 +153,19 @@ class TestSemafor(unittest.TestCase):
         self.assertEqual(self.c.stage, "green")
         self.assertIsNone(self.c.ramas_degajare)
 
+    def test_din_etapa_scurta_se_poate_cere_faza_de_pietoni(self):
+        self.treci(31)
+        self.c.request(2, scurta=True)
+        self.treci(6 + 5 + 3)
+        self.assertTrue(self.c.scurta)
+        self.c.request(2)
+        self.assertEqual(self.c.stage, "yellow")
+        self.treci(5)
+        self.assertEqual((self.c.current, self.c.scurta), (2, False))
+        self.assertTrue(self.c.pietoni_verde())
+
     def test_etapa_scurta_nu_are_verde_minim(self):
-        self.treci(30)
+        self.treci(31)
         self.c.request(2, scurta=True)
         self.treci(6 + 5)
         self.assertEqual((self.c.current, self.c.scurta, self.c.faza_afisata()), (2, True, 3))
@@ -125,7 +182,7 @@ class TestSemafor(unittest.TestCase):
 
     def test_pe_doua_etape_scurta_vine_singura(self):
         self.c.via_scurta = True
-        self.treci(30)
+        self.treci(31)
         self.c.request(1)
         self.treci(6 + 5)
         self.assertEqual(self.c.current, 1)
@@ -164,10 +221,48 @@ class TestRejucat(unittest.TestCase):
         self.assertEqual(d, 130.0)
         self.assertEqual(g, 130.0 - TRANZITII_S - ETAPA_SCURTA_S - 60)
 
+    def test_doua_valuri_lipite_urmate_de_o_pauza_nu_dau_un_ciclu_imens(self):
+        val = [(0.0, 15.4, 19), (40.2, 53.1, 8), (781.1, 850.0, 50)]
+        c = cicluri(val, 900, 120.5, 25.0)
+        self.assertLessEqual(max(d for _, d in c), 1.6 * 120.5)
+        self.assertLessEqual(max(g for g, _ in c), 110)
+        self.assertGreaterEqual(sum(d for _, d in c), 900)
+
+    def test_inceputul_merge_pana_la_primul_val(self):
+        for prima in (0.0, 10.0, 40.0, 130.7, 274.4, 500.0):
+            etape, rest = etape_inceput(prima, 120.0, 40.0)
+            total = sum(v for _, v in etape)
+            # fiecare etapă e urmată de o tranziție de 5 s, afară de cea scurtă dintre două tranziții, care are și ea una
+            total += 5 * len(etape)
+            self.assertAlmostEqual(total + rest, prima, places=6, msg=str(prima))
+            self.assertLessEqual(max([v for f, v in etape if f == 1] or [0]), E_V_MAX_S + 30)
+
+    def test_acoperirea_numara_doar_ciclurile_date_de_valuri(self):
+        val = [(0.0, 70.0, 80), (140.0, 215.0, 80), (280.0, 350.0, 80)]
+        c = [(70.0, 140.0), (75.0, 140.0), (72.0, 140.0)]
+        self.assertAlmostEqual(acoperire(val, c, sfarsit=420.0), 280 / 420)
+        self.assertEqual(acoperire([], c), 0.0)
+
     def test_un_val_prea_apropiat_se_lipeste_de_cel_dinainte(self):
         val = [(0.0, 60.0, 80), (70.0, 90.0, 20), (150.0, 220.0, 80)]
         c = cicluri(val, 200, 150.0, 72.0)
         self.assertEqual(c[0], (90.0, 150.0))
+
+
+class TestCerereTimpReal(unittest.TestCase):
+    CFG = {"pondere_prior": 2.0, "prior_destinatii": {"magheru": {"catargiu": 3, "dacia_est": 1}, "catargiu": {"magheru": 1}},
+           "cote_fixe": {"catargiu": {"dacia_vest": 0.2}}, "cote_timp_real": {"magheru": {"dacia_est": 0.14}}}
+
+    def test_cotele_declarate_inlocuiesc_proportiile(self):
+        r = turning_ratios(self.CFG, {"magheru>dacia_est": 500, "magheru>catargiu": 500})
+        self.assertAlmostEqual(r["magheru"]["dacia_est"], 0.14)
+        self.assertAlmostEqual(r["magheru"]["catargiu"], 0.86)
+        self.assertAlmostEqual(r["catargiu"]["dacia_vest"], 0.2)
+        self.assertAlmostEqual(sum(r["catargiu"].values()), 1.0)
+
+    def test_fara_cote_ramane_ca_inainte(self):
+        r = turning_ratios({"pondere_prior": 2.0, "prior_destinatii": {"magheru": {"catargiu": 1}}}, {})
+        self.assertEqual(r, {"magheru": {"catargiu": 1.0}})
 
 
 if __name__ == "__main__":

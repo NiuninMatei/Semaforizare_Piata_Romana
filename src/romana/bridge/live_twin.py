@@ -97,6 +97,14 @@ def turning_ratios(cfg: dict, observed: dict[str, int]) -> dict[str, dict[str, f
         s = {d: observed.get(f"{o}>{d}", 0) + w * p / tot for d, p in prior.items()}
         z = sum(s.values())
         out[o] = {d: v / z for d, v in s.items()}
+    # cotele care în scenarii nu vin din proporții (§ 4.3); în timp real nu există traiectorii numărate pe viraj, deci și virajul de pe Magheru are o cotă declarată
+    cote = dict(cfg.get("cote_fixe") or {})
+    for o, f in (cfg.get("cote_timp_real") or {}).items():
+        cote[o] = {**cote.get(o, {}), **f}
+    for o, fixe in cote.items():
+        if o in out:
+            rest = sum(v for d, v in out[o].items() if d not in fixe) or 1.0
+            out[o] = {**{d: (1 - sum(fixe.values())) * v / rest for d, v in out[o].items() if d not in fixe}, **fixe}
     return out
 
 
@@ -196,7 +204,7 @@ def main(argv=None) -> None:
             if cam and cam.get("intrari_veh_h") and (cam is good_cam):
                 rates = {k: float(v) for k, v in cam["intrari_veh_h"].items()}
                 obs_turns = cam.get("total_viraje", {})
-                ped_rate = sum(cam.get("pietoni_h", {}).values()) * cfg.get("factor_extrapolare_pietoni", 1.0)
+                ped_rate = sum(cam.get("pietoni_h", {}).values()) * cfg.get("factor_extrapolare_pietoni", 1.0) * cfg.get("factor_pietoni_masurati", 1.0)
                 # debitul prin piață ca în scenarii (§ 5.1): media dintre intrările (subnumărate) și ieșirile
                 # (supranumărate) măsurate; pe el se aleg benzile programului pe tipuri de trafic
                 debit = (sum(rates.values()) + sum(float(v) for v in cam.get("iesiri_veh_h", {}).values())) / 2
@@ -273,9 +281,12 @@ def main(argv=None) -> None:
                     sub = (("ai_lejer" if rl_lejer is not None else "ai" if rl is not None else "fix") if tot < PRAG_LEJER else
                            ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
             efectiv = sub or mode
+            if hasattr(ctrl, "via_scurta"):       # controlerul e comun tuturor modurilor: doar un agent pe două etape trece singur prin etapa scurtă
+                agent = {"ai": rl, "ai_pranz": rl_pranz, "ai_lejer": rl_lejer, "ai_e13": rl_e13}.get(efectiv)
+                ctrl.via_scurta = agent is not None and agent.romana_phases == [0, 1]
             if efectiv in PLANURI_FIXE or efectiv == "fix":
-                # planurile fixe se urmăresc în fiecare secundă: duratele de verde sunt exact cele evaluate
-                # (o verificare la 5 s le-ar fi rotunjit în sus, de exemplu 12 s → 15 s)
+                # planurile fixe se urmăresc în fiecare secundă, ca duratele să nu se rotunjească în sus (o verificare la 5 s ar fi făcut din 12 s, 15 s).
+                # Pe geamănul corectat, verdele minim lungește etapa de pietoni a planului de referință: 12 s devin ≈16 s, cu degajarea
                 durate = PLANURI_FIXE.get(efectiv) or tuple(plan_green[i] for i in plan_cycle)
                 # pe geamănul corectat, o a treia etapă scurtă e fără pietoni, iar degajarea lor face parte din verde (§ 6.5)
                 scurta = hasattr(ctrl, "stare_scurta") and durate[2] < ctrl.min_green
@@ -283,9 +294,12 @@ def main(argv=None) -> None:
                     ctrl.request(plan_cycle[0])
                 else:
                     k = plan_cycle.index(ctrl.current)
-                    if ctrl.green_time >= durate[k] - (getattr(ctrl, "degajare", 0) if not getattr(ctrl, "scurta", False) else 0):
-                        urm = plan_cycle[(k + 1) % len(plan_cycle)]
-                        ctrl.request(urm, scurta=True) if scurta and urm == plan_cycle[2] else ctrl.request(urm)
+                    urm = plan_cycle[(k + 1) % len(plan_cycle)]
+                    spre = scurta and urm == plan_cycle[2]
+                    # degajarea pietonilor face parte din verde doar când etapa următoare chiar închide o trecere verde
+                    inchide = hasattr(ctrl, "treceri") and not ctrl.scurta and any(ctrl.afisata[i] in "Gg" and ctrl._inceput(urm, spre)[i] not in "Gg" for i in ctrl.treceri)
+                    if ctrl.green_time >= durate[k] - (ctrl.degajare if inchide else 0):
+                        ctrl.request(urm, scurta=True) if spre else ctrl.request(urm)
             elif t % 5 == 0:
                 if efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
@@ -301,6 +315,8 @@ def main(argv=None) -> None:
                 elif efectiv == "manual":
                     # după verdele maxim, controlerul trece la faza cu numărul următor; din faza de pietoni, aceea ar fi o fază „fără dozare” (§ 6.3)
                     faza = int(cmd.get("faza", ctrl.current))
+                    if not 0 <= faza < ctrl.n:         # o comandă în afara listei nu oprește simularea și nu lasă semaforul pe etapa scurtă, cu toate brațele pe roșu
+                        faza = 0
                     ctrl.request(plan_cycle[0] if faza == plan_cycle[-1] == ctrl.current and ctrl.green_time >= ctrl.max_green else faza)
             # o secundă de simulare în SUBPASI pași mici, întinși pe secunda reală: mișcarea apare fluentă,
             # iar controlerul (verde minim, galben, roșu de degajare) rămâne pe secunde întregi
@@ -324,7 +340,7 @@ def main(argv=None) -> None:
                 hist = hist[-600:]
                 state = {"timestamp": time.time(), "timp_sim": t, "mod": mode, "mod_program": sub, "sursa": src,
                          "faza": ctrl.faza_afisata() if hasattr(ctrl, "faza_afisata") else ctrl.current, "faza_nume": ctrl.nume_scurta if getattr(ctrl, "scurta", False) else ctrl.names[ctrl.current], "etapa": ctrl.stage,
-                         "faza_tinta": ctrl.target if ctrl.stage != "green" else ctrl.current,
+                         "faza_tinta": (len(ctrl.greens) if getattr(ctrl, "spre_scurta", False) else ctrl.target) if ctrl.stage != "green" else ctrl.current,
                          "varsta_debite_s": round(time.time() - good_t) if good_cam else None,
                          "verde_s": ctrl.green_time, "faze": [*ctrl.names, *([ctrl.nume_scurta] if hasattr(ctrl, "nume_scurta") else [])], "model_ai": bool(rl), "pietoni_verde": ctrl.pietoni_verde() if hasattr(ctrl, "pietoni_verde") else ctrl.current == 2,
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
