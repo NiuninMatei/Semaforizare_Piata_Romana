@@ -9,7 +9,7 @@ const rotunjit = x => Math.round(x * 100) / 100;
 // Aceleași câmpuri ca outputs/live/state.json și sim_state.json. Reacția la o comandă e ca în geamăn: faza veche rămâne
 // până la pasul de citire a comenzii (5 s), pietonii au 6 s să termine traversarea, apoi galben 3 s și roșu 2 s, iar faza nouă
 // vine abia după ele. Fiindcă planul stă pe faza N–S cu verdele minim deja atins la sarcina de verde, aici reacția durează
-// 11–16 s; în geamănul adevărat poate ajunge la ≈30 s (§ 8).
+// 11–16 s; în geamănul adevărat poate ajunge la ≈45 s (§ 8).
 class Banc {
   constructor(D, ceas = secunde, salvat = null) {
     this.D = D;

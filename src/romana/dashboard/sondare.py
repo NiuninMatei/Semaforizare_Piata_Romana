@@ -56,7 +56,7 @@ FAZE = ["N–S: Magheru ↔ Lascăr Catargiu prin centru", "E–V: Dacia în jur
         "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)", "Golirea centrului, fără pietoni"]
 PLAN = [(0, 72), (1, 48), (5, 3)]               # planul observat din geamăn (§ 6.5): verde 72/48/3 s, apoi galben 3 s și roșu 2 s
 GALBEN, ROSU, VERDE_MIN, PAS_COMANDA = 3, 2, 10, 5    # ca în SignalController și în bucla geamănului (comanda se citește la 5 s)
-INTARZIERE_PIETONI, DEGAJARE_PIETONI = 24, 6     # ca în SemaforCuPietoni: pietonii pornesc după vehicule și termină traversarea înaintea galbenului
+INTARZIERE_PIETONI, DEGAJARE_PIETONI = 28, 6     # ca în SemaforCuPietoni: pietonii pornesc după vehicule și termină traversarea înaintea galbenului
 VERDE_PE_DACIA = (1, 3, 4)                      # schema arată verde pe Dacia în aceste faze
 VERDE_PE_MAGHERU = (0, 3, 4)
 AUTOMATE = ("ai", "fix", "max_pressure", "program")
@@ -212,7 +212,7 @@ STIL_CAMERA = "<style>.cam .stare,#sursa{display:none}</style>"
 SUBSOL_CAMERA = ("Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, "
                  "persoanele estompate, afișată doar local.")
 SUBSOL_PUBLIC = ("Imaginea camerei: Webcam România – https://webcamromania.ro; drepturile aparțin operatorului camerei. "
-                 "Fotografie publicată cu acordul lui, cu persoanele și plăcuțele estompate.")
+                 "Fotografie publicată cu acordul scris al Webcam România, cu persoanele și plăcuțele estompate.")
 
 
 def _inlocuieste(text: str, vechi: str, nou: str) -> str:
