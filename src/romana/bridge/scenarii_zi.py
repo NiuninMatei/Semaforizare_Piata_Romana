@@ -27,7 +27,7 @@ import re
 import pandas as pd
 
 from romana.bridge import build_demand
-from romana.common import COUNTS_DIR, DEMAND_DIR, TRAJ_DIR, TRAJ_RAW_DIR, save_json
+from romana.common import COUNTS_COR_DIR, COUNTS_DIR, DEMAND_DIR, TRAJ_DIR, TRAJ_RAW_DIR, save_json
 
 
 def intervale_incetinite(zi: str) -> set[pd.Timestamp]:
@@ -124,8 +124,11 @@ def main(argv=None) -> None:
     ap.add_argument("--exclude", action="append", default=[], metavar="HH:MM-HH:MM",
                     help="exclude din ferestre sferturile de oră dintre cele două ore (de ex. o oprire a colectării); "
                          "se poate repeta")
+    ap.add_argument("--masura", choices=("veche", "cor"), default="veche",
+                    help="cor = măsura nouă (§ 9.11): numărătorile din data/counts_cor, config/demand_v2.json, scenarii cu prefixul cor_")
     args = ap.parse_args(argv)
-    path = COUNTS_DIR / f"numaratori_{args.zi}.csv"
+    prefix, cerere = ("cor_", ["--cerere", "demand_v2.json"]) if args.masura == "cor" else ("", [])
+    path = (COUNTS_COR_DIR if args.masura == "cor" else COUNTS_DIR) / f"numaratori_{args.zi}.csv"
     df = pd.read_csv(path, parse_dates=["inceput", "sfarsit"])
     prof = hourly_profile(df)
     profil = prof["echilibrat_veh_h"].dropna()        # profilul complet, pentru rezumat (debitele ferestrelor)
@@ -149,18 +152,18 @@ def main(argv=None) -> None:
         return
     names = []
     for k, (a, b) in windows.items():
-        name = f"zi_{args.zi}_{k}"
-        build_demand.main(["--counts", str(path), "--de-la", f"{a:%Y-%m-%d %H:%M}", "--pana-la", f"{b:%Y-%m-%d %H:%M}",
+        name = f"{prefix}zi_{args.zi}_{k}"
+        build_demand.main([*cerere, "--counts", str(path), "--de-la", f"{a:%Y-%m-%d %H:%M}", "--pana-la", f"{b:%Y-%m-%d %H:%M}",
                            "--nume", name])
         names.append(name)
     for k, f in (("varf", 1.2), ("linistit", 0.8)):
         a, b = windows[k]
-        name = f"zi_{args.zi}_{k}_x{f:.1f}".replace(".", "_")
-        build_demand.main(["--counts", str(path), "--de-la", f"{a:%Y-%m-%d %H:%M}", "--pana-la", f"{b:%Y-%m-%d %H:%M}",
+        name = f"{prefix}zi_{args.zi}_{k}_x{f:.1f}".replace(".", "_")
+        build_demand.main([*cerere, "--counts", str(path), "--de-la", f"{a:%Y-%m-%d %H:%M}", "--pana-la", f"{b:%Y-%m-%d %H:%M}",
                            "--nume", name, "--scala", str(f)])
         names.append(name)
     summary["scenarii"] = names
-    save_json(summary, DEMAND_DIR / f"zi_{args.zi}_rezumat.json")
+    save_json(summary, DEMAND_DIR / f"{prefix}zi_{args.zi}_rezumat.json")
     print(f"[OK] {len(names)} scenarii: {', '.join(names)}")
 
 

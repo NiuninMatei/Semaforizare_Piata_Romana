@@ -14,6 +14,7 @@ NET_DIR = SUMO_DIR / "net"
 DEMAND_DIR = SUMO_DIR / "demand"
 OUTPUT_DIR = ROOT / "outputs"
 COUNTS_DIR = ROOT / "data" / "counts"
+COUNTS_COR_DIR = ROOT / "data" / "counts_cor"         # numărătorile măsurii noi, cu zonele din camera_v2.json (§ 9.11)
 TRAJ_DIR = ROOT / "data" / "trajectories"            # jurnalul publicat: doar vehiculele, traiectorii reunite
 TRAJ_RAW_DIR = ROOT / "data" / "trajectories_brute"  # jurnalul complet (și pietonii), doar local – nepublicat (GDPR)
 MODELS_DIR = ROOT / "models"
