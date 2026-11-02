@@ -38,7 +38,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 
 ## Stare curentă (02.11.2026, ~05:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
-- **Geamănul a fost corectat pe 02.11 (§ 6.5, memoria geaman-coliziuni):** rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, stau pe coliziuni și teleportări și nu mai sunt valabile. Măsura nouă `cor_*` folosește geamănul v2 (`romana.network.retea_v2`, `config/retea_v2.json`, `config/demand_v2.json`). Orice simulare nouă raportează teleportările și ciocnirile. Referința regulilor din § 9.11 e planul observat, 71/40/12.
+- **Geamănul a fost corectat pe 02.11 (§ 6.5, memoria geaman-coliziuni):** rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, stau pe coliziuni și teleportări și nu mai sunt valabile. Măsura nouă `cor_*` folosește geamănul v2 (`romana.network.retea_v2`, `config/retea_v2.json`, `config/demand_v2.json`). Orice simulare nouă raportează teleportările și ciocnirile. Referințele regulilor din § 9.11 sunt planul observat, 72/48/3, și semaforul rejucat; poarta validării spune ce ore contează.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
@@ -57,7 +57,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 
 - **Git:** `C:\Users\Matei\AppData\Local\GitHubDesktop\app-3.6.7\resources\app\git\cmd\git.exe` (în Git Bash merge `git`).
   Mesajul de commit într-un fișier nou, UTF-8 fără BOM, cu `git commit -F`; commit doar pe fișiere numite, fără `git add -A`.
-  Push doar prin GitHub Desktop, grupat, niciodată în timpul simulărilor (memoria push-prin-github-desktop).
+  Push doar prin GitHub Desktop, grupat, niciodată în timpul simulărilor, fără să cer voie; înainte verific ce ajunge public (memoria push-prin-github-desktop).
 - **Cât colectează camera:** nu se ating `run_vision.py`, `stream.py`, `od_counter.py`, `config/camera.json`,
   `config/demand.json`, `vtypes*`; `veghe.py` citește `fps` din `state.json`. `signals.py` nu se schimbă. Scenariile
   `zi_2026-10-2[89]_*` nu se regenerează sub același nume. `run_vision` se oprește doar curat (Ctrl+C), altfel jurnalul

@@ -92,8 +92,8 @@ Nu se încarcă automat; se citește la nevoie. Mutată din `.claude/CLAUDE.md` 
 - **Reluat (29.10, 08:46):** `run_vision` repornit la 08:46:12 (PID 10228; prima traiectorie 08:46:21; gol
   08:33:21–08:46:21, 13 min); noaptea 29.10 fără încetiniri (calitate, goluri 1,1–3,0% pe oră); test29.py
   repornit în fundal cu `scenarii_zi --exclude 08:30-09:00` și oprire dacă calitate / recount eșuează; prioritatea
-  BelowNormal a lanțului setată din afară (cea din script nu se aplicase); keep-awake activ. Autorul doarme (după
-  tura de noapte) și a lăsat restul în grija mea; întrebarea despre excludere retrasă (premisa era greșită); zonele
+  BelowNormal a lanțului setată din afară (cea din script nu se aplicase); keep-awake activ. Autorul a lăsat restul
+  în grija mea; întrebarea despre excludere retrasă (premisa era greșită); zonele
   de vehicule pe imagine – ziua, la lumină.
 - **29.10, ≈09:45–11:30 – auditul de coerență al documentației** (4 cititori + 4 verificatori adversariali): 48 de
   probleme confirmate, toate corectate. Cele importante: efectul corecturii trecerilor pe 26.10 = +4% pietoni (nu +6%);
@@ -134,7 +134,7 @@ Nu se încarcă automat; se citește la nevoie. Mutată din `.claude/CLAUDE.md` 
   din 29.10 în § 4.6); după miezul nopții, `veghe --reluare` pe 29.10 întreagă → rândurile 29.10 din
   `veghe_reluare.csv` și cifrele din § 4.6; ce a arătat veghea în noaptea cu lanțul; până pe 30.10 09:30 totul oprit
   (întâi veghea), comis, împins, explicația cap-coadă. **Planul complet al nopții și al dimineții (refăcut după
-  pre-mortemul cu 3 agenți, wf_0d54bbeb-51a):** `C:\Users\Matei\AppData\Local\Temp\claude\C--Users-Matei-Documents-GitHub-Semaforizare-Piata-Romana\8ef09c01-dd8e-42e5-be89-50bed1c571fe\scratchpad\dupa_confirmare.md`
+  pre-mortemul cu 3 agenți, wf_0d54bbeb-51a):** `dupa_confirmare.md`, în directorul temporar al sesiunii
   (în același director: test29.py și test29_log.txt, oprire30.ps1 = oprirea de dimineață, repara_jurnal.py = repararea
   membru cu membru, copiaza29.py, combina_reluare.py, explicatie_cap_coada.md = schița explicației). Treziri: 23:50,
   00:45, 03:30, 06:30, 08:20, 08:40. Codul de pe drumul lanțului e înghețat până la test29_gata.txt.
@@ -163,7 +163,7 @@ Nu se încarcă automat; se citește la nevoie. Mutată din `.claude/CLAUDE.md` 
   (figurile 4.1 / 4.2, și în README); estompate persoanele, plăcuțele apropiate și reclama „Notar…” suprapusă de cameră;
   verificare pe 9 dale în două runde (19 locuri scăpate + 14 incerte estompate); cadrul brut șters;
   `LicenseRef-Toate-drepturile-rezervate` (LICENSES/, REUSE.toml, NOTICE). **Răspunsul către Webcam România trimis pe
-  28.10, 10:11** (firul 1a178a0160eff9ba; linkul proiectului și al PDF-ului). GitHub Support: tot fără răspuns.
+  28.10, 10:11** (cu linkul proiectului și al PDF-ului). GitHub Support: tot fără răspuns.
 - **28.10, ~10:30 – grila de planuri fixe pe geamănul calibrat (§ 9.9, `docs/rezultate/grila_calibrat.csv`):** 23 de
   planuri pe validarea 26.10 (seed-urile 11–15); ciclurile scurte câștigă: 12/14/12 −9,3% vs fix, −0,9% vs E13 (ns);
   `TOD_FIX` (16/10/12 lejer + moderat, 12/14/12 greu) −10,8% / −2,3% (ales pe aceleași date). Intră în test ca

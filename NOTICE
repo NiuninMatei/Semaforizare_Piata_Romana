@@ -32,7 +32,7 @@ c) Datele OpenStreetMap și bazele de date derivate din ele: data/osm/**, sumo/n
    Licență: Open Database License 1.0 (ODbL-1.0), obligatorie (bază de date OSM sau derivată din ea) –
    LICENSES/ODbL-1.0.txt, https://opendatacommons.org/licenses/odbl/1-0/
 
-d) Numărătorile și traiectoriile proprii: data/counts/**, data/trajectories/**, precum și traiectoriile
+d) Numărătorile și traiectoriile proprii: data/counts/**, data/counts_cor/**, data/trajectories/**, precum și traiectoriile
    vehiculelor din clipurile numărătorii de referință, docs/rezultate/referinta/clip*/traiectorii/**
    Licență: ODbL-1.0 (alegerea autorului) – LICENSES/ODbL-1.0.txt. Licența se acordă în măsura în care
    asupra acestor date există drepturi de autor sau drepturi sui generis asupra bazei de date; faptele
@@ -90,7 +90,7 @@ Fără garanție: vezi AGPL-3.0 §15–16, ODbL 1.0 §7–8 și CC BY 4.0 §5.
   depozit. Versiunile exacte ale scenariilor folosite pentru fiecare model sau rezultat se găsesc în
   istoricul git al depozitului https://github.com/NiuninMatei/Semaforizare_Piata_Romana (scenariile de
   antrenare sunt listate în models/*.json).
-- config/network.json conține câțiva identificatori, coordonate și nume de stradă din OSM. Aceasta
+- config/network.json, config/demand.json, config/demand_v2.json și config/retea_v2.json conțin câțiva identificatori, coordonate și nume de stradă din OSM. Aceasta
   este o parte nesubstanțială, deci nu intră sub share-alike, dar se atribuie: © OpenStreetMap
   contributors.
 - Versiunile din istoricul git ale fișierelor osm_bbox.osm.xml.gz, osm.net.xml.gz și osm.poly.xml.gz
@@ -165,6 +165,8 @@ Componentă (versiunea testată) – licență – sursă:
 - Python-Markdown 3.8.1 – BSD-3-Clause – https://github.com/Python-Markdown/markdown
 - psutil 7.2.2 (veghea fluxului de cadre, prioritatea colectării) – BSD-3-Clause –
   https://github.com/giampaolo/psutil
+- anthropic 2.3.0 (biblioteca Python pentru Claude; doar pentru loturile de adnotare și de evaluare, instalată
+  separat, nu din requirements.txt) – Apache-2.0 – https://github.com/anthropics/anthropic-sdk-python
 - pyproj 3.8.0 (instalat, neimportat în src/) – MIT – https://github.com/pyproj4/pyproj
 - httpx 0.28.1 – BSD-3-Clause – https://github.com/encode/httpx
 - nvidia-ml-py 13.615.71 – BSD – https://pypi.org/project/nvidia-ml-py/
@@ -181,7 +183,7 @@ Licenses”) și a componentelor Ultralytics (AGPL-3.0; ultralytics-platform: AG
 6. SURSA DATELOR DE TRAFIC: CAMERA PIAȚA ROMANĂ
 -----------------------------------------------
 
-Numărătorile (data/counts/) și jurnalul de traiectorii (data/trajectories/) au fost DERIVATE AUTOMAT
+Numărătorile (data/counts/, data/counts_cor/) și jurnalul de traiectorii (data/trajectories/) au fost DERIVATE AUTOMAT
 din fluxul public al camerei Piața Romană difuzat de Webcam România:
 https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/.
 Drepturile asupra imaginilor aparțin operatorului camerei, neidentificat public; Webcam România
@@ -209,7 +211,8 @@ afiliat cu Webcam România sau cu operatorul camerei și nu este susținut de ac
 Codul și documentația au fost realizate cu ajutorul asistenților generativi, cum se declară în cap. 13
 din docs/DOCUMENTATIE.md:
 - Claude (Anthropic), de la 20.10.2026. Termeni: https://www.anthropic.com/legal/consumer-terms (§ 4,
-  drepturile asupra rezultatelor) și https://www.anthropic.com/legal/aup.
+  drepturile asupra rezultatelor) și https://www.anthropic.com/legal/aup. Pentru loturile prin interfața de
+  programare, din 1.11.2026: https://www.anthropic.com/legal/commercial-terms.
 - Modulul AI Google din Chrome, până la 18.10.2026, pentru ciorna din legacy/. Termeni:
   https://policies.google.com/terms.
 
