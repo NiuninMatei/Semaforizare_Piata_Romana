@@ -101,3 +101,4 @@ async function actualizeaza(){
   schema(sim); butoane(sim);
 }
 actualizeaza(); setInterval(actualizeaza,1000);
+MOD.plan_observat = MOD.plan_scurt;

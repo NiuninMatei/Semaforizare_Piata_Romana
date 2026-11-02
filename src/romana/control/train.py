@@ -58,14 +58,14 @@ def behaviour_cloning(model, env, plan: list[float], steps_per_env: int, epochs:
     return {"plan_verde_s": plan, "perechi": int(len(ot)), "acuratete": round(acc, 3)}
 
 
-def make_env(scen: list[str], controlled: list[str], seed: int, phases, monitor: str, upstream: bool = False):
+def make_env(scen: list[str], controlled: list[str], seed: int, phases, monitor: str, upstream: bool = False, pietoni: bool = False):
     """Fabrică de medii (de nivel superior, ca să poată fi trimisă proceselor SubprocVecEnv)."""
     from stable_baselines3.common.monitor import Monitor
 
     from romana.control.env import RomanaEnv
 
     return Monitor(RomanaEnv([Path(s) for s in scen], controlled=controlled, seed=seed, romana_phases=phases,
-                             upstream_obs=upstream), filename=monitor)
+                             upstream_obs=upstream, pietoni_in_recompensa=pietoni), filename=monitor)
 
 
 def main(argv=None) -> None:
@@ -83,6 +83,7 @@ def main(argv=None) -> None:
     ap.add_argument("--obs-amonte", action="store_true",
                     help="observația și recompensa includ cozile din amonte de intrări (~250 m); observația și "
                          "vehiculele neintroduse")
+    ap.add_argument("--recompensa-pietoni", action="store_true", help="și pietonii care așteaptă contează în recompensă, cât un vehicul oprit")
     ap.add_argument("--bc-plan", default=None,
                     help="preantrenare prin imitație a unui plan fix, ex. „50,40,10” (verde N–S, E–V, pietoni, s)")
     ap.add_argument("--bc-pasi", type=int, default=40_000, help="pași de decizie demonstrați de planul fix")
@@ -123,7 +124,7 @@ def main(argv=None) -> None:
     # la continuare, jurnalele de episoade primesc un sufix (cele vechi rămân pentru curba de învățare)
     suffix = f"_de_la_{prev_steps}" if args.continua else ""
     fns = [partial(make_env, scen, controlled, args.seed + 1000 * i + prev_steps, phases,
-                   str(out / f"monitor_{i}{suffix}"), args.obs_amonte) for i in range(args.medii)]
+                   str(out / f"monitor_{i}{suffix}"), args.obs_amonte, args.recompensa_pietoni) for i in range(args.medii)]
     env = SubprocVecEnv(fns) if args.medii > 1 else DummyVecEnv(fns)
     # ~1024 de tranziții pe actualizare, indiferent de numărul de medii (multiplu de 64 → loturi întregi de 128)
     n_steps = -(-1024 // (args.medii * 64)) * 64
@@ -155,7 +156,7 @@ def main(argv=None) -> None:
                                "gamma": args.gamma, "ent_coef": float(model.ent_coef),
                                "retea": [128, 128], "delta_t_s": 5, "verde_min_s": 10, "verde_max_s": 90},
             "faze_romana": load_json(ROOT / "sumo" / "net" / "network_info.json")["phase_names"],
-            "faze_actiuni_romana": phases, "obs_amonte": args.obs_amonte}
+            "faze_actiuni_romana": phases, "obs_amonte": args.obs_amonte, "recompensa_pietoni": args.recompensa_pietoni}
     (MODELS_DIR / f"ppo_{name}.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     env.close()
     print(f"[OK] Model salvat: {path}  ({meta['durata_min']} min)")
