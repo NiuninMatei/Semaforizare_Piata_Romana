@@ -567,6 +567,21 @@ class TestNumaratori(unittest.TestCase):
         self.assertEqual(n, 600.0)
         self.assertIsNone(lipsa)
 
+    def test_persoanele_de_pe_ambele_zebre(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "numaratori_2026-10-26.csv").write_text(
+                "inceput,sfarsit,tip,origine,destinatie,vehicul,numar\n"
+                "2026-10-26 14:30:00,2026-10-26 14:45:00,pietoni,dacia_est,trecere_dacia_est_iesire,pieton,200\n"
+                "2026-10-26 14:30:00,2026-10-26 14:45:00,pietoni,dacia_est,trecere_dacia_est_intrare,pieton,100\n"
+                "2026-10-26 14:30:00,2026-10-26 14:45:00,pietoni,magheru,trecere_magheru,pieton,999\n", encoding="utf-8")
+            vechi = V.COUNTS_COR_DIR
+            V.COUNTS_COR_DIR = Path(d)
+            try:
+                n = V.pietoni_numarati("2026-10-26", pd.Timestamp("2026-10-26 14:30"), pd.Timestamp("2026-10-26 14:45"), ("trecere_dacia_est_iesire", "trecere_dacia_est_intrare"))
+            finally:
+                V.COUNTS_COR_DIR = vechi
+        self.assertEqual(n, 1200.0)
+
 
 def sintetic(decalaj: float = 0.0, seeds: int = 2) -> tuple[dict, list[dict]]:
     """O oră inventată: cameră cu valuri și un „geamăn” care e chiar camera, cu momentele mutate cu `decalaj` secunde, fără factori."""
@@ -581,7 +596,8 @@ def sintetic(decalaj: float = 0.0, seeds: int = 2) -> tuple[dict, list[dict]]:
     pietoni = valuri_pe(20, 24, 40)
     miscari = [(o, d, float(t), float(t + u)) for (o, d, u) in (("magheru", "catargiu", 6.0), ("magheru", "dacia_est", 3.0), ("catargiu", "magheru", 2.5)) for t in intrari[o][::2]]
     miscari += [("dacia_est", "catargiu", 80.0 + i, 83.0 + i) for i in range(40)]
-    od = {"magheru>catargiu": 9000, "magheru>dacia_est": 9000, "catargiu>magheru": 9000, "dacia_est>catargiu": 1}
+    miscari += [("catargiu", "dacia_vest", float(t - 3.0), float(t)) for t in iesiri["dacia_vest"][::2]]      # ieșirea are destule momente cu origine, deci rândurile ei judecă
+    od = {"magheru>catargiu": 9000, "magheru>dacia_est": 9000, "catargiu>magheru": 9000, "dacia_est>catargiu": 1, "catargiu>dacia_vest": 0}
     cam = {"stem": "cor_zi_2026-10-26_varf", "zi": "2026-10-26", "a": 0.0, "f": dict.fromkeys(V.BRATE, 1.0), "intrari": intrari, "iesiri": iesiri, "val": val, "sc": sc, "ns": np.c_[sc, sc + 70], "ev": np.c_[sc + 75, sc + 120],
            "detalii": {"acoperire": 1.0}, "pietoni": pietoni, "pietoni_pe_ora": float(len(pietoni)), "miscari": miscari, "od": {"durata_s": 3600, "od_vehicule": od}}
     stari = [(0, verzi[1])]
@@ -747,6 +763,33 @@ class TestRanduri(unittest.TestCase):
         self.assertIn("ambele pe toată ora", q["nota"])
         self.assertNotIn("fără numărătoarea orei", q["nota"])
 
+    def test_pietonii_se_compara_cu_persoanele_ori_factorul(self):
+        cam, rez = sintetic()
+        cam.update(pietoni_pe_ora=900.0, persoane_pe_ora=1000.0, f_pietoni=1.5)
+        q = V.randuri(cam, rez)[0].set_index("masura").loc["pietoni pe zebra Dacia est, pe oră"]
+        self.assertEqual(q["camera"], 1500.0)
+        self.assertEqual(q["grup"], "A")
+        self.assertIn("× factorul din referință, 1.5", q["nota"])
+        self.assertIn("detectorul singur, doar pe zebra de ieșire: 900", q["nota"])
+
+    def test_iesirea_in_ns_se_citeste_pe_zona_chiar_daca_pe_ora_se_citeste_pe_muchie(self):
+        cam, rez = sintetic()
+        z = []
+        for r in rez:
+            m = np.asarray(r["iesiri"]["dacia_est"], float)
+            ns = V.ns_din_stari(r)
+            in_ns = np.array([any(a <= x < b for a, b in ns) for x in m])
+            z.append(dict(r, zone={"intrare": {}, "ieșire": {"dacia_est": m[in_ns] - 2.0}}))      # în afara etapei N–S, camera virtuală nu le prinde
+        self.assertEqual(V.acoperire_virtuala(z[0], "ieșire", "dacia_est") < V.ACOPERIRE_VIRTUALA, True)
+        c = alege_citiri(z)
+        self.assertEqual(c[("ieșire", "dacia_est")], "muchie")
+        self.assertEqual(c[V.CITIRE_NS], "zonă")
+        d = V.randuri(cam, z)[0].set_index("masura")
+        self.assertEqual(d.loc["ieșirea Dacia est, s 24–60 din N–S: nivel, veh/etapă", "citire"], "zonă")
+        self.assertIn("în N–S, citit pe zonă", d.loc["ieșirea Dacia est, s 24–60 din N–S: nivel, veh/etapă", "nota"])
+        self.assertEqual(d.loc["decalaj de aliniere, s: ieșire dacia_est", "citire"], "muchie")
+        self.assertIn("ieșire în N–S dacia_est: zonă", V.rezumat_citiri(z, c))
+
     def test_fara_numaratoare_nota_spune_ce_sursa_s_a_folosit(self):
         cam, rez = sintetic()
         cam["pietoni_pe_ora"] = None
@@ -806,6 +849,7 @@ class TestDecalajPeSeeduri(unittest.TestCase):
     def setUpClass(cls):
         cls.cam, cls.rez = sintetic(seeds=5)
         cu_doua_minime(cls.cam, cls.rez)
+        cls.cam["miscari"] = cls.cam["miscari"] + [("catargiu", "dacia_vest", float(t - 3.0), float(t)) for t in cls.cam["iesiri"]["dacia_vest"]]      # momentele noi au și origine, deci rândul judecă
         cls.baza = V.randuri(cls.cam, cls.rez)[0]
         cls.din_baza = dict(zip(cls.baza["cheie_prag"], cls.baza["prag"]))
         cls.din_baza.pop("", None)
@@ -905,6 +949,27 @@ class TestCitire(unittest.TestCase):
         s = V.rezumat_citiri(z, alege_citiri(z))
         self.assertIn("intrare magheru: zonă, 100%, muchie − zonă p50 -1.0 s", s)
         self.assertIn("intrare catargiu: muchie, 0%", s)
+
+    def test_o_iesire_cu_prea_putine_origini_nu_judeca_forma(self):
+        cam, rez = sintetic(5.0)
+        cam["miscari"] = [m for m in cam["miscari"] if m[1] != "dacia_vest"]
+        self.assertEqual(V.parte_cu_origine(cam, "dacia_vest"), 0.0)
+        d = V.randuri(cam, rez)[0].set_index("masura")
+        q = d.loc["decalaj de aliniere, s: ieșire dacia_vest"]
+        self.assertEqual(q["verdict"], "neinformativ")
+        self.assertIn("rândul ar măsura detectorul", q["nota"])
+        self.assertEqual(d.loc["decalaj de aliniere, s: ieșire magheru", "verdict"], "peste prag")
+
+    def test_fragmentele_din_etapa_n_s_nu_intra_la_forma_de_pe_dacia_vest(self):
+        self.assertEqual(V.fara_etapa(np.array([5.0, 12.0, 16.0, 30.0]), np.array([[10.0, 11.0]])).tolist(), [5.0, 16.0, 30.0])       # marja de 5 s
+        cam, rez = sintetic()
+        curat = cam["intrari"]["dacia_vest"]
+        fragmente = np.sort(np.concatenate([s + np.arange(5.0, 55.0, 10.0) for s in cam["sc"]]))
+        cam["intrari"] = {**cam["intrari"], "dacia_vest": np.sort(np.r_[curat, fragmente])}
+        d = V.randuri(cam, rez)[0].set_index("masura")
+        self.assertEqual(d.loc["decalaj de aliniere, s: intrare dacia_vest", "geaman"], 0.0)
+        self.assertIn("fragmente", d.loc["decalaj de aliniere, s: intrare dacia_vest", "nota"])
+        self.assertLess(d.loc["profil pe ciclu: dacia_vest", "abatere"], 0.40)      # factorul de pe tot brațul rămâne, deci profilul e doar mai sus, nu altă formă
 
     def test_ce_nu_acopera_randurile_e_spus(self):
         self.assertTrue(any("Mendeleev" in k for k in V.RENUNTATE))

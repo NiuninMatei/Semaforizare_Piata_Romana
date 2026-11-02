@@ -177,5 +177,22 @@ class TestCheia(unittest.TestCase):
         self.assertNotIn("ANTHROPIC_API_KEY=", cod)
 
 
+class Pietoni(unittest.TestCase):
+    TINTA = {"id": "P_x", "tip": "pietoni", "descriere": "zebra din prim-plan"}
+
+    def test_regula_e_pentru_persoane(self):
+        p = L.prompt_pietoni(self.TINTA, 2, L.ROLURI[0])
+        self.assertNotIn("linia roșie", p)
+        self.assertIn("[60, 90)", p)
+        self.assertIn("6 numere", p)
+        self.assertIn("Nu numi și nu descrie persoane", p)
+
+    def test_schema_cere_numarul_pe_5_s(self):
+        self.assertIn("pe_5s", L.SCHEMA_PIETONI["required"])
+        self.assertEqual(set(L.SCHEMA_PIETONI["required"]), set(L.SCHEMA_PIETONI["properties"]))
+        self.assertNotIn("pe_5s", L.SCHEMA["properties"])          # schema vehiculelor rămâne cea veche
+        json.dumps(L.SCHEMA_PIETONI)
+
+
 if __name__ == "__main__":
     unittest.main()
