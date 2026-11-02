@@ -20,7 +20,7 @@ from pathlib import Path
 
 from romana.atribuire_osm import adauga_notificare_osm
 from romana.common import CONFIG_DIR, DEMAND_DIR, NET_DIR, load_json, sumo_binary
-from romana.control.faze import fara_treceri, program_fix
+from romana.control.faze import SCURTA, fara_treceri, program_fix
 
 NET_VECHI = NET_DIR / "romana.net.xml"
 NET_V2 = NET_DIR / "romana_v2.net.xml"
@@ -37,12 +37,12 @@ def stari_v2(verzi: list[str], cfg: dict) -> list[str]:
         for i in e["treceri"]:
             s[i] = "g"
         out[int(faza)] = "".join(s)
-    out.append(fara_treceri(out[2], cfg["pietoni"]["treceri"]))     # etapa scurtă: ca etapa de pietoni, dar fără pietoni
     return out
 
 
 def pietoni_cfg(cfg: dict, stari: list[str]) -> dict:
-    return {**{k: v for k, v in cfg["pietoni"].items() if k != "nume_faza_scurta"}, "faza_scurta": len(stari) - 1}
+    return {**{k: v for k, v in cfg["pietoni"].items() if k != "nume_faza_scurta"}, "nume_scurta": cfg["pietoni"]["nume_faza_scurta"],
+            "stare_scurta": fara_treceri(stari[2], cfg["pietoni"]["treceri"])}     # etapa scurtă: ca etapa de pietoni, dar fără pietoni
 
 
 def retea(cfg: dict, faze_fix: list[tuple[str, float]]) -> None:
@@ -80,7 +80,7 @@ def actuated(stari: list[str], pietoni: dict, galben: int) -> None:
     ET.SubElement(logic, "param", key="max-gap", value="3.0")
     ET.SubElement(logic, "param", key="detector-gap", value="2.0")
     limite = {stari[0]: (10, 64), stari[1]: (10, 54)}        # până la 90 s pe N–S și 60 s pe E–V, cu tot cu fereastra de la capete
-    for s, d in program_fix(stari, [(0, 36), (1, 28), (pietoni["faza_scurta"], 3)], pietoni, galben):
+    for s, d in program_fix(stari, [(0, 36), (1, 28), (SCURTA, 3)], pietoni, galben):
         ET.SubElement(logic, "phase", duration=f"{d:g}", state=s, **({"minDur": str(limite[s][0]), "maxDur": str(limite[s][1])} if s in limite else {}))
     ET.indent(add)
     ET.ElementTree(add).write(ACTUATED_V2, encoding="UTF-8", xml_declaration=True)
@@ -119,8 +119,7 @@ def main() -> None:
     retea(cfg, program_fix(stari, etape, pietoni, retea_cfg["yellow_time"]))
     actuated(stari, pietoni, retea_cfg["yellow_time"])
     tipuri(cfg)
-    INFO_V2.write_text(json.dumps({**info, "green_states": stari, "phase_names": info["phase_names"] + [cfg["pietoni"]["nume_faza_scurta"]], "pietoni": pietoni},
-                                  ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    INFO_V2.write_text(json.dumps({**info, "green_states": stari, "pietoni": pietoni}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"[OK] {NET_V2.name}, {INFO_V2.name}, {ACTUATED_V2.name}, tipurile de vehicule; config: {CONFIG_DIR / 'retea_v2.json'}")
 
 

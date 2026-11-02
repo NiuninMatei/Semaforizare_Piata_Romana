@@ -78,6 +78,7 @@ def main(argv=None) -> None:
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--toate-fazele", action="store_true",
                     help="agentul poate alege și fazele „fără dozare” (implicit doar fazele planului real)")
+    ap.add_argument("--doua-etape", action="store_true", help="agentul alege doar când se schimbă N–S și E–V, ca semaforul real; etapa scurtă vine singură (§ 6.5)")
     ap.add_argument("--medii", type=int, default=6,
                     help="simulări SUMO în paralel (procese separate); 1 = un singur proces")
     ap.add_argument("--obs-amonte", action="store_true",
@@ -113,7 +114,7 @@ def main(argv=None) -> None:
 
     from romana.control.controllers import fixed_phase_indices
 
-    phases = None if args.toate_fazele else fixed_phase_indices()
+    phases = [0, 1] if args.doua_etape else None if args.toate_fazele else fixed_phase_indices()
     path = MODELS_DIR / f"ppo_{name}.zip"
     prev_steps, prev_min = 0, 0.0
     if args.continua:
