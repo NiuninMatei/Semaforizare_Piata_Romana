@@ -14,15 +14,15 @@ import numpy as np
 import pandas as pd
 
 from romana.common import CONFIG_DIR, DEMAND_DIR, OUTPUT_DIR, TRAJ_DIR
-from romana.control.faze import info_v2, program_fix
+from romana.control.faze import ETAPA_SCURTA_S, SCURTA, info_v2, program_fix
 from romana.vision import program_real as P
 from romana.vision.od_counter import load_zones
 
 GOL_VAL_S = 15            # un val nou începe după atâtea secunde fără vehicule
 MIN_VAL = 8               # un val are cel puțin atâtea vehicule
-ETAPA_SCURTA_S = 3        # din măsurătoare: planul observat are 13 s între etape, cu tot cu tranziții
 TRANZITII_S = 15          # trei tranziții de 5 s
 VERDE_MIN_S = 12
+E_V_MAX_S = 60            # la trafic slab, valul de pe Magheru se termină mult înaintea verdelui; restul ciclului nu e E–V, ci tot N–S
 ORIZONT_S = 4500
 
 
@@ -71,6 +71,7 @@ def cicluri(val: list[tuple[float, float, int]], orizont: float, t_med: float, g
             d = (urm - t) if k < len(val) else t_med
             if d < g + TRANZITII_S + ETAPA_SCURTA_S + VERDE_MIN_S:
                 d = g + TRANZITII_S + ETAPA_SCURTA_S + VERDE_MIN_S
+        g = max(g, d - TRANZITII_S - ETAPA_SCURTA_S - E_V_MAX_S)
         out.append((g, d))
         t += d
     return out
@@ -106,7 +107,7 @@ def program_rejucat(stem: str) -> tuple[list[tuple[str, float]], dict]:
         faze += [(stari[1], max(prima - 5, 1)), ("y", 3), ("r", 2)]
     lista = cicluri(val, ORIZONT_S - prima, t_med, g_med)
     for g, d in lista:
-        faze += program_fix(stari, [(0, g), (1, d - g - TRANZITII_S - ETAPA_SCURTA_S), (pietoni["faza_scurta"], ETAPA_SCURTA_S)], pietoni)
+        faze += program_fix(stari, [(0, g), (1, d - g - TRANZITII_S - ETAPA_SCURTA_S), (SCURTA, ETAPA_SCURTA_S)], pietoni)
     if faze and faze[1][0] == "y":                      # tranziția de la început, acum că se știe starea care urmează
         from romana.control.signals import all_red_between, yellow_between
 

@@ -164,6 +164,8 @@ class RLPolicy:
                 g, n = green_phases_from_program(traci, tid), None
             self.ctrls.append(controler(traci, tid, g, n))
         self.maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
+        if self.romana_phases == [0, 1] and hasattr(self.ctrls[0], "via_scurta"):
+            self.ctrls[0].via_scurta = True
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
         if self.upstream_obs:
             from romana.control.signals import upstream_groups

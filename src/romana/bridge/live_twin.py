@@ -278,14 +278,14 @@ def main(argv=None) -> None:
                 # (o verificare la 5 s le-ar fi rotunjit în sus, de exemplu 12 s → 15 s)
                 durate = PLANURI_FIXE.get(efectiv) or tuple(plan_green[i] for i in plan_cycle)
                 # pe geamănul corectat, o a treia etapă scurtă e fără pietoni, iar degajarea lor face parte din verde (§ 6.5)
-                scurta = getattr(ctrl, "faza_scurta", None)
-                ciclu = [plan_cycle[0], plan_cycle[1], scurta] if scurta is not None and durate[2] < ctrl.min_green else plan_cycle
-                if ctrl.current not in ciclu:
-                    ctrl.request(ciclu[0])
+                scurta = hasattr(ctrl, "stare_scurta") and durate[2] < ctrl.min_green
+                if ctrl.current not in plan_cycle:
+                    ctrl.request(plan_cycle[0])
                 else:
-                    k = ciclu.index(ctrl.current)
-                    if ctrl.green_time >= durate[k] - (getattr(ctrl, "degajare", 0) if ciclu[k] != scurta else 0):
-                        ctrl.request(ciclu[(k + 1) % len(ciclu)])
+                    k = plan_cycle.index(ctrl.current)
+                    if ctrl.green_time >= durate[k] - (getattr(ctrl, "degajare", 0) if not getattr(ctrl, "scurta", False) else 0):
+                        urm = plan_cycle[(k + 1) % len(plan_cycle)]
+                        ctrl.request(urm, scurta=True) if scurta and urm == plan_cycle[2] else ctrl.request(urm)
             elif t % 5 == 0:
                 if efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
@@ -323,10 +323,10 @@ def main(argv=None) -> None:
                 hist.append([t, q_tot])
                 hist = hist[-600:]
                 state = {"timestamp": time.time(), "timp_sim": t, "mod": mode, "mod_program": sub, "sursa": src,
-                         "faza": ctrl.current, "faza_nume": ctrl.names[ctrl.current], "etapa": ctrl.stage,
+                         "faza": ctrl.faza_afisata() if hasattr(ctrl, "faza_afisata") else ctrl.current, "faza_nume": ctrl.nume_scurta if getattr(ctrl, "scurta", False) else ctrl.names[ctrl.current], "etapa": ctrl.stage,
                          "faza_tinta": ctrl.target if ctrl.stage != "green" else ctrl.current,
                          "varsta_debite_s": round(time.time() - good_t) if good_cam else None,
-                         "verde_s": ctrl.green_time, "faze": ctrl.names, "model_ai": bool(rl), "pietoni_verde": ctrl.pietoni_verde() if hasattr(ctrl, "pietoni_verde") else ctrl.current == 2,
+                         "verde_s": ctrl.green_time, "faze": [*ctrl.names, *([ctrl.nume_scurta] if hasattr(ctrl, "nume_scurta") else [])], "model_ai": bool(rl), "pietoni_verde": ctrl.pietoni_verde() if hasattr(ctrl, "pietoni_verde") else ctrl.current == 2,
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
                          "vehicule_in_retea": traci.vehicle.getIDCount(), "vehicule_injectate": n_veh,
                          "pietoni_in_retea": traci.person.getIDCount(), "pietoni_injectati": n_ped,

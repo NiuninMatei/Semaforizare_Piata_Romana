@@ -11,6 +11,8 @@ from romana.common import NET_DIR
 from romana.control.signals import SignalController, all_red_between, romana_green_phases, yellow_between
 
 MINIM_PIETONI_S = 7        # dintr-o etapă scurtă, pietonii primesc totuși măcar atât, ca să nu rămână niciodată fără verde
+SCURTA = "scurta"          # a treia etapă, când ține mai puțin decât verdele minim: centrul se golește, fără pietoni; nu e o fază în lista agentului
+ETAPA_SCURTA_S = 3         # din cameră: între sfârșitul etapei E–V și începutul etapei N–S trec ≈13 s, cu tot cu cele două tranziții
 # după verdele maxim: N–S → E–V, E–V → N–S, orice altceva → N–S; nu faza cu numărul următor, care poate fi una „fără dozare” (§ 6.3)
 URMATOAREA = {0: 1, 1: 0}
 
@@ -47,7 +49,7 @@ def segmente_etapa(stare: str, verde: float, treceri, intarziere: float, degajar
 
 def program_fix(stari: list[str], etape: list[tuple[int, float]], pietoni: dict, galben: float = 3, rosu: float = 2) -> list[tuple[str, float]]:
     """Plan fix: [(faza, verde)] → [(stare, durată)], cu fereastra pietonilor și cu tranzițiile sigure acolo unde se schimbă legături de vehicule."""
-    seg = [x for f, v in etape for x in segmente_etapa(stari[f], v, pietoni["treceri"], pietoni["intarziere_s"].get(str(f), 0), pietoni["degajare_s"])]
+    seg = [x for f, v in etape for x in ([(pietoni["stare_scurta"], v)] if f == SCURTA else segmente_etapa(stari[f], v, pietoni["treceri"], pietoni["intarziere_s"].get(str(f), 0), pietoni["degajare_s"]))]
     n = min(pietoni["treceri"])          # legăturile de vehicule stau înaintea trecerilor
     out = []
     for k, (s, d) in enumerate(seg):
@@ -61,7 +63,7 @@ def program_fix(stari: list[str], etape: list[tuple[int, float]], pietoni: dict,
 def etape_plan(verde_s: list[float], pietoni: dict) -> list[tuple[int, float]]:
     """Planul „a/b/c”: verde N–S, verde E–V, a treia etapă. Sub verdele minim, a treia e etapa scurtă, fără pietoni; altfel, cea doar pentru pietoni."""
     a, b, c = verde_s
-    return [(0, a), (1, b)] + ([(pietoni["faza_scurta"] if c < 10 else 2, c)] if c > 0 else [])
+    return [(0, a), (1, b)] + ([(SCURTA if c < 10 else 2, c)] if c > 0 else [])
 
 
 class SemaforCuPietoni(SignalController):
@@ -73,7 +75,10 @@ class SemaforCuPietoni(SignalController):
         self.treceri = set(pietoni["treceri"])
         self.intarziere = {int(k): v for k, v in pietoni["intarziere_s"].items()}
         self.degajare = pietoni["degajare_s"]
-        self.faza_scurta = pietoni["faza_scurta"]
+        self.stare_scurta = pietoni["stare_scurta"]
+        self.nume_scurta = pietoni["nume_scurta"]
+        self.scurta = self.spre_scurta = False     # în etapa scurtă, respectiv spre ea; pentru agent, ea rămâne faza a treia
+        self.via_scurta = False               # agentul pe două etape: de la E–V la N–S se trece mereu prin etapa scurtă, ca la semaforul real
         self.ramas_degajare = None            # secundele de degajare rămase, cât timp vehiculele mai au verde
         self.plecare = self.sosire = None     # stările dintre care se face tranziția
         self.afisata = None
@@ -83,25 +88,39 @@ class SemaforCuPietoni(SignalController):
         self.afisata = stare
         self.t.trafficlight.setRedYellowGreenState(self.id, stare)
 
-    def _inceput(self, faza: int) -> str:
+    def _inceput(self, faza: int, scurta: bool = False) -> str:
+        if scurta:
+            return self.stare_scurta
         return fara_treceri(self.greens[faza], self.treceri) if self.intarziere.get(faza, 0) > 0 else self.greens[faza]
 
     def can_switch(self) -> bool:
-        return self.stage == "green" and self.ramas_degajare is None and self.green_time >= (0 if self.current == self.faza_scurta else self.min_green)
+        return self.stage == "green" and self.ramas_degajare is None and (self.scurta or self.green_time >= self.min_green)
 
-    def request(self, phase: int) -> None:
-        if self.stage != "green" or self.ramas_degajare is not None:
+    def request(self, phase: int, scurta: bool = False) -> None:
+        if self.stage != "green" or self.ramas_degajare is not None or (self.scurta and self.green_time < ETAPA_SCURTA_S):
             return
+        if self.via_scurta:
+            if self.scurta:
+                phase = 0
+            elif self.current == 1 and phase == 0:
+                phase, scurta = 2, True
         if phase == self.current and self.green_time >= self.max_green:
             phase = URMATOAREA.get(self.current, 0)
+            if self.via_scurta and self.current == 1:
+                phase, scurta = 2, True
         if phase != self.current and self.can_switch():
             self.target = phase
-            self.sosire = self._inceput(phase)
+            self.spre_scurta = scurta and phase == 2
+            self.sosire = self._inceput(phase, self.spre_scurta)
             if any(self.afisata[i] in "Gg" and self.sosire[i] not in "Gg" for i in self.treceri):
                 self.ramas_degajare = self.degajare
                 self._arata(fara_treceri(self.afisata, {i for i in self.treceri if self.sosire[i] not in "Gg"}))
             else:
                 self._galben()
+
+    def faza_afisata(self) -> int:
+        """Pentru dispecerat: etapa scurtă are numele ei, după cele cinci faze."""
+        return len(self.greens) if self.scurta else self.current
 
     def pietoni_verde(self) -> bool:
         return any(self.afisata[i] in "Gg" for i in self.treceri)
@@ -120,7 +139,9 @@ class SemaforCuPietoni(SignalController):
                 self.ramas_degajare -= 1
                 if self.ramas_degajare <= 0:
                     self._galben()
-            elif self.green_time == self.intarziere.get(self.current, -1):
+            elif self.scurta and self.via_scurta and self.green_time >= ETAPA_SCURTA_S:
+                self.request(0)
+            elif not self.scurta and self.green_time == self.intarziere.get(self.current, -1):
                 self._arata(self.greens[self.current])
         elif self.stage == "yellow" and self.stage_time >= self.yellow:
             self.stage, self.stage_time = "red", 0
@@ -129,6 +150,7 @@ class SemaforCuPietoni(SignalController):
                 self.tick()
         elif self.stage == "red" and self.stage_time >= self.all_red:
             self.current = self.target
+            self.scurta = self.spre_scurta
             self.stage, self.stage_time, self.green_time = "green", 0, 0
             self.switches += 1
             self._arata(self.sosire)
