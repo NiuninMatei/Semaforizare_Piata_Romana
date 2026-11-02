@@ -1,13 +1,13 @@
-﻿"""Demonstrație rapidă: aceeași oră de trafic real, semaforul condus de planul fix actual și de agentul AI.
+﻿"""Demonstrație rapidă: aceeași oră de trafic real, semaforul condus de planul de referință, de planul ales și de agentul IA.
 
-Rulează în paralel (câte un proces pe simulare) scenariul ales cu planul fix de referință, Max-Pressure și
-agentul PPO, pe aceleași seed-uri (aceleași vehicule, aceiași pietoni), și afișează comparația pe categorii
-de participanți. Nu modifică rezultatele oficiale (outputs/eval, docs/rezultate): fișierele temporare merg
+Rulează în paralel (câte un proces pe simulare) scenariul ales cu planul de referință 36/28/12, planul ales 12/14/12,
+Presiune maximă și agentul PPO, pe aceleași seed-uri (aceleași vehicule, aceiași pietoni), și afișează comparația pe
+categorii de participanți. Nu modifică rezultatele oficiale (outputs/eval, docs/rezultate): fișierele temporare merg
 în outputs/demo. Evaluarea completă rămâne `python -m romana.control.evaluate` (vezi § 9).
 
 Exemple:
-  python -m romana.control.demo                                           # prânzul din 21.10, 5 seed-uri
-  python -m romana.control.demo --scenariu sumo/scenarios/zi_2026-10-21_varf.sumocfg --seeds 5
+  python -m romana.control.demo                                           # prânzul din 26.10, 5 seed-uri
+  python -m romana.control.demo --scenariu sumo/scenarios/zi_2026-10-26_varf.sumocfg --seeds 5
 """
 from __future__ import annotations
 
@@ -19,7 +19,8 @@ from pathlib import Path
 
 from romana.common import MODELS_DIR, OUTPUT_DIR, ROOT
 
-STRATEGII = {"fix_referinta": "Plan fix actual", "max_pressure": "Max-Pressure", "rl_ppo": "Agent AI (PPO)"}
+PLAN_ALES = [12.0, 14.0, 12.0]
+STRATEGII = {"fix_referinta": "Plan de referință", "plan_ales": "Planul ales", "max_pressure": "Presiune maximă", "rl_ppo": "Agent IA (PPO)"}
 COLOANE = [("pierdere_totala_h", "Pierdere totală, toți participanții (h)", 1),
            ("asteptare_medie_s", "Așteptare medie vehicul (s)", 1),
            ("intarziere_intrare_s", "Întârziere la intrarea în rețea (s/veh)", 1),
@@ -44,17 +45,21 @@ def _run(args):
     from romana.control import evaluate as E
 
     E.EVAL_DIR = OUTPUT_DIR / "demo"
-    ctrl = {"fix_referinta": C.FixedReference, "max_pressure": C.MaxPressure}.get(strategie)
-    ctrl = ctrl() if ctrl else C.RLPolicy(Path(model))
+    if strategie == "plan_ales":
+        ctrl = C.FixedWebster.__new__(C.FixedWebster)       # plan fix dat prin duratele de verde, ca în `validare`
+        ctrl.plan = {"verde_s": PLAN_ALES}
+    else:
+        ctrl = {"fix_referinta": C.FixedReference, "max_pressure": C.MaxPressure}.get(strategie)
+        ctrl = ctrl() if ctrl else C.RLPolicy(Path(model))
     ctrl.name = strategie
     return E.run_one(Path(scen), ctrl, seed)
 
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenariu", default=str(ROOT / "sumo" / "scenarios" / "zi_2026-10-21_pranz.sumocfg"))
+    ap.add_argument("--scenariu", default=str(ROOT / "sumo" / "scenarios" / "zi_2026-10-26_pranz.sumocfg"))
     ap.add_argument("--seeds", type=int, default=5)
-    ap.add_argument("--model", default=str(MODELS_DIR / "ppo_romana.zip"))
+    ap.add_argument("--model", default=str(MODELS_DIR / "ppo_romana_cal.zip"))
     args = ap.parse_args(argv)
 
     scen = Path(args.scenariu).resolve()

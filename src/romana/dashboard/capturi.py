@@ -63,6 +63,10 @@ STARI = {
 }
 # numele stării → lățimea ferestrei, dacă nu e cea implicită
 ECRANE = {"telefon_normal": (375, "normal"), "telefon_confirmare": (375, "confirmare"), "tableta_normal": (768, "normal")}
+# figura din documentație (§ 8): fără imaginea camerei și fără indicatorii ei, care aici ar fi inventați
+FIGURA = ('document.getElementById("cadru").style.visibility="hidden"; const r=document.getElementById("cadru").parentElement; '
+          'r.style.cssText+=";background:#d9dcd8;display:flex;align-items:center;justify-content:center;min-height:300px"; '
+          'r.insertAdjacentHTML("afterbegin",\'<span style="position:absolute;color:#4a5560">imaginea camerei: nu apare în figură</span>\');')
 
 
 def fazele() -> list[str]:
@@ -107,10 +111,22 @@ def main(argv=None) -> None:
     ap.add_argument("--versiune", choices=sorted(VERSIUNI), default="m1")
     ap.add_argument("--out", default=None, help="implicit outputs/evaluare/<versiune>")
     ap.add_argument("--inaltime", type=int, default=1500)
+    ap.add_argument("--figura", default=None, help="doar figura din documentație, în acest fișier JPEG, și nimic altceva")
     a = ap.parse_args(argv)
     dosar = Path(a.out) if a.out else OUTPUT_DIR / "evaluare" / a.versiune
     dosar.mkdir(parents=True, exist_ok=True)
     sursa = VERSIUNI[a.versiune].read_text(encoding="utf-8")
+    if a.figura:
+        png = dosar / "figura.png"
+        if not randeaza(sursa, FIGURA, png, 1366, a.inaltime):
+            raise SystemExit("Captura figurii n-a reușit.")
+        imagine = cv2.imread(str(png))
+        randuri = (imagine.astype(int) - imagine[-1, -1].astype(int)).any(axis=2).any(axis=1).nonzero()[0]     # taie fundalul gol de jos
+        cv2.imwrite(a.figura, imagine[: randuri[-1] + 16], [cv2.IMWRITE_JPEG_QUALITY, 88])
+        png.unlink()
+        shutil.rmtree(dosar / "profil", ignore_errors=True)
+        print(f"figura: {a.figura}")
+        return
     lista = [(n, 1366, cod, a.inaltime) for n, cod in STARI.items()] + [(n, w, STARI[s], 2400 if w < 500 else 1800) for n, (w, s) in ECRANE.items()]
     for nume, latime, cod, inaltime in lista:
         png = dosar / f"{nume}.png"
