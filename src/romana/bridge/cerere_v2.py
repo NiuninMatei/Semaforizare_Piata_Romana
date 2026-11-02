@@ -16,11 +16,10 @@ def cerere(baza: dict, factori: dict) -> dict:
     cfg["factor_corectie_detectie"] = factori["factor_corectie_detectie"]
     cfg["_factor_corectie_detectie"] = ("Măsura nouă (§ 9.11): referință / numărătoarea automată pe zonele din camera_v2.json, pe clipuri de zi și de noapte. Referința, pe foi de contact și felii "
                                         "timp-spațiu; la Lascăr Catargiu, fără inelul dinspre est. Un braț poate avea un factor pentru zi și altul pentru întuneric (după înălțimea Soarelui). Sursa valorilor: config/factori_v2.json.")
-    cfg["factor_extrapolare_pietoni"] = 3.0
-    cfg["_factor_extrapolare_pietoni"] = "Măsura nouă numără pietonii pe persoane, nu pe zone: 2,5 pe zone înseamnă ≈3,0 pe persoane (raport zone/persoane 1,218 pe 29.10). Rămâne o ipoteză (§ 9.11); ≈30% din pierderea de la vârf vine din acești pietoni neobservați."
-    cfg["viraje_numarate"] = {"magheru": {"dacia_est": 1.1}}
-    cfg["_viraje_numarate"] = ("Viraje pe care camera le vede aproape pe toate, în prim-plan: se iau din numărul lor, cu factorul dat, nu din proporții. Magheru → Dacia est: 348 de traiectorii complete pe 26.10, 14:30–15:30, și ≈370–390 de vehicule "
-                               "la ieșirea Dacia est în timpul etapei N–S. Din proporții ar fi ieșit 672 de vehicule pe oră, fiindcă traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete (§ 4.3).")
+    cfg["factor_extrapolare_pietoni"] = factori["factor_extrapolare_pietoni"]
+    cfg["_factor_extrapolare_pietoni"] = factori["_factor_extrapolare_pietoni"]
+    cfg["viraje_numarate"] = factori["viraje_numarate"]
+    cfg["_viraje_numarate"] = factori["_viraje_numarate"]
     cfg["factor_pietoni_masurati"] = factori["factor_pietoni_masurati"]
     cfg["_factor_pietoni_masurati"] = factori["_factor_pietoni_masurati"]
     cfg["cote_fixe"] = {"catargiu": {"dacia_vest": 0.20},

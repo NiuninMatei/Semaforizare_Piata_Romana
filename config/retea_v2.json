@@ -135,7 +135,7 @@
       60
     ],
     "intarziere_s": {
-      "0": 24
+      "0": 28
     },
     "degajare_s": 6,
     "nume_faza_scurta": "Golirea centrului, fără pietoni",
@@ -146,6 +146,6 @@
       18
     ]
   },
-  "_pietoni": "Din cameră, pe 26.10, la prânz, după-amiaza și seara: pe zebrele de pe Dacia est, trecerile cresc brusc la ≈24 s de la începutul valului de pe Magheru și se termină la ≈70 s; doar 3% din treceri cad în ultimele 20 s dinaintea valului. Pe Magheru, de la ≈60 s la ≈120 s din ciclu. Deci pietonii de pe Dacia pornesc la ≈24 s după vehicule, iar între ultimul pieton și următoarea etapă rămân câteva secunde: degajarea e timpul de traversare al celei mai lungi treceri, 12,8 m la 1,2 m/s, minus cele 5 s de tranziție. Pentru Magheru–Catargiu și Dacia vest, camera vede prea puțini pietoni: același program, prin analogie, ipoteză.",
+  "_pietoni": "Din referința de pe clipurile din 2.11, unde adnotatorii numără pornirile pe zebrele de pe Dacia est: primele porniri ale fiecărei etape vin la ≈28 s (mediana; 26–34 s) de la începutul valului de pe Magheru, aproape toți odată; detectorul prinde mulțimea mai târziu și pe bucăți, de aceea numărătoarea lui părea să înceapă la ≈24 s și să crească lent. Pe Magheru, de la ≈60 s la ≈120 s din ciclu. Deci pietonii de pe Dacia pornesc la ≈28 s după vehicule, iar între ultimul pieton și următoarea etapă rămân câteva secunde: degajarea e timpul de traversare al celei mai lungi treceri, 12,8 m la 1,2 m/s, minus cele 5 s de tranziție. Pentru Magheru–Catargiu și Dacia vest, camera vede prea puțini pietoni: același program, prin analogie, ipoteză.",
   "_pietoni_linii_interioare": "Pe Magheru sunt trei linii de oprire la rând: 0–3, apoi 37–40 după 2,71 m, zebra 56 și 15–18 după încă 0,2 m. Dacă se închid toate deodată, cine a trecut de 37–40 pe galben rămâne oprit pe zebră toată etapa E–V, iar pietonii trec prin el. Linia 15–18 se închide deci după celelalte. E doar program, rețeaua nu se schimbă. Măsurat pe vârful din 26.10: perechi pieton–vehicul oprit pe zebra 56, 314 → 5; debitele rămân în zgomot."
 }

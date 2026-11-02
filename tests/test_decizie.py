@@ -80,5 +80,37 @@ class Referinte(unittest.TestCase):
         self.assertNotIn("alte_referinte", d["candidati"][0])
 
 
+class Poarta(unittest.TestCase):
+    PIERDERI = {"C": {"varf": 80, "linistit": 11}, "PLAN_A": {"varf": 100, "linistit": 10}}
+
+    def ruleaza(self, trec):
+        with tempfile.TemporaryDirectory() as d:
+            csv, out, poarta = Path(d) / "r.csv", Path(d) / "d.json", Path(d) / "p.json"
+            pd.DataFrame(rulari(self.PIERDERI)).to_csv(csv, index=False)
+            poarta.write_text(json.dumps({"commit": "abc", "scenarii": {"cor_zi_2026-11-05_varf": {"trece": "varf" in trec}, "cor_zi_2026-11-05_linistit": {"trece": "linistit" in trec}}}), encoding="utf-8")
+            with mock.patch.object(decizie, "debite", lambda sc: {s: 5000.0 if "varf" in s else 1000.0 for s in sc}):
+                decizie.main([str(csv), "--out", str(out), "--program", "X=lejer:PLAN_A,moderat:PLAN_A,greu:PLAN_A", "--in-vigoare", "PLAN_A", "--candidati", "C", "--poarta", str(poarta)])
+            return json.loads(out.read_text(encoding="utf-8"))
+
+    def test_ora_de_baza(self):
+        self.assertEqual(decizie.ora_de_baza("indisciplinat_cor_zi_2026-11-05_varf_x1_2"), "cor_zi_2026-11-05_varf")
+        self.assertEqual(decizie.ore_care_trec(["cor_zi_2026-11-05_varf", "cor_zi_2026-11-05_seara"], {"cor_zi_2026-11-05_varf": {"trece": True}}), ({"cor_zi_2026-11-05_varf"}, {"cor_zi_2026-11-05_seara"}))
+
+    def test_orele_care_nu_trec_nu_intra(self):
+        d = self.ruleaza({"varf", "linistit"})
+        self.assertEqual(d["poarta"]["nu_trec"], [])
+        self.assertEqual(d["candidati"][0]["fata_de_in_vigoare"]["n"], 40)
+        d = self.ruleaza({"varf"})
+        self.assertEqual(d["poarta"]["nu_trec"], ["cor_zi_2026-11-05_linistit"])
+        self.assertEqual(d["candidati"][0]["fata_de_in_vigoare"]["n"], 20)
+        self.assertEqual(d["castigator"], "C")
+
+    def test_sub_jumatate_din_ore_ziua_e_descriptiva(self):
+        d = self.ruleaza(set())
+        self.assertTrue(d["poarta"]["descriptiv"])
+        self.assertEqual(d["castigator"], "PLAN_A")
+        self.assertIn("descriptivă", d["motiv"])
+
+
 if __name__ == "__main__":
     unittest.main()

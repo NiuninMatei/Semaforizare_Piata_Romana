@@ -17,6 +17,9 @@ Cu mai multe referințe (`--in-vigoare PLAN_72_48_3 REAL`, regula din § 9.11), 
 nimeni, rămâne prima. Semaforul rejucat, REAL, se compară doar pe orele unde cel puțin `--acoperire-minima` din oră vine din valuri
 măsurate: în rest e în cea mai mare parte presupus și nu i se spune „semaforul real”.
 
+Cu `--poarta F` (scris de `valideaza_geaman --poarta`), orele la care geamănul nu trece poarta din § 9.11 nu intră în decizie, nici variantele lor ×0,8 și ×1,2. Dacă trec sub jumătate din ore, ziua rămâne
+descriptivă: nu se poate schimba nimic, oricât de bine ar ieși un candidat.
+
 Exemple:
   python -m romana.control.decizie outputs/validare/test_28_indisciplinat.csv outputs/validare/test_28_normal.csv
   python -m romana.control.decizie outputs/validare/test_29_*.csv --confirma TOD_DEBIT
@@ -89,6 +92,18 @@ def mascat_real(p: pd.DataFrame, acoperire: dict[str, float], minima: float) -> 
     return pd.Series([acoperire[sc] >= minima for sc, _ in p.index], index=p.index)
 
 
+def ora_de_baza(sc: str) -> str:
+    """Scenariul observat din care vine o variantă: fără comportament și fără scară."""
+    return re.sub(r"_x\d_\d$", "", sc.replace("indisciplinat_", ""))
+
+
+def ore_care_trec(scenarii, porti: dict) -> tuple[set, set]:
+    """Orele de bază care trec poarta și cele care nu; o oră pe care validarea n-a rulat-o nu trece."""
+    ore = {ora_de_baza(s) for s in scenarii}
+    trec = {o for o in ore if porti.get(o, {}).get("trece")}
+    return trec, ore - trec
+
+
 def compara(a: pd.Series, b: pd.Series) -> dict:
     m = a.notna() & b.notna()
     a, b = a[m].astype(float), b[m].astype(float)
@@ -107,6 +122,7 @@ def main(argv=None) -> None:
     ap.add_argument("--in-vigoare", nargs="+", default=[IN_VIGOARE], help="referința; cu mai multe, un candidat trebuie să le bată pe toate, iar dacă nu trece nimeni rămâne prima")
     ap.add_argument("--acoperire-minima", type=float, default=0.8, help="semaforul rejucat, REAL, se compară doar pe orele cu cel puțin atâta din oră din valuri măsurate")
     ap.add_argument("--program", action="append", default=None, help="implicit: REALIST și TOD_DEBIT")
+    ap.add_argument("--poarta", help="JSON-ul scris de `valideaza_geaman --poarta`: orele care nu trec nu intră în decizie")
     ap.add_argument("--confirma", help="pe o zi de confirmare: strategia aleasă înainte")
     ap.add_argument("--out", help="fișierul JSON cu decizia (implicit outputs/validare/decizie_<zi>.json)")
     args = ap.parse_args(argv)
@@ -120,6 +136,19 @@ def main(argv=None) -> None:
     benzi = benzi_analiza(cazuri)
     bands = [(b, [s for s, c in cazuri.items() if c == b]) for b in ("lejer", "moderat")] + [("greu", [])]
     p = pivot(df)
+    descriptiv, poarta_rez = False, None
+    if args.poarta:
+        porti = json.loads(Path(args.poarta).read_text(encoding="utf-8"))
+        trec, nu_trec = ore_care_trec(p.index.get_level_values(0).unique(), porti["scenarii"])
+        descriptiv = len(trec) < len(nu_trec)
+        print(f"poarta din § 9.11: trec {len(trec)} din {len(trec) + len(nu_trec)} ore; nu trec: {sorted(nu_trec)}" + (" → ziua e doar descriptivă" if descriptiv else ""))
+        poarta_rez = {"trec": sorted(trec), "nu_trec": sorted(nu_trec), "descriptiv": descriptiv, "commit_validare": porti.get("commit")}
+        if trec:
+            p = p[[ora_de_baza(s) in trec for s, _ in p.index]]
+        q = {s: v for s, v in q.items() if ora_de_baza(s) in trec} or q
+        cazuri = {s: c for s, c in cazuri.items() if s in q}
+        benzi = benzi_analiza(cazuri)
+        bands = [(b, [s for s, c in cazuri.items() if c == b]) for b in ("lejer", "moderat")] + [("greu", [])]
     for spec in args.program or PROGRAME:
         name, comp = parse_program(spec)
         p = add_program(p, name, comp, bands)
@@ -159,6 +188,8 @@ def main(argv=None) -> None:
            "debite": {s: round(v) for s, v in q.items()}, "cazuri": cazuri, "benzi_analiza": benzi}
     if alte_ref or "REAL" in args.in_vigoare:
         rez.update({"referinte": args.in_vigoare, "acoperire_minima": args.acoperire_minima})
+    if poarta_rez:
+        rez["poarta"] = poarta_rez
     if args.confirma:
         e = evaluare(args.confirma)
         g, i, d = e["fata_de_in_vigoare"], e["indisciplinati"], e["disciplinati"]
@@ -195,7 +226,9 @@ def main(argv=None) -> None:
                   f"{g['mai_bun']}/{g['n']}, p = {g['p_wilcoxon']:.6f} | "
                   f"indisc. {i['dif_medie_h']:+.2f} h (p = {i['p_wilcoxon']:.4f}), "
                   f"disc. {d['dif_medie_h']:+.2f} h (p = {d['p_wilcoxon']:.4f}) → {'eligibil' if e['eligibil'] else 'nu'}")
-        if not eligibili:
+        if descriptiv:
+            castig, motiv = ref, "geamănul trece poarta din § 9.11 pe sub jumătate din ore: ziua e doar descriptivă"
+        elif not eligibili:
             castig, motiv = ref, "niciun candidat nu e semnificativ mai bun decât strategia în vigoare"
         else:
             eligibili.sort(key=lambda e: e["pierdere_totala_h"])

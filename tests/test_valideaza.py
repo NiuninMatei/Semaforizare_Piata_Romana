@@ -971,6 +971,16 @@ class TestCitire(unittest.TestCase):
         self.assertIn("fragmente", d.loc["decalaj de aliniere, s: intrare dacia_vest", "nota"])
         self.assertLess(d.loc["profil pe ciclu: dacia_vest", "abatere"], 0.40)      # factorul de pe tot brațul rămâne, deci profilul e doar mai sus, nu altă formă
 
+    def test_poarta_cere_toate_randurile_in_prag(self):
+        cam, rez = sintetic()
+        d = V.randuri(cam, rez)[0]
+        self.assertTrue(V.poarta(d)["trece"], V.poarta(d))
+        self.assertEqual(set(V.poarta(d)["randuri"]), set(V.POARTA))
+        d2 = d.copy()
+        d2.loc[d2["masura"] == "debit, veh/h: catargiu", "verdict"] = "nedecis"
+        self.assertFalse(V.poarta(d2)["trece"])
+        self.assertFalse(V.poarta(d[d["masura"] != "teleportări"])["trece"])       # un rând lipsă nu trece
+
     def test_ce_nu_acopera_randurile_e_spus(self):
         self.assertTrue(any("Mendeleev" in k for k in V.RENUNTATE))
         self.assertIn("același cod de zone", V.LIMITE)
