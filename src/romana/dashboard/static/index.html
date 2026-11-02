@@ -214,7 +214,8 @@ const istoric=[], schimbari=[];
 const $=id=>document.getElementById(id);
 const ora=ms=>new Date(ms).toLocaleTimeString("ro-RO");
 const nr=v=>Number(v).toLocaleString("ro-RO",{maximumFractionDigits:1});
-const cate=(n,cuv)=>`${n}${n%100>=20||(n>=100&&n%100==0)?" de":""} ${cuv}`;   // în română: 20 de vehicule, dar 19 vehicule
+const UNUL={vehicule:"vehicul","vehicule oprite":"vehicul oprit",pietoni:"pieton"};
+const cate=(n,cuv)=>n==1?`1 ${UNUL[cuv]||cuv}`:`${n}${n%100>=20||(n>=100&&n%100==0)?" de":""} ${cuv}`;   // în română: 20 de vehicule, dar 19 vehicule
 function anunta(text){ $("anunt").textContent=text }
 function durata(s){ s=Math.max(0,Math.round(s)); if(s<90) return `${s} s`; if(s<3600) return `${Math.floor(s/60)} min${s%60?` ${s%60} s`:""}`; return `${Math.floor(s/3600)} h ${Math.round(s%3600/60)} min` }
 function pune(el,html){ if(el.dataset.ultim!==html){ el.dataset.ultim=html; el.innerHTML=html } }   // rescrie doar când se schimbă, ca să nu mute cititorul de ecran
@@ -400,7 +401,7 @@ function afiseazaCamera(c){
   if(c&&c.intrari_veh_h){
     areTrafic=true; camUltimLa=Date.now()-(c._varsta_s||0)*1000;
     const ins=c.intrari_veh_h||{}, outs=c.iesiri_veh_h||{}, ped=c.pietoni_h||{}, doarIesiri=b=>b=="mendeleev"||b=="caderea_bastiliei";
-    pune($("debite"),Object.keys(NUME).map(b=>`<tr><td>${NUME[b]}</td><td class="n">${doarIesiri(b)?'<span class="doar">doar ieșire</span>':ins[b]??"nu e măsurat"}</td><td class="n">${outs[b]??"nu e măsurat"}</td></tr>`).join(""));
+    pune($("debite"),Object.keys(NUME).map(b=>`<tr><td>${NUME[b]}</td><td class="n">${doarIesiri(b)?'<span class="doar">doar ieșire</span>':ins[b]??0}</td><td class="n">${outs[b]??0}</td></tr>`).join(""));
     $("t-pietoni").hidden=!Object.keys(ped).length;
     pune($("pietoni"),Object.keys(ped).map(b=>`<tr><td>${NUME[b]||b}</td><td class="n">${ped[b]}</td></tr>`).join(""));
     $("p-deb").classList.toggle("vechi",!proaspat||!legatura);
