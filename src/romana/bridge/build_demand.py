@@ -286,8 +286,8 @@ def write_sumocfg(name: str, route_files: list[Path], dur: int) -> Path:
 
 
 def main(argv=None) -> None:
-    cfg = load_json("demand.json")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--cerere", default="demand.json", help="fișierul de configurare a cererii, din config/ (măsura nouă: demand_v2.json)")
     ap.add_argument("--counts", nargs="*", help="fișiere CSV de numărători (implicit toate din data/counts)")
     ap.add_argument("--de-la", dest="start")
     ap.add_argument("--pana-la", dest="end")
@@ -297,6 +297,7 @@ def main(argv=None) -> None:
     ap.add_argument("--scala", type=float, default=1.0, help="multiplicator al volumelor (analize de sensibilitate)")
     ap.add_argument("--regenerare-candidate", action="store_true")
     args = ap.parse_args(argv)
+    cfg = load_json(args.cerere)
     if args.fond is not None:
         cfg["fond_fractiune"] = args.fond
     random.seed(cfg["seed"])

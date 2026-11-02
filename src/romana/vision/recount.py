@@ -12,6 +12,7 @@ Exemple:
   python -m romana.vision.recount --zi 2026-10-21 --directii        # verificarea sensului de mers pe zone
   python -m romana.vision.recount --flux cadru.jpg                   # câmpul de mișcare, pentru calibrarea zonelor
   python -m romana.vision.recount --zi 2026-10-26 --publica          # jurnalul publicabil (doar vehicule)
+  python -m romana.vision.recount --zi 2026-11-01 --camera camera_v2.json --pe-persoane --out data/counts_cor   # măsura nouă (§ 9.11)
 """
 from __future__ import annotations
 
@@ -105,8 +106,9 @@ def stitch(tracks: list[tuple[str, list]], max_gap: float = 2.0, radius: float =
 
 
 def recount(files: list[Path], zones, interval_s: int, out_dir: Path, params: Params,
-            do_stitch: bool = True) -> list[dict]:
-    """Reconstruiește numărătorile pe intervale; suprascrie CSV-urile zilelor respective."""
+            do_stitch: bool = True, pe_persoane: bool = False) -> list[dict]:
+    """Reconstruiește numărătorile pe intervale; suprascrie CSV-urile zilelor respective. Cu `pe_persoane`, un pieton se numără o
+    singură dată, chiar dacă atinge mai multe treceri (zonele se suprapun pe Dacia est); în măsura veche se numără pe fiecare zonă."""
     tracks = [(vt, pts) for _, vt, pts in read_trajectories(files)]
     if do_stitch:
         n0 = len(tracks)
@@ -125,7 +127,10 @@ def recount(files: list[Path], zones, interval_s: int, out_dir: Path, params: Pa
         c.p = params
         for vt, pts in buckets[start]:
             if len(pts) >= params.min_track_frames:
-                c.add(vt, classify(vt, pts, zones, params))
+                rezultat = classify(vt, pts, zones, params)
+                if pe_persoane and vt == PEDESTRIAN:
+                    rezultat = {"treceri": rezultat["treceri"][:1]}
+                c.add(vt, rezultat)
         last = max(p[-1][0] for _, p in buckets[start])
         rec = {"start": start, "end": min(start + interval_s, last), "od": dict(c.od), "in": dict(c.arm_in),
                "out": dict(c.arm_out), "pietoni": dict(c.peds)}
@@ -227,10 +232,11 @@ def main(argv=None) -> None:
             flux.reconfigure(encoding="utf-8", errors="replace")
         except (AttributeError, ValueError):
             pass
-    cam = load_json("camera.json")
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--zi", nargs="*", help="zile AAAA-LL-ZZ (implicit toate)")
-    ap.add_argument("--interval", type=int, default=cam.get("interval_s", 900))
+    ap.add_argument("--camera", default="camera.json", help="fișierul cu zonele, din config/ (măsura nouă: camera_v2.json)")
+    ap.add_argument("--pe-persoane", action="store_true", help="un pieton se numără o singură dată, nu pe fiecare zonă (măsura nouă)")
+    ap.add_argument("--interval", type=int, default=None, help="secunde pe interval (implicit interval_s din fișierul cu zonele)")
     ap.add_argument("--out", default=str(COUNTS_DIR))
     ap.add_argument("--directii", action="store_true", help="doar verificarea sensului de mers pe zone")
     ap.add_argument("--flux", metavar="IMAGINE.jpg",
@@ -240,6 +246,11 @@ def main(argv=None) -> None:
     ap.add_argument("--fara-reunire", action="store_true",
                     help="nu reuni fragmentele (implicit pentru jurnalul publicat, care e deja reunit)")
     args = ap.parse_args(argv)
+    cam = load_json(args.camera)
+    if args.interval is None:
+        args.interval = cam.get("interval_s", 900)
+    if (args.camera != "camera.json" or args.pe_persoane) and Path(args.out).resolve() == COUNTS_DIR.resolve():
+        raise SystemExit("Altă măsură nu se scrie peste data/counts, care e măsura veche (§ 9.11): dați un alt dosar cu --out.")
     # pentru fiecare zi: jurnalul complet (local) are prioritate; fără el, jurnalul publicat (doar vehicule, deja reunit)
     days = sorted({f.name for d in (TRAJ_RAW_DIR, TRAJ_DIR) for f in d.glob("traiectorii_*.jsonl.gz")})
     if args.zi:
@@ -273,7 +284,8 @@ def main(argv=None) -> None:
     p = Params(capat_s=cam.get("capat_s", 1.5))
     for k, v in cam.get("parametri_numarare", {}).items():
         setattr(p, k, v)
-    recs = recount(files, zones, args.interval, Path(args.out), p, do_stitch=bool(raw) and not args.fara_reunire)
+    recs = recount(files, zones, args.interval, Path(args.out), p, do_stitch=bool(raw) and not args.fara_reunire,
+                   pe_persoane=args.pe_persoane)
     if pub:
         print("[renumărare] din jurnalul publicat: doar vehiculele (pietonii sunt agregați în data/counts)")
     n_in = sum(sum(r["in"].values()) for r in recs)
