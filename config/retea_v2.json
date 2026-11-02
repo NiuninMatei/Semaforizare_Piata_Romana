@@ -122,13 +122,9 @@
     "fisier": "vtypes_v2.add.xml",
     "fisier_indisciplinat": "vtypes_indisciplinat_v2.add.xml",
     "tau": "1.0",
-    "sigma": "0.2",
-    "sigma_indisciplinat": "0.3",
-    "minGap": "1.5",
-    "jmCrossingGap": "2",
-    "lcKeepRight": "0"
+    "jmCrossingGap": "2"
   },
-  "_tipuri_vehicule": "tau rămâne valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare: sub el apar coliziuni. Distanța minimă și imperfecțiunea sunt alese pe debitul de descărcare măsurat de cameră pe Magheru. jmCrossingGap: distanța minimă până la un pieton care merge spre punctul de conflict; dacă e mai departe, vehiculul poate trece; valoarea implicită, 10 m, ține vehiculele pe loc mult mai mult decât se vede în cameră. lcKeepRight 0: în oraș, șoferii nu trag spre dreapta când banda lor e liberă; altfel, banda dreaptă, care virează, se umple cu vehicule care merg înainte. Fără jmIgnoreJunctionFoeProb: o primă versiune îl folosea, iar vehiculele treceau prin pietoni, deci debitul potrivit cu camera era un artefact (§ 6.5).",
+  "_tipuri_vehicule": "Vehiculele rămân cele din vtypes.add.xml, cu două schimbări. tau revine la valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare: sub el apar coliziuni. jmCrossingGap 2: distanța minimă până la un pieton care merge spre punctul de conflict; dacă e mai departe, vehiculul poate trece; cu valoarea implicită, 10 m, debitul de pe Magheru scade cu ≈5%, iar virajele spre Dacia est se opresc și mai mult decât în cameră, unde curg și în timpul pietonilor. O primă versiune avea și jmIgnoreJunctionFoeProb 0,5, minGap 1,5 și sigma 0,2, alese pe debitul din cameră; primul făcea vehiculele să treacă prin pietoni, deci potrivirea era un artefact, iar cu valorile implicite ale celorlalte două, profilul pe ciclu de pe Magheru se potrivește mai bine (§ 6.5).",
   "pietoni": {
     "treceri": [
       54,
@@ -140,10 +136,10 @@
       60
     ],
     "intarziere_s": {
-      "0": 20
+      "0": 24
     },
     "degajare_s": 6,
     "nume_faza_scurta": "Golirea centrului, fără pietoni"
   },
-  "_pietoni": "Din cameră, pe 26.10, 15–16: pe zebrele de pe Dacia est, 83% din treceri cad în secundele 20–70 de la începutul valului de pe Magheru și doar 3% în ultimele 20 s dinaintea lui; pe Magheru, de la ≈60 s la ≈120 s din ciclu. Deci pietonii de pe Dacia pornesc la ≈20 s după vehicule, iar între ultimul pieton și următoarea etapă rămân câteva secunde: degajarea e timpul de traversare al celei mai lungi treceri, 12,8 m la 1,2 m/s, minus cele 5 s de tranziție. Pentru Magheru–Catargiu și Dacia vest, camera vede prea puțini pietoni: același program, prin analogie, ipoteză."
+  "_pietoni": "Din cameră, pe 26.10, la prânz, după-amiaza și seara: pe zebrele de pe Dacia est, trecerile cresc brusc la ≈24 s de la începutul valului de pe Magheru și se termină la ≈70 s; doar 3% din treceri cad în ultimele 20 s dinaintea valului. Pe Magheru, de la ≈60 s la ≈120 s din ciclu. Deci pietonii de pe Dacia pornesc la ≈24 s după vehicule, iar între ultimul pieton și următoarea etapă rămân câteva secunde: degajarea e timpul de traversare al celei mai lungi treceri, 12,8 m la 1,2 m/s, minus cele 5 s de tranziție. Pentru Magheru–Catargiu și Dacia vest, camera vede prea puțini pietoni: același program, prin analogie, ipoteză."
 }

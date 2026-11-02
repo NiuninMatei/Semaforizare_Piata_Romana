@@ -40,7 +40,7 @@ NAMES_RO = {"fix_referinta": "Plan fix de referință", "fix_webster": "Plan fix
 BASELINE = "fix_referinta"
 
 
-def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None) -> dict:
+def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None, observator=None) -> dict:
     tag = f"{sumocfg.stem}_{ctrl.name}_{seed}"
     ti = EVAL_DIR / f"tripinfo_{tag}.xml"
     EVAL_DIR.mkdir(parents=True, exist_ok=True)
@@ -69,6 +69,8 @@ def run_one(sumocfg: Path, ctrl, seed: int, horizon: int | None = None) -> dict:
         ciocniri += traci.simulation.getCollidingVehiclesNumber()
         if hasattr(ctrl, "tick"):
             ctrl.tick()
+        if observator is not None:
+            observator(traci, t)
     pending = traci.simulation.getMinExpectedNumber()
     traci.close()
     extra = stare_ciocniri(ciocniri_xml) if v2 else {}

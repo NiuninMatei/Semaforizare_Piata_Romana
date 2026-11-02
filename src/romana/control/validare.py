@@ -109,6 +109,10 @@ def make_controller(spec: str):
 
     if spec == "FIX":
         ctrl = C.FixedReference()
+    elif spec == "REAL":
+        from romana.control.rejucat import SemaforRejucat
+
+        ctrl = SemaforRejucat()
     elif spec == "ACTUATED":
         ctrl = C.Actuated()
     elif spec.startswith("PLAN_"):

@@ -3,8 +3,8 @@
   <tlLogic id="romana" type="actuated" programID="actuated" offset="0">
     <param key="max-gap" value="3.0" />
     <param key="detector-gap" value="2.0" />
-    <phase duration="20" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr" />
-    <phase duration="10" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr" minDur="10" maxDur="64" />
+    <phase duration="23" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr" />
+    <phase duration="7" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr" minDur="10" maxDur="64" />
     <phase duration="6" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr" />
     <phase duration="3" state="yyyyrrryyyrryyyyyyyGGGGGGrrrrrrrrrrGGyyyyGGGGGGGGrryyyrrrrrrr" />
     <phase duration="2" state="rrrrrrrrrrrrrrrrrrrGGGGGGrrrrrrrrrrGGrrrrGGGGGGGGrrrrrrrrrrrr" />

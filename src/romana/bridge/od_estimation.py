@@ -149,7 +149,7 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     by_cls = by_cls[by_cls.index != "pieton"]
     shares = (by_cls / by_cls.sum()).to_dict() if by_cls.sum() > 0 else {"passenger": 1.0}
     complete = obs.sum() * hours
-    ped = float(sub.loc[sub["tip"] == "pietoni", "numar"].sum()) * cfg.get("factor_extrapolare_pietoni", 1.0) / hours
+    ped = float(sub.loc[sub["tip"] == "pietoni", "numar"].sum()) * cfg.get("factor_extrapolare_pietoni", 1.0) * cfg.get("factor_pietoni_masurati", 1.0) / hours
     return {"origini": origins, "destinatii": arms, "od_veh_h": od.round(1).tolist(),
             "intrari_veh_h": dict(zip(origins, rows.round(1).tolist())),
             "iesiri_veh_h": dict(zip(arms, cols.round(1).tolist())),
