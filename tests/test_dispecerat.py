@@ -31,7 +31,7 @@ __st(__CAM,nou(s=>{s.etapa="red";s.verde_s=14;s.faza_tinta=1})); await actualize
 __st(__CAM,nou(s=>{s.faza=2})); await actualizeaza(); rez.pietoni=instantaneu();
 __st(__CAM,nou(s=>{s.model_ai=false})); await actualizeaza(); rez.fara_ai=instantaneu(); rez.fara_ai.d_ai=text("d-ai");
 __st(__CAM,__SIM); await actualizeaza();
-__st(Object.assign({},__CAM,{_varsta_s:40}),__SIM); await actualizeaza(); rez.camera_40=instantaneu();
+__st(Object.assign({},__CAM,{_varsta_s:40}),__SIM); await actualizeaza(); rez.camera_40=instantaneu(); rez.camera_40.gol_text=text("cadru-gol");
 __st(Object.assign({},__CAM,{_varsta_s:200}),__SIM); await actualizeaza(); rez.camera_200=instantaneu();
 __st(__CAM,Object.assign({},__SIM,{_varsta_s:50})); await actualizeaza(); rez.geaman_50=instantaneu();
 __st(__CAM,__SIM); await actualizeaza();
@@ -59,7 +59,14 @@ __st(__CAM,nou(s=>{s.mod="manual";s.mod_program=null;s.faza=1;s.etapa="green";s.
 document.querySelector('[data-faza="3"]').click(); rez.faza_risc={text:text("confirm-text"),confirm:$("confirm").classList.contains("vizibil")}; $("nu").click();
 __st(__CAM,nou(s=>{s.mod="manual";s.mod_program=null;s.faza=1;s.etapa="green";s.verde_s=70})); await actualizeaza(); rez.verde_lung=instantaneu();
 // imaginea
-$("b-imagine").click(); rez.imagine={oprita:$("b-imagine").getAttribute("aria-pressed"),are_src:$("cadru").hasAttribute("src")}; await actualizeaza(); rez.imagine.tot_oprita=!$("cadru").hasAttribute("src"); $("b-imagine").click(); rez.imagine.pornita=$("cadru").hasAttribute("src");
+$("b-imagine").click(); rez.imagine={oprita:text("b-imagine"),are_src:$("cadru").hasAttribute("src"),stare:text("s-cam"),gol:vizibil($("cadru-gol"))}; await actualizeaza(); rez.imagine.tot_oprita=!$("cadru").hasAttribute("src"); $("b-imagine").click(); rez.imagine.pornita=$("cadru").hasAttribute("src");
+// cele găsite la a doua evaluare
+bt("fix").click(); rez.buton_da=text("da"); $("nu").click();
+__st(null,__SIM); await actualizeaza(); rez.fara_camera={vechi:$("p-deb").classList.contains("vechi"),nota:text("deb-nota")};
+__st(Object.assign({},__CAM,{_varsta_s:40}),__SIM); await actualizeaza(); __st(__CAM,__SIM); await actualizeaza(); rez.anunt_revenire=text("anunt");
+__st(__CAM,nou(s=>{s.mod="manual";s.mod_program=null;s.etapa="yellow";s.faza_tinta=2})); await actualizeaza(); rez.faza_urmeaza=document.querySelector('[data-faza="2"]').className;
+__st(__CAM,__SIM); await actualizeaza();
+$("taste").checked=false; document.dispatchEvent(new KeyboardEvent("keydown",{key:"3"})); rez.taste_oprite=$("confirm").classList.contains("vizibil"); $("taste").checked=true;
 // ajutorul
 document.dispatchEvent(new KeyboardEvent("keydown",{key:"?"})); rez.ajutor=vizibil($("ajutor"));
 const pre=document.createElement("pre"); pre.id="rez"; pre.textContent=JSON.stringify(rez); document.body.appendChild(pre);
@@ -89,7 +96,7 @@ class TestPagina(unittest.TestCase):
     def test_starea_normala_spune_cine_conduce(self):
         n = self.r["normal"]
         self.assertEqual(n["alerte"], [])
-        self.assertIn("calculatorul", n["cine"])
+        self.assertIn("un calculator", n["cine"])
         self.assertEqual(n["apasate"], ["program"])
         self.assertEqual(n["dezactivate"], [])
         self.assertIn("Magheru: verde", n["lumini"])
@@ -124,6 +131,7 @@ class TestPagina(unittest.TestCase):
         self.assertTrue(s["debite_vechi"])
         self.assertTrue(s["gol"])
         self.assertEqual(s["alerte"], [])         # o oprire scurtă nu ridică alertă
+        self.assertNotIn("în mai puțin de un minut", s["gol_text"])
         l = self.r["camera_200"]
         self.assertIn("3 min 20 s", l["cam"])
         self.assertIn("Camera nu mai trimite date", l["alerte"][0])
@@ -142,7 +150,7 @@ class TestPagina(unittest.TestCase):
 
     def test_serverul_cazut_nu_pare_activ_si_revine(self):
         s = self.r["server"]
-        self.assertIn("Legătura cu dispeceratul s-a pierdut", s["alerte"][0])
+        self.assertIn("Pagina nu mai primește date", s["alerte"][0])
         self.assertTrue(s["schema_veche"])
         self.assertTrue(s["debite_vechi"])
         self.assertEqual(len(s["dezactivate"]), 5)
@@ -155,7 +163,7 @@ class TestPagina(unittest.TestCase):
 
     def test_confirmarea(self):
         d = self.r["dialog"]
-        self.assertIn("de la „Program în vigoare” către „Plan de referință”", d["text"])
+        self.assertIn("de la „Planul ales” către „Plan de referință”", d["text"])
         self.assertEqual(d["focus"], "confirm")      # nu „da”: un Enter din reflex nu confirmă
         self.assertTrue(d["labelledby"] and d["describedby"])
         self.assertEqual(d["dupa_renunt"], "fix")
@@ -172,7 +180,7 @@ class TestPagina(unittest.TestCase):
     def test_comanda_esuata_spune_si_ce_ramane(self):
         s = self.r["esuata"]
         self.assertIn("nu a ajuns la dispecerat", s["rezultat"])
-        self.assertIn("Conduce în continuare „Program în vigoare”", s["rezultat"])
+        self.assertIn("Conduce în continuare „Planul ales”", s["rezultat"])
         self.assertEqual(s["rez_cls"], "rau")
         self.assertFalse(s["confirm"])
         self.assertIn("eșuată", s["istoric"])
@@ -185,7 +193,7 @@ class TestPagina(unittest.TestCase):
         self.assertIn("Aplicat", s["rezultat"])
         self.assertEqual(s["rez_cls"], "bun")
         self.assertIn("aplicată", s["istoric"])
-        self.assertIn("Program în vigoare", s["revino"])
+        self.assertIn("Planul ales", s["revino"])
 
     def test_comanda_neaplicata_nu_trece_neobservata(self):
         s = self.r["neaplicata"]
@@ -196,7 +204,7 @@ class TestPagina(unittest.TestCase):
         self.assertIn("Rămâne faza de acum", self.r["manual_intrare"])
         self.assertNotIn("Agent", self.r["manual_intrare"])
         self.assertEqual(self.r["manual_corp"], {"mod": "manual", "faza": 0})
-        self.assertIn("dumneavoastră", self.r["manual"]["cine"])
+        self.assertIn("un om", self.r["manual"]["cine"])
         self.assertEqual(len(self.r["faze"]["obisnuite"]), 3)
         self.assertEqual(len(self.r["faze"]["risc"]), 2)
         d = self.r["faza_directa"]
@@ -209,9 +217,28 @@ class TestPagina(unittest.TestCase):
         self.assertIn("se poate bloca", self.r["faza_risc"]["text"])
         self.assertIn("mai sunt 20 s", self.r["verde_lung"]["det"])
 
+    def test_cele_gasite_la_a_doua_evaluare(self):
+        s = self.r["geaman_50"]
+        self.assertIn("Ultimul mod cunoscut: „Planul ales”", s["cine"])
+        self.assertIn("Ultima valoare primită", s["grafic"])
+        self.assertNotIn("Acum:", s["grafic"])
+        self.assertIn("anunțați persoana", s["alerte"][0])
+        self.assertIn("123 de vehicule", self.r["normal"]["det"])
+        self.assertIn("e verde de 9 s", self.r["normal"]["det"])
+        self.assertIn("Pietonii: roșu", " ".join(self.r["normal"]["lumini"]))
+        self.assertIn("Pietonii: verde", " ".join(self.r["pietoni"]["lumini"]))
+        self.assertIn("Da, trec la „Plan de referință”", self.r["buton_da"])
+        self.assertEqual(self.r["fara_camera"]["vechi"], True)
+        self.assertIn("Ultimele valori", self.r["fara_camera"]["nota"])
+        self.assertIn("a revenit", self.r["anunt_revenire"])
+        self.assertIn("urmeaza", self.r["faza_urmeaza"])
+        self.assertEqual(self.r["taste_oprite"], False)
+
     def test_imaginea_si_ajutorul(self):
         i = self.r["imagine"]
-        self.assertEqual(i["oprita"], "true")
+        self.assertEqual(i["oprita"], "Pornește imaginea")
+        self.assertIn("măsoară", i["stare"])
+        self.assertTrue(i["gol"])
         self.assertFalse(i["are_src"])
         self.assertTrue(i["tot_oprita"])
         self.assertTrue(i["pornita"])
