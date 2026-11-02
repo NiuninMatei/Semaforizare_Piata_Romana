@@ -13,9 +13,14 @@ candidați eligibili nu se deosebesc semnificativ (p ≥ 0,05), câștigă cel m
 listă (planul fix, programul din planuri fixe, agentul). Fără niciun candidat eligibil, rămâne strategia în vigoare.
 Cu --confirma X, pe o zi nouă se verifică doar dacă X e semnificativ mai slab decât strategia în vigoare.
 
+Cu mai multe referințe (`--in-vigoare PLAN_72_48_3 REAL`, regula din § 9.11), condițiile (a) și (b) se cer față de fiecare; dacă nu trece
+nimeni, rămâne prima. Semaforul rejucat, REAL, se compară doar pe orele unde cel puțin `--acoperire-minima` din oră vine din valuri
+măsurate: în rest e în cea mai mare parte presupus și nu i se spune „semaforul real”.
+
 Exemple:
   python -m romana.control.decizie outputs/validare/test_28_indisciplinat.csv outputs/validare/test_28_normal.csv
   python -m romana.control.decizie outputs/validare/test_29_*.csv --confirma TOD_DEBIT
+  python -m romana.control.decizie outputs/validare/test_05_*.csv --in-vigoare PLAN_72_48_3 REAL --candidati PLAN_60_40_3 ACTUATED
 """
 from __future__ import annotations
 
@@ -73,6 +78,17 @@ def benzi_analiza(cazuri: dict[str, str]) -> str:
     return ";".join(parti + ["greu"])
 
 
+def acoperiri(scenarii) -> dict[str, float]:
+    """Pe fiecare scenariu, ce parte din oră vine, la semaforul rejucat, din valuri măsurate."""
+    from romana.control.rejucat import program_rejucat      # aduce rețeaua și jurnalul zilei; regula veche nu are nevoie de ele
+    return {sc: float(program_rejucat(sc)[1]["acoperire"]) for sc in scenarii}
+
+
+def mascat_real(p: pd.DataFrame, acoperire: dict[str, float], minima: float) -> pd.Series:
+    """Perechile pe care semaforul rejucat poate fi referință."""
+    return pd.Series([acoperire[sc] >= minima for sc, _ in p.index], index=p.index)
+
+
 def compara(a: pd.Series, b: pd.Series) -> dict:
     m = a.notna() & b.notna()
     a, b = a[m].astype(float), b[m].astype(float)
@@ -88,7 +104,8 @@ def main(argv=None) -> None:
     ap.add_argument("fisiere", nargs="+", help="CSV-urile testului (model, scenariu, seed, pierdere_h)")
     ap.add_argument("--praguri", nargs=2, type=float, default=list(PRAGURI), metavar=("LEJER", "INTENS"))
     ap.add_argument("--candidati", nargs="+", default=CANDIDATI)
-    ap.add_argument("--in-vigoare", default=IN_VIGOARE)
+    ap.add_argument("--in-vigoare", nargs="+", default=[IN_VIGOARE], help="referința; cu mai multe, un candidat trebuie să le bată pe toate, iar dacă nu trece nimeni rămâne prima")
+    ap.add_argument("--acoperire-minima", type=float, default=0.8, help="semaforul rejucat, REAL, se compară doar pe orele cu cel puțin atâta din oră din valuri măsurate")
     ap.add_argument("--program", action="append", default=None, help="implicit: REALIST și TOD_DEBIT")
     ap.add_argument("--confirma", help="pe o zi de confirmare: strategia aleasă înainte")
     ap.add_argument("--out", help="fișierul JSON cu decizia (implicit outputs/validare/decizie_<zi>.json)")
@@ -106,10 +123,10 @@ def main(argv=None) -> None:
     for spec in args.program or PROGRAME:
         name, comp = parse_program(spec)
         p = add_program(p, name, comp, bands)
-    ref = args.in_vigoare
+    ref, alte_ref = args.in_vigoare[0], args.in_vigoare[1:]
     # toate strategiile comparate trebuie să aibă valori pe toate perechile: altfel totalurile s-ar aduna pe seturi
     # diferite de perechi și n-ar mai fi comparabile (un program primește NaN unde îi lipsește o componentă)
-    necesare = [ref, *([args.confirma] if args.confirma else args.candidati)]
+    necesare = [*args.in_vigoare, *([args.confirma] if args.confirma else args.candidati)]
     lipsesc = [x for x in necesare if x not in p.columns or not p[x].notna().all()]
     if lipsesc:
         raise SystemExit(f"[decizie] valori lipsă pentru {lipsesc} (strategii sau componente de program nerulate)")
@@ -118,14 +135,30 @@ def main(argv=None) -> None:
     for s in sorted(q, key=q.get):
         print(f"  {s:48s} {q[s]:7.0f} veh/h → {cazuri[s]}")
 
+    def fata_de(x: str, r: str, masca: pd.Series) -> dict:
+        return {"fata_de_in_vigoare": compara(p.loc[masca, x], p.loc[masca, r]), "indisciplinati": compara(p.loc[masca & indisc, x], p.loc[masca & indisc, r]),
+                "disciplinati": compara(p.loc[masca & ~indisc, x], p.loc[masca & ~indisc, r])}
+
+    toate = pd.Series(True, index=p.index)
+    masti = {r: toate for r in args.in_vigoare}
+    if "REAL" in args.in_vigoare:
+        acop = acoperiri(sorted(q))
+        masti["REAL"] = mascat_real(p, acop, args.acoperire_minima)
+        scoase = sorted(s for s, v in acop.items() if v < args.acoperire_minima)
+        print(f"REAL, doar unde acoperirea e de cel puțin {args.acoperire_minima:.0%}: {int(masti['REAL'].sum())}/{len(p)} perechi; scoase: {scoase}")
+        if not masti["REAL"].any():
+            raise SystemExit("[decizie] nicio oră cu acoperire suficientă pentru REAL")
+
     def evaluare(x: str) -> dict:
-        r = {"strategie": x, "pierdere_totala_h": float(p[x].sum()), "fata_de_in_vigoare": compara(p[x], p[ref])}
-        r["indisciplinati"] = compara(p.loc[indisc, x], p.loc[indisc, ref])
-        r["disciplinati"] = compara(p.loc[~indisc, x], p.loc[~indisc, ref])
+        r = {"strategie": x, "pierdere_totala_h": float(p[x].sum()), **fata_de(x, ref, masti[ref])}
+        if alte_ref:
+            r["alte_referinte"] = {a: fata_de(x, a, masti[a]) for a in alte_ref}
         return r
 
     rez = {"zi": sorted({RE_SC.search(s)["zi"] for s in q}), "praguri": args.praguri, "in_vigoare": ref,
            "debite": {s: round(v) for s, v in q.items()}, "cazuri": cazuri, "benzi_analiza": benzi}
+    if alte_ref or "REAL" in args.in_vigoare:
+        rez.update({"referinte": args.in_vigoare, "acoperire_minima": args.acoperire_minima})
     if args.confirma:
         e = evaluare(args.confirma)
         g, i, d = e["fata_de_in_vigoare"], e["indisciplinati"], e["disciplinati"]
@@ -145,6 +178,12 @@ def main(argv=None) -> None:
             g, i, d = e["fata_de_in_vigoare"], e["indisciplinati"], e["disciplinati"]
             a_ok = g["dif_medie_h"] < 0 and g["p_wilcoxon"] < 0.05
             b_ok = not any(c["p_wilcoxon"] < 0.05 and c["dif_medie_h"] > 0 for c in (i, d))
+            for a, c in e.get("alte_referinte", {}).items():
+                ga, ia, da = c["fata_de_in_vigoare"], c["indisciplinati"], c["disciplinati"]
+                a_ok = a_ok and ga["dif_medie_h"] < 0 and ga["p_wilcoxon"] < 0.05
+                b_ok = b_ok and not any(k["p_wilcoxon"] < 0.05 and k["dif_medie_h"] > 0 for k in (ia, da))
+                print(f"  {e['strategie']:16s} față de {a}: {ga['dif_medie_h']:+.2f} h/pereche, {ga['mai_bun']}/{ga['n']}, p = {ga['p_wilcoxon']:.6f} | "
+                      f"indisc. {ia['dif_medie_h']:+.2f} h (p = {ia['p_wilcoxon']:.4f}), disc. {da['dif_medie_h']:+.2f} h (p = {da['p_wilcoxon']:.4f})")
             e["eligibil"] = bool(a_ok and b_ok)
             if e["eligibil"]:
                 eligibili.append(e)

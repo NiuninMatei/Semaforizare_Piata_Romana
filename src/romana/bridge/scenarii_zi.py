@@ -22,12 +22,13 @@ Exemple:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 
 import pandas as pd
 
 from romana.bridge import build_demand
-from romana.common import COUNTS_COR_DIR, COUNTS_DIR, DEMAND_DIR, TRAJ_DIR, TRAJ_RAW_DIR, save_json
+from romana.common import CONFIG_DIR, COUNTS_COR_DIR, COUNTS_DIR, DEMAND_DIR, TRAJ_DIR, TRAJ_RAW_DIR, save_json
 
 
 def intervale_incetinite(zi: str, prag_median: float | None = None) -> set[pd.Timestamp]:
@@ -115,6 +116,11 @@ def alege_ferestre(prof: pd.DataFrame, zi: str) -> dict[str, tuple[pd.Timestamp,
     return {k: (a, b) for k, (a, b) in windows.items() if k in ("varf", "linistit") or b <= a0 or a >= b0}
 
 
+def amprenta_cerere() -> str:
+    """Amprenta lui config/demand_v2.json, cu care s-au făcut rutele măsurii noi."""
+    return hashlib.sha256((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8").encode()).hexdigest()[:16]
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--zi", required=True, help="AAAA-LL-ZZ")
@@ -167,6 +173,8 @@ def main(argv=None) -> None:
                            "--nume", name, "--scala", str(f)])
         names.append(name)
     summary["scenarii"] = names
+    if args.masura == "cor":            # cu ce cerere s-au făcut rutele: validarea o compară cu cea de acum
+        summary["cerere_sha256"] = amprenta_cerere()
     save_json(summary, DEMAND_DIR / f"{prefix}zi_{args.zi}_rezumat.json")
     print(f"[OK] {len(names)} scenarii: {', '.join(names)}")
 
