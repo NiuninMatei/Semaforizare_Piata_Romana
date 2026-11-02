@@ -68,7 +68,7 @@
       "intuneric": 1.39
     },
     "catargiu": {
-      "zi": 1.11,
+      "zi": 1.21,
       "intuneric": 1.53
     },
     "dacia_est": 1.05,
@@ -96,18 +96,18 @@
   },
   "durata_scenariu_s": 3600,
   "seed": 42,
-  "factor_extrapolare_pietoni": 3.0,
-  "_factor_extrapolare_pietoni": "Măsura nouă numără pietonii pe persoane, nu pe zone: 2,5 pe zone înseamnă ≈3,0 pe persoane (raport zone/persoane 1,218 pe 29.10). Rămâne o ipoteză (§ 9.11); ≈30% din pierderea de la vârf vine din acești pietoni neobservați.",
+  "factor_extrapolare_pietoni": 3.27,
+  "_factor_extrapolare_pietoni": "PROVIZORIU. Pietonii de pe celelalte brațe, față de cei de pe Dacia est din cerere. Pe Magheru se pot număra pe clipuri (zebra de la marginea cadrului); pe celelalte brațe, nu se văd, deci rămân o ipoteză. Cu 3,0, cât era înainte, pietonii de pe Dacia vest țineau virajul Catargiu → Dacia vest și umpleau banda din dreapta de pe Catargiu.",
   "echilibrare": "doar_intrari",
   "_echilibrare": "Intrările și ieșirile numărate sunt aduse la media sumelor lor înainte de Furness (camera subnumără intrările de la marginea cadrului și supranumără ieșirile spre străzile parțial ascunse; diferența, ~±15–20%, este acoperită de scenariile de sensibilitate ×0,8 / ×1,2). Valoarea 'intrari' păstrează totalul intrărilor. Din 25.10.2026: 'doar_intrari' (ideea autorului) – volumele vin doar din intrări (semaforul controlează intrările), proporțiile de viraj din traiectoriile complete + a priori; ieșirile brute, supranumărate pe brațele îndepărtate (vehicule mici pierdute de detector pe inelul din fundal), nu se mai folosesc.",
   "viraje_numarate": {
     "magheru": {
-      "dacia_est": 1.1
+      "dacia_est": 1.5
     }
   },
-  "_viraje_numarate": "Viraje pe care camera le vede aproape pe toate, în prim-plan: se iau din numărul lor, cu factorul dat, nu din proporții. Magheru → Dacia est: 348 de traiectorii complete pe 26.10, 14:30–15:30, și ≈370–390 de vehicule la ieșirea Dacia est în timpul etapei N–S. Din proporții ar fi ieșit 672 de vehicule pe oră, fiindcă traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete (§ 4.3).",
-  "factor_pietoni_masurati": 0.75,
-  "_factor_pietoni_masurati": "O persoană pierdută pe insula dintre cele două zebre de pe Dacia est apare probabil ca două persoane. PROVIZORIU, până la numărătoarea de referință de pe clipurile din 2.11; valoarea 0,75 nu se reproduce din numărătorile pe care le înmulțește (cu regula din counts_cor: 0,52–0,69).",
+  "_viraje_numarate": "PROVIZORIU. Viraje pe care camera le vede aproape pe toate, în prim-plan: se iau din numărul lor, cu factorul dat, nu din proporții. Din proporții, Magheru → Dacia est ar fi ieșit 672 de vehicule pe oră pe 26.10, 14:30–15:30, fiindcă traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete (§ 4.3). Factorul vine din referința de pe clipurile din 2.11: virajul numărat pe felii timp-spațiu, față de traiectoriile complete, pe aceleași bucăți.",
+  "factor_pietoni_masurati": 0.33,
+  "_factor_pietoni_masurati": "PROVIZORIU. Cerere efectivă, nu numărul real: pe clipurile din 2.11, pe aceleași bucăți, adnotatorii numără pe zebrele de pe Dacia est de ≈2,7 ori mai multe persoane decât detectorul, care pierde mulțimile. Dublați în geamăn, Magheru cade cu 13–17%, iar pierderea crește cu peste 60%, fiindcă un pieton din SUMO oprește vehiculele mai mult decât unul real. Numărul se alege deci ca vehiculele să treacă prin trecere ca în cameră.",
   "cote_fixe": {
     "catargiu": {
       "dacia_vest": 0.2

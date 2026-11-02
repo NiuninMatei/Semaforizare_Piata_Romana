@@ -1,11 +1,15 @@
 {
-  "_stare": "PROVIZORII, din clipurile din 1.11; se refac după clipurile din 2.11, înainte de termenul din § 9.11.",
+  "_stare": "PROVIZORII, din clipurile din 1.11 și din primele clipuri din 2.11; se refac după toate clipurile din 2.11, înainte de termenul din § 9.11.",
   "factor_corectie_detectie": {
     "magheru": {"zi": 1.2, "intuneric": 1.39},
-    "catargiu": {"zi": 1.11, "intuneric": 1.53},
+    "catargiu": {"zi": 1.21, "intuneric": 1.53},
     "dacia_est": 1.05,
     "dacia_vest": 1.24
   },
-  "factor_pietoni_masurati": 0.75,
-  "_factor_pietoni_masurati": "O persoană pierdută pe insula dintre cele două zebre de pe Dacia est apare probabil ca două persoane. PROVIZORIU, până la numărătoarea de referință de pe clipurile din 2.11; valoarea 0,75 nu se reproduce din numărătorile pe care le înmulțește (cu regula din counts_cor: 0,52–0,69)."
+  "factor_pietoni_masurati": 0.33,
+  "_factor_pietoni_masurati": "PROVIZORIU. Cerere efectivă, nu numărul real: pe clipurile din 2.11, pe aceleași bucăți, adnotatorii numără pe zebrele de pe Dacia est de ≈2,7 ori mai multe persoane decât detectorul, care pierde mulțimile. Dublați în geamăn, Magheru cade cu 13–17%, iar pierderea crește cu peste 60%, fiindcă un pieton din SUMO oprește vehiculele mai mult decât unul real. Numărul se alege deci ca vehiculele să treacă prin trecere ca în cameră.",
+  "factor_extrapolare_pietoni": 3.27,
+  "_factor_extrapolare_pietoni": "PROVIZORIU. Pietonii de pe celelalte brațe, față de cei de pe Dacia est din cerere. Pe Magheru se pot număra pe clipuri (zebra de la marginea cadrului); pe celelalte brațe, nu se văd, deci rămân o ipoteză. Cu 3,0, cât era înainte, pietonii de pe Dacia vest țineau virajul Catargiu → Dacia vest și umpleau banda din dreapta de pe Catargiu.",
+  "viraje_numarate": {"magheru": {"dacia_est": 1.5}},
+  "_viraje_numarate": "PROVIZORIU. Viraje pe care camera le vede aproape pe toate, în prim-plan: se iau din numărul lor, cu factorul dat, nu din proporții. Din proporții, Magheru → Dacia est ar fi ieșit 672 de vehicule pe oră pe 26.10, 14:30–15:30, fiindcă traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete (§ 4.3). Factorul vine din referința de pe clipurile din 2.11: virajul numărat pe felii timp-spațiu, față de traiectoriile complete, pe aceleași bucăți."
 }

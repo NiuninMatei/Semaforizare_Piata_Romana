@@ -88,6 +88,8 @@ ORE_NEATINSE = {"cor_zi_2026-11-01_seara", "cor_zi_2026-10-25_varf"}
 # Aici stau doar pragurile scrise de mână: abatere relativă sau valoare maximă pe rulare. Celelalte se calculează din reeșantionarea camerei și din zgomotul seed-urilor, pe braț,
 # iar autorul le fixează într-un fișier (--praguri) înaintea zilei de validare. „pietoni_detectie”: cât de bine prinde camera pietonii, pe zebra din prim-plan.
 PRAGURI = {"debit": 0.10, "timp_departe": 0.25, "pietoni_detectie": 0.10, "teleportari": 5, "ciocniri_vehicule": 5, "pieton_in_miscare_fractie": 0.01, "neintrate_fractie": 0.02}
+# Poarta din § 9.11: geamănul duce cererea orei, fără teleportări în masă. Dacia vest nu intră, fiindcă se știe că acolo nu trece (§ 6.5), dar lipsa de capacitate se vede la vehiculele neintrate.
+POARTA = ("debit, veh/h: magheru", "debit, veh/h: catargiu", "debit, veh/h: dacia_est", "teleportări", "ciocniri între vehicule văzute de SUMO", "vehicule neintrate sau nesosite la final, parte din vehicule")
 # Rândurile la care s-a renunțat și de ce, ca istoria validării să se vadă (§ 6.5)
 RENUNTATE = {
     "Total în prag": "nu deosebește nimic: un geamăn greșit dinadins avea aproape același scor cu cel de bază;",
@@ -1472,6 +1474,13 @@ def stare_git(scenarii: list[str] | None = None) -> dict:
     return {"commit": commit, "git_curat": not lista, "schimbate": lista}
 
 
+def poarta(baza: pd.DataFrame) -> dict:
+    """Trece doar dacă toate rândurile porții sunt „în prag”; „nedecis” nu ajunge."""
+    d = baza.set_index("masura")
+    randuri = {m: str(d.loc[m, "verdict"]) if m in d.index else "lipsă" for m in POARTA}
+    return {"trece": all(v == "în prag" for v in randuri.values()), "randuri": randuri}
+
+
 def figura(p: dict, cale: str) -> None:
     """Patru panouri cu câte două curbe, camera și media seed-urilor geamănului, pe același ceas: intrările mari și ieșirea care le deosebește cel mai greu."""
     import matplotlib
@@ -1522,6 +1531,7 @@ def main(argv=None) -> None:
     ap.add_argument("--out", default=None, help="CSV, cu commitul, factorii și data rulării pe fiecare rând")
     ap.add_argument("--profile", action="store_true", help="afișează și profilele pe ciclu")
     ap.add_argument("--figura", default=None, help="PNG cu profilele primului scenariu")
+    ap.add_argument("--poarta", default=None, help="scrie aici, pe fiecare scenariu, verdictul porții din § 9.11, pentru `decizie --poarta`")
     ap.add_argument("--orizont", type=int, default=None, help="doar pentru încercarea codului: oprește simularea mai devreme; rândurile nu se mai pot judeca")
     ap.add_argument("--fara-geometrie", action="store_true", help="doar pentru măsurarea costului: fără atingerile geometrice")
     a = ap.parse_args(argv)
@@ -1556,7 +1566,7 @@ def main(argv=None) -> None:
         print(f"ATENȚIE: simularea se oprește la secunda {a.orizont}, doar pentru încercarea codului; rândurile nu se pot judeca.")
     if len(seeds) < 5:
         print(f"Doar {len(seeds)} seed-uri: pragurile calculate și intervalele sunt orientative; pentru fixarea lor, cel puțin 5.")
-    tot, prima_fig, calculate = [], None, []
+    tot, prima_fig, calculate, porti = [], None, [], {}
     for s in a.scenarii:
         cam = camere[s]
         rb = [r for (st, tip, *_), r in zip(sarcini, rez) if st == s and tip == "baza"]
@@ -1574,6 +1584,8 @@ def main(argv=None) -> None:
         for x in avertismente[s]:
             print(x)
         print(tabel_text(baza, probe))
+        porti[s] = poarta(baza)
+        print("Poarta din § 9.11: " + ("trece" if porti[s]["trece"] else "NU trece: " + "; ".join(f"{m}: {v}" for m, v in porti[s]["randuri"].items() if v != "în prag")))
         if probe:
             print(rezumat_probe(probe, len(seeds_proba), len(seeds)))
         if a.profile:
@@ -1604,6 +1616,9 @@ def main(argv=None) -> None:
         Path(a.scrie_praguri).parent.mkdir(parents=True, exist_ok=True)
         Path(a.scrie_praguri).write_text(json.dumps({"_descriere": "Pragurile din zgomotul camerei și al seed-urilor, media pe scenarii. Se fixează înaintea zilei de validare și se comit.", "commit": git["commit"], "data": acum, "scenarii": a.scenarii, "seeds": seeds,
                                                      "factori": factori, "praguri": {k: float(v) for k, v in praguri.items()}}, ensure_ascii=False, indent=1), encoding="utf-8")
+    if a.poarta:
+        Path(a.poarta).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.poarta).write_text(json.dumps({"commit": git["commit"], "data_rularii": acum, "seeds": seeds, "scenarii": porti}, ensure_ascii=False, indent=1), encoding="utf-8")
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         pd.concat(tot, ignore_index=True).round(4).to_csv(a.out, index=False)

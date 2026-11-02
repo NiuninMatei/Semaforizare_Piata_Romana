@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
 
-<!-- generated on 2026-11-02T10:46:10.776358+02:00 by Eclipse SUMO netconvert 1.28.0
+<!-- generated on 2026-11-02T14:23:43.204308+02:00 by Eclipse SUMO netconvert 1.28.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
