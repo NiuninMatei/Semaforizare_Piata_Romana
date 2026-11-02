@@ -1,13 +1,13 @@
-﻿"""Demonstrație rapidă: aceeași oră de trafic real, semaforul condus de planul de referință, de planul ales și de agentul IA.
+"""Demonstrație rapidă: aceeași oră de trafic real, semaforul condus de planul de referință, de planul observat și de agentul IA.
 
-Rulează în paralel (câte un proces pe simulare) scenariul ales cu planul de referință 36/28/12, planul ales 12/14/12,
+Rulează în paralel (câte un proces pe simulare) scenariul ales cu planul de referință 36/28/12, planul observat,
 Presiune maximă și agentul PPO, pe aceleași seed-uri (aceleași vehicule, aceiași pietoni), și afișează comparația pe
 categorii de participanți. Nu modifică rezultatele oficiale (outputs/eval, docs/rezultate): fișierele temporare merg
 în outputs/demo. Evaluarea completă rămâne `python -m romana.control.evaluate` (vezi § 9).
 
 Exemple:
   python -m romana.control.demo                                           # prânzul din 26.10, 5 seed-uri
-  python -m romana.control.demo --scenariu sumo/scenarios/zi_2026-10-26_varf.sumocfg --seeds 5
+  python -m romana.control.demo --scenariu sumo/scenarios/cor_zi_2026-10-26_varf.sumocfg --seeds 5
 """
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ from pathlib import Path
 
 from romana.common import MODELS_DIR, OUTPUT_DIR, ROOT
 
-PLAN_ALES = [12.0, 14.0, 12.0]
-STRATEGII = {"fix_referinta": "Plan de referință", "plan_ales": "Planul ales", "max_pressure": "Presiune maximă", "rl_ppo": "Agent IA (PPO)"}
+PLAN_OBSERVAT = [72.0, 48.0, 3.0]
+STRATEGII = {"fix_referinta": "Plan de referință", "plan_observat": "Planul observat", "max_pressure": "Presiune maximă", "rl_ppo": "Agent IA (PPO)"}
 COLOANE = [("pierdere_totala_h", "Pierdere totală, toți participanții (h)", 1),
            ("asteptare_medie_s", "Așteptare medie vehicul (s)", 1),
            ("intarziere_intrare_s", "Întârziere la intrarea în rețea (s/veh)", 1),
@@ -45,9 +45,9 @@ def _run(args):
     from romana.control import evaluate as E
 
     E.EVAL_DIR = OUTPUT_DIR / "demo"
-    if strategie == "plan_ales":
+    if strategie == "plan_observat":
         ctrl = C.FixedWebster.__new__(C.FixedWebster)       # plan fix dat prin duratele de verde, ca în `validare`
-        ctrl.plan = {"verde_s": PLAN_ALES}
+        ctrl.plan = {"verde_s": PLAN_OBSERVAT}
     else:
         ctrl = {"fix_referinta": C.FixedReference, "max_pressure": C.MaxPressure}.get(strategie)
         ctrl = ctrl() if ctrl else C.RLPolicy(Path(model))
@@ -57,7 +57,7 @@ def _run(args):
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenariu", default=str(ROOT / "sumo" / "scenarios" / "zi_2026-10-26_pranz.sumocfg"))
+    ap.add_argument("--scenariu", default=str(ROOT / "sumo" / "scenarios" / "cor_zi_2026-10-26_pranz.sumocfg"))
     ap.add_argument("--seeds", type=int, default=5)
     ap.add_argument("--model", default=str(MODELS_DIR / "ppo_romana_cal.zip"))
     args = ap.parse_args(argv)
@@ -76,17 +76,19 @@ def main(argv=None) -> None:
     w = max(len(t) for _, t, _ in COLOANE)
     print(f"{'':<{w}}" + "".join(f"{n:>18}" for n in STRATEGII.values()))
     for k, titlu, zec in COLOANE:
-        baza = medie["fix_referinta"][k]
+        baza = medie["plan_observat"][k]
         celule = []
         for s in STRATEGII:
             v = medie[s][k]
-            d = "" if s == "fix_referinta" or not baza else f" ({(v - baza) / baza * 100:+.0f}%)"
+            d = "" if s == "plan_observat" or not baza else f" ({(v - baza) / baza * 100:+.0f}%)"
             celule.append(f"{v:.{zec}f}{d}")
         print(f"{titlu:<{w}}" + "".join(f"{c:>18}" for c in celule))
-    rl, fx = medie["rl_ppo"]["pierdere_totala_h"], medie["fix_referinta"]["pierdere_totala_h"]
-    print(f"\nAgentul AI față de planul fix actual: {(rl - fx) / fx * 100:+.1f}% timp pierdut de toți participanții "
-          f"({abs(fx - rl):.1f} ore-om {'câștigate' if rl < fx else 'pierdute'} în această oră de trafic).")
-    print("Notă: cu puține seed-uri rezultatul variază; evaluarea oficială (10 scenarii × 5 seed-uri) e în § 9.")
+    baza = medie["plan_observat"]["pierdere_totala_h"]
+    for s, cine in (("fix_referinta", "Planul de referință"), ("rl_ppo", "Agentul IA")):
+        v = medie[s]["pierdere_totala_h"]
+        print(f"\n{cine} față de planul observat: {(v - baza) / baza * 100:+.1f}% timp pierdut de toți participanții "
+              f"({abs(baza - v):.1f} ore-om {'câștigate' if v < baza else 'pierdute'} în această oră de trafic).", end="")
+    print("\nNotă: cu puține seed-uri rezultatul variază; regulile de alegere și evaluarea completă sunt în § 9.11.")
 
 
 if __name__ == "__main__":

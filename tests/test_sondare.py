@@ -190,7 +190,8 @@ class TestPachet(unittest.TestCase):
             self.assertNotIn(fals, pagina)
         self.assertIn(s.NOTA_CAMERA, pagina)
         original = re.search(r"<script>(.*?)</script>", sursa, flags=re.S)[1].strip() + "\n"
-        self.assertEqual(script, original.replace('"/api/video"', json.dumps(s.IMAGINE_PUBLICA)))
+        # singura linie în plus: planul de azi se numește în versiunea M1 cum îl numea ea pe cel de atunci
+        self.assertEqual(script, original.replace('"/api/video"', json.dumps(s.IMAGINE_PUBLICA)) + "MOD.plan_observat = MOD.plan_scurt;\n")
 
     def test_un_ecran_schimbat_opreste_pachetul(self):
         with self.assertRaises(SystemExit):

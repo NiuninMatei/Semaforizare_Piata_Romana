@@ -38,7 +38,7 @@ const __CAM={_varsta_s:0.9,fps:5.94,conectat:true,reconectari:0,vehicule_urmarit
   intrari_veh_h:{dacia_vest:142,dacia_est:105,magheru:577,catargiu:231},
   iesiri_veh_h:{mendeleev:52,dacia_vest:47,dacia_est:147,catargiu:514,magheru:283,caderea_bastiliei:37},
   pietoni_h:{dacia_est:283,catargiu:5},secunde_interval:687};
-const __SIM={_varsta_s:0.5,timp_sim:500,mod:"program",mod_program:"plan_scurt",sursa:"camera live",faza:0,faza_nume:__FAZE[0],etapa:"green",verde_s:9,faze:__FAZE,model_ai:true,
+const __SIM={_varsta_s:0.5,timp_sim:500,mod:"program",mod_program:"plan_observat",sursa:"camera live",faza:0,faza_nume:__FAZE[0],etapa:"green",verde_s:9,faze:__FAZE,model_ai:true,
   coada_brate:{magheru:3,catargiu:12,dacia_est:5,dacia_vest:21,pietoni:4},coada_total:41,vehicule_in_retea:123,pietoni_in_retea:8,
   istoric_coada:Array.from({length:40},(_,i)=>[i*5,10+Math.round(8*Math.sin(i/4))])};
 function __st(cam,sim){ window.__stare={camera:cam,simulare:sim,comanda:null,ora_server:0}; }

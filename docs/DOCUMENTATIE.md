@@ -1298,6 +1298,14 @@ calibrare, vârful zilelor 21–22.10 ajunge la ≈2 520–2 560 veh/h prin pia�
 sus, probabil chiar peste ea, pentru că zilele 21–22.10 sunt subnumărate (§ 4.6). Scenariile actuale din
 `sumo/scenarios` folosesc această calibrare (§ 5.4).
 
+**Cererea măsurii noi (2.11.2026).** Măsura nouă, `cor_`, are fișierul ei, `config/demand_v2.json`, iar `config/demand.json` a rămas
+neatins. Ea se deosebește în patru puncte. Intrările vin din zonele noi (§ 4.3), iar pietonii sunt numărați pe persoane. Factorii de
+corecție pot fi diferiți ziua și pe întuneric, după înălțimea Soarelui la acel moment, iar pragul este apusul, cu Soarele la 0,833° sub orizont.
+Două proporții de viraj sunt fixate, fiindcă traiectoriile rupte le arată greșit, iar `cote_fixe` le declară: ≈25% din Lascăr Catargiu
+merge spre Dacia vest, pe drumul de sus, unde detectorul pierde vehiculele; pe Dacia est, vehiculele numărate pe inel sunt cam tot atâtea
+câte intră, deci aproape nimeni nu iese spre Catargiu, iar restul destinațiilor de acolo rămân distribuția a priori, o ipoteză declarată.
+În fine, rutele și pietonii sunt cei din § 6.5.
+
 ### 5.2 De la O–D la vehicule în SUMO
 
 Matricea O–D spune doar câte vehicule merg de la fiecare intrare la fiecare ieșire. SUMO, simulatorul de trafic al
@@ -1521,6 +1529,10 @@ lucru în dispecerat.
 
 **Pașii simulării.** Simularea avansează în pași de 0,2 s, repartizați de-a lungul fiecărei secunde reale, ca
 mișcarea să pară fluentă în SUMO-GUI. Controlerul semaforului lucrează însă pe secunde întregi.
+
+**Geamănul corectat (2.11.2026).** Geamănul în timp real rulează acum pe rețeaua, tipurile de vehicule, rutele și pietonii din § 6.5, iar
+planul implicit este planul observat. Debitele rămân cele de la colectarea în curs, cu zonele vechi, până la sfârșitul zilelor de test, deci
+seara Lascăr Catargiu e subreprezentat în demonstrație. Opțiunea `--geaman-vechi` pornește varianta de dinainte, doar pentru comparație.
 
 **Modurile de control.** Din dispecerat se alege unul dintre aceste moduri:
 
@@ -2064,9 +2076,9 @@ butoanelor, iar modurile sunt împărțite după cine decide:
 
 | Numele de pe ecran | Cine decide | Ce face |
 |---|---|---|
-| Planul ales | un calculator, singur | planul fix 12/14/12, ales după testele din simulare (§ 9.10) |
+| Planul observat | un calculator, singur | planul fix cel mai apropiat de semaforul real, măsurat din cameră (§ 6.5) |
 | Agent IA | un calculator, singur | un program antrenat în simulare alege faza, după cozi (§ 7) |
-| Plan de referință | un calculator, singur | planul fix 36/28/12, cu care s-au făcut comparațiile (§ 7.4) |
+| Plan de referință | un calculator, singur | planul fix 36/28/12, păstrat pentru comparație (§ 7.4) |
 | Presiune maximă | un calculator, singur | la câteva secunde dă verde direcției cu cele mai lungi cozi (§ 7.4) |
 | Comandă manuală | un om, de la acest ecran | omul alege direcția, iar galbenul și roșul de siguranță se aplică singure |
 
@@ -2080,13 +2092,13 @@ minoră, 3 majoră și 4 catastrofală. Toți sunt modele de limbaj: găsesc ce 
 că evaluarea nu înlocuiește sondarea cu oameni. Rezultatele complete, cu dovezi și recomandări, sunt în `docs/rezultate/evaluare_m1/` și
 `docs/rezultate/evaluare_m2/`.
 
-| | Versiunea M1 | Prima versiune reparată |
-|---|---|---|
-| Probleme după reunire | 44 | 50 |
-| Confirmate de verificatori | 43 | 48 |
-| Confirmate, cu severitatea cel puțin 3 | **8** | **1** |
+| | Versiunea M1 | Prima versiune reparată | A doua versiune reparată |
+|---|---|---|---|
+| Probleme după reunire | 44 | 50 | 49 |
+| Confirmate de verificatori | 43 | 48 | 45 |
+| Confirmate, cu severitatea cel puțin 3 | **8** | **1** | **1** |
 
-Numărul total spune puțin: verificatorii au confirmat aproape tot, inclusiv un artefact. Problema „pe telefon pagina e mai lată
+Fiecare rundă găsește probleme noi, tot mai fine, deci lista nu se golește. Numărul total spune puțin: verificatorii au confirmat aproape tot, inclusiv un artefact. Problema „pe telefon pagina e mai lată
 decât ecranul” din versiunea M1 era o greșeală a capturii: fereastra fără cadru a navigatorului are cel puțin 500 px. Am recitit-o
 și am infirmat-o abia după ce o confirmaseră amândoi verificatorii. De aceea, contează severitatea, nu numărul, iar o problemă
 se crede doar după ce e citită direct. Tot din această cauză, a doua listă nu arată că pagina s-a înrăutățit: e mai lungă fiindcă
@@ -3568,7 +3580,7 @@ fără a colecta date noi. Jurnalul de traiectorii păstrează drumurile vehicul
 | Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | mesajul `OK` la sfârșitul celor peste 460 de teste; cele ale sondării folosesc Node.js și Chrome, iar fără ele sunt sărite. Ele verifică numărarea pe origine și destinație (O–D), pietonii, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, recunoașterea prelucrării încetinite (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi` |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | fereastra grafică a simulatorului, SUMO-GUI, cu ora de vârf din 21.10.2026; semaforul pieței este condus de agentul AI |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu semaforul pe planul fix |
-| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~4 min) | ora de prânz din 26.10, simulată cu planul de referință, cu planul ales 12/14/12, cu Presiune maximă, un algoritm clasic fără învățare, și cu agentul IA; rezultatele apar pe categorii de participanți. Pentru altă oră se adaugă `--scenariu` |
+| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~4 min) | ora de prânz din 26.10, simulată cu planul de referință, cu planul observat, cu Presiune maximă, un algoritm clasic fără învățare, și cu agentul IA; rezultatele apar pe categorii de participanți. Pentru altă oră se adaugă `--scenariu` |
 | Evaluare scurtă | `.venv\Scripts\python -m romana.control.evaluate --seeds 1 --procese 4 --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg` | tabelul din `docs\rezultate\rezultate.md`, refăcut. **Atenție:** comanda rescrie fișierele publicate `rezultate.md`, `rezultate_brute.csv` și graficul; versiunea publicată se readuce cu `git checkout -- docs/rezultate` (§ 11.8) |
 
 Comanda `set PYTHONPATH=src` îi arată lui Python unde se află codul proiectului. Ea este valabilă doar în fereastra în
@@ -3608,14 +3620,12 @@ aduc pe rând pe ecran, în ordinea în care circulă datele:
 | 1. Ochii sistemului | „Piata Romana – viziune artificiala” | participanții la trafic recunoscuți în imagine de YOLO11 și urmăriți de la un cadru la altul de ByteTrack; zonele de intrare, de ieșire și de trecere; debitele pe fiecare braț al pieței, în vehicule pe oră. Imaginea este redată fluent, cu o întârziere de 8 s |
 | 2. Geamănul digital | SUMO-GUI | replica fidelă a rețelei, după OpenStreetMap; cele 16 semafoare ale pieței, conduse împreună, ca un singur controler; traficul generat în timp real din debitele măsurate de cameră |
 | 3. Supravegherea umană | dispeceratul, http://localhost:8050 | imaginea camerei, ca flux video; faza curentă a semaforului, descrisă în cuvinte; cozile de pe brațe. Operatorul poate alege orice mod de control: „Agent AI”, „Plan fix”, „Max-Pressure”, „Manual” sau „Program pe cazuri de trafic”. Modul ales se aplică doar după „Confirm” |
-| 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` | aceeași oră reală de trafic, simulată cu planul de referință, cu planul ales, cu Presiune maximă și cu agentul IA |
+| 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` | aceeași oră reală de trafic, simulată cu planul de referință, cu planul observat, cu Presiune maximă și cu agentul IA |
 | 5. Rezultate și limite | capitolele 9 și 10 | evaluarea oficială și limitările declarate ale proiectului |
 
-**Strategia recomandată** este „Program pe cazuri de trafic”, activă implicit la pornire. Programul împarte traficul
-în cazuri după debitul măsurat de cameră. Varianta lui, adică strategia folosită în fiecare caz, se alege după regula
-„cel mai bun câștigă” (§ 9.9). Din 29.10, varianta este planul fix 12/14/12, același în toate cazurile de trafic.
-Planul a câștigat testul final și a fost confirmat pe ziua următoare (§ 9.10). Notația 12/14/12 înseamnă 12 s de
-verde pentru direcția nord–sud, 14 s pentru direcția est–vest și 12 s pentru pietoni, la fiecare ciclu al semaforului.
+**Strategia implicită la pornire** este, din 2.11.2026, planul observat, 71/40/12, cel mai apropiat de semaforul real, măsurat din cameră
+(§ 6.5). Notația înseamnă 71 s de verde pentru direcția nord–sud, 40 s pentru direcția est–vest și 12 s pentru pietoni, la fiecare ciclu.
+Geamănul în timp real rulează pe geamănul corectat; cel vechi se poate porni cu `--geaman-vechi`, doar pentru comparație.
 
 Celelalte variante se aleg din `VARIANTA_PROGRAM`, în `bridge/live_twin.py`. Una dintre ele este programul realist,
 care comută între agentul oficial și agentul E3, doi agenți AI prezentați în capitolul 9. Dispeceratul arată în fiecare
@@ -3661,6 +3671,17 @@ Tabelul adună problemele întâlnite cel mai des și soluția fiecăreia.
 | imaginea pare înghețată sau numărătorile scad brusc | o oprire de 10–30 s, de câteva ori pe zi, este o microînghețare și trece singură; dispeceratul arată atunci „fără cadre noi de N s” (§ 4.6). Altfel, `2d_veghe.bat` arată pe loc dacă a scăzut rata cadrelor prelucrate sau dacă fluxul camerei nu mai avansează. Rata scade din cauza calculelor grele rulate în paralel: porniți-le la prioritate scăzută. Diagnosticul este în `outputs\logs\veghe_alerta_*.json`, iar explicațiile, în § 4.6 |
 
 ### 11.8 Reproducerea rezultatelor și a calibrării
+
+**Geamănul corectat și măsura nouă.** Rezultatele din § 6.5 se refac astfel, în această ordine:
+
+| Ce | Comanda |
+|---|---|
+| rețeaua, fazele și tipurile de vehicule | `python -m romana.network.retea_v2` |
+| numărătorile măsurii noi | `python -m romana.vision.recount --zi <zi> --camera camera_v2.json --pe-persoane --out data/counts_cor` |
+| scenariile | `python -m romana.bridge.scenarii_zi --zi <zi> --masura cor`, apoi `python -m romana.bridge.indisciplinat --scenarii "sumo/scenarios/cor_zi_*.sumocfg" --vtypes vtypes_indisciplinat_v2.add.xml --vechi vtypes_v2.add.xml` |
+| programul real al semaforului | `python -m romana.vision.program_real --zi <zi> --interval 15:00-16:00 --pe-zi --profile outputs/program_real/profile_<zi>.json` |
+| geamănul lângă cameră | `python -m romana.control.compara_camera --zi <zi> --interval 15:00-16:00 --scenariu cor_zi_<zi>_varf --plan <planul observat>` |
+| strategiile, cu teleportări și ciocniri | `python -m romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1-10 --fara-alegere --out outputs/validare/<fișier>.csv` |
 
 Această secțiune arată cum se verifică rezultatele: statisticile din capitolul 9 se recalculează exact din fișierele
 publicate, iar o simulare repetată cu aceleași date dă exact același rezultat. Comenzile, de la paragraful „Pentru
@@ -4008,6 +4029,19 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 | Bornă | Data | Prezentarea |
 |---|---|---|
 | M1 | 01.11.2026 | proiectul cap-coadă și demonstrația dispeceratului (`docs/prezentari/Prezentare_M1.pdf`) |
+| M2 | 08.11.2026 | dispeceratul evaluat, reparat și măsurat din nou, cu evaluatori AI și cu oameni; numărătoarea pe întuneric; programul real al semaforului, măsurat din cameră; geamănul corectat și retragerea rezultatului de −7% |
+
+**Schimbările de la M1 la M2.** Lista completă este în istoricul Git, în commit-urile „Borna M2: …”. Pe scurt:
+
+* **Dispeceratul:** evaluare cu 7 evaluatori AI, pe 15 stări, înainte și după reparații; moduri împărțite după cine decide, comenzi
+  urmărite până la aplicare, date vechi marcate, alerte, legendă, ajutor, taste (§ 8). Pagina de sondare cu oameni, publică și fără
+  laptop, cu versiunea M1 și cea nouă, în ordine alternată (§ 8, § 4.5).
+* **Numărătoarea:** referință nouă pe clipuri de seară, felii timp-spațiu, separarea celor trei fluxuri de pe Lascăr Catargiu, zonă nouă,
+  pietoni numărați pe persoane, factori după lumină (§ 4.3). Loturi de adnotare prin interfața de programare, cu o gardă pentru credit.
+* **Programul real:** ciclul și etapele semaforului, măsurate din jurnalul public al vehiculelor (§ 6.5).
+* **Geamănul:** s-a găsit defectul coliziunilor, s-a construit geamănul corectat, comparat cu camera, iar rezultatul de −7% s-a retras
+  (§ 6.5, § 9.11).
+* **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, scrise dinainte (§ 9.11).
 
 ### 12.4 Ce am învățat
 
@@ -4024,6 +4058,10 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
    drumul spre soluția bună. Toate aceste încercări sunt documentate.
 5. **Ochiul omului rămâne indispensabil.** Descoperirea marcajului confundat cu o trecere, lămurirea benzii „lipsă” de
    pe Dacia și ideea de a lua volumele doar din intrări au venit toate de la autor.
+6. **Un simulator care „merge” trebuie verificat ca orice altă măsurătoare.** Pe 2.11 s-a văzut că rezultatul prezentat la borna M1
+   stătea pe un geamăn cu ≈15 000 de teleportări pe oră. Trei lucruri simple l-ar fi dat de gol mai devreme: avertismentele lăsate
+   pornite, o socoteală de hârtie a capacității și compararea geamănului cu camera, ciclu cu ciclu. Niciun test statistic nu îl putea
+   prinde: p = 4·10⁻¹⁰ arăta doar că două strategii diferă pe același model greșit (§ 6.5).
 
 ### 12.5 Post-scriptum: curățarea istoricului depozitului (26.10.2026)
 
@@ -4451,6 +4489,8 @@ publicate în `models/`: `ppo_romana_final_a/b`, `ppo_romana_nou_375k/600k/800k/
 | `capacitate_indisciplinat_26.csv`, `capacitate_normal_26.csv` | Testul pe luni 26.10, cu capacitatea calibrată (§ 9.9): planul fix, actuated, planul 46/48/12, agentul oficial, E3, E9, E12 și E13, pe seed-urile 1–5. | arborele curent | `romana.control.validare --seeds 1-5 --fara-alegere` |
 | `capacitate_indisciplinat_26_6_10.csv`, `capacitate_normal_26_6_10.csv` | Aceleași strategii pe seed-urile 6–10, rulate după fixarea protocolului (§ 9.9). | arborele curent | `romana.control.validare --seeds 6-10 --fara-alegere` |
 | `durate_verde_agenti.csv` | Duratele de verde alese de E13 și de agentul oficial pe trei scenarii de validare din luni 26.10, cu seed 11 (§ 9.9): mediana pe fiecare fază, de câte ori a primit verde fiecare fază și ciclul median. | arborele curent | `romana.control.durate_verde` |
+| `program_real_2026-10-26.csv`, `program_real_2026-11-01.csv` | Programul real al semaforului, măsurat din jurnalul public al vehiculelor (§ 6.5): ciclul pe intervale și pe fiecare 20 de minute, cât curge fiecare intrare, debitul de vârf. | arborele curent | `romana.vision.program_real --zi <zi> --pe-zi --interval … --out …` |
+| `geaman_camera_2026-10-26.csv` | Vehicule pe ciclu și debit de vârf, pe fiecare intrare, în cameră și în geamănul corectat, cu planul observat (§ 6.5). | arborele curent | `romana.control.compara_camera` |
 | `grila_calibrat.csv` | Grila de 23 de planuri fixe încercate pe geamănul calibrat (§ 9.9), pe luni 26.10, cu ambele comportamente și seed-urile 11–15, la care se adaugă planul fix de referință. | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` | Testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12, pe seed-urile 1–10. Pierderea de timp e dată și pe tipuri de participanți, în coloanele `pierdere_h_<tip>`. | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |
 | `sens_pietoni_28_indisciplinat.csv`, `sens_pietoni_28_normal.csv` | Sensibilitatea rezultatului la o fază de pietoni mai lungă (§ 9.10): planurile 12/14/18 și 36/28/18, pe aceleași scenarii și seed-uri ca testul din 28.10. Au fost rulate după test și se citesc împreună cu `test_28_*.csv`. | arborele curent | `romana.control.validare PLAN_12_14_18 PLAN_36_28_18 --seeds 1-10 --fara-alegere --fara-fix` |

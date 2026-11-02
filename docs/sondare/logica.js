@@ -127,7 +127,7 @@ class Banc {
     const istoric = [];
     for (let i = 0; i < 120; i++) istoric.push([t - 600 + 5 * i, Math.max(0, Math.trunc(total + 6 * Math.sin(i / 9) + 3 * Math.sin(i / 2.3)))]);
     const intrari = D.INTRARI[this.runda];
-    const simulare = {timestamp: acum, timp_sim: t, mod: this.mod, mod_program: this.mod === "program" ? "plan_scurt" : null,
+    const simulare = {timestamp: acum, timp_sim: t, mod: this.mod, mod_program: this.mod === "program" ? "plan_observat" : null,
       sursa: "camera live", faza, faza_nume: D.FAZE[faza], etapa, verde_s: verde, faze: D.FAZE, model_ai: true,
       coada_brate: cozi, coada_total: total, vehicule_in_retea: 90 + total, vehicule_injectate: 412, pietoni_in_retea: 31,
       pietoni_injectati: 140, debite_folosite: intrari, debit_echilibrat_veh_h: 2800, pietoni_h_folositi: 620,

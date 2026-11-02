@@ -36,8 +36,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (01.11.2026, ~15:00) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (02.11.2026, ~05:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
+- **Geamănul a fost corectat pe 02.11 (§ 6.5, memoria geaman-coliziuni):** rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, stau pe coliziuni și teleportări și nu mai sunt valabile. Măsura nouă `cor_*` folosește geamănul v2 (`romana.network.retea_v2`, `config/retea_v2.json`, `config/demand_v2.json`). Orice simulare nouă raportează teleportările și ciocnirile. Referința regulilor din § 9.11 e planul observat, 71/40/12.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).

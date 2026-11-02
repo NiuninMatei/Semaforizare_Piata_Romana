@@ -23,8 +23,8 @@ const titluri=()=>[...document.querySelectorAll("#schema title")].map(t=>t.textC
 function instantaneu(){ return {alerte:[...document.querySelectorAll(".alerta")].map(a=>a.textContent),cine:text("cine-acum"),faza:text("faza"),det:text("faza-det"),cam:text("s-cam"),
   dezactivate:[...document.querySelectorAll("[data-mod]")].filter(b=>b.disabled).map(b=>b.dataset.mod),apasate:[...document.querySelectorAll("[data-mod][aria-pressed=true]")].map(b=>b.dataset.mod),
   schema_veche:document.querySelector(".schema").classList.contains("vechi"),debite_vechi:$("p-deb").classList.contains("vechi"),nota:text("deb-nota"),blocat:$("blocat").hidden?null:text("blocat"),
-  lumini:titluri(),sursa:text("sursa"),rezultat:text("rezultat"),rez_cls:$("rezultat").className,grafic:text("grafic-rez"),gol:vizibil($("cadru-gol")),confirm:$("confirm").classList.contains("vizibil")} }
-await actualizeaza(); rez.normal=instantaneu(); rez.text_pagina=document.body.innerText;
+  lumini:titluri(),sursa:text("sursa"),rezultat:text("rezultat"),rez_cls:$("rezultat").className,grafic:text("grafic-rez"),gol:vizibil($("cadru-gol")),confirm:$("confirm").classList.contains("vizibil"),coada_max:text("max-coada")} }
+await actualizeaza(); rez.normal=instantaneu(); rez.text_pagina=document.body.innerText; await new Promise(r=>setTimeout(r,1100)); rez.antet_normal=text("proaspat");
 const nou=(f)=>{ const s=JSON.parse(JSON.stringify(__SIM)); f(s); return s };
 __st(__CAM,nou(s=>{s.etapa="yellow";s.verde_s=12})); await actualizeaza(); rez.galben=instantaneu();
 __st(__CAM,nou(s=>{s.etapa="red";s.verde_s=14;s.faza_tinta=1})); await actualizeaza(); rez.rosu=instantaneu();
@@ -69,6 +69,38 @@ __st(__CAM,__SIM); await actualizeaza();
 $("taste").checked=false; document.dispatchEvent(new KeyboardEvent("keydown",{key:"3"})); rez.taste_oprite=$("confirm").classList.contains("vizibil"); $("taste").checked=true;
 // ajutorul
 document.dispatchEvent(new KeyboardEvent("keydown",{key:"?"})); rez.ajutor=vizibil($("ajutor"));
+// cele găsite la a doua rundă cu evaluatori
+__st(__CAM,__SIM); await actualizeaza();
+const stilul=(el,p)=>getComputedStyle(el,p||null), alerteCuClasa=()=>[...document.querySelectorAll(".alerta")].map(a=>({cls:a.className,text:a.textContent}));
+window.__netOK=false; await actualizeaza(); const inainte=text("deb-nota"); await new Promise(r=>setTimeout(r,3000));
+rez.fara_legatura={inainte,dupa:text("deb-nota"),antet:text("proaspat"),blocat:text("blocat"),faza:text("faza"),revino_blocat:$("revino").disabled}; window.__netOK=true; await actualizeaza(); rez.fara_legatura.revino_dupa=$("revino").disabled;
+const retea=window.fetch, raspunde=(parte,raspuns)=>{ window.fetch=async(u,o)=>String(u).includes(parte)?raspuns:retea(u,o) };
+raspunde("/api/state",{ok:false,status:500,json:async()=>({})}); await actualizeaza(); rez.eroare_500=instantaneu(); rez.eroare_500.tehnic=document.querySelector(".alerta details").textContent; window.fetch=retea; await actualizeaza();
+raspunde("/api/command",{ok:false,status:400,json:async()=>({eroare:"mod necunoscut"})}); bt("fix").click(); await $("da").onclick(); window.fetch=retea; rez.refuzata=instantaneu(); rez.refuzata.istoric=text("istoric-lista"); rez.refuzata.urmarita=!!cerere;
+bt("fix").click(); __st(__CAM,nou(s=>{s.mod="max_pressure";s.mod_program=null})); await actualizeaza(); rez.confirmare_depasita=instantaneu(); __st(__CAM,__SIM); await actualizeaza();
+__st(__CAM,Object.assign({},__SIM,{_varsta_s:50})); await actualizeaza(); rez.simulare_veche=instantaneu();
+Object.assign(rez.simulare_veche,{eticheta:$("svg-schema").getAttribute("aria-label"),opacitate:[".schema svg","#grafic","#faza"].map(q=>stilul(document.querySelector(q)).opacity),marcaj:stilul($("t-sem"),"::after").content,semne:$("schema").innerHTML}); __st(__CAM,__SIM); await actualizeaza();
+__st(Object.assign({},__CAM,{conectat:false}),__SIM); await actualizeaza(); await new Promise(r=>setTimeout(r,1100));
+rez.reconectare=Object.assign(instantaneu(),{antet:text("proaspat"),punct:$("p-cam").className,nesigur:$("p-deb").classList.contains("nesigur")}); __st(__CAM,__SIM); await actualizeaza();
+const camera=()=>({alerte:alerteCuClasa(),punct:$("p-cam").className,cam:text("s-cam"),gol:text("cadru-gol"),nota:text("deb-nota")});
+__st(Object.assign({},__CAM,{_varsta_s:700}),__SIM); await actualizeaza(); rez.camera_700=camera();
+__st(Object.assign({},__CAM,{_varsta_s:200}),__SIM); await actualizeaza(); rez.camera_200_alerta=camera();
+__st(__CAM,__SIM); await actualizeaza(); __st(null,__SIM); await actualizeaza(); rez.camera_lipsa=camera();
+camUltimLa=0; await actualizeaza(); rez.camera_niciodata=camera();
+__st(Object.assign({},__CAM,{_varsta_s:200}),Object.assign({},__SIM,{_varsta_s:50})); await actualizeaza(); rez.ambele=document.body.innerText; __st(__CAM,__SIM); await actualizeaza();
+let gata; window.fetch=async(u,o)=>{ if(String(u).includes("/api/command")) await new Promise(r=>gata=r); return retea(u,o) };
+bt("fix").click(); const pe_drum=$("da").onclick(); rez.se_trimite={active:[...document.querySelectorAll("[data-mod],[data-faza],#revino")].filter(b=>!b.disabled).length,istoric:text("istoric-lista")}; gata(); await pe_drum; window.fetch=retea;
+rez.se_trimite.dezactivate_dupa=[...document.querySelectorAll("[data-mod]")].filter(b=>b.disabled).length;
+bt("max_pressure").click(); await $("da").onclick(); rez.inlocuita=text("istoric-lista"); cerere.la-=20000; await actualizeaza();
+const man=s=>{s.mod="manual";s.mod_program=null}; __st(__CAM,nou(man)); await actualizeaza();
+document.querySelector('[data-faza="1"]').click(); await new Promise(r=>setTimeout(r,10)); await actualizeaza(); rez.faza_in_curs=text("rezultat"); cerere.la-=40000; await actualizeaza(); await actualizeaza();
+rez.faza_expirata=Object.assign(instantaneu(),{istoric:text("istoric-lista"),clasa:document.querySelector('[data-faza="1"]').className});
+__st(__CAM,nou(s=>{man(s);s.faza=3})); await actualizeaza(); rez.risc_3={lumini:titluri(),legenda:!$("leg-plus").hidden}; document.querySelector('[data-faza="4"]').click(); rez.risc_3.confirmare=text("confirm-text"); $("nu").click();
+__st(__CAM,nou(s=>{man(s);s.faza=4})); await actualizeaza(); rez.risc_4={lumini:titluri()};
+__st(__CAM,nou(man)); await actualizeaza(); rez.manual_text=$("manual").querySelector("p").textContent; rez.legenda_fara_risc=$("leg-plus").hidden;
+__st(__CAM,nou(s=>{s.model_ai=false})); await actualizeaza(); rez.fara_ai_stil={opacitate:stilul(bt("ai")).opacity,culoare:stilul($("d-ai")).color}; __st(__CAM,__SIM); await actualizeaza();
+await new Promise(r=>{ $("cadru").addEventListener("error",r,{once:true}); $("cadru").src="data:,nimic" }); await actualizeaza();
+rez.imagine_cazuta={stare:text("s-cam"),gol:text("cadru-gol"),vizibil:vizibil($("cadru-gol")),punct:$("p-cam").className};
 const pre=document.createElement("pre"); pre.id="rez"; pre.textContent=JSON.stringify(rez); document.body.appendChild(pre);
 """
 
@@ -150,7 +182,7 @@ class TestPagina(unittest.TestCase):
 
     def test_serverul_cazut_nu_pare_activ_si_revine(self):
         s = self.r["server"]
-        self.assertIn("Pagina nu mai primește date", s["alerte"][0])
+        self.assertIn("Nu mai e legătură cu calculatorul dispeceratului", s["alerte"][0])
         self.assertTrue(s["schema_veche"])
         self.assertTrue(s["debite_vechi"])
         self.assertEqual(len(s["dezactivate"]), 5)
@@ -163,7 +195,7 @@ class TestPagina(unittest.TestCase):
 
     def test_confirmarea(self):
         d = self.r["dialog"]
-        self.assertIn("de la „Planul ales” către „Plan de referință”", d["text"])
+        self.assertIn("de la „Planul observat” către „Plan de referință”", d["text"])
         self.assertEqual(d["focus"], "confirm")      # nu „da”: un Enter din reflex nu confirmă
         self.assertTrue(d["labelledby"] and d["describedby"])
         self.assertEqual(d["dupa_renunt"], "fix")
@@ -179,8 +211,8 @@ class TestPagina(unittest.TestCase):
 
     def test_comanda_esuata_spune_si_ce_ramane(self):
         s = self.r["esuata"]
-        self.assertIn("nu a ajuns la dispecerat", s["rezultat"])
-        self.assertIn("Conduce în continuare „Planul ales”", s["rezultat"])
+        self.assertIn("nu a ajuns la calculatorul dispeceratului", s["rezultat"])
+        self.assertIn("Conduce în continuare „Planul observat”", s["rezultat"])
         self.assertEqual(s["rez_cls"], "rau")
         self.assertFalse(s["confirm"])
         self.assertIn("eșuată", s["istoric"])
@@ -193,7 +225,7 @@ class TestPagina(unittest.TestCase):
         self.assertIn("Aplicat", s["rezultat"])
         self.assertEqual(s["rez_cls"], "bun")
         self.assertIn("aplicată", s["istoric"])
-        self.assertIn("Planul ales", s["revino"])
+        self.assertIn("Planul observat", s["revino"])
 
     def test_comanda_neaplicata_nu_trece_neobservata(self):
         s = self.r["neaplicata"]
@@ -219,10 +251,10 @@ class TestPagina(unittest.TestCase):
 
     def test_cele_gasite_la_a_doua_evaluare(self):
         s = self.r["geaman_50"]
-        self.assertIn("Ultimul mod cunoscut: „Planul ales”", s["cine"])
+        self.assertIn("Ultimul mod cunoscut: „Planul observat”", s["cine"])
         self.assertIn("Ultima valoare primită", s["grafic"])
         self.assertNotIn("Acum:", s["grafic"])
-        self.assertIn("anunțați persoana", s["alerte"][0])
+        self.assertIn("Dacă nu revine în 2 minute, anunțați autorul proiectului", s["alerte"][0])
         self.assertIn("123 de vehicule", self.r["normal"]["det"])
         self.assertIn("e verde de 9 s", self.r["normal"]["det"])
         self.assertIn("Pietonii: roșu", " ".join(self.r["normal"]["lumini"]))
@@ -233,6 +265,135 @@ class TestPagina(unittest.TestCase):
         self.assertIn("a revenit", self.r["anunt_revenire"])
         self.assertIn("urmeaza", self.r["faza_urmeaza"])
         self.assertEqual(self.r["taste_oprite"], False)
+
+    def test_vechimea_creste_fara_legatura_si_revenirea_e_blocata(self):
+        s = self.r["fara_legatura"]
+        secunde = lambda t: int(re.search(r"(\d+) s", t)[1])
+        self.assertGreaterEqual(secunde(s["dupa"]), secunde(s["inainte"]) + 2)
+        self.assertGreaterEqual(secunde(s["dupa"]), secunde(s["antet"]))
+        self.assertIn("calculatorul dispeceratului", s["blocat"])
+        self.assertIn("Ultima fază cunoscută", s["faza"])
+        self.assertTrue(s["revino_blocat"])
+        self.assertFalse(s["revino_dupa"])
+
+    def test_eroarea_serverului_nu_da_vina_pe_simulare_si_camera(self):
+        s = self.r["eroare_500"]
+        self.assertEqual(len(s["alerte"]), 1)
+        self.assertIn("calculatorul dispeceratului", s["alerte"][0])
+        self.assertIn("500", s["tehnic"])
+        self.assertIn("7_dashboard", s["tehnic"])
+        self.assertEqual(len(s["dezactivate"]), 5)
+
+    def test_comanda_refuzata_spune_motivul(self):
+        s = self.r["refuzata"]
+        self.assertIn("a refuzat", s["rezultat"])
+        self.assertIn("mod necunoscut", s["rezultat"])
+        self.assertNotIn("nu a ajuns", s["rezultat"])
+        self.assertNotIn("Încercați din nou", s["rezultat"])
+        self.assertEqual(s["rez_cls"], "rau")
+        self.assertIn("refuzată", s["istoric"])
+        self.assertFalse(s["urmarita"])
+
+    def test_confirmarea_se_inchide_daca_modul_se_schimba(self):
+        s = self.r["confirmare_depasita"]
+        self.assertFalse(s["confirm"])
+        self.assertIn("Între timp a preluat „Presiune maximă”", s["rezultat"])
+
+    def test_simularea_veche_nu_pare_actuala(self):
+        s = self.r["simulare_veche"]
+        self.assertTrue(s["faza"].startswith("Ultima fază cunoscută (acum 50 s): Verde pe Magheru"), s["faza"])
+        self.assertIn("Magheru: necunoscut; ultima culoare primită: verde", s["lumini"])
+        self.assertIn("#5d6873", s["semne"])
+        self.assertNotIn("#8a948c", s["semne"])
+        self.assertTrue(s["eticheta"].startswith("Ultimele valori primite, vechi de 50 s"), s["eticheta"])
+        self.assertIn("Magheru verde", s["eticheta"])
+        self.assertEqual(s["opacitate"], ["1", "1", "1"])
+        self.assertIn("date vechi", s["marcaj"])
+        self.assertTrue(s["coada_max"].startswith("La ultima valoare primită"), s["coada_max"])
+
+    def test_camera_care_se_reconecteaza_nu_e_la_zi(self):
+        s = self.r["reconectare"]
+        self.assertIn("camera se reconectează", s["antet"])
+        self.assertIn("atent-p", s["punct"])
+        self.assertTrue(s["nesigur"])
+        self.assertIn("nesigure", s["nota"])
+        self.assertTrue(s["gol"])
+        self.assertEqual(self.r["antet_normal"], "date la zi")
+        i = self.r["imagine_cazuta"]
+        self.assertIn("imaginea nu se încarcă", i["stare"])
+        self.assertIn("încercăm din nou", i["gol"])
+        self.assertTrue(i["vizibil"])
+        self.assertIn("atent-p", i["punct"])
+
+    def test_alerta_camerei_are_trepte_dupa_vechime(self):
+        l = self.r["camera_700"]
+        self.assertEqual(l["alerte"][0]["cls"].split(), ["alerta"])       # roșie
+        self.assertIn("de peste 10 minute", l["alerte"][0]["text"])
+        self.assertNotIn("revin singure", l["alerte"][0]["text"])
+        self.assertIn("err", l["punct"])
+        m = self.r["camera_200_alerta"]
+        self.assertIn("atent", m["alerte"][0]["cls"])
+        self.assertIn("revin singure", m["alerte"][0]["text"])
+        self.assertIn("atent-p", m["punct"])
+        self.assertNotIn("anunțați", m["gol"])
+        f = self.r["camera_lipsa"]       # starea lipsește, dar ultima măsurătoare e de acum câteva secunde
+        self.assertEqual(f["alerte"], [])
+        self.assertIn("atent-p", f["punct"])
+        self.assertIn("nicio măsurătoare nouă de", f["cam"])
+        self.assertIn("s-a oprit de", f["gol"])
+        n = self.r["camera_niciodata"]
+        self.assertIn("Camera nu trimite date", n["alerte"][0]["text"])
+        self.assertIn("atent", n["alerte"][0]["cls"])
+        self.assertNotIn("revin singure", n["alerte"][0]["text"])
+        self.assertEqual(n["cam"], "camera: nu trimite date")
+
+    def test_ce_aveti_de_facut_se_spune_o_singura_data(self):
+        t = self.r["ambele"]
+        self.assertEqual(t.count("anunțați autorul proiectului"), 1)
+        self.assertIn("în 2 minute", t)
+        self.assertNotIn("administrează", t)
+
+    def test_comenzile_nu_se_incurca(self):
+        s = self.r["se_trimite"]
+        self.assertEqual(s["active"], 0)
+        self.assertIn("se trimite", s["istoric"])
+        self.assertNotIn("undefined", s["istoric"])
+        self.assertEqual(s["dezactivate_dupa"], 0)
+        self.assertIn("înlocuită", self.r["inlocuita"])
+        self.assertIn("se aplică", self.r["inlocuita"])
+
+    def test_schimbarea_de_faza_expira(self):
+        self.assertIn("Se schimbă spre", self.r["faza_in_curs"])
+        s = self.r["faza_expirata"]
+        self.assertIn("n-a aplicat", s["rezultat"])
+        self.assertEqual(s["rez_cls"], "rau")
+        self.assertIn("neaplicată", s["istoric"])
+        self.assertNotIn("urmeaza", s["clasa"])
+
+    def test_fazele_cu_risc_se_deosebesc(self):
+        a, b = self.r["faze"]["risc"]
+        self.assertIn("prin centru", a)
+        self.assertIn("în jurul insulei", b)
+        self.assertIn("Magheru: verde", self.r["risc_3"]["lumini"])
+        self.assertIn("Dacia est: verde, deschisă în plus", self.r["risc_3"]["lumini"])
+        self.assertIn("Dacia est: verde", self.r["risc_4"]["lumini"])
+        self.assertIn("Magheru: verde, deschisă în plus", self.r["risc_4"]["lumini"])
+        self.assertTrue(self.r["risc_3"]["legenda"])
+        self.assertTrue(self.r["legenda_fara_risc"])
+        self.assertIn("Verdele principal e pe Dacia", self.r["risc_3"]["confirmare"])
+        self.assertIn("10–15 s", self.r["manual_text"])
+
+    def test_schema_raspunde_unde_asteapta_cele_mai_multe(self):
+        n = self.r["normal"]
+        self.assertIn("Cele mai multe vehicule oprite: Dacia vest (21)", n["coada_max"])
+        self.assertIn("pe toate străzile", n["grafic"])
+        self.assertIn("schema", n["grafic"])
+        self.assertIn("intră în piață", self.r["text_pagina"])
+        self.assertIn("ies din piață", self.r["text_pagina"])
+
+    def test_motivul_agentului_indisponibil_se_citeste(self):
+        self.assertEqual(self.r["fara_ai_stil"]["opacitate"], "1")
+        self.assertEqual(self.r["fara_ai_stil"]["culoare"], "rgb(31, 42, 51)")
 
     def test_imaginea_si_ajutorul(self):
         i = self.r["imagine"]

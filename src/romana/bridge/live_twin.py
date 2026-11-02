@@ -24,7 +24,8 @@ from collections import defaultdict
 from pathlib import Path
 
 from romana.common import DEMAND_DIR, MODELS_DIR, NET_DIR, OUTPUT_DIR, load_json
-from romana.control.signals import SignalController, romana_green_phases
+from romana.control.faze import faze_romana
+from romana.control.signals import SignalController
 
 LIVE = OUTPUT_DIR / "live"
 SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă în SUMO-GUI
@@ -40,24 +41,29 @@ PRAG_LEJER, PRAG_GREU = 2400, 4100
 #   "e13"          – agentul E13 singur (oficialul reantrenat pe cererea calibrată, § 9.5);
 #   "tod_debit"    – planuri fixe pe cazuri: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens;
 #   "marginea_sus" – participanți disciplinați: E9 / E3 / planul 46/48/12 (§ 9.2, istoric)
-VARIANTA_PROGRAM = "plan_scurt"
+#   "plan_observat" – planul cel mai apropiat de semaforul real, măsurat din cameră (§ 6.5), în geamănul corectat
+VARIANTA_PROGRAM = "plan_observat"
 PLAN_LUNG = (46, 48, 12)
 PLAN_SCURT = (12, 14, 12)
 PLAN_MEDIU = (16, 10, 12)
-PLANURI_FIXE = {"plan_lung": PLAN_LUNG, "plan_scurt": PLAN_SCURT, "plan_mediu": PLAN_MEDIU}   # verde N–S, E–V, pietoni (s)
+PLAN_OBSERVAT = (72, 48, 3)
+PLANURI_FIXE = {"plan_lung": PLAN_LUNG, "plan_scurt": PLAN_SCURT, "plan_mediu": PLAN_MEDIU, "plan_observat": PLAN_OBSERVAT}   # verde N–S, E–V, pietoni (s)
 MODEL_PRANZ = MODELS_DIR / "ppo_romana_zn3.zip"   # agentul E3, cel mai bun la trafic moderat (prânz)
 MODEL_LEJER = MODELS_DIR / "ppo_romana_lejer.zip"  # agentul E9, specialistul de trafic lejer (§ 9.2)
 MODEL_E13 = MODELS_DIR / "ppo_romana_cal.zip"     # agentul E13, oficialul reantrenat pe cererea calibrată (§ 9.5)
 
 
 def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
-    from romana.bridge.build_demand import build_candidates, candidates_file, write_vtypes
+    from romana.bridge.build_demand import build_candidates, build_candidates_brate, candidates_file, write_vtypes
 
     arms = cfg["brate"]
     cand = candidates_file(vclass)
     if not cand.exists():   # fișier regenerabil, nu e în Git
         write_vtypes()
         build_candidates(cfg, vclass=vclass)
+    if cfg.get("rute_pe_brate") and vclass == "passenger":    # geamănul corectat: rutele pornesc de pe bulevardul brațului (§ 6.5)
+        cand = DEMAND_DIR / cfg["rute_pe_brate"]["fisier"]
+        build_candidates_brate(cfg, cand)
     pool = defaultdict(list)
     for _, el in ET.iterparse(cand):
         if el.tag != "route":
@@ -100,6 +106,7 @@ def main(argv=None) -> None:
     ap.add_argument("--model", default=str(MODELS_DIR / "ppo_romana.zip"))
     ap.add_argument("--viteza", type=float, default=1.0, help="1 = timp real; 0 = cât de repede se poate")
     ap.add_argument("--durata", type=int, default=0, help="secunde simulate până la oprire (0 = continuu)")
+    ap.add_argument("--geaman-vechi", action="store_true", help="rețeaua, tipurile și rutele de dinainte de 2.11 (§ 6.5), doar pentru comparație")
     args = ap.parse_args(argv)
 
     from romana.common import sumo_binary, sumo_home
@@ -107,22 +114,33 @@ def main(argv=None) -> None:
     sumo_home()
     import traci  # TraCI clasic: permite și sumo-gui
 
-    cfg = load_json("demand.json")
+    cfg = load_json("demand.json" if args.geaman_vechi else "demand_v2.json")
     pools = {"passenger": load_route_pool(cfg), "bicycle": load_route_pool(cfg, "bicycle")}
     from romana.bridge.build_demand import pedestrian_pool
 
     ped_pool = pedestrian_pool(cfg)
     ref = cfg["profil_referinta"]
     shares = {k: v for k, v in ref["pondere_clase"].items() if v > 0}
-    traci.start([sumo_binary("sumo-gui" if args.gui else "sumo"), "-n", str(NET_DIR / "romana.net.xml"),
-                 "--additional-files", f"{DEMAND_DIR / 'vtypes.add.xml'},{NET_DIR / 'tls_actuated.add.xml'}",
+    retea = NET_DIR / cfg.get("retea", "romana.net.xml")
+    tipuri = DEMAND_DIR / cfg.get("tipuri_vehicule", "vtypes.add.xml")
+    actuated = NET_DIR / ("tls_actuated.add.xml" if args.geaman_vechi else "tls_actuated_v2.add.xml")
+    optiuni = [x for k, v in cfg.get("optiuni_sumo", {}).items() for x in (f"--{k}", str(v))]
+    traci.start([sumo_binary("sumo-gui" if args.gui else "sumo"), "-n", str(retea),
+                 "--additional-files", f"{tipuri},{actuated}",
                  "--no-step-log", "--no-warnings", "--time-to-teleport", "300", "--begin", "0",
-                 "--step-length", str(1 / SUBPASI), "--delay", "0",
+                 "--step-length", str(1 / SUBPASI), "--delay", "0", *optiuni,
                  "--gui-settings-file", str(NET_DIR / "view.xml"), "--start", "--quit-on-end"]
                 if args.gui else
-                [sumo_binary("sumo"), "-n", str(NET_DIR / "romana.net.xml"),
-                 "--additional-files", f"{DEMAND_DIR / 'vtypes.add.xml'},{NET_DIR / 'tls_actuated.add.xml'}",
-                 "--no-step-log", "--no-warnings", "--time-to-teleport", "300", "--step-length", str(1 / SUBPASI)])
+                [sumo_binary("sumo"), "-n", str(retea),
+                 "--additional-files", f"{tipuri},{actuated}",
+                 "--no-step-log", "--no-warnings", "--time-to-teleport", "300", "--step-length", str(1 / SUBPASI), *optiuni])
+    # pe geamănul corectat, fiecare pieton traversează o singură dată, pe un braț (§ 9.11)
+    treceri = cfg.get("pietoni_pe_treceri")
+    trasee_treceri: dict[tuple[str, str], list[str]] = {}
+    if treceri:
+        f_pietoni = cfg.get("factor_extrapolare_pietoni", 1.0)
+        brate_treceri = ["dacia_est", *[b for b in treceri if b != "dacia_est"]]
+        ponderi_treceri = [1 / f_pietoni] + [(f_pietoni - 1) / f_pietoni / (len(treceri) - 1)] * (len(treceri) - 1)
     for tid in traci.trafficlight.getIDList():
         traci.trafficlight.setProgram(tid, "0")
     if args.gui:   # vederea pornește centrată pe Piața Romană (centrul benzilor controlate de semafor)
@@ -130,7 +148,7 @@ def main(argv=None) -> None:
         traci.gui.setOffset("View #0", sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))
         traci.gui.setZoom("View #0", 700)
 
-    greens, names = romana_green_phases()
+    greens, names = faze_romana(traci)
     ctrl = SignalController(traci, "romana", greens, names)
     from romana.control.controllers import RLPolicy
 
@@ -156,7 +174,7 @@ def main(argv=None) -> None:
 
     plan_cycle = fixed_phase_indices()            # planul fix de referință: N–S, E–V, pietoni
     plan_green = {i: load_json("network.json")["romana_faze"][i]["durata_fixa"] for i in plan_cycle}
-    info = json.loads((NET_DIR / "network_info.json").read_text(encoding="utf-8"))
+    info = json.loads((NET_DIR / ("network_info.json" if args.geaman_vechi else "network_info_v2.json")).read_text(encoding="utf-8"))
     route_ids: dict[tuple, list[str]] = {}
     n_veh, n_ped, t, last_src = 0, 0, 0, ""
     good_cam, good_t = None, 0.0
@@ -214,7 +232,15 @@ def main(argv=None) -> None:
                 n_veh += 1
             # --- injectare pietoni (Poisson) pe traseele care trec prin piață ---
             if ped_pool and random.random() < ped_rate / 3600.0:
-                edges = random.choice(ped_pool).split()
+                if treceri:
+                    de_la, pana_la = treceri[random.choices(brate_treceri, ponderi_treceri)[0]]
+                    if random.random() < 0.5:
+                        de_la, pana_la = pana_la, de_la
+                    if (de_la, pana_la) not in trasee_treceri:
+                        trasee_treceri[(de_la, pana_la)] = list(traci.simulation.findIntermodalRoute(de_la, pana_la)[0].edges)
+                    edges = trasee_treceri[(de_la, pana_la)]
+                else:
+                    edges = random.choice(ped_pool).split()
                 pid = f"pieton_live_{n_ped}"
                 try:
                     traci.person.add(pid, edges[0], 0.0, typeID="pieton")
@@ -239,6 +265,8 @@ def main(argv=None) -> None:
                     sub = "ai_e13" if rl_e13 is not None else ("ai" if rl is not None else "fix")
                 elif VARIANTA_PROGRAM == "plan_scurt":
                     sub = "plan_scurt"
+                elif VARIANTA_PROGRAM == "plan_observat":
+                    sub = "plan_observat"
                 elif VARIANTA_PROGRAM == "tod_debit":
                     sub = "plan_mediu" if tot <= PRAG_GREU else "plan_scurt"
                 else:   # "marginea_sus": participanți disciplinați, cererea = media intrări/ieșiri (§ 9.2)
@@ -266,7 +294,9 @@ def main(argv=None) -> None:
                     p = ctrl.phase_pressure()              # doar fazele planului real (vezi MaxPressure)
                     ctrl.request(max(plan_cycle, key=lambda i: p[i]))
                 elif efectiv == "manual":
-                    ctrl.request(int(cmd.get("faza", ctrl.current)))
+                    # după verdele maxim, controlerul trece la faza cu numărul următor; din faza de pietoni, aceea ar fi o fază „fără dozare” (§ 6.3)
+                    faza = int(cmd.get("faza", ctrl.current))
+                    ctrl.request(plan_cycle[0] if faza == plan_cycle[-1] == ctrl.current and ctrl.green_time >= ctrl.max_green else faza)
             # o secundă de simulare în SUBPASI pași mici, întinși pe secunda reală: mișcarea apare fluentă,
             # iar controlerul (verde minim, galben, roșu de degajare) rămâne pe secunde întregi
             for k in range(SUBPASI):

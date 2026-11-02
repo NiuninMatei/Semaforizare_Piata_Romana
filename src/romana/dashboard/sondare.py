@@ -54,7 +54,7 @@ LUNGIME_TEXT = 300
 FAZE = ["N–S: Magheru ↔ Lascăr Catargiu prin centru", "E–V: Dacia în jurul insulei",
         "Pietoni: toate trecerile, axa centrală se golește", "N–S, cu intrările Dacia deschise (fără dozare)",
         "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"]
-PLAN = [(0, 12), (1, 14), (2, 12)]              # planul fix din geamăn: verde 12/14/12 s, apoi galben 3 s și roșu 2 s
+PLAN = [(0, 72), (1, 48), (2, 3)]               # planul observat din geamăn (§ 6.5): verde 72/48/3 s, apoi galben 3 s și roșu 2 s
 GALBEN, ROSU, VERDE_MIN, PAS_COMANDA = 3, 2, 10, 5    # ca în SignalController și în bucla geamănului (comanda se citește la 5 s)
 VERDE_PE_DACIA = (1, 3, 4)                      # schema arată verde pe Dacia în aceste faze
 VERDE_PE_MAGHERU = (0, 3, 4)
@@ -240,6 +240,8 @@ def ecran_static(html: str, versiune: str) -> tuple[str, str]:
         raise SystemExit(f"Dispeceratul s-a schimbat: are {len(m)} scripturi în pagină, nu unul; actualizați `ecran_static`.")
     script = _inlocuieste(m[0], '"/api/video"', json.dumps(IMAGINE_PUBLICA))
     html = html.replace(f"<script>{m[0]}</script>", f'<script src="punte.js"></script>\n<script src="{versiune}.js"></script>')
+    if versiune == "m1":      # versiunea M1 rămâne neschimbată: planul de azi se numește cum îl numea ea pe cel de atunci
+        script = script.strip() + "\nMOD.plan_observat = MOD.plan_scurt;"
     return html, script.strip() + "\n"
 
 
