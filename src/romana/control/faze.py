@@ -12,6 +12,7 @@ from romana.control.signals import SignalController, all_red_between, romana_gre
 
 MINIM_PIETONI_S = 7        # dintr-o etapă scurtă, pietonii primesc totuși măcar atât, ca să nu rămână niciodată fără verde
 SCURTA = "scurta"          # a treia etapă, când ține mai puțin decât verdele minim: centrul se golește, fără pietoni; nu e o fază în lista agentului
+VAL_LUNG_S, INTARZIERE_VAL_LUNG = 90, 0.5     # din cameră, pe patru zile: la o etapă mai lungă de atât, pietonii pornesc mai târziu; doar unde durata se știe dinainte (planuri, semaforul rejucat)
 ETAPA_SCURTA_S = 3         # din cameră: între sfârșitul etapei E–V și începutul etapei N–S trec ≈13 s, cu tot cu cele două tranziții
 # după verdele maxim: N–S → E–V, E–V → N–S, orice altceva → N–S; nu faza cu numărul următor, care poate fi una „fără dozare” (§ 6.3)
 URMATOAREA = {0: 1, 1: 0}
@@ -43,6 +44,8 @@ def segmente_etapa(stare: str, verde: float, treceri, intarziere: float, degajar
     if goala == stare:
         return [(stare, verde)]
     sfarsit = max(verde - degajare, 0)
+    if intarziere and verde > VAL_LUNG_S:
+        intarziere += INTARZIERE_VAL_LUNG * (verde - VAL_LUNG_S)
     inceput = min(intarziere, max(sfarsit - MINIM_PIETONI_S, 0))
     return [(s, d) for s, d in ((goala, inceput), (stare, sfarsit - inceput), (goala, verde - sfarsit)) if d > 0]
 

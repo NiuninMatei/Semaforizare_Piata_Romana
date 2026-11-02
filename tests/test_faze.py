@@ -43,6 +43,10 @@ class TestProgram(unittest.TestCase):
         self.assertTrue(all(s[:4] == N_S[:4] for s, _ in seg))
 
     def test_o_etapa_scurta_lasa_pietonilor_macar_un_minim(self):
+        lung = segmente_etapa(N_S, 110, TRECERI, 24, 6)
+        self.assertEqual([d for _, d in lung], [34.0, 70.0, 6])     # la un val lung, pietonii pornesc mai târziu: +0,5 s pe secunda de peste 90 s
+        self.assertEqual([d for _, d in segmente_etapa(N_S, 90, TRECERI, 24, 6)], [24, 60, 6])
+        self.assertEqual([d for _, d in segmente_etapa(N_S, 110, TRECERI, 0, 6)], [104, 6])     # etapa fără întârziere rămâne cum era
         seg = segmente_etapa(N_S, 20, TRECERI, 24, 6)
         verde = sum(d for s, d in seg if s[4] == "G")
         self.assertEqual(verde, MINIM_PIETONI_S)
