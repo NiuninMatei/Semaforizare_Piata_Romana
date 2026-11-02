@@ -98,7 +98,7 @@ def resolve_scenarios(items: list[str]) -> list[Path]:
 
 def strategy_name(spec: str) -> str:
     """Numele strategiei în CSV: FIX / ACTUATED / PLAN_a_b_c rămân ca atare; un model → numele fișierului."""
-    if spec in ("FIX", "ACTUATED") or spec.startswith("PLAN_"):
+    if spec in ("FIX", "ACTUATED", "REAL") or spec.startswith("PLAN_"):
         return spec
     return Path(spec).stem
 
@@ -261,7 +261,7 @@ def main(argv=None) -> None:
     if not specs:
         ap.error("nicio strategie de rulat")
     for s in specs:
-        if s not in ("FIX", "ACTUATED") and not s.startswith("PLAN_") and not Path(s).exists():
+        if s not in ("FIX", "ACTUATED", "REAL") and not s.startswith("PLAN_") and not Path(s).exists():
             ap.error(f"modelul {s} nu există")
     scenarios = resolve_scenarios(args.scenarii)
     seeds = parse_seeds(args.seeds)

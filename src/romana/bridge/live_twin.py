@@ -277,10 +277,15 @@ def main(argv=None) -> None:
                 # planurile fixe se urmăresc în fiecare secundă: duratele de verde sunt exact cele evaluate
                 # (o verificare la 5 s le-ar fi rotunjit în sus, de exemplu 12 s → 15 s)
                 durate = PLANURI_FIXE.get(efectiv) or tuple(plan_green[i] for i in plan_cycle)
-                if ctrl.current not in plan_cycle:
-                    ctrl.request(plan_cycle[0])
-                elif ctrl.green_time >= durate[plan_cycle.index(ctrl.current)]:
-                    ctrl.request(plan_cycle[(plan_cycle.index(ctrl.current) + 1) % len(plan_cycle)])
+                # pe geamănul corectat, o a treia etapă scurtă e fără pietoni, iar degajarea lor face parte din verde (§ 6.5)
+                scurta = getattr(ctrl, "faza_scurta", None)
+                ciclu = [plan_cycle[0], plan_cycle[1], scurta] if scurta is not None and durate[2] < ctrl.min_green else plan_cycle
+                if ctrl.current not in ciclu:
+                    ctrl.request(ciclu[0])
+                else:
+                    k = ciclu.index(ctrl.current)
+                    if ctrl.green_time >= durate[k] - (getattr(ctrl, "degajare", 0) if ciclu[k] != scurta else 0):
+                        ctrl.request(ciclu[(k + 1) % len(ciclu)])
             elif t % 5 == 0:
                 if efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
@@ -321,7 +326,7 @@ def main(argv=None) -> None:
                          "faza": ctrl.current, "faza_nume": ctrl.names[ctrl.current], "etapa": ctrl.stage,
                          "faza_tinta": ctrl.target if ctrl.stage != "green" else ctrl.current,
                          "varsta_debite_s": round(time.time() - good_t) if good_cam else None,
-                         "verde_s": ctrl.green_time, "faze": ctrl.names, "model_ai": bool(rl),
+                         "verde_s": ctrl.green_time, "faze": ctrl.names, "model_ai": bool(rl), "pietoni_verde": ctrl.pietoni_verde() if hasattr(ctrl, "pietoni_verde") else ctrl.current == 2,
                          "coada_brate": dict(arms_q), "coada_total": q_tot,
                          "vehicule_in_retea": traci.vehicle.getIDCount(), "vehicule_injectate": n_veh,
                          "pietoni_in_retea": traci.person.getIDCount(), "pietoni_injectati": n_ped,

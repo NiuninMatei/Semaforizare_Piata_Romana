@@ -103,6 +103,9 @@ class SemaforCuPietoni(SignalController):
             else:
                 self._galben()
 
+    def pietoni_verde(self) -> bool:
+        return any(self.afisata[i] in "Gg" for i in self.treceri)
+
     def _galben(self) -> None:
         self.ramas_degajare = None
         self.stage, self.stage_time = "yellow", 0
