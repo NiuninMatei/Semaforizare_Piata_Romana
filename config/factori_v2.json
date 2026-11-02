@@ -1,0 +1,11 @@
+{
+  "_stare": "PROVIZORII, din clipurile din 1.11; se refac după clipurile din 2.11, înainte de termenul din § 9.11.",
+  "factor_corectie_detectie": {
+    "magheru": {"zi": 1.2, "intuneric": 1.39},
+    "catargiu": {"zi": 1.11, "intuneric": 1.53},
+    "dacia_est": 1.05,
+    "dacia_vest": 1.24
+  },
+  "factor_pietoni_masurati": 0.75,
+  "_factor_pietoni_masurati": "O persoană pierdută pe insula dintre cele două zebre de pe Dacia est apare probabil ca două persoane. PROVIZORIU, până la numărătoarea de referință de pe clipurile din 2.11; valoarea 0,75 nu se reproduce din numărătorile pe care le înmulțește (cu regula din counts_cor: 0,52–0,69)."
+}
