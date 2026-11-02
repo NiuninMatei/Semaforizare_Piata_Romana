@@ -170,6 +170,39 @@ def build_candidates(cfg: dict, force: bool = False, vclass: str = "passenger") 
     print(f"[cerere] {n} rute candidate în {target.relative_to(ROOT)}")
 
 
+def build_candidates_brate(cfg: dict, target: Path, force: bool = False) -> None:
+    """Măsura nouă (§ 9.11): câte o rută pe pereche intrare→ieșire, care pornește de pe bulevardul brațului de intrare.
+
+    Rutele candidate vechi lasă routeSampler să aleagă orice drum care reproduce virajele din piață, iar camera nu vede ce e mai departe:
+    pe 26.10, ≈72% din traficul de pe Magheru pornea de pe Calea Victoriei, prin 4 semafoare, și aproape tot traficul de pe Catargiu din
+    Piața Victoriei, prin 7. Așa, capacitatea unor străzi vecine, unde semafoarele sunt doar presupuse, limita traficul din piață."""
+    if target.exists() and not force:
+        return
+    tmp = DEMAND_DIR / "_tmp"
+    tmp.mkdir(parents=True, exist_ok=True)
+    arms = cfg["brate"]
+    porniri, capete, peste = cfg["rute_pe_brate"]["porniri"], cfg["rute_pe_brate"]["capete"], cfg["rute_pe_brate"].get("prin", {})
+    trips = ET.Element("routes")
+    for k, (o, oi) in enumerate((o, oi) for o, oi in arms.items() if oi["intrare"]):
+        for d, di in arms.items():
+            ET.SubElement(trips, "trip", id=f"brat_{o}_{d}", depart=str(k), type="passenger", departLane="best", **{
+                "from": porniri[o], "to": capete[d], "via": peste.get(f"{o}>{d}", f"{oi['intrare']} {di['iesire']}")})
+    ET.ElementTree(trips).write(tmp / "brate.trips.xml", encoding="UTF-8", xml_declaration=True)
+    run([sumo_binary("duarouter"), "-n", str(NET_DIR / cfg["retea"]), "--route-files", str(tmp / "brate.trips.xml"), "--additional-files", str(VTYPES),
+         "-o", str(tmp / "brate.rou.xml"), "--ignore-errors", "--no-warnings", "--repair"])
+    entries = {a["intrare"] for a in arms.values() if a["intrare"]}
+    out = ET.Element("routes")
+    n = 0
+    for _, edges in route_edges(tmp / "brate.rou.xml"):
+        if sum(e in entries for e in edges) <= 1:          # fără rute care traversează piața de două ori
+            v = ET.SubElement(out, "vehicle", id=f"b{n}", depart="0")
+            ET.SubElement(v, "route", edges=" ".join(edges))
+            n += 1
+    ET.indent(out)
+    ET.ElementTree(out).write(target, encoding="UTF-8", xml_declaration=True)
+    print(f"[cerere] {n} rute pe brațe în {target.relative_to(ROOT)}")
+
+
 def write_turn_file(recs: list[dict], cfg: dict, vtype: str, path: Path) -> int:
     arms = cfg["brate"]
     root = ET.Element("data")
@@ -260,20 +293,49 @@ def pedestrians(recs: list[dict], cfg: dict, path: Path) -> int:
     return n
 
 
-def write_sumocfg(name: str, route_files: list[Path], dur: int) -> Path:
+def pedestrians_treceri(recs: list[dict], cfg: dict, path: Path) -> int:
+    """Măsura nouă (§ 9.11): fiecare pieton traversează o singură dată, pe un braț al pieței, de pe un trotuar pe celălalt.
+
+    `pietoni_h` e numărul măsurat înmulțit cu factorul de extrapolare. Camera vede bine doar trecerea de pe Dacia est, care primește
+    numărul măsurat; restul se împarte în mod egal între celelalte brațe. Traseele vechi aveau în medie ≈700 m și mai multe treceri
+    pe drum, deci același pieton număra de câteva ori."""
+    capete = cfg["pietoni_pe_treceri"]
+    f = cfg.get("factor_extrapolare_pietoni", 1.0)
+    alte = [b for b in capete if b != "dacia_est"]
+    ponderi = [1 / f] + [(f - 1) / f / len(alte)] * len(alte)
+    brate = ["dacia_est", *alte]
+    root = ET.Element("routes")
+    t0, n = 0.0, 0
+    for r in recs:
+        cnt = int(round(r.get("pietoni_h", 0) * r["durata_s"] / 3600))
+        for t in sorted(random.uniform(t0, t0 + r["durata_s"]) for _ in range(cnt)):
+            a, invers = random.choices(brate, ponderi)[0], random.random() < 0.5
+            de_la, pana_la = capete[a][::-1] if invers else capete[a]
+            p = ET.SubElement(root, "person", id=f"pieton_{n}", depart=f"{t:.1f}", type="pieton", departPos="random")
+            ET.SubElement(p, "walk", **{"from": de_la, "to": pana_la, "arrivalPos": "random"})
+            n += 1
+        t0 += r["durata_s"]
+    ET.indent(root)
+    ET.ElementTree(root).write(path, encoding="UTF-8", xml_declaration=True)
+    return n
+
+
+def write_sumocfg(name: str, route_files: list[Path], dur: int, net: Path = NET, vtypes: Path = VTYPES, optiuni: dict | None = None) -> Path:
     SCEN_DIR.mkdir(parents=True, exist_ok=True)
     rel = lambda p: Path("..") / p.relative_to(SUMO_DIR)  # noqa: E731
     cfg = ET.Element("configuration")
     inp = ET.SubElement(cfg, "input")
-    ET.SubElement(inp, "net-file", value=str(rel(NET)).replace("\\", "/"))
+    ET.SubElement(inp, "net-file", value=str(rel(net)).replace("\\", "/"))
     ET.SubElement(inp, "route-files", value=",".join(str(rel(p)).replace("\\", "/") for p in route_files))
-    ET.SubElement(inp, "additional-files", value=str(rel(VTYPES)).replace("\\", "/"))
+    ET.SubElement(inp, "additional-files", value=str(rel(vtypes)).replace("\\", "/"))
     tm = ET.SubElement(cfg, "time")
     ET.SubElement(tm, "begin", value="0")
     ET.SubElement(tm, "end", value=str(dur + 900))
     proc = ET.SubElement(cfg, "processing")
     ET.SubElement(proc, "time-to-teleport", value="300")
     ET.SubElement(proc, "ignore-route-errors", value="true")
+    for k, v in (optiuni or {}).items():
+        ET.SubElement(proc, k, value=str(v))
     rep = ET.SubElement(cfg, "report")
     ET.SubElement(rep, "no-step-log", value="true")
     ET.SubElement(rep, "duration-log.statistics", value="true")
@@ -328,7 +390,11 @@ def main(argv=None) -> None:
         rf = out_dir / f"{vt}.rou.xml"
         vclass = "bicycle" if vt == "bicycle" else "passenger"
         build_candidates(cfg, force=False, vclass=vclass)
-        log = run([sys.executable, str(sumo_tools() / "routeSampler.py"), "-r", str(candidates_file(vclass)), "-t", str(tf),
+        candidate = candidates_file(vclass)
+        if cfg.get("rute_pe_brate") and vclass == "passenger":
+            candidate = DEMAND_DIR / cfg["rute_pe_brate"]["fisier"]
+            build_candidates_brate(cfg, candidate, force=args.regenerare_candidate)
+        log = run([sys.executable, str(sumo_tools() / "routeSampler.py"), "-r", str(candidate), "-t", str(tf),
                    "--turn-max-gap", "25", "-o", str(rf), "--prefix", f"{vt}_", "-a", f'type="{vt}" departLane="best"',
                    "--seed", str(cfg["seed"]), "--optimize", "full", "--mismatch-output", str(out_dir / f"mismatch_{vt}.xml")],
                   log=out_dir / f"routeSampler_{vt}.log")
@@ -339,10 +405,13 @@ def main(argv=None) -> None:
     report["vehicule_fond"] = background(recs, cfg, bg)
     route_files.append(bg)
     pf = out_dir / "pietoni.rou.xml"
-    report["pietoni"] = pedestrians(recs, cfg, pf)
+    report["pietoni"] = pedestrians_treceri(recs, cfg, pf) if cfg.get("pietoni_pe_treceri") else pedestrians(recs, cfg, pf)
     if report["pietoni"]:
         route_files.append(pf)
-    sumocfg = write_sumocfg(args.nume, route_files, dur)
+    if cfg.get("retea"):       # geamănul corectat (§ 6.5): rețeaua și tipurile de vehicule din romana.network.retea_v2
+        sumocfg = write_sumocfg(args.nume, route_files, dur, NET_DIR / cfg["retea"], DEMAND_DIR / cfg["tipuri_vehicule"], cfg.get("optiuni_sumo"))
+    else:
+        sumocfg = write_sumocfg(args.nume, route_files, dur)
     # notificarea ODbL (§ 4.2) în fișierele derivate din rețeaua OSM: rute, viraje, abateri, scenariul
     for f in [*sorted(out_dir.glob("*.xml")), sumocfg]:
         adauga_notificare_osm(f)

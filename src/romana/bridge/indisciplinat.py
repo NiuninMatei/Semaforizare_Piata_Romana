@@ -60,14 +60,14 @@ def _read(path: Path) -> str:
 
 
 def generate(sources: list[Path], out_dir: Path | None = None, check: bool = False,
-             prefix: str = PREFIX, vtypes: str = VTYPES_INDISCIPLINAT) -> dict[str, list[str]]:
+             prefix: str = PREFIX, vtypes: str = VTYPES_INDISCIPLINAT, vechi: str = VTYPES) -> dict[str, list[str]]:
     """Scrie (sau, cu check=True, doar compară) scenariile indisciplinate. Întoarce rapoartele pe categorii."""
     rep = {"scrise": [], "identice": [], "diferite": [], "lipsa": [], "sarite": []}
     for src in sources:
         if src.name.startswith(prefix):
             continue                                    # nu se generează „indisciplinat_indisciplinat_…”
         text = _read(src)
-        new = undisciplined_text(text, new=vtypes)
+        new = undisciplined_text(text, old=vechi, new=vtypes)
         if new is None:
             print(f"[sărit] {src.name}: fără {VTYPES} în additional-files")
             rep["sarite"].append(src.name)
@@ -96,6 +96,7 @@ def main(argv=None) -> None:
     ap.add_argument("--vtypes", default=VTYPES_INDISCIPLINAT,
                     help=f"fișierul cu tipurile de participanți pus în locul lui {VTYPES} (implicit {VTYPES_INDISCIPLINAT})")
     ap.add_argument("--prefix", default=PREFIX, help=f"prefixul scenariilor generate (implicit {PREFIX})")
+    ap.add_argument("--vechi", default=VTYPES, help=f"fișierul de tipuri care se înlocuiește (implicit {VTYPES}; măsura nouă: vtypes_v2.add.xml)")
     ap.add_argument("--verifica", action="store_true",
                     help="nu scrie nimic: verifică dacă fișierele existente sunt exact cele generate")
     args = ap.parse_args(argv)
@@ -105,7 +106,7 @@ def main(argv=None) -> None:
     if args.out_dir and Path(args.out_dir).resolve() != sources[0].parent.resolve():
         print("[atenție] căile din sumocfg sunt relative: scenariile generate funcționează doar lângă cele sursă")
     rep = generate(sources, Path(args.out_dir) if args.out_dir else None, check=args.verifica,
-                   prefix=args.prefix, vtypes=args.vtypes)
+                   prefix=args.prefix, vtypes=args.vtypes, vechi=args.vechi)
     if args.verifica:
         print(f"identice: {len(rep['identice'])}, diferite: {rep['diferite']}, lipsă: {rep['lipsa']}")
         if rep["diferite"] or rep["lipsa"]:
