@@ -52,6 +52,27 @@ SCHEMA = {
     "required": ["numar", "numar_minim", "numar_maxim", "evenimente", "vizibilitate", "observatii"],
     "additionalProperties": False,
 }
+SCHEMA_PIETONI = {**SCHEMA, "properties": {**SCHEMA["properties"], "pe_5s": {"type": "array", "items": {"type": "integer"}}}, "required": [*SCHEMA["required"], "pe_5s"]}
+
+
+def prompt_pietoni(tinta: dict, bucata: int, rol: str, chunk_s: float = 30, conditii: str = "") -> str:
+    """Pietonii n-au linie de numărare, iar o mulțime densă nu se poate urmări individual: numărul pe bucăți de 5 s păstrează momentul și când evenimentele sunt pe grupuri."""
+    a, b = bucata * chunk_s, (bucata + 1) * chunk_s
+    clip = f"un clip al camerei publice, {conditii}" if conditii else "un clip al camerei publice"
+    return "\n".join([
+        "Ești adnotator pentru o numărătoare de referință (proiect universitar de trafic, Piața Romană, București). Se numără doar câte persoane sunt, nu cine sunt.",
+        f"Imaginile de mai sus sunt FOI DE CONTACT din {clip}, în ordine. Fiecare foaie are până la 12 imagini, pe 2 coloane, în ORDINEA "
+        "TIMPULUI de la stânga la dreapta și de sus în jos, la 0,5 s una de alta; momentul e scris în colț (t = secunde de la începutul clipului). "
+        f"Chenar VERDE = imaginea face parte din bucata ta de timp [{a:g}, {b:g}) s; chenar GRI cu „CONTEXT” = 1 s înainte sau după, doar pentru continuitate.",
+        f"ȚINTA: {tinta['descriere']}",
+        "Regula de numărare: o persoană se numără o singură dată, în momentul în care calcă pe zebră ca să traverseze; vehiculele nu se numără. Numără DOAR pornirile "
+        "dintr-o imagine cu chenar VERDE. Urmărește persoanele de la o imagine la alta, ca să nu numeri aceeași persoană de două ori.",
+        f"„pe_5s” = câte persoane pornesc în fiecare 5 s din bucată, în ordine: {int(chunk_s // 5)} numere care se adună la „numar”; e câmpul cel mai important. Dacă mulțimea e prea densă ca să urmărești fiecare persoană, "
+        "estimează din densitate și din ritmul de traversare și spune asta în „observatii”. În „evenimente” listează pornirile care se pot deosebi, câte una pe persoană, sau pe grupuri, cu t = mijlocul grupului și, în „descriere”, doar câte persoane "
+        "are grupul, tip = „pieton”. „numar_minim” și „numar_maxim” = intervalul tău de încredere. „vizibilitate” = cât de bine se deosebesc persoanele pe zebră. "
+        "În „observatii” spune cinstit, în una-două fraze, ce te-a încurcat și dacă numărătoarea ți se pare de încredere. Nu numi și nu descrie persoane: fără haine, culori sau alte semne.",
+        rol,
+    ])
 
 
 def prompt_adnotator(tinta: dict, bucata: int, rol: str, chunk_s: float = 30, conditii: str = "") -> str:
@@ -322,7 +343,8 @@ def main(argv=None) -> None:
                         vazute = felii if x.toate_liniile else [felii[k % len(felii)]]
                         cereri.append(cerere(cid, vazute, prompt_felie(tg, b, rol, conditii=x.conditii, imagini=len(vazute)), x.model, x.efort, schema_felie(tg["benzi"])))
                     else:
-                        cereri.append(cerere(cid, foi_bucata(Path(x.foi) / tg["id"], b), prompt_adnotator(tg, b, rol, conditii=x.conditii), x.model, x.efort))
+                        pieton = tg.get("tip") == "pietoni"
+                        cereri.append(cerere(cid, foi_bucata(Path(x.foi) / tg["id"], b), (prompt_pietoni if pieton else prompt_adnotator)(tg, b, rol, conditii=x.conditii), x.model, x.efort, SCHEMA_PIETONI if pieton else SCHEMA))
         trimite(cereri, {"clip": x.clip, "mod": "felii" if x.felii else "foi", "dosar": str(x.felii or x.foi), "tinte": x.tinte, "efort": x.efort, "conditii": x.conditii})
     elif x.comanda == "aduna":
         rez = aduna(x.lot, x.asteapta)

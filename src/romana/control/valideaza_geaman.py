@@ -65,6 +65,7 @@ FEREASTRA_VARF_S = 20             # debitul de vârf
 PIETONI_DE_LA_S, PIETONI_PANA_LA_S = 24, 60      # fereastra pietonilor de pe Dacia est, de la începutul etapei N–S
 PLAJA_DECALAJ_S = 25
 MIN_TRAIECTORII = 15              # sub atâtea traiectorii, timpul zonă–zonă nu se judecă
+MIN_PARTE_CU_ORIGINE = 0.25       # sub atât, momentele unei ieșiri din cameră sunt mai ales traiectorii pierdute sau apărute pe drum, deci forma lor măsoară detectorul
 MIN_SEEDURI_PERCENTILE = 5        # sub atâtea seed-uri, p10–p90 n-are sens: intervalul e min–max
 ACOPERIRE_VIRTUALA = 0.90         # de aici în sus, camera virtuală prinde aproape toate vehiculele unei muchii, deci momentele se iau din ea
 TOLERANTA_CERERE = 0.03           # pe toate orele privite, cererea din rute stă la cel mult 1,9% de cameră × factor; peste atât, rutele s-au făcut cu alți factori
@@ -79,6 +80,7 @@ PROBE_DIR = OUTPUT_DIR / "validare" / "probe"
 RULARI_DIR = OUTPUT_DIR / "validare" / "rulari"
 GRUPURI = {"A": "din cerere", "B": "independente de cerere, măsoară fizica", "C": "verificarea ceasului și a ferestrelor", "D": "siguranță și limite"}
 CHEI_CAPAT = {"intrare": "brate", "ieșire": "iesiri"}
+CITIRE_NS = ("ieșire în N–S", "dacia_est")      # muchia ieșirii e chiar la zebră, deci după așteptare; zona camerei începe mult înainte
 # Orele care n-au influențat alegerea măsurilor, ambele de duminică: toate celelalte au fost privite în cele patru runde.
 # 1.11 seara: pe 2.11, un revizor a rulat un seed și a văzut rândurile ei; nicio reparație nu stă pe ele. Autorul hotărăște dacă rămâne aici.
 ORE_NEATINSE = {"cor_zi_2026-11-01_seara", "cor_zi_2026-10-25_varf"}
@@ -103,6 +105,7 @@ LIMITE = {
     "bara din față": "camera virtuală folosește bara din față a vehiculului, camera punctul de contact cu solul. La timpul zonă–zonă, diferența se scade; pe momentele de pe capete rămâne, necorectată și nemăsurată: cam jumătate de vehicul, deci ≈0,5 s la 5 m/s;",
     "ceasul": "`evaluate.run_one` dă observatorului indicele buclei, `t`, iar ceasul SUMO după pas e t + 1. În `Contoare`, ce s-a întâmplat în pas are momentul t + 0,5, cu o eroare de citire de cel mult 0,5 s, pozițiile sunt ale sfârșitului pasului, t + 1, iar starea "
               "semaforului rămâne la t, fiindcă se schimbă la începutul pasului (măsurat: primul vehicul de la linie iese de pe muchie chiar în pasul t);",
+    "pietonii": "detectorul pierde persoanele din mulțimi: pe clipurile din 2.11, pe aceleași bucăți, adnotatorii văd mult mai multe. De aceea numărul de comparat e numărătoarea pe persoane × factorul din referință, deci rândul verifică doar că geamănul duce cererea, iar histograma camerei nu e un criteriu;",
     "factorii": "tabelul folosește factorii de acum din demand_v2.json, iar rutele pe cei cu care s-au făcut; generatorul scrie în rezumatul zilei amprenta cererii folosite. Validarea avertizează dacă amprenta diferă sau, pe scenariile mai vechi, dacă fișierul e mai nou decât rutele, și dacă "
                 f"cererea din rute se abate cu peste {TOLERANTA_CERERE:.0%} de cameră × factor. Eroarea factorilor nu e măsurată, deci nu intră în pragul vârfului: rândul dă cât s-ar muta abaterea la factor ×0,9 și ×1,1."}
 _GOL = float("nan")
@@ -540,12 +543,28 @@ def acoperire_virtuala(r: dict, rol: str, b: str) -> float:
     return in_fereastra(np.asarray(r.get("zone", {}).get(rol, {}).get(b, ()), float)) / muchie if muchie else 0.0
 
 
+def ns_din_stari(r: dict) -> np.ndarray:
+    """Etapele N–S întregi dintr-o rulare, pe ceasul scenariului."""
+    info = info_v2()
+    return ferestre_in(intervale_etape([(s, u - t) for (t, s), (u, _) in zip(r["stari"], r["stari"][1:] + [(SFARSIT_S + 900, "")])], info["green_states"], min(info["pietoni"]["treceri"]), r["stari"][0][0])[0],
+                       INCALZIRE_S, SFARSIT_S, intregi=True)
+
+
+def acoperire_ns(r: dict) -> float:
+    """În etapele N–S, pe ieșirea Dacia est vin aproape numai vehicule de pe Magheru, pe care camera virtuală le prinde, chiar dacă pe toată ora pierde vehiculele venite de pe Dacia vest."""
+    ns = ns_din_stari(r)
+    in_ns = lambda m: sum(int(((np.asarray(m, float) >= a) & (np.asarray(m, float) < b)).sum()) for a, b in ns)       # noqa: E731
+    muchie = in_ns(r["iesiri"]["dacia_est"])
+    return in_ns(r.get("zone", {}).get("ieșire", {}).get("dacia_est", ())) / muchie if muchie else 0.0
+
+
 def alege_citiri(rez: list[dict]) -> dict[tuple[str, str], str]:
     """De unde se citesc momentele geamănului pe fiecare capăt: din camera virtuală („zonă”), cu același cod ca la cameră, doar unde ea prinde aproape toate vehiculele pe toate seed-urile; altfel, de pe muchie. La o probă, citirea e cea a bazei."""
     out = {}
     for rol, brate in (("intrare", BRATE), ("ieșire", IESIRI)):
         for b in brate:
             out[(rol, b)] = "zonă" if rez and min(acoperire_virtuala(r, rol, b) for r in rez) >= ACOPERIRE_VIRTUALA else "muchie"
+    out[CITIRE_NS] = "zonă" if rez and min(acoperire_ns(r) for r in rez) >= ACOPERIRE_VIRTUALA else "muchie"
     return out
 
 
@@ -558,6 +577,9 @@ def rezumat_citiri(rez: list[dict], citiri: dict) -> str:
     """Pe fiecare capăt: de unde se citește, cât prinde camera virtuală și cât diferă momentele pe același vehicul."""
     parti = []
     for (rol, b), c in citiri.items():
+        if rol not in CHEI_CAPAT:
+            parti.append(f"{rol} {b}: {c}, {np.mean([acoperire_ns(r) for r in rez]):.0%}")
+            continue
         d = diferenta_muchie_zona(rez, rol, b)
         parti.append(f"{rol} {b}: {c}, {np.mean([acoperire_virtuala(r, rol, b) for r in rez]):.0%}" + (f", muchie − zonă p50 {np.median(d):+.1f} s" if len(d) else ""))
     return "; ".join(parti)
@@ -910,14 +932,14 @@ def pietoni_camera(zi: str, a: float, b: float, zone: list) -> np.ndarray | None
     return r
 
 
-def pietoni_numarati(zi: str, de_la: pd.Timestamp, pana_la: pd.Timestamp) -> float | None:
-    """Pietonii de pe zebra de ieșire de pe Dacia est, pe oră, din numărătorile măsurii noi: și cei care așteaptă la bordură, pe care detectorul îi pierde pe zebră. Doar numere agregate."""
+def pietoni_numarati(zi: str, de_la: pd.Timestamp, pana_la: pd.Timestamp, treceri: tuple = ("trecere_dacia_est_iesire",)) -> float | None:
+    """Pietonii de pe trecerile date, pe oră, din numărătorile măsurii noi, pe persoane: și cei care așteaptă la bordură, pe care detectorul îi pierde pe zebră. Doar numere agregate."""
     cale = COUNTS_COR_DIR / f"numaratori_{zi}.csv"
     if not cale.exists():
         return None
     d = pd.read_csv(cale)
     t = pd.to_datetime(d["inceput"])
-    return float(d[(d["tip"] == "pietoni") & (d["destinatie"] == "trecere_dacia_est_iesire") & (t >= de_la) & (t < pana_la)]["numar"].sum()) * 3600 / (pana_la - de_la).total_seconds()
+    return float(d[(d["tip"] == "pietoni") & d["destinatie"].isin(treceri) & (t >= de_la) & (t < pana_la)]["numar"].sum()) * 3600 / (pana_la - de_la).total_seconds()
 
 
 def factori_folositi() -> dict:
@@ -932,7 +954,8 @@ def date_camera(stem: str, zone: list) -> dict:
     zi, a_ts, b_ts = fereastra_scenariu(stem)
     a = pd.Timestamp(a_ts, tz="Europe/Bucharest").timestamp()
     real = camera_zi(zi, zone)
-    fact = json.loads((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8"))["factor_corectie_detectie"]
+    cerere = json.loads((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8"))
+    fact = cerere["factor_corectie_detectie"]
     mij = pd.Timestamp(a_ts) + pd.Timedelta(seconds=(INCALZIRE_S + SFARSIT_S) / 2)
     fereastra = lambda m: m[(m >= a + INCALZIRE_S) & (m < a + SFARSIT_S)] - a     # noqa: E731
     m = real["intrari"]["magheru"]
@@ -944,7 +967,7 @@ def date_camera(stem: str, zone: list) -> dict:
     od = json.loads((DEMAND_DIR / stem / "od_estimat.json").read_text(encoding="utf-8"))["rezumat"]
     return {"stem": stem, "zi": zi, "a": a, "f": {b: factor_brat(fact[b], mij) for b in BRATE}, "intrari": {b: fereastra(v) for b, v in real["intrari"].items()}, "iesiri": {b: fereastra(v) for b, v in real["iesiri"].items()},
             "intrari_ora": {b: int(((real["intrari"][b] >= a) & (real["intrari"][b] < a + SFARSIT_S)).sum()) for b in BRATE},
-            "val": val, "sc": np.array([v[0] for v in val]), "ns": ns, "ev": ev, "detalii": detalii, "pietoni": None if pc is None else pc - a, "pietoni_pe_ora": pietoni_numarati(zi, a_ts, b_ts),
+            "val": val, "sc": np.array([v[0] for v in val]), "ns": ns, "ev": ev, "detalii": detalii, "pietoni": None if pc is None else pc - a, "pietoni_pe_ora": pietoni_numarati(zi, a_ts, b_ts), "persoane_pe_ora": pietoni_numarati(zi, a_ts, b_ts, ("trecere_dacia_est_iesire", "trecere_dacia_est_intrare")), "f_pietoni": float(cerere.get("factor_pietoni_masurati", 1.0)),
             "miscari": [(o, d, to - a, td - a) for o, d, to, td in real["miscari"]], "od": od}
 
 
@@ -1004,12 +1027,27 @@ def _alatura(*parti) -> str:
     return "; ".join(p for p in parti if p)
 
 
+def fara_etapa(momente: np.ndarray, etape: np.ndarray, marja: float = 5.0) -> np.ndarray:
+    """Momentele din afara etapelor date, cu marja de degajare de la sfârșitul lor."""
+    m = np.asarray(momente, float)
+    afara = np.ones(len(m), bool)
+    for a, b in etape:
+        afara &= ~((m >= a) & (m < b + marja))
+    return m[afara]
+
+
+def parte_cu_origine(cam: dict, b: str) -> float:
+    """Pe o ieșire, ce parte din momentele camerei sunt vehicule urmărite de la o intrare."""
+    n = len(cam["iesiri"].get(b, ()))
+    return sum(1 for _, d, _, td in cam["miscari"] if d == b and INCALZIRE_S <= td < SFARSIT_S) / n if n else 0.0
+
+
 def nota_iesire_camera(cam: dict, b: str) -> str:
     """Pe o ieșire, ce parte din momentele camerei sunt vehicule urmărite de la o intrare; restul sunt traiectorii pierdute sau apărute pe drum, deci un rând de aici măsoară și detectorul."""
     n = len(cam["iesiri"].get(b, ()))
     if not n:
         return "în cameră, nicio trecere pe această ieșire"
-    return f"în cameră, {sum(1 for _, d, _, td in cam['miscari'] if d == b and INCALZIRE_S <= td < SFARSIT_S) / n:.0%} din momentele ieșirii au și origine"
+    return f"în cameră, {parte_cu_origine(cam, b):.0%} din momentele ieșirii au și origine" + ("; prea puține: rândul ar măsura detectorul" if parte_cu_origine(cam, b) < MIN_PARTE_CU_ORIGINE else "")
 
 
 def rulari_cu_probleme(rez: list[dict], parte: float = 0.20) -> dict[int, str]:
@@ -1114,8 +1152,7 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
     P = [fereastra(r["pietoni"]) for r in rez]
     S = [sc if strategie == "REAL" else np.array([v[0] for v in valuri_in_fereastra(MI["magheru"][k])]) for k in range(K)]      # același semafor, același ceas
     info = info_v2()
-    NS = [ferestre_in(intervale_etape([(s, u - t) for (t, s), (u, _) in zip(r["stari"], r["stari"][1:] + [(SFARSIT_S + 900, "")])], info["green_states"], min(info["pietoni"]["treceri"]), r["stari"][0][0])[0],
-                      INCALZIRE_S, SFARSIT_S, intregi=True) for r in rez]
+    NS = [ns_din_stari(r) for r in rez]
     ns_c, ev_c = ferestre_in(cam["ns"], INCALZIRE_S, SFARSIT_S), ferestre_in(cam["ev"], INCALZIRE_S, SFARSIT_S)
     muchii = cicluri_din(sc)
     profile = {}
@@ -1156,7 +1193,9 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
                 T.rand("B", "timp", masura, v, c, mod="relativ", zgomot=zc, nota=f"{nota}; geamănul nu are traiectorii", prag=prag, verdict="peste prag")
                 continue
             T.rand("B", "timp", masura, v, c, mod="relativ", zgomot=zc, z_seed=zs, nota=_alatura(f"{nota}; eroarea proiecției {pro:.0%}", f"{lipsa} din {K} seed-uri fără valoare, sub {MIN_TRAIECTORII} traiectorii" if lipsa else ""), prag=prag, lipsa=lipsa)
-    for tip, brate, momente_cam, momente_g, cheie_prag in (("intrare", BRATE, cam["intrari"], MI, "decalaj_intrare"), ("ieșire", IESIRI, cam["iesiri"], ME, "decalaj_iesire")):
+    intrari_forma = {**cam["intrari"], "dacia_vest": fara_etapa(cam["intrari"]["dacia_vest"], cam["ns"])}      # pe Dacia vest, în N–S, adnotatorii văd 0–7% din vehicule, detectorul 19–37%: fragmente
+    nota_fragmente = "fără momentele camerei din N–S: la adnotatori sunt 0–7% din vehicule, la detector 19–37%, deci fragmente"
+    for tip, brate, momente_cam, momente_g, cheie_prag in (("intrare", BRATE, intrari_forma, MI, "decalaj_intrare"), ("ieșire", IESIRI, cam["iesiri"], ME, "decalaj_iesire")):
         for b in brate:
             mc = momente_cam[b]
             pc = forma(profil(mc, sc))       # pe forme și la intrări: fără factor, deci rândul nu depinde de el
@@ -1168,27 +1207,33 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
             prag = T.prag(f"{cheie_prag}:{b}", max(prag_din_zgomot(zc, zs), 1.0))
             nota = _alatura(f"abaterea formei: {l_0:.3f} la 0 s, {l_dl:.3f} la {dl:+d} s", f"la marginea plajei de ±{PLAJA_DECALAJ_S} s" if abs(dl) >= PLAJA_DECALAJ_S else "",
                             f"prag ≥ plaja de ±{PLAJA_DECALAJ_S} s, deci rândul n-ar putea pica" if prag[0] >= PLAJA_DECALAJ_S else "", f"fiecare seed singur: {singure}" if K > 1 else "",
-                            nota_citire(tip, b), nota_iesire_camera(cam, b) if tip == "ieșire" else "")
+                            nota_citire(tip, b), nota_iesire_camera(cam, b) if tip == "ieșire" else "", nota_fragmente if (tip, b) == ("intrare", "dacia_vest") else "")
             T.rand("B", "decalaj", f"decalaj de aliniere, s: {tip} {b}", fara or [dl], 0.0, geaman=float(dl), mod="absolut", zgomot=zc, z_seed=zs, nota=nota, prag=prag, minmax=True, citire=citiri[(tip, b)],
-                   verdict="neinformativ" if prag[0] >= PLAJA_DECALAJ_S else None)
+                   verdict="neinformativ" if prag[0] >= PLAJA_DECALAJ_S or (tip == "ieșire" and parte_cu_origine(cam, b) < MIN_PARTE_CU_ORIGINE) else None)
     ce = cam["iesiri"]["dacia_est"]
     ns_intregi = ferestre_in(cam["ns"], INCALZIRE_S, SFARSIT_S, intregi=True)
-    nc_iesire = nota_citire("ieșire", "dacia_est")
+    citire_ns = citiri.get(CITIRE_NS, citiri[("ieșire", "dacia_est")])
+    if citire_ns == "zonă":     # în N–S, camera virtuală prinde vehiculele de aici, chiar dacă pe toată ora se citește pe muchie
+        nc_iesire = f"în N–S, citit pe zonă, ca în cameră: prinde {np.mean([acoperire_ns(r) for r in rez]):.0%}; muchia e la zebră, deci după așteptare"
+        I_ns = [fereastra(np.asarray(r.get("zone", {}).get("ieșire", {}).get("dacia_est", ()), float)) for r in rez]
+    else:
+        nc_iesire = nota_citire("ieșire", "dacia_est")
+        I_ns = [x["dacia_est"] for x in I]
     mat = matrice_ferestre(ce, ns_intregi)
     pc_ns = forma(mat.mean(0))
-    pg_ns = [matrice_ferestre(x["dacia_est"], n).mean(0) for x, n in zip(I, NS)]
+    pg_ns = [matrice_ferestre(x, n).mean(0) for x, n in zip(I_ns, NS)]
     fg_ns = [forma(p) for p in pg_ns]
     zc, zs = zgomot_reesantionare(mat, rng, normat=True), zgomot_seeduri(fg_ns)
     T.rand("B", "iesire_ns", "ieșirea Dacia est în etapa N–S: forma pe 10 s (camera, geamăn: veh/ciclu)", [p.sum() for p in pg_ns], float(mat.sum(1).mean()), abateri=[abatere_profil(pc_ns, p) for p in fg_ns],
            abatere=abatere_profil(pc_ns, forma(np.mean(pg_ns, axis=0))), mod="abatere", zgomot=zc, z_seed=zs, prag=T.prag("iesire_ns:forma", prag_din_zgomot(zc, zs)), nota=_alatura("nu depinde de urmărirea de la origine; fără factori", nc_iesire),
-           profil_g=forma(np.mean(pg_ns, axis=0)), citire=citiri[("ieșire", "dacia_est")])
+           profil_g=forma(np.mean(pg_ns, axis=0)), citire=citire_ns)
     profile["ieșire dacia_est, în N–S"] = (pc_ns, forma(np.mean(pg_ns, axis=0)))
     vc = per_etapa(ce, ns_intregi, PIETONI_DE_LA_S, PIETONI_PANA_LA_S)
-    vg = [per_etapa(x["dacia_est"], n, PIETONI_DE_LA_S, PIETONI_PANA_LA_S) for x, n in zip(I, NS)]
+    vg = [per_etapa(x, n, PIETONI_DE_LA_S, PIETONI_PANA_LA_S) for x, n in zip(I_ns, NS)]
     v = [float(u.mean()) if len(u) else _GOL for u in vg]
     c = float(vc.mean()) if len(vc) else _GOL
     zc, zs = zgomot_statistica(vc, np.mean, rng), zgomot_seeduri_scalar(v) / c if c else _GOL
-    T.rand("B", "iesire_24_60", f"ieșirea Dacia est, s {PIETONI_DE_LA_S}–{PIETONI_PANA_LA_S} din N–S: nivel, veh/etapă", v, c, mod="relativ", zgomot=zc, z_seed=zs, prag=T.prag("iesire_24_60:nivel", prag_din_zgomot(zc, zs)), nota=_alatura("fără factori", nc_iesire), citire=citiri[("ieșire", "dacia_est")])
+    T.rand("B", "iesire_24_60", f"ieșirea Dacia est, s {PIETONI_DE_LA_S}–{PIETONI_PANA_LA_S} din N–S: nivel, veh/etapă", v, c, mod="relativ", zgomot=zc, z_seed=zs, prag=T.prag("iesire_24_60:nivel", prag_din_zgomot(zc, zs)), nota=_alatura("fără factori", nc_iesire), citire=citire_ns)
     pc = cam["pietoni"]
     if pc is not None:
         nc = per_etapa(pc, ns_intregi, PIETONI_DE_LA_S, PIETONI_PANA_LA_S)
@@ -1199,23 +1244,24 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
         zc = zgomot_statistica(ind, lambda i: regresie(nc[i.astype(int)], vc[i.astype(int)])["panta"], rng, relativ=False)
         zs = zgomot_seeduri_scalar(v)
         T.rand("B", "iesire_24_60", f"ieșirea Dacia est, s {PIETONI_DE_LA_S}–{PIETONI_PANA_LA_S} din N–S: pantă față de pietoni, veh/pieton", v, panta_c, mod="absolut", zgomot=zc, z_seed=zs, pieton=True,
-               prag=T.prag("iesire_24_60:panta", prag_din_zgomot(zc, zs)), nota=f"pietoni pe etapă: cameră {nc.mean() if len(nc) else _GOL:.1f}, geamăn {np.mean([a.mean() if len(a) else _GOL for a in ng]):.1f}", citire=citiri[("ieșire", "dacia_est")])
+               prag=T.prag("iesire_24_60:panta", prag_din_zgomot(zc, zs)), nota=f"pietoni pe etapă: cameră {nc.mean() if len(nc) else _GOL:.1f}, geamăn {np.mean([a.mean() if len(a) else _GOL for a in ng]):.1f}; detectorul pierde mulțimile", citire=citire_ns)
         vazuti = len(pc) * 3600 / n_s
         if cam["pietoni_pe_ora"] is not None:       # numărătoarea e pe sferturi, deci pe toată ora; geamănul, la fel
-            c, v = cam["pietoni_pe_ora"], [int(((np.asarray(r["pietoni"], float) >= 0) & (np.asarray(r["pietoni"], float) < SFARSIT_S)).sum()) * 3600 / SFARSIT_S for r in rez]
-            sursa = f"camera: numărătoarea orei, cu cei care așteaptă la bordură; ambele pe toată ora; doar traversările văzute: {vazuti:.0f} pe oră"
+            n_p, f_p = cam.get("persoane_pe_ora", cam["pietoni_pe_ora"]), cam.get("f_pietoni", 1.0)
+            c, v = n_p * f_p, [int(((np.asarray(r["pietoni"], float) >= 0) & (np.asarray(r["pietoni"], float) < SFARSIT_S)).sum()) * 3600 / SFARSIT_S for r in rez]
+            sursa = f"camera: persoanele numărate pe Dacia est, {n_p:.0f} pe oră, × factorul din referință, {f_p:g}; ambele pe toată ora; detectorul singur, doar pe zebra de ieșire: {cam['pietoni_pe_ora']:.0f}, iar traversările văzute: {vazuti:.0f} pe oră"
         else:
             c, v = vazuti, [len(x) * 3600 / n_s for x in P]
             sursa = f"fără numărătoarea orei (data/counts_cor): doar traversările văzute, pe {INCALZIRE_S}–{SFARSIT_S} s, la fel la geamăn; fără cei care așteaptă la bordură"
         zc, zs = zgomot_statistica(matrice_valuri(pc, sc).sum(1), np.mean, rng), zgomot_seeduri_scalar(v) / c if c else _GOL
-        T.rand("B", "pietoni_zebra", "pietoni pe zebra Dacia est, pe oră", v, c, mod="relativ", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:numar", prag_din_zgomot(zc, zs, PRAGURI["pietoni_detectie"])), nota=f"fără factori; {sursa}")
+        T.rand("A", "pietoni_zebra", "pietoni pe zebra Dacia est, pe oră", v, c, mod="relativ", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:numar", prag_din_zgomot(zc, zs, PRAGURI["pietoni_detectie"])), nota=sursa)
         mat = matrice_valuri(pc, sc)
         pc_h = forma(mat.mean(0))
         pg_h = [forma(profil(x, s)) for x, s in zip(P, S)]
         medie_h = forma(np.mean([profil(x, s) for x, s in zip(P, S)], axis=0))
         zc, zs = zgomot_reesantionare(mat, rng, normat=True), zgomot_seeduri(pg_h)
         T.rand("B", "pietoni_zebra", "pietoni pe zebra Dacia est: histograma intrărilor pe 10 s", camera=_GOL, abateri=[abatere_profil(pc_h, p) for p in pg_h], abatere=abatere_profil(pc_h, medie_h),
-               mod="abatere", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:histograma", prag_din_zgomot(zc, zs)), nota="se raportează, chiar dacă pică", profil_g=medie_h)
+               mod="abatere", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:histograma", prag_din_zgomot(zc, zs)), nota="se raportează, chiar dacă pică; detectorul pierde începutul mulțimilor, deci histograma camerei e întârziată și lățită", profil_g=medie_h)
         profile["pietoni zebra dacia_est"] = (pc_h, medie_h)
     else:
         T.rand("B", "pietoni_zebra", "pietoni pe zebra Dacia est, pe oră", nota="fără jurnalul local al pietonilor", pieton=True)
@@ -1237,8 +1283,8 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
     # C. Ceasul și ferestrele
     for tip, brate, normat in (("intrare", BRATE, False), ("ieșire", IESIRI, True)):
         for b in brate:
-            mc, ms = (cam["intrari"][b], B) if tip == "intrare" else (cam["iesiri"][b], I)
-            scala = f[b] if tip == "intrare" else 1.0
+            mc, ms = (intrari_forma[b], B) if tip == "intrare" else (cam["iesiri"][b], I)
+            scala = f[b] * len(cam["intrari"][b]) / max(len(mc), 1) if tip == "intrare" else 1.0      # factorul e pe tot brațul, cu fragmente cu tot
             mat = matrice_valuri(mc, sc) * scala
             pc = forma(mat.mean(0)) if normat else mat.mean(0)
             pg = [profil(x[b], s) for x, s in zip(ms, S)]
