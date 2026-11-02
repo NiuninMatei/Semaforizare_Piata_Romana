@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+
+<!-- generated on 2026-11-02 00:20:39.561248 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<configuration>
+    <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate.rou.xml"/>
+    <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-11-01_linistit_x0_8\viraje_truck.xml"/>
+    <output-file value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-11-01_linistit_x0_8\truck.rou.xml"/>
+    <mismatch-output value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\zi_2026-11-01_linistit_x0_8\mismatch_truck.xml"/>
+    <prefix value="truck_"/>
+    <attributes value="type=&quot;truck&quot; departLane=&quot;best&quot;"/>
+    <turn-max-gap value="25"/>
+    <optimize value="full"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+<!-- begin="2700.0" end="3600.0" -->
+    <vehicle id="truck_2700_0" depart="3358.79" type="truck" departLane="best">
+        <route edges="119241030#1 119241030#2 669726791#1 448266581#1 448266581#2 668307642#1 130848152#1 130848152#2 778823271 448266586 448266584 130848151 28869538#0 119238385#0 119238385#1 119238385#2 119238385#3 119238385#4 119238385#5 119238385#6 119238385#7 119238385#8"/>
+    </vehicle>
+</routes>
