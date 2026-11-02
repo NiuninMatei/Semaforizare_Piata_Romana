@@ -4,7 +4,7 @@ Străzile, benzile, trecerile și semafoarele sunt aceleași. Se schimbă, din `
   - câteva legături între benzi, pe care OSM nu le spune și netconvert le-a ghicit;
   - cât de departe văd șoferii la legăturile care cedează trecerea;
   - momentele în care au verde trecerile de pietoni, măsurate din cameră;
-  - tipurile de vehicule: `tau` egal cu pasul de simulare, ca să nu apară coliziuni, distanța minimă și imperfecțiunea, calibrate pe cameră.
+  - tipurile de vehicule: `tau` egal cu pasul de simulare, ca să nu apară coliziuni, și distanța față de pietoni la care un șofer mai poate trece.
 
 Scrie, lângă cele vechi: sumo/net/romana_v2.net.xml, network_info_v2.json, tls_actuated_v2.add.xml, sumo/demand/vtypes_v2.add.xml, vtypes_indisciplinat_v2.add.xml.
 
@@ -89,7 +89,7 @@ def actuated(stari: list[str], pietoni: dict, galben: int) -> None:
 def tipuri(cfg: dict) -> None:
     v = cfg["tipuri_vehicule"]
 
-    def schimba(sursa: Path, tinta: str, sigma: str, nota: str) -> None:
+    def schimba(sursa: Path, tinta: str, nota: str) -> None:
         t = sursa.read_text(encoding="utf-8")
 
         def vtype(m: re.Match) -> str:
@@ -97,17 +97,16 @@ def tipuri(cfg: dict) -> None:
             if re.search(r'id="([^"]+)"', s).group(1) not in VEHICULE:
                 return s
             s = re.sub(r'tau="[0-9.]+"', f'tau="{v["tau"]}"', s)
-            s = re.sub(r'sigma="[0-9.]+"', f'sigma="{sigma}"', s)
-            return s.replace("<vType ", f'<vType minGap="{v["minGap"]}" jmCrossingGap="{v["jmCrossingGap"]}" lcKeepRight="{v["lcKeepRight"]}" ', 1)
+            return s.replace("<vType ", f'<vType jmCrossingGap="{v["jmCrossingGap"]}" ', 1)
 
         t = re.sub(r"<!--.*?-->\s*", "", t, flags=re.S)
         t = re.sub(r"<vType [^>]*>", vtype, t)
         t = t.replace("<additional>", f"<!-- {nota} -->\n<additional>", 1)
         (DEMAND_DIR / tinta).write_text(t, encoding="utf-8", newline="\n")
 
-    nota = "Geamănul corectat (§ 6.5): tau egal cu pasul de simulare, distanța minimă și imperfecțiunea calibrate pe debitul de descărcare din cameră. Generat de romana.network.retea_v2."
-    schimba(DEMAND_DIR / "vtypes.add.xml", v["fisier"], v["sigma"], nota)
-    schimba(DEMAND_DIR / "vtypes_indisciplinat.add.xml", v["fisier_indisciplinat"], v["sigma_indisciplinat"], nota)
+    nota = "Geamănul corectat (§ 6.5): tau egal cu pasul de simulare și jmCrossingGap ales pe cameră; restul, ca în vtypes.add.xml. Generat de romana.network.retea_v2."
+    schimba(DEMAND_DIR / "vtypes.add.xml", v["fisier"], nota)
+    schimba(DEMAND_DIR / "vtypes_indisciplinat.add.xml", v["fisier_indisciplinat"], nota)
 
 
 def main() -> None:

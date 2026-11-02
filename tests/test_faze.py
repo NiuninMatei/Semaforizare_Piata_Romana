@@ -1,0 +1,148 @@
+"""Programul pietonilor de pe geamănul corectat (§ 6.5) și semaforul real, rejucat din cameră."""
+import unittest
+
+import numpy as np
+
+from romana.control.faze import MINIM_PIETONI_S, SemaforCuPietoni, etape_plan, fara_treceri, program_fix, segmente_etapa
+from romana.control.rejucat import ETAPA_SCURTA_S, TRANZITII_S, VERDE_MIN_S, cicluri, valuri
+
+TRECERI = {4, 5}
+#        vehicule  treceri
+N_S = "GGrr" + "Gr"
+E_V = "rrGG" + "rG"
+PIETONI = "rrrr" + "GG"
+SCURTA = "rrrr" + "rr"
+STARI = [N_S, E_V, PIETONI, SCURTA]
+CONFIG = {"treceri": [4, 5], "intarziere_s": {"0": 24}, "degajare_s": 6, "faza_scurta": 3}
+
+
+class TrafficLight:
+    def __init__(self):
+        self.stare = None
+
+    def setRedYellowGreenState(self, _id, s):
+        self.stare = s
+
+    def getControlledLanes(self, _id):
+        return []
+
+    def getControlledLinks(self, _id):
+        return []
+
+
+class Traci:
+    def __init__(self):
+        self.trafficlight = TrafficLight()
+
+
+class TestProgram(unittest.TestCase):
+    def test_pietonii_pornesc_dupa_vehicule_si_se_opresc_inaintea_lor(self):
+        seg = segmente_etapa(N_S, 72, TRECERI, 24, 6)
+        self.assertEqual([d for _, d in seg], [24, 42, 6])
+        self.assertEqual([s[4] for s, _ in seg], ["r", "G", "r"])
+        self.assertTrue(all(s[:4] == N_S[:4] for s, _ in seg))
+
+    def test_o_etapa_scurta_lasa_pietonilor_macar_un_minim(self):
+        seg = segmente_etapa(N_S, 20, TRECERI, 24, 6)
+        verde = sum(d for s, d in seg if s[4] == "G")
+        self.assertEqual(verde, MINIM_PIETONI_S)
+        self.assertEqual(sum(d for _, d in seg), 20)
+
+    def test_programul_fix_are_tranzitii_doar_cand_se_schimba_vehicule(self):
+        faze = program_fix(STARI, [(0, 72), (1, 48), (3, 3)], CONFIG)
+        self.assertEqual(sum(d for _, d in faze), 72 + 48 + 3 + 15)
+        for (a, _), (b, _) in zip(faze, faze[1:] + faze[:1]):      # între două faze nu dispare niciun verde de vehicul fără galben
+            for x, y in zip(a[:4], b[:4]):
+                self.assertFalse(x == "G" and y == "r", (a, b))
+
+    def test_trecerile_conflictuale_nu_au_verde_cu_vehiculele_lor(self):
+        for s, _ in program_fix(STARI, [(0, 72), (1, 48), (3, 3)], CONFIG):
+            self.assertFalse(s[4] == "G" and s[2] == "G")
+            self.assertFalse(s[5] == "G" and s[0] == "G")
+
+    def test_a_treia_etapa_e_scurta_doar_sub_verdele_minim(self):
+        self.assertEqual(etape_plan([72, 48, 3], CONFIG)[-1], (3, 3))
+        self.assertEqual(etape_plan([36, 28, 12], CONFIG)[-1], (2, 12))
+        self.assertEqual(len(etape_plan([60, 40, 0], CONFIG)), 2)
+
+
+class TestSemafor(unittest.TestCase):
+    def setUp(self):
+        self.tr = Traci()
+        self.c = SemaforCuPietoni(self.tr, "x", STARI, list("abcd"), CONFIG)
+
+    def treci(self, n):
+        for _ in range(n):
+            self.c.tick()
+
+    def test_pornire_fara_pietoni_apoi_cu_ei(self):
+        self.assertEqual(self.tr.trafficlight.stare, fara_treceri(N_S, TRECERI))
+        self.treci(24)
+        self.assertEqual(self.tr.trafficlight.stare, N_S)
+
+    def test_inaintea_galbenului_pietonii_au_timp_sa_termine(self):
+        self.treci(30)
+        self.c.request(1)
+        self.assertEqual(self.tr.trafficlight.stare, fara_treceri(N_S, TRECERI))     # vehiculele au verde, pietonii nu
+        self.assertEqual(self.c.stage, "green")
+        self.assertFalse(self.c.can_switch())
+        self.treci(5)
+        self.assertEqual(self.c.stage, "green")
+        self.treci(1)
+        self.assertEqual(self.c.stage, "yellow")
+        self.assertEqual(self.tr.trafficlight.stare[:2], "yy")
+        self.treci(3)
+        self.assertEqual(self.c.stage, "red")
+        self.treci(2)
+        self.assertEqual((self.c.stage, self.c.current), ("green", 1))
+        self.assertEqual(self.tr.trafficlight.stare, E_V)
+
+    def test_fara_pietoni_pe_trecere_nu_mai_e_degajare(self):
+        self.treci(12)                 # sub cele 24 s, pietonii n-au primit verde
+        self.c.request(1)
+        self.assertEqual(self.c.stage, "yellow")
+
+    def test_verdele_minim_ramane(self):
+        self.treci(5)
+        self.c.request(1)
+        self.assertEqual(self.c.stage, "green")
+        self.assertIsNone(self.c.ramas_degajare)
+
+    def test_etapa_scurta_nu_are_verde_minim(self):
+        self.treci(30)
+        self.c.request(3)
+        self.treci(6 + 5)
+        self.assertEqual(self.c.current, 3)
+        self.treci(3)
+        self.c.request(0)
+        self.assertEqual(self.c.stage, "yellow")
+
+    def test_dupa_verdele_maxim_nu_merge_la_o_faza_fara_dozare(self):
+        self.c.current = 2
+        self.c.green_time = self.c.max_green
+        self.c.request(2)
+        self.assertEqual(self.c.target, 0)
+
+
+class TestRejucat(unittest.TestCase):
+    def test_valuri(self):
+        m = np.r_[np.arange(0, 20.0, 2), 100 + np.arange(0, 30.0, 3), 200.0, 201.0]
+        self.assertEqual([(a, b, n) for a, b, n in valuri(m)], [(0.0, 18.0, 10), (100.0, 127.0, 10)])
+
+    def test_ciclurile_urmeaza_valurile_si_umplu_golurile(self):
+        val = [(0.0, 70.0, 80), (140.0, 215.0, 80), (280.0, 350.0, 80), (700.0, 770.0, 80)]
+        c = cicluri(val, 900, 140.0, 72.0)
+        self.assertEqual(c[0], (70.0, 140.0))
+        self.assertEqual(c[1], (75.0, 140.0))
+        self.assertGreaterEqual(sum(d for _, d in c), 900)
+        for g, d in c:                 # orice ciclu încape: verde N–S, tranziții, etapa scurtă și verdele minim pe E–V
+            self.assertGreaterEqual(d - g - TRANZITII_S - ETAPA_SCURTA_S, VERDE_MIN_S)
+
+    def test_un_val_prea_apropiat_se_lipeste_de_cel_dinainte(self):
+        val = [(0.0, 60.0, 80), (70.0, 90.0, 20), (150.0, 220.0, 80)]
+        c = cicluri(val, 200, 150.0, 72.0)
+        self.assertEqual(c[0], (90.0, 150.0))
+
+
+if __name__ == "__main__":
+    unittest.main()
