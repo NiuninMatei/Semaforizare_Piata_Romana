@@ -18,7 +18,9 @@ Referință metodă: Furness (1965); Ortúzar & Willumsen, „Modelling Transpor
 """
 from __future__ import annotations
 
+import math
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -55,6 +57,44 @@ def furness(seed: np.ndarray, rows: np.ndarray, cols: np.ndarray | None, iters: 
     return m
 
 
+def inaltime_soare(moment: datetime, latitudine: float = 44.4478, longitudine: float = 26.0979) -> float:
+    """Înălțimea Soarelui deasupra orizontului, în grade, la Piața Romană; `moment` e ora locală a Bucureștiului, ca în numărători."""
+    an = moment.year
+    ultima_duminica = lambda luna: max(d for d in (datetime(an, luna, z) for z in range(25, 32)) if d.weekday() == 6)
+    vara = ultima_duminica(3).replace(hour=3) <= moment < ultima_duminica(10).replace(hour=4)
+    ore_utc = moment.hour + moment.minute / 60 + moment.second / 3600 - (3 if vara else 2)
+    g = 2 * math.pi / 365 * (moment.timetuple().tm_yday - 1 + (ore_utc - 12) / 24)
+    decl = (0.006918 - 0.399912 * math.cos(g) + 0.070257 * math.sin(g) - 0.006758 * math.cos(2 * g) + 0.000907 * math.sin(2 * g)
+            - 0.002697 * math.cos(3 * g) + 0.00148 * math.sin(3 * g))
+    ecuatia_min = 229.18 * (0.000075 + 0.001868 * math.cos(g) - 0.032077 * math.sin(g) - 0.014615 * math.cos(2 * g) - 0.040849 * math.sin(2 * g))
+    unghi_orar = math.radians((ore_utc * 60 + ecuatia_min + 4 * longitudine) / 4 - 180)
+    lat = math.radians(latitudine)
+    return math.degrees(math.asin(math.sin(lat) * math.sin(decl) + math.cos(lat) * math.cos(decl) * math.cos(unghi_orar)))
+
+
+def factor_brat(valoare, moment) -> float:
+    """Factorul unui braț: un număr sau, în măsura nouă, {"zi": ..., "intuneric": ...}, după cum e Soarele deasupra orizontului sau nu."""
+    if isinstance(valoare, dict):
+        return float(valoare["zi" if inaltime_soare(pd.Timestamp(moment).to_pydatetime()) > -0.833 else "intuneric"])
+    return float(valoare)
+
+
+def aplica_cote_fixe(seed: np.ndarray, origins: list[str], arms: list[str], cote: dict) -> np.ndarray:
+    """Cote măsurate direct, pe care traiectoriile nu le pot arăta: pentru un braț de intrare, destinația → fracțiunea din intrările lui. Restul
+    destinațiilor își păstrează proporțiile dintre ele."""
+    seed = seed.copy()
+    for o, fixe in cote.items():
+        i, rand = origins.index(o), seed[origins.index(o)].copy()
+        rest = [j for j, d in enumerate(arms) if d not in fixe]
+        total = rand.sum() or 1.0
+        rand_rest = rand[rest].sum()
+        for j in rest:
+            seed[i, j] = (1 - sum(fixe.values())) * total * (rand[j] / rand_rest if rand_rest > 0 else 1 / len(rest))
+        for d, c in fixe.items():
+            seed[i, arms.index(d)] = c * total
+    return seed
+
+
 def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     """OD (veh/h) pentru un interval de numărare."""
     arms = list(cfg["brate"])
@@ -62,7 +102,8 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     # factorul de corecție a detecției: un număr pentru toate brațele sau, măsurat pe numărătoarea de referință,
     # câte unul pe fiecare braț de intrare (raportul referință / numărătoarea automată)
     corr_cfg = cfg.get("factor_corectie_detectie", 1.0)
-    corr_in = np.array([corr_cfg.get(o, 1.0) if isinstance(corr_cfg, dict) else corr_cfg for o in origins], dtype=float)
+    moment = sub["inceput"].iloc[0] if isinstance(corr_cfg, dict) and len(sub) else None
+    corr_in = np.array([factor_brat(corr_cfg.get(o, 1.0), moment) if isinstance(corr_cfg, dict) else corr_cfg for o in origins], dtype=float)
     corr = float(np.mean(corr_in))
     def get(tip, o=None, d=None):
         m = sub["tip"] == tip
@@ -79,6 +120,8 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     prior = np.array([[cfg["prior_destinatii"].get(o, {}).get(d, 0.0) for d in arms] for o in origins])
     prior = prior / prior.sum(axis=1, keepdims=True)
     seed = obs + cfg.get("pondere_prior", 2.0) * prior / hours
+    if cfg.get("cote_fixe"):
+        seed = aplica_cote_fixe(seed, origins, arms, cfg["cote_fixe"])
     use_cols = None
     measured_in, measured_out = rows.sum(), cols.sum()
     if cfg.get("echilibrare") == "doar_intrari":
