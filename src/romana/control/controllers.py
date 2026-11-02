@@ -15,7 +15,8 @@ from pathlib import Path
 import numpy as np
 
 from romana.common import NET_DIR, load_json
-from romana.control.signals import SignalController, all_red_between, romana_green_phases, yellow_between
+from romana.control.faze import faze_romana
+from romana.control.signals import SignalController, all_red_between, yellow_between
 
 SAT_FLOW = 1800  # veh/h/bandă verde (valoare uzuală HCM)
 
@@ -79,7 +80,7 @@ class FixedWebster:
         self.plan = webster_plan(od_json)
 
     def reset(self, traci):
-        greens, _ = romana_green_phases()
+        greens, _ = faze_romana(traci)
         idx = fixed_phase_indices()
         phases = []
         for k, i in enumerate(idx):
@@ -108,7 +109,7 @@ class MaxPressure:
     name = "max_pressure"
 
     def reset(self, traci):
-        greens, names = romana_green_phases()
+        greens, names = faze_romana(traci)
         self.ctrl = SignalController(traci, "romana", greens, names)
         # doar fazele planului real: fazele „fără dozare” au cele mai multe legături verzi, deci
         # presiunea cea mai mare, dar umplu inelul și blochează piața (verificat: blocaj total)
@@ -151,7 +152,7 @@ class RLPolicy:
         self.ctrls = []
         for tid in self.controlled:
             if tid == "romana":
-                g, n = romana_green_phases()
+                g, n = faze_romana(traci)
             else:
                 traci.trafficlight.setProgram(tid, "0")
                 g, n = green_phases_from_program(traci, tid), None

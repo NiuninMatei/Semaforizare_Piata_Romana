@@ -1,0 +1,42 @@
+{
+  "_descriere": "Geamănul corectat (§ 6.5). Rețeaua rămâne cea din OpenStreetMap: aceleași străzi, benzi, treceri și semafoare. Se schimbă doar ce OSM nu spune și ce a ghicit netconvert: câteva legături între benzi, cât de departe văd șoferii la legăturile care cedează trecerea, și în ce etapă au verde trecerile de pietoni.",
+  "legaturi_sterse": [
+    {"from": "778823266", "to": "778823265", "fromLane": "2", "toLane": "1"},
+    {"from": "778823265", "to": "119238384#0", "fromLane": "1", "toLane": "1"},
+    {"from": "778823265", "to": "119238384#0", "fromLane": "2", "toLane": "2"},
+    {"from": "448266586", "to": "1214130905", "fromLane": "0", "toLane": "2"},
+    {"from": "778823265", "to": "448792279#0", "fromLane": "2", "toLane": "0"},
+    {"from": "448266586", "to": "448266584", "fromLane": "0", "toLane": "0"},
+    {"from": "448266586", "to": "448266584", "fromLane": "0", "toLane": "1"},
+    {"from": "448266586", "to": "448266584", "fromLane": "0", "toLane": "2"},
+    {"from": "778823271", "to": "448266586", "fromLane": "0", "toLane": "0"}
+  ],
+  "legaturi_noi": [
+    {"from": "778823266", "to": "778823265", "fromLane": "1", "toLane": "1"},
+    {"from": "778823266", "to": "778823265", "fromLane": "2", "toLane": "2"},
+    {"from": "778823265", "to": "448792279#0", "fromLane": "1", "toLane": "0"},
+    {"from": "448266586", "to": "1214130905", "fromLane": "1", "toLane": "2"},
+    {"from": "778823270", "to": "119238380#0", "fromLane": "1", "toLane": "1"},
+    {"from": "448266586", "to": "448266584", "fromLane": "1", "toLane": "2"},
+    {"from": "778823271", "to": "448266586", "fromLane": "0", "toLane": "1"}
+  ],
+  "_legaturi": "Dacia vest spre inel și inelul spre ieșirea Dacia est: netconvert a lăsat câte o singură bandă, iar traiectoriile din cameră arată două fire de vehicule pe aceste mișcări. Virajul la dreapta de pe Magheru spre Dacia est (muchia 778823270) rămăsese fără nicio legătură mai departe: banda ducea nicăieri, iar vehiculele care o nimereau blocau și banda vecină, până la teleportare.",
+  "vizibilitate_m": 40,
+  "_vizibilitate_m": "Cu valoarea implicită, 4,5 m, un șofer care cedează trecerea încetinește aproape până la oprire chiar dacă nu vine nimeni; pe Dacia est, debitul ieșea la jumătate din cel măsurat de cameră.",
+  "treceri_in_etape": {
+    "0": {"treceri": [55, 59], "cedeaza": [35, 36, 47, 48]},
+    "1": {"treceri": [57, 58], "cedeaza": [41, 42, 43, 44, 45, 46]}
+  },
+  "_treceri_in_etape": "Numere de legătură. Trecerile de pe ieșiri aveau verde doar în faza de pietoni. Ca la orice semafor de oraș, ele au acum verde și în etapa în care pe ieșirea respectivă vin doar vehicule care virează, iar acestea cedează trecerea: 55 Dacia est, 59 Dacia vest în etapa N–S; 57 Magheru, 58 Lascăr Catargiu în etapa E–V.",
+  "tipuri_vehicule": {
+    "fisier": "vtypes_v2.add.xml",
+    "fisier_indisciplinat": "vtypes_indisciplinat_v2.add.xml",
+    "tau": "1.0",
+    "sigma": "0.2",
+    "sigma_indisciplinat": "0.3",
+    "minGap": "1.5",
+    "jmCrossingGap": "2",
+    "lcKeepRight": "0"
+  },
+  "_tipuri_vehicule": "tau rămâne valoarea implicită din SUMO, 1,0 s, egală cu pasul de simulare: sub el apar coliziuni. Distanța minimă și imperfecțiunea sunt calibrate pe debitul de descărcare măsurat de cameră pe Magheru. jmCrossingGap: un șofer pleacă după ce pietonul i-a eliberat banda, la cel puțin 2 m, nu abia după ce a ajuns aproape de capătul zebrei."
+}

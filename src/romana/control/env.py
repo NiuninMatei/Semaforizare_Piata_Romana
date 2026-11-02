@@ -29,8 +29,9 @@ import gymnasium as gym
 import numpy as np
 
 from romana.common import NET_DIR, sumo_home
+from romana.control.faze import faze_romana
 from romana.control.signals import (SignalController, action_maps, green_phases_from_program, observation,
-                                    romana_green_phases, upstream_groups, upstream_halting, waiting_total)
+                                    upstream_groups, upstream_halting, waiting_total)
 
 def _import_libsumo():
     """libsumo (mult mai rapid pentru antrenare). Pe Windows, PYTHONPATH-ul setat de instalatorul
@@ -71,10 +72,12 @@ def start_sumo(sumocfg: Path, seed: int, gui: bool = False, extra: list[str] | N
     add = ET.parse(sumocfg).getroot().find("input/additional-files")
     vtypes = [str(sumocfg.parent / a) for a in add.get("value").split(",")] if add is not None else \
         [str(sumocfg.parent / "../demand/vtypes.add.xml")]
+    # geamănul corectat (§ 6.5) are programele lui, lângă rețeaua lui
+    actuated = "tls_actuated_v2.add.xml" if ET.parse(sumocfg).getroot().find("input/net-file").get("value").endswith("_v2.net.xml") else "tls_actuated.add.xml"
     cmd = [sumo_binary("sumo-gui" if gui else "sumo"), "-c", str(sumocfg), "--seed", str(seed),
            "--no-step-log", "true", "--no-warnings", "true", "--duration-log.disable", "true",
            "--time-to-teleport", "300", "--additional-files",
-           ",".join(vtypes + [str(NET_DIR / "tls_actuated.add.xml")])]
+           ",".join(vtypes + [str(NET_DIR / actuated)])]
     if gui:
         cmd += ["--start", "--delay", "50"]
     cmd += extra or []
@@ -121,7 +124,7 @@ class RomanaEnv(gym.Env):
         self.ctrls = []
         for tid in self.controlled:
             if tid == "romana":
-                greens, names = romana_green_phases()
+                greens, names = faze_romana(traci)
             else:
                 traci.trafficlight.setProgram(tid, "0")
                 greens, names = green_phases_from_program(traci, tid), None
