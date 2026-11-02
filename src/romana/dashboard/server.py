@@ -37,10 +37,26 @@ def index():
     return send_file(STATIC / "index.html")
 
 
+def _ultimele_comenzi(n: int = 5) -> list[dict]:
+    """Ultimele comenzi din jurnal, cea mai nouă la urmă; o linie stricată se sare."""
+    p = LIVE / "comenzi.jsonl"
+    try:
+        linii = p.read_text(encoding="utf-8").splitlines()[-n:]
+    except OSError:
+        return []
+    out = []
+    for linie in linii:
+        try:
+            out.append(json.loads(linie))
+        except json.JSONDecodeError:
+            pass
+    return out
+
+
 @app.get("/api/state")
 def state():
     return jsonify({"camera": _read("state.json"), "simulare": _read("sim_state.json"),
-                    "comanda": _read("command.json"), "ora_server": time.time()})
+                    "comanda": _read("command.json"), "comenzi": _ultimele_comenzi(), "ora_server": time.time()})
 
 
 @app.get("/api/frame.jpg")
@@ -87,6 +103,8 @@ def command():
             return jsonify({"eroare": "fază invalidă"}), 400
     LIVE.mkdir(parents=True, exist_ok=True)
     (LIVE / "command.json").write_text(json.dumps(cmd), encoding="utf-8")
+    with open(LIVE / "comenzi.jsonl", "a", encoding="utf-8") as f:      # istoricul, ca să poată fi citit și după o reîncărcare a paginii
+        f.write(json.dumps(cmd) + "\n")
     return jsonify({"ok": True, **cmd})
 
 

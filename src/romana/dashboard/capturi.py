@@ -26,11 +26,11 @@ RE_FONTURI = re.compile(r'<link rel="preconnect"[^>]*>\s*<link href="https://fon
 
 SIMULARI = r"""
 <script>
-window.__netOK=true; window.__stare=null;
+window.__netOK=true; window.__stare=null; window.__posts=[];
 window.fetch=async(url,opt)=>{
   if(!window.__netOK) throw new TypeError("Failed to fetch");
   if(String(url).includes("/api/state")) return {ok:true,status:200,json:async()=>JSON.parse(JSON.stringify(window.__stare))};
-  if(String(url).includes("/api/command")) return {ok:true,status:200,json:async()=>({ok:true})};
+  if(String(url).includes("/api/command")){ window.__posts.push(JSON.parse(opt.body)); return {ok:true,status:200,json:async()=>({ok:true})}; }
   throw new TypeError("necunoscut");
 };
 const __FAZE=%FAZE%;
@@ -52,7 +52,7 @@ STARI = {
     "confirmare": 'cere("fix");',
     "confirmare_ai": 'cere("ai");',
     "manual": 'const m=JSON.parse(JSON.stringify(__SIM)); m.mod="manual"; m.mod_program=null; __st(__CAM,m); await actualizeaza();',
-    "manual_confirmare": 'const m=JSON.parse(JSON.stringify(__SIM)); m.mod="manual"; m.mod_program=null; __st(__CAM,m); await actualizeaza(); cere("manual",1);',
+    "manual_confirmare": 'const m=JSON.parse(JSON.stringify(__SIM)); m.mod="manual"; m.mod_program=null; __st(__CAM,m); await actualizeaza(); cere("manual",3);',
     "galben": 'const m=JSON.parse(JSON.stringify(__SIM)); m.etapa="yellow"; m.verde_s=12; __st(__CAM,m); await actualizeaza();',
     "rosu_degajare": 'const m=JSON.parse(JSON.stringify(__SIM)); m.etapa="red"; m.verde_s=14; __st(__CAM,m); await actualizeaza();',
     "ai_indisponibil": 'const m=JSON.parse(JSON.stringify(__SIM)); m.model_ai=false; __st(__CAM,m); await actualizeaza();',
@@ -85,11 +85,14 @@ def pagina(sursa: str, cod_stare: str) -> str:
 
 
 def randeaza(sursa: str, cod_stare: str, cale: Path, latime: int = 1366, inaltime: int = 1500, profil: Path | None = None) -> bool:
-    """O captură PNG cu Chrome fără fereastră, la prioritate scăzută, ca să nu încurce colectarea."""
+    """O captură PNG cu Chrome fără fereastră, la prioritate scăzută, ca să nu încurce colectarea. Pagina stă într-o ramă de lățimea cerută:
+    fereastra fără cadru are cel puțin 500 px, deci sub această lățime pagina s-ar așeza la 500 px, iar captura ar tăia-o."""
+    cale = cale.resolve()            # Chrome se blochează cu un dosar de profil dat relativ
     temp = cale.with_suffix(".html")
-    temp.write_text(pagina(sursa, cod_stare), encoding="utf-8")
+    rama = f"<!doctype html><meta charset='utf-8'><style>body{{margin:0}}iframe{{border:0;display:block}}</style><iframe width='{latime}' height='{inaltime}' srcdoc=\"{html.escape(pagina(sursa, cod_stare), quote=True)}\"></iframe>"
+    temp.write_text(rama, encoding="utf-8")
     cmd = [CHROME, "--headless=new", "--disable-gpu", f"--user-data-dir={profil or cale.parent / 'profil'}", "--hide-scrollbars", "--no-first-run",
-           "--no-default-browser-check", "--allow-file-access-from-files", "--virtual-time-budget=6000", f"--window-size={latime},{inaltime}", f"--screenshot={cale}", temp.as_uri()]
+           "--no-default-browser-check", "--allow-file-access-from-files", "--virtual-time-budget=6000", f"--window-size={max(latime, 500)},{inaltime}", f"--screenshot={cale}", temp.as_uri()]
     subprocess.run(cmd, capture_output=True, timeout=120, creationflags=getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0))
     temp.unlink(missing_ok=True)
     return cale.exists()
