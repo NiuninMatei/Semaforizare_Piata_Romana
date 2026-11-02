@@ -623,6 +623,49 @@ sensului lor: intrările pe banda spre piață, ieșirile pe banda dinspre piaț
 OSM proiectate în imagine. În prim-plan, proiecția OSM se abate, ca la calibrarea camerei, iar zonele urmează
 marcajele reale.
 
+**O măsură nouă, verificată pe întuneric (1–2.11.2026).** La verificarea bornei M1 a ieșit la iveală că, seara, Lascăr Catargiu
+aproape dispare din numărători, deși mașinile trec mai departe. Pe clipurile de seară din 1.11, zona veche a prins 21, 1 și 0
+vehicule în 5 minute, iar numărătoarea atentă a găsit 87,5, 127,5 și 113,5. Am numărat deci din nou, am căutat o zonă pe care
+detectorul o vede și pe întuneric și am ținut rezultatul separat, ca măsură nouă, cu prefixul `cor_`. Măsura veche nu s-a schimbat:
+renumărarea din 29.10 iese identică, octet cu octet, iar regulile celor două măsuri sunt în § 9.11.
+
+*Felii timp-spațiu.* Foile de contact merg bine, dar costă mult, iar pe un drum îndepărtat, noaptea, se văd doar lumini. De aceea
+s-a folosit și o a doua metodă, simplă: din fiecare cadru se ia aceeași linie de pixeli, așezată de-a curmezișul drumului, și
+liniile se pun una lângă alta, în ordinea timpului. Rezultă o singură imagine cu 30 de secunde din acel loc, iar un vehicul care
+trece apare ca o pată. Două linii alăturate arată și sensul de mers, după ordinea în care le atinge vehiculul. O astfel de felie
+costă ≈0,24 USD pe bucata de 30 s, față de ≈0,63 USD pentru foi. Pe Lascăr Catargiu, foile au dat cu 0–9% mai mult decât feliile,
+iar pe Magheru cu 13–22% mai mult, așa că referința finală rămâne pe foi, iar feliile sunt folosite acolo unde foile nu pot
+deosebi sensurile. Ca și pe 26.10, au numărat doi adnotatori AI independenți, iar la diferențe mari, un arbitru (§ 13).
+
+*Ce trece de fapt pe Lascăr Catargiu.* Numărătoarea a arătat că prin acel loc nu trece un singur flux, ci trei:
+
+- **banda principală**, spre Magheru, adică traficul pe care îl voiam;
+- **drumul de sus**, ≈26% din traficul bulevardului, pe care vehiculele se pierd din vedere spre Dacia vest; detectorul nu le poate
+  urmări până la capăt, deci în simulare destinația lor se dă ca o cotă fixă, declarată (§ 5.1);
+- **inelul dinspre est**, care circulă exact în fazele în care Catargiu are roșu. El nu e trafic de pe Catargiu și nu trebuie numărat
+  acolo. Vehiculele de pe inel sunt cam tot atâtea câte intră dinspre Dacia est, deci aproape nimeni din Dacia est nu iese spre
+  Catargiu, deși traiectoriile rupte par să arate altceva.
+
+Tabelul dă numărătoarea de referință pe cele trei clipuri din 1.11, vehicule în 5 minute. Primul clip e pe lumină, iar celelalte
+două sunt după apus, care a fost la ≈17:05.
+
+| Locul | 16:45 | 17:45 | 18:30 |
+|---|---|---|---|
+| Lascăr Catargiu, fără inel | 87,5 | 127,5 | 113,5 |
+| Inelul dinspre est | 29,5 | 38 | 26 |
+| Dacia est, intrări | 28,5 | 34 | 24 |
+| Dacia vest, intrări | 48 | 41 | 37 |
+| Magheru, intrări | 165 | 172,5 | 156,5 |
+
+*Zona nouă.* Pe traiectoriile din clipuri s-au încercat sistematic multe zone. Pe cea aleasă, numărarea automată prinde 76% din
+Catargiu și doar 9% din inel, iar pe cele 30 de bucăți de 30 s urmărește bine referința: corelația este 0,967. Prima variantă,
+cea din plan, prindea 53%, respectiv 29%, cu o corelație de 0,884. Tot atunci s-a îngustat și zona de pe Dacia vest. Zonele au fost
+fixate prin două commit-uri, `b6a0adc` și `573217f`, **înaintea** clipurilor de verificare, ca să nu poată fi potrivite după ele.
+Ele stau în `config/camera_v2.json`, iar `config/camera.json`, al măsurii vechi, a rămas neatins.
+
+*Pietonii, pe persoane.* Măsura nouă numără un pieton o singură dată, chiar dacă atinge mai multe zone de trecere. Pe 29.10, raportul
+dintre numărarea pe zone și cea pe persoane este 1,218.
+
 ### 4.4 Pietoni și bicicliști
 
 În simulare intră toți participanții la trafic pe care îi vede camera, nu doar vehiculele. Pietonii contează pentru
@@ -722,10 +765,12 @@ Măsurile luate sunt următoarele.
   imaginile au fost trimise spre analiză modelului, la Anthropic. Copii ale lor au rămas, ca imagini, în jurnalele
   locale ale sesiunilor Claude Code.
 * **Clipurile din săptămâna 1–7.11.2026.** Ca să se verifice numărarea pe întuneric și pe ploaie, s-au salvat din
-  nou, temporar, câteva clipuri de câteva minute. Regulile sunt aceleași: rămân doar pe calculatorul autorului, nu
-  intră în Git, nu se publică și se șterg după numărătoarea de referință. Foile de contact citite de adnotatori fac
-  același drum ca mai sus, inclusiv spre analiză la Anthropic. Acordul din 27.10.2026 (§ 14.1) nu pomenește clipurile:
-  salvarea lor temporară este decizia autorului, ca parte a analizei automate, și nu lărgește ce se publică.
+  nou, temporar, câteva clipuri de câte 5 minute. Regulile sunt aceleași: rămân doar pe calculatorul autorului, nu
+  intră în Git, nu se publică și se șterg după numărătoarea de referință, împreună cu foile de contact și cu feliile
+  timp-spațiu făcute din ele (§ 4.3). Foile și feliile citite de adnotatori ajung spre analiză la Anthropic, de data
+  aceasta în loturi, prin interfața de programare, cu o cheie păstrată în afara depozitului (`romana.vision.referinta_lot`).
+  Acordul din 27.10.2026 (§ 14.1) nu pomenește clipurile: salvarea lor temporară este decizia autorului, ca parte a
+  analizei automate, și nu lărgește ce se publică.
 * **Sondarea cu oameni.** Persoanele invitate de autor folosesc dispeceratul pe propriul calculator, într-o pagină publică (§ 8).
   Temeiul este consimțământul lor, conform art. 6 alin. (1) lit. a) GDPR, dat pe un ecran separat, și se pot opri oricând. Pagina nu
   cere nume, cont sau adresă de e-mail, nu folosește cookie-uri, iar o regulă de securitate a browserului oprește orice cerere pe care
@@ -1862,11 +1907,72 @@ la Piața Romană; de aceea, nu schimbă clasamentul strategiilor, dar măresc v
 
 ## 8. Interfața om-calculator: dispeceratul
 
-Dispeceratul este consola operatorului: pagina web din care un om urmărește intersecția și poate interveni. Scriptul
-`scripts\7_dashboard.bat` o deschide la `http://localhost:8050` în navigatorul web. Serverul paginii folosește Flask, o
-bibliotecă Python pentru aplicații web, iar pagina propriu-zisă este scrisă în HTML și JavaScript simplu, fără un cadru
-de dezvoltare pentru interfață (framework). Principiul de proiectare este **automatizarea conduce, omul
-supervizează**: sistemul schimbă singur fazele, iar operatorul vede ce vede algoritmul și poate prelua oricând controlul.
+**Pe scurt.** Dispeceratul este consola operatorului: o pagină web din care un om urmărește semaforul din simulare și poate
+interveni oricând. Sistemul schimbă singur fazele, iar omul supervizează; de aici principiul de proiectare, **automatizarea
+conduce, omul supervizează**. Comenzile ajung doar la semaforul din simulare, nu la semafoarele din piață, iar pagina spune
+asta tot timpul. Între bornele M1 și M2, pagina a fost evaluată, reparată și măsurată din nou: mai întâi cu evaluatori AI, apoi
+cu oameni.
+
+Scriptul `scripts\7_dashboard.bat` deschide pagina la `http://localhost:8050`. Serverul folosește Flask, o bibliotecă Python
+pentru aplicații web, iar pagina este scrisă în HTML și JavaScript simplu, fără un cadru de dezvoltare pentru interfață.
+
+![Dispeceratul, versiunea bornei M2](imagini/dispecerat_m2.jpg)
+
+*Figura 8.1 – Dispeceratul la borna M2, într-o stare fixată, cu date simulate pentru captură. Imaginea camerei lipsește din
+figură, fiindcă pagina o arată doar local (§ 4.5). Stânga: ce culoare are semaforul și ce cozi sunt. Mijloc: cine conduce și
+cum se schimbă. Dreapta: camera, cozile din ultimele 10 minute și traficul măsurat. Figura se reface cu
+`python -m romana.dashboard.capturi --versiune m2 --figura docs/imagini/dispecerat_m2.jpg`.*
+
+**Cine conduce.** Prima întrebare a unui operator este cine schimbă acum culorile. Pagina răspunde în cuvinte, deasupra
+butoanelor, iar modurile sunt împărțite după cine decide:
+
+| Numele de pe ecran | Cine decide | Ce face |
+|---|---|---|
+| Planul ales | un calculator, singur | planul fix 12/14/12, ales după testele din simulare (§ 9.10) |
+| Agent IA | un calculator, singur | un program antrenat în simulare alege faza, după cozi (§ 7) |
+| Plan de referință | un calculator, singur | planul fix 36/28/12, cu care s-au făcut comparațiile (§ 7.4) |
+| Presiune maximă | un calculator, singur | la câteva secunde dă verde direcției cu cele mai lungi cozi (§ 7.4) |
+| Comandă manuală | un om, de la acest ecran | omul alege direcția, iar galbenul și roșul de siguranță se aplică singure |
+
+**Evaluarea cu evaluatori AI.** Pagina a fost arătată unor evaluatori care nu știau ce defecte cunoaște autorul: 5 evaluatori
+euristici, fiecare cu alt rol, un evaluator care parcurge 5 sarcini de operator și un audit de accesibilitate. Rolurile sunt un
+specialist în ergonomie, un dispecer de trafic, cineva fără nicio pregătire în trafic, un specialist în erori și stări degradate
+și un specialist în vizualizarea datelor și în limba română. Ei au văzut capturi ale paginii în 15 stări fixate, de exemplu cu
+camera oprită, cu serverul căzut sau pe telefon, și codul ei. Apoi problemele au fost reunite într-o singură listă, iar câte doi
+verificatori independenți au confirmat sau au infirmat fiecare problemă. Severitatea urmează scara lui Nielsen: 1 cosmetică, 2
+minoră, 3 majoră și 4 catastrofală. Toți sunt modele de limbaj: găsesc ce se vede și ce se citește în cod, nu ce simte un om, așa
+că evaluarea nu înlocuiește sondarea cu oameni. Rezultatele complete, cu dovezi și recomandări, sunt în `docs/rezultate/evaluare_m1/` și
+`docs/rezultate/evaluare_m2/`.
+
+| | Versiunea M1 | Prima versiune reparată |
+|---|---|---|
+| Probleme după reunire | 44 | 50 |
+| Confirmate de verificatori | 43 | 48 |
+| Confirmate, cu severitatea cel puțin 3 | **8** | **1** |
+
+Numărul total spune puțin: verificatorii au confirmat aproape tot, inclusiv un artefact. Problema „pe telefon pagina e mai lată
+decât ecranul” din versiunea M1 era o greșeală a capturii: fereastra fără cadru a navigatorului are cel puțin 500 px. Am recitit-o
+și am infirmat-o abia după ce o confirmaseră amândoi verificatorii. De aceea, contează severitatea, nu numărul, iar o problemă
+se crede doar după ce e citită direct. Tot din această cauză, a doua listă nu arată că pagina s-a înrăutățit: e mai lungă fiindcă
+pagina are acum mai mult de spus și fiindcă evaluatorii găsesc mereu ceva.
+
+**Ce s-a reparat.** Cele 8 probleme de severitate 3 din versiunea M1 și remedierea lor:
+
+| Problema din versiunea M1 | Ce face pagina acum |
+|---|---|
+| La căderea serverului, pagina rămâne înghețată și pare activă | o alertă sus spune ce lipsește, iar valorile vechi devin palide și își arată vechimea |
+| Debitele rămân prezentate ca actuale după oprirea camerei | tabelul spune de când sunt datele; după un timp, valorile nu mai apar ca actuale |
+| Cu geamănul oprit, schema desenează o stare falsă | schema păstrează ultimele valori, palide și cu vechimea lor, în loc de semafoare roșii și cozi zero, iar comenzile se blochează până revine simularea |
+| Butonul „Agent AI” indisponibil arată ca unul activ | o comandă care nu se poate da spune motivul, pe ecran, nu doar într-o etichetă care apare la trecerea cu mausul |
+| O comandă eșuată nu primește niciun mesaj | comanda e urmărită pe ecran: se trimite, cerere primită, aplicată sau neaplicată, cu un istoric și cu „Reveniți la” |
+| Culorile cozilor se confundă cu luminile semaforului | cozile sunt o singură culoare, cu cifră și bară; semaforul are cercuri cu literele V, G și R; există legendă |
+| Modurile nu spun dacă decide calculatorul sau un om | modurile sunt grupate exact după această întrebare și au o frază de explicație |
+| Imaginea camerei nu se reconectează după o întrerupere | fluxul se reia singur |
+
+**Proba pe sistemul adevărat.** Capturile folosesc date simulate, deci reparațiile s-au încercat și cu geamănul și serverul reale,
+pe 2.11, la prioritate scăzută. Trecerea la planul de referință a fost aplicată în 2,2 s, iar comanda manuală a fost primită în
+2,1 s. Verdele cerut vine după galben, roșu și verdele minim al fazei curente. Între timp, pagina arată „urmează”. Colectarea a mers
+în acest timp cu 5,9 cadre/s.
 
 **Sondarea cu oameni (`romana.dashboard.sondare`).** O pagină publică, deschisă cu un link, fără instalare: în stânga un ghid care îi
 spune persoanei, pas cu pas, ce să facă, de la deschiderea ecranului până la închiderea lui, iar în dreapta dispeceratul. Laptopul care
@@ -1884,20 +1990,20 @@ iar locul în care s-a blocat cineva se vede doar din timpi și apăsări. Se da
 apropiate autorului separat de colegi, și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
 Pagina nu se deosebește de restul codului: `--pachet` o construiește în `docs/sondare` din sursele din `static/`, iar GitHub Pages o servește.
 
-*Captura dispeceratului se reface ca figură proprie, fără imaginea camerei.*
-
-Tabelul arată cum respectă dispeceratul euristicile lui Nielsen, regulile practice pentru interfețe ușor de folosit.
+Tabelul arată cum respectă dispeceratul cele 10 euristici ale lui Nielsen, regulile practice pentru interfețe ușor de folosit.
 
 | Euristica lui Nielsen[^nielsen] | Cum o aplică dispeceratul |
 |---|---|
-| Vizibilitatea stării sistemului | imaginea camerei, ca flux video continuu MJPEG, cu ≈6 cadre/s; indicatoare pentru fluxul camerei sau reconectarea lui, pentru numărul de cadre/s și pentru vechimea datelor; în modul „Program”, componenta care conduce semaforul în acel moment; faza curentă, etapa ei, adică verde, galben sau roșu de degajare, și secundele de verde; sursa cererii, „camera live” sau „profil de referință”; vehiculele și pietonii din simulare, pietonii care așteaptă la treceri și debitul de pietoni măsurat de cameră |
-| Potrivirea cu lumea reală | schema pieței păstrează orientarea reală a brațelor; apar numele străzilor, nu codurile lor interne din simulare; se folosesc culorile semaforului |
-| Controlul și libertatea utilizatorului | cinci moduri de control: Agent AI, Plan fix, Max-Pressure, Manual și Program pe cazuri de trafic; revenirea la AI sau la planul fix se face dintr-un clic, urmat de confirmare; tasta `Esc` anulează |
+| Vizibilitatea stării sistemului | în cuvinte, cine conduce, ce direcție are verde și de cât timp; imaginea camerei și indicatorul ei; vechimea datelor; o comandă dată e urmărită până când e aplicată |
+| Potrivirea cu lumea reală | schema păstrează orientarea reală a brațelor; numele străzilor, nu codurile din simulare; fazele poartă numele efectului lor, de exemplu „Verde pe Magheru și Lascăr Catargiu” |
+| Controlul și libertatea utilizatorului | cinci moduri, între care se trece dintr-un clic și o confirmare; `Esc` renunță; „Reveniți la” readuce modul de dinainte |
 | Consecvență și standarde | modurile au aceleași nume pe butoane, în confirmări și în starea afișată |
-| Prevenirea erorilor | schimbarea modului cere o confirmare explicită; în modul manual se alege doar faza verde, iar galbenul și roșul de siguranță se aplică automat |
-| Recunoaștere în loc de reamintire | în modul manual, fazele apar cu numele lor complet; culorile cozilor se înțeleg fără o legendă de memorat: albastru ≤ 8, galben 9–18, roșu > 18 vehicule |
-| Design estetic și minimalist | o singură culoare de accent, albastrul STB, iar restul în tonuri neutre; culorile semaforului apar doar pentru a arăta starea |
-| Ajutor pentru recunoașterea și remedierea erorilor | când lipsește o componentă, mesajul spune exact ce script trebuie pornit („Porniți scripts\2_viziune_live.bat”) |
+| Prevenirea erorilor | o schimbare de mod cere confirmare; în modul manual se alege doar direcția, iar galbenul și roșul se aplică singure; fazele cu risc de blocare stau separat și cer și ele confirmare |
+| Recunoaștere în loc de reamintire | butoanele își explică efectul; fazele apar cu numele complet; legenda stă lângă schemă |
+| Flexibilitate și eficiență în utilizare | tastele 1–5 aleg modul, iar cine nu le vrea le poate opri; un operator obișnuit nu trebuie să caute cu mausul |
+| Design estetic și minimalist | o singură culoare de accent, iar restul în tonuri neutre; culorile semaforului apar doar pentru a arăta starea |
+| Ajutor pentru recunoașterea și remedierea erorilor | alertele spun ce lipsește și ce trebuie pornit; o comandă blocată își spune motivul |
+| Ajutor și documentație | butonul „Ajutor” explică modurile, tastele și ce înseamnă culorile, fără a părăsi pagina |
 
 Sunt respectate și regulile lui Shneiderman[^shneiderman] despre răspunsul informativ al interfeței, încheierea clară
 a dialogului, prin confirmare urmată de starea actualizată, și sentimentul utilizatorului că el deține controlul.
@@ -3305,7 +3411,7 @@ fără a colecta date noi. Jurnalul de traiectorii păstrează drumurile vehicul
 | Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | mesajul `OK` la sfârșitul celor peste 460 de teste; cele ale sondării folosesc Node.js și Chrome, iar fără ele sunt sărite. Ele verifică numărarea pe origine și destinație (O–D), pietonii, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, recunoașterea prelucrării încetinite (`calitate`), veghea fluxului de cadre (`veghe`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi` |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | fereastra grafică a simulatorului, SUMO-GUI, cu ora de vârf din 21.10.2026; semaforul pieței este condus de agentul AI |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu semaforul pe planul fix |
-| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~2,5 min) | ora de prânz din 21.10, simulată cu planul fix, cu Max-Pressure, un algoritm clasic fără învățare, și cu agentul AI; rezultatele apar pe categorii de participanți. Pentru altă oră se adaugă `--scenariu` |
+| Comparație măsurată | `scripts\9_demo_comparatie.bat` (~4 min) | ora de prânz din 26.10, simulată cu planul de referință, cu planul ales 12/14/12, cu Presiune maximă, un algoritm clasic fără învățare, și cu agentul IA; rezultatele apar pe categorii de participanți. Pentru altă oră se adaugă `--scenariu` |
 | Evaluare scurtă | `.venv\Scripts\python -m romana.control.evaluate --seeds 1 --procese 4 --scenarii sumo\scenarios\zi_2026-10-21_varf.sumocfg` | tabelul din `docs\rezultate\rezultate.md`, refăcut. **Atenție:** comanda rescrie fișierele publicate `rezultate.md`, `rezultate_brute.csv` și graficul; versiunea publicată se readuce cu `git checkout -- docs/rezultate` (§ 11.8) |
 
 Comanda `set PYTHONPATH=src` îi arată lui Python unde se află codul proiectului. Ea este valabilă doar în fereastra în
@@ -3345,7 +3451,7 @@ aduc pe rând pe ecran, în ordinea în care circulă datele:
 | 1. Ochii sistemului | „Piata Romana – viziune artificiala” | participanții la trafic recunoscuți în imagine de YOLO11 și urmăriți de la un cadru la altul de ByteTrack; zonele de intrare, de ieșire și de trecere; debitele pe fiecare braț al pieței, în vehicule pe oră. Imaginea este redată fluent, cu o întârziere de 8 s |
 | 2. Geamănul digital | SUMO-GUI | replica fidelă a rețelei, după OpenStreetMap; cele 16 semafoare ale pieței, conduse împreună, ca un singur controler; traficul generat în timp real din debitele măsurate de cameră |
 | 3. Supravegherea umană | dispeceratul, http://localhost:8050 | imaginea camerei, ca flux video; faza curentă a semaforului, descrisă în cuvinte; cozile de pe brațe. Operatorul poate alege orice mod de control: „Agent AI”, „Plan fix”, „Max-Pressure”, „Manual” sau „Program pe cazuri de trafic”. Modul ales se aplică doar după „Confirm” |
-| 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` | aceeași oră reală de trafic, simulată cu planul fix, cu Max-Pressure și cu agentul AI |
+| 4. Dovada măsurată | `scripts\9_demo_comparatie.bat` | aceeași oră reală de trafic, simulată cu planul de referință, cu planul ales, cu Presiune maximă și cu agentul IA |
 | 5. Rezultate și limite | capitolele 9 și 10 | evaluarea oficială și limitările declarate ale proiectului |
 
 **Strategia recomandată** este „Program pe cazuri de trafic”, activă implicit la pornire. Programul împarte traficul
@@ -3813,7 +3919,11 @@ asistenți:
 * **aproape tot codul sursă**: viziunea artificială, estimarea cererii, rețeaua SUMO, mediul de învățare, agenții,
   strategiile de referință, evaluarea, geamănul digital, dispeceratul și testele;
 * colectarea și calibrarea datelor de pe cameră, inclusiv adnotarea clipurilor numărătorii de referință, făcută de
-  instanțe separate ale asistentului, care au lucrat independent una de alta (§ 4.3);
+  instanțe separate ale asistentului, care au lucrat independent una de alta (§ 4.3); din 2.11.2026, aceste instanțe rulează
+  în loturi, prin interfața de programare Claude, pe un credit promoțional de 200 USD al autorului, cu aceeași regulă de
+  independență;
+* evaluarea dispeceratului, făcută tot de instanțe separate, cu roluri diferite, și verificată de altele (§ 8); ele sunt
+  declarate peste tot ca evaluatori AI, nu ca oameni, iar testul cu oameni rămâne separat;
 * antrenarea și evaluarea modelelor;
 * diagnosticarea erorilor;
 * redactarea acestei documentații.
