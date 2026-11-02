@@ -1,6 +1,6 @@
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
-const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"planul cel mai apropiat de semaforul real, măsurat din cameră"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program antrenat în simulare, care alege faza după cozi"},
-  fix:{nume:"Plan de referință",cine:"un calculator, singur",text:"pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, 12 s pietoni"},max_pressure:{nume:"Presiune maximă",cine:"un calculator, singur",text:"verde pentru direcția cu cele mai lungi cozi"},
+const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"un plan fix dedus din cameră, la vârful zilei de luni 26.10"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program antrenat în simulare, care alege faza după cozi"},
+  fix:{nume:"Plan de referință",cine:"un calculator, singur",text:"pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni"},max_pressure:{nume:"Presiune maximă",cine:"un calculator, singur",text:"verde pentru direcția cu cele mai lungi cozi"},
   manual:{nume:"Comandă manuală",cine:"un om, de la acest ecran",text:"alegeți dumneavoastră direcția care primește verde"}};
 const ORDINE=["program","ai","fix","max_pressure","manual"];
 const SUBPROGRAM={plan_observat:"verde 72 s Magheru–Catargiu, apoi 48 s Dacia",plan_scurt:"verde 12 s Magheru–Catargiu, 14 s Dacia, 12 s pietoni",plan_mediu:"verde 16 s Magheru–Catargiu, 10 s Dacia, 12 s pietoni",plan_lung:"verde 46 s Magheru–Catargiu, 48 s Dacia, 12 s pietoni",
@@ -96,7 +96,7 @@ function butoane(s){
   document.querySelectorAll("[data-mod]").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.mod==mod); b.disabled=!!blocat||trimitem||(b.dataset.mod=="ai"&&!!s&&!s.model_ai) });
   $("revino").disabled=!!blocat||trimitem;
   $("d-ai").textContent=s&&!s.model_ai?"Indisponibil: pe acest calculator nu există un agent antrenat.":"Un program antrenat în simulare alege faza, după cozi."; $("d-ai").classList.toggle("motiv",!!s&&!s.model_ai);
-  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`Cel mai apropiat de semaforul real: ${SUBPROGRAM[s.mod_program]}.`:"Cel mai apropiat de semaforul real, măsurat din cameră.";
+  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`Dedus din cameră: ${SUBPROGRAM[s.mod_program]}.`:"Plan fix dedus din cameră, la vârful zilei de luni 26.10.";
   $("blocat").hidden=!blocat; $("blocat").textContent=blocat;
   $("manual").classList.toggle("vizibil",mod=="manual");
   faze(s);

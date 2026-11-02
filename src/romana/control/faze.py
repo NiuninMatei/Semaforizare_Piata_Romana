@@ -1,6 +1,6 @@
 """Fazele semaforului pieței pentru rețeaua încărcată în simulare: geamănul corectat are fișierul lui și programul pietonilor (§ 6.5).
 
-Programul pietonilor vine din cameră. Pe Dacia est, pietonii pornesc la ≈20 s după vehiculele de pe axa Magheru–Catargiu; pe Magheru, abia după sfârșitul
+Programul pietonilor vine din cameră. Pe Dacia est, pietonii pornesc la ≈28 s de la începutul valului de pe axa Magheru–Catargiu, iar la valurile foarte lungi mai târziu; pe Magheru, abia după sfârșitul
 etapei N–S. În ambele etape, pietonii primesc roșu cu câteva secunde înaintea vehiculelor, ca să termine traversarea până vine etapa următoare.
 """
 from __future__ import annotations

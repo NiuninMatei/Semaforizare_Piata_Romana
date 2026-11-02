@@ -147,7 +147,7 @@ footer a{color:inherit;text-decoration:underline}
       <p id="cine-acum"></p>
       <h3 id="t-auto">Decide un calculator, singur</h3>
       <div class="moduri" role="group" aria-labelledby="t-auto">
-        <button data-mod="program"><kbd>1</kbd><b>Planul observat</b><span id="d-program">Cel mai apropiat de semaforul real, măsurat din cameră.</span></button>
+        <button data-mod="program"><kbd>1</kbd><b>Planul observat</b><span id="d-program">Plan fix dedus din cameră, la vârful zilei de luni 26.10.</span></button>
         <button data-mod="ai"><kbd>2</kbd><b>Agent IA</b><span id="d-ai">Un program antrenat în simulare alege faza, după cozi.</span></button>
         <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni.</span></button>
         <button data-mod="max_pressure"><kbd>4</kbd><b>Presiune maximă</b><span>La câteva secunde, dă verde direcției cu cele mai lungi cozi.</span></button>
@@ -192,7 +192,7 @@ footer a{color:inherit;text-decoration:underline}
     </section>
     <section aria-labelledby="t-deb" id="p-deb">
       <h2 id="t-deb">Trafic măsurat de cameră</h2>
-      <p class="sub" style="margin:0 0 6px">Câte vehicule trec printr-o stradă într-o oră, nu câte așteaptă la semafor.</p>
+      <p class="sub" style="margin:0 0 6px">Câte vehicule trec printr-o stradă într-o oră, nu câte așteaptă la semafor. Numărări brute, fără corecții: Lascăr Catargiu apare de 2–3 ori sub traficul real.</p>
       <table><thead><tr><th>Intrare / ieșire</th><th class="n">intră în piață (vehicule/oră)</th><th class="n">ies din piață (vehicule/oră)</th></tr></thead><tbody id="debite"><tr><td colspan="3" class="sub">Așteptăm primele măsurători.</td></tr></tbody></table>
       <table id="t-pietoni" hidden style="margin-top:8px"><thead><tr><th>Pietoni care traversează</th><th class="n">persoane/oră</th></tr></thead><tbody id="pietoni"></tbody></table>
       <p class="sub" id="deb-nota" style="margin:6px 0 0"></p>
@@ -202,8 +202,8 @@ footer a{color:inherit;text-decoration:underline}
 <footer>Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, persoanele estompate, afișată doar local. Hartă și rețea: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0 OR GPL-2.0-or-later). <a href="https://github.com/NiuninMatei/Semaforizare_Piata_Romana">Cod sursă</a> (GNU AGPL v3).</footer>
 <script>
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
-const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"planul cel mai apropiat de semaforul real, măsurat din cameră"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program antrenat în simulare, care alege faza după cozi"},
-  fix:{nume:"Plan de referință",cine:"un calculator, singur",text:"pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, 12 s pietoni"},max_pressure:{nume:"Presiune maximă",cine:"un calculator, singur",text:"verde pentru direcția cu cele mai lungi cozi"},
+const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"un plan fix dedus din cameră, la vârful zilei de luni 26.10"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program antrenat în simulare, care alege faza după cozi"},
+  fix:{nume:"Plan de referință",cine:"un calculator, singur",text:"pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni"},max_pressure:{nume:"Presiune maximă",cine:"un calculator, singur",text:"verde pentru direcția cu cele mai lungi cozi"},
   manual:{nume:"Comandă manuală",cine:"un om, de la acest ecran",text:"alegeți dumneavoastră direcția care primește verde"}};
 const ORDINE=["program","ai","fix","max_pressure","manual"];
 const SUBPROGRAM={plan_observat:"verde 72 s Magheru–Catargiu, apoi 48 s Dacia",plan_scurt:"verde 12 s Magheru–Catargiu, 14 s Dacia, 12 s pietoni",plan_mediu:"verde 16 s Magheru–Catargiu, 10 s Dacia, 12 s pietoni",plan_lung:"verde 46 s Magheru–Catargiu, 48 s Dacia, 12 s pietoni",
@@ -299,7 +299,7 @@ function butoane(s){
   document.querySelectorAll("[data-mod]").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.mod==mod); b.disabled=!!blocat||trimitem||(b.dataset.mod=="ai"&&!!s&&!s.model_ai) });
   $("revino").disabled=!!blocat||trimitem;
   $("d-ai").textContent=s&&!s.model_ai?"Indisponibil: pe acest calculator nu există un agent antrenat.":"Un program antrenat în simulare alege faza, după cozi."; $("d-ai").classList.toggle("motiv",!!s&&!s.model_ai);
-  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`Cel mai apropiat de semaforul real: ${SUBPROGRAM[s.mod_program]}.`:"Cel mai apropiat de semaforul real, măsurat din cameră.";
+  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`Dedus din cameră: ${SUBPROGRAM[s.mod_program]}.`:"Plan fix dedus din cameră, la vârful zilei de luni 26.10.";
   $("blocat").hidden=!blocat; $("blocat").textContent=blocat;
   $("manual").classList.toggle("vizibil",mod=="manual");
   faze(s);

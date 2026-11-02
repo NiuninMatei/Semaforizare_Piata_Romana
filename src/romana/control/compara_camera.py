@@ -5,7 +5,7 @@ numără, secundă cu secundă, vehiculele care părăsesc muchia dinaintea sema
 aceeași oră, iar cele două cicluri se aliniază pe cea mai bună suprapunere.
 
 Exemplu:
-  python -m romana.control.compara_camera --zi 2026-10-26 --interval 15:00-16:00 --scenariu cor_zi_2026-10-26_varf --plan PLAN_71_40_12 \
+  python -m romana.control.compara_camera --zi 2026-10-26 --interval 15:00-16:00 --scenariu cor_zi_2026-10-26_varf --plan PLAN_72_48_3 \
       --out docs/rezultate/geaman_camera_2026-10-26.csv --figura docs/imagini/geaman_camera.png
 """
 from __future__ import annotations

@@ -57,7 +57,7 @@ def _run(args):
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scenariu", default=str(ROOT / "sumo" / "scenarios" / "cor_zi_2026-10-26_pranz.sumocfg"))
+    ap.add_argument("--scenariu", default=str(ROOT / "sumo" / "scenarios" / "cor_zi_2026-10-26_varf.sumocfg"))
     ap.add_argument("--seeds", type=int, default=5)
     ap.add_argument("--model", default=str(MODELS_DIR / "ppo_romana_cal.zip"))
     args = ap.parse_args(argv)
