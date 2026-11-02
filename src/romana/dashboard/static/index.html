@@ -149,7 +149,7 @@ footer a{color:inherit;text-decoration:underline}
       <div class="moduri" role="group" aria-labelledby="t-auto">
         <button data-mod="program"><kbd>1</kbd><b>Planul observat</b><span id="d-program">Cel mai apropiat de semaforul real, măsurat din cameră.</span></button>
         <button data-mod="ai"><kbd>2</kbd><b>Agent IA</b><span id="d-ai">Un program antrenat în simulare alege faza, după cozi.</span></button>
-        <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, 12 s pietoni.</span></button>
+        <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni.</span></button>
         <button data-mod="max_pressure"><kbd>4</kbd><b>Presiune maximă</b><span>La câteva secunde, dă verde direcției cu cele mai lungi cozi.</span></button>
       </div>
       <h3 id="t-man">Decide un om, de la acest ecran</h3>
@@ -158,7 +158,7 @@ footer a{color:inherit;text-decoration:underline}
       </div>
       <p id="blocat" hidden tabindex="-1"></p>
       <div class="manual" id="manual">
-        <p class="sub">Alegeți direcția. Schimbarea se face singură: galben 3 s, apoi roșu 2 s pe toate direcțiile, cât se eliberează intersecția. Verdele ales ține cel mult 90 s: apoi faza următoare primește verde 10–15 s, iar semaforul revine la alegerea dumneavoastră.</p>
+        <p class="sub">Alegeți direcția. Schimbarea se face singură: galben 3 s, apoi roșu 2 s pe toate direcțiile, cât se eliberează intersecția. Verdele ales ține cel mult ≈100 s: apoi faza următoare primește verde ≈20 s, iar semaforul revine la alegerea dumneavoastră.</p>
         <div class="faze" id="faze"></div>
         <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
       </div>
@@ -332,6 +332,8 @@ function notaIstoric(stare){
   pune($("istoric-lista"),istoric.slice(-5).reverse().map(i=>`<li>${ora(i.la)} · ${i.nume}: ${i.stare}</li>`).join(""));
   $("istoric-parte").hidden=!istoric.length;
 }
+// la preluare rămâne faza de acum; în tranziție, cea spre care se merge; etapa scurtă nu se poate cere, deci de acolo se merge pe Magheru–Catargiu
+function fazaDePreluat(s){ const f=s.etapa=="green"||s.faza_tinta===undefined?s.faza:s.faza_tinta; return f<FAZE_CLARE.length?f:0 }
 function numeComanda(mod,faza){ return mod=="manual"&&faza!==undefined?(FAZE_CLARE[faza]||`faza ${faza}`):(MODURI[mod]?.nume||mod) }
 async function trimite(mod,faza){
   const la=Date.now(), id=++nrCereri, nume=numeComanda(mod,faza), aceasta={id,mod,faza,la,etapa:"se trimite"};
@@ -339,7 +341,7 @@ async function trimite(mod,faza){
   cerere=aceasta; istoric.push({id,la,nume,stare:"se trimite"}); notaIstoric();
   inchide(); rezultat(`Se trimite: ${nume}…`);
   const inapoi=document.activeElement; butoane(sim);   // cât se trimite, butoanele stau dezactivate, ca două comenzi să nu se încurce
-  const corp={mod}; if(mod=="manual") corp.faza=faza??(sim?sim.faza:0);
+  const corp={mod}; if(mod=="manual") corp.faza=faza??(sim?fazaDePreluat(sim):0);
   const ramas=()=>sim?` Conduce în continuare „${MODURI[sim.mod]?.nume||sim.mod}”.`:"";
   let stare="se aplică", text=`Cerere primită: ${nume}. Așteptăm simularea…`, cls;
   try{

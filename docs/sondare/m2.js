@@ -129,6 +129,8 @@ function notaIstoric(stare){
   pune($("istoric-lista"),istoric.slice(-5).reverse().map(i=>`<li>${ora(i.la)} · ${i.nume}: ${i.stare}</li>`).join(""));
   $("istoric-parte").hidden=!istoric.length;
 }
+// la preluare rămâne faza de acum; în tranziție, cea spre care se merge; etapa scurtă nu se poate cere, deci de acolo se merge pe Magheru–Catargiu
+function fazaDePreluat(s){ const f=s.etapa=="green"||s.faza_tinta===undefined?s.faza:s.faza_tinta; return f<FAZE_CLARE.length?f:0 }
 function numeComanda(mod,faza){ return mod=="manual"&&faza!==undefined?(FAZE_CLARE[faza]||`faza ${faza}`):(MODURI[mod]?.nume||mod) }
 async function trimite(mod,faza){
   const la=Date.now(), id=++nrCereri, nume=numeComanda(mod,faza), aceasta={id,mod,faza,la,etapa:"se trimite"};
@@ -136,7 +138,7 @@ async function trimite(mod,faza){
   cerere=aceasta; istoric.push({id,la,nume,stare:"se trimite"}); notaIstoric();
   inchide(); rezultat(`Se trimite: ${nume}…`);
   const inapoi=document.activeElement; butoane(sim);   // cât se trimite, butoanele stau dezactivate, ca două comenzi să nu se încurce
-  const corp={mod}; if(mod=="manual") corp.faza=faza??(sim?sim.faza:0);
+  const corp={mod}; if(mod=="manual") corp.faza=faza??(sim?fazaDePreluat(sim):0);
   const ramas=()=>sim?` Conduce în continuare „${MODURI[sim.mod]?.nume||sim.mod}”.`:"";
   let stare="se aplică", text=`Cerere primită: ${nume}. Așteptăm simularea…`, cls;
   try{

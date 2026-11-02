@@ -30,13 +30,13 @@ from romana.bridge import build_demand
 from romana.common import COUNTS_COR_DIR, COUNTS_DIR, DEMAND_DIR, TRAJ_DIR, TRAJ_RAW_DIR, save_json
 
 
-def intervale_incetinite(zi: str) -> set[pd.Timestamp]:
+def intervale_incetinite(zi: str, prag_median: float | None = None) -> set[pd.Timestamp]:
     """Începuturile intervalelor de 15 min cu prelucrarea camerei încetinită, din jurnalul de traiectorii al zilei."""
     from romana.vision.calitate import incetinite, quality
     for d in (TRAJ_RAW_DIR, TRAJ_DIR):
         f = d / f"traiectorii_{zi}.jsonl.gz"
         if f.exists():
-            return {pd.Timestamp(f"{zi} {k}") for k, *_ in incetinite(quality(f)[1])}
+            return {pd.Timestamp(f"{zi} {k}") for k, *_ in incetinite(quality(f)[1], prag_median)}
     print(f"[scenarii_zi] fără jurnal de traiectorii pentru {zi}: nu se pot exclude intervalele încetinite")
     return set()
 
@@ -132,7 +132,11 @@ def main(argv=None) -> None:
     df = pd.read_csv(path, parse_dates=["inceput", "sfarsit"])
     prof = hourly_profile(df)
     profil = prof["echilibrat_veh_h"].dropna()        # profilul complet, pentru rezumat (debitele ferestrelor)
-    incet = intervale_incetinite(args.zi) if args.fara_incetinite else set()
+    if args.masura == "cor":            # măsura nouă nu folosește ferestre prelucrate încetinit (§ 9.11)
+        from romana.vision.calitate import PRAG_PAS_MEDIAN
+        incet = intervale_incetinite(args.zi, PRAG_PAS_MEDIAN)
+    else:
+        incet = intervale_incetinite(args.zi) if args.fara_incetinite else set()
     alese = intervale_date(args.zi, args.exclude)
     if incet:
         print("Intervale excluse (prelucrare încetinită):", ", ".join(f"{t:%H:%M}" for t in sorted(incet)))
@@ -143,7 +147,7 @@ def main(argv=None) -> None:
     windows = alege_ferestre(prof, args.zi)
     summary = {"zi": args.zi, "profil": {str(k): round(v, 1) for k, v in profil.items()},
                "ferestre": {k: [str(a), str(b)] for k, (a, b) in windows.items()}}
-    if args.fara_incetinite:
+    if args.fara_incetinite or args.masura == "cor":
         summary["incetinite_excluse"] = [str(t) for t in sorted(incet)]
     if alese:
         summary["intervale_excluse"] = [str(t) for t in sorted(alese)]

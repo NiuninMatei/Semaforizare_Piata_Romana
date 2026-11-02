@@ -39,6 +39,7 @@ from romana.vision.repara import citeste_inregistrari
 MISCARE_MIN = 0.02      # deplasarea netă minimă (coordonate normalizate) a unui vehicul „în mișcare”
 PAS_LUNG = 0.5          # s; un pas mai lung între două puncte înseamnă cadre pierdute (normal ≈0,17–0,2 s)
 PRAG_PASI_LUNGI = 0.4   # încetinit: cel puțin 40% dintre pași mai lungi de PAS_LUNG
+PRAG_PAS_MEDIAN = 0.22  # măsura nouă (§ 9.11): de la 0,22 s pasul median în sus, numărătoarea pe Magheru scade mult înainte să apară pași lungi (pe 26.10: 380–420 de vehicule pe sfert la pas ≤0,22 s, 292 la 0,22–0,26 s, 146 peste)
 
 
 def inregistrari(path: Path):
@@ -79,13 +80,13 @@ def pasi(interval: list) -> tuple[float, float]:
     return float(np.median(d)), float((d > PAS_LUNG).mean())
 
 
-def incetinite(per15: dict[str, list]) -> list[tuple]:
-    """Intervalele cu prelucrarea încetinită: (HH:MM, traiectorii, în mișcare, pasul median în s, pași lungi %)."""
+def incetinite(per15: dict[str, list], prag_median: float | None = None) -> list[tuple]:
+    """Intervalele cu prelucrarea încetinită: (HH:MM, traiectorii, în mișcare, pasul median în s, pași lungi %). Măsura veche se uită doar la pașii lungi; măsura nouă și la pasul median."""
     out = []
     for k in sorted(per15):
         n, mis = per15[k][:2]
         med, lungi = pasi(per15[k])
-        if n and lungi >= PRAG_PASI_LUNGI:
+        if n and (lungi >= PRAG_PASI_LUNGI or (prag_median is not None and med > prag_median)):
             out.append((k, n, mis, med, 100 * lungi))
     return out
 

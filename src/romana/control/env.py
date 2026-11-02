@@ -101,13 +101,12 @@ class RomanaEnv(gym.Env):
 
     def __init__(self, scenarios: list[Path], controlled: list[str] = ("romana",), delta_t: int = 5,
                  episode_s: int = 3600, warmup_s: int = 60, seed: int = 0, gui: bool = False,
-                 romana_phases: list[int] | None = None, upstream_obs: bool = False, pietoni_in_recompensa: bool = False):
+                 romana_phases: list[int] | None = None, upstream_obs: bool = False):
         super().__init__()
         self.scenarios = [Path(s) for s in scenarios]
         self.controlled = list(controlled)
         self.romana_phases = romana_phases   # fazele dintre care alege agentul (None = toate)
         self.upstream_obs = upstream_obs     # observația include cozile din amonte și vehiculele neintroduse
-        self.pietoni_in_recompensa = pietoni_in_recompensa   # și pietonii care așteaptă contează în recompensă (E15)
         self.delta_t, self.episode_s, self.warmup_s = delta_t, episode_s, warmup_s
         self.gui = gui
         self.rng = random.Random(seed)
@@ -172,8 +171,7 @@ class RomanaEnv(gym.Env):
         # vehiculele care nu pot intra în rețea (blocaj la margine) contează cât un vehicul oprit:
         # cu o penalizare mai mică, agentul coridor învăța să țină traficul în afara rețelei
         backlog = len(traci.simulation.getPendingVehicles())
-        pietoni = sum(self.ctrls[0].ped_waiting()) if self.pietoni_in_recompensa else 0
-        reward = -(halting + backlog + pietoni) / 100.0
+        reward = -(halting + backlog) / 100.0
         truncated = self.t >= self.episode_s
         info = {"oprite": halting, "timp": self.t}
         return self._obs(), float(reward), False, truncated, info

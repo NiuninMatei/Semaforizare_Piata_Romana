@@ -101,6 +101,10 @@ __st(__CAM,nou(man)); await actualizeaza(); rez.manual_text=$("manual").querySel
 __st(__CAM,nou(s=>{s.model_ai=false})); await actualizeaza(); rez.fara_ai_stil={opacitate:stilul(bt("ai")).opacity,culoare:stilul($("d-ai")).color}; __st(__CAM,__SIM); await actualizeaza();
 await new Promise(r=>{ $("cadru").addEventListener("error",r,{once:true}); $("cadru").src="data:,nimic" }); await actualizeaza();
 rez.imagine_cazuta={stare:text("s-cam"),gol:text("cadru-gol"),vizibil:vizibil($("cadru-gol")),punct:$("p-cam").className};
+__st(__CAM,nou(s=>{s.etapa="green";s.faza=5})); await actualizeaza(); rez.preluare=[fazaDePreluat(sim)];
+__st(__CAM,nou(s=>{s.etapa="yellow";s.faza=1;s.faza_tinta=5})); await actualizeaza(); rez.preluare.push(fazaDePreluat(sim));
+__st(__CAM,nou(s=>{s.etapa="yellow";s.faza=0;s.faza_tinta=1})); await actualizeaza(); rez.preluare.push(fazaDePreluat(sim));
+__st(__CAM,nou(s=>{s.etapa="green";s.faza=2})); await actualizeaza(); rez.preluare.push(fazaDePreluat(sim));
 const pre=document.createElement("pre"); pre.id="rez"; pre.textContent=JSON.stringify(rez); document.body.appendChild(pre);
 """
 
@@ -124,6 +128,9 @@ class TestPagina(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(cls.d, ignore_errors=True)
+
+    def test_la_preluare_se_trimite_o_faza_care_se_poate_cere(self):
+        self.assertEqual(self.r["preluare"], [0, 0, 1, 2])      # din etapa scurtă și spre ea: N–S; în tranziție, ținta; altfel, faza de acum
 
     def test_starea_normala_spune_cine_conduce(self):
         n = self.r["normal"]
@@ -381,7 +388,7 @@ class TestPagina(unittest.TestCase):
         self.assertTrue(self.r["risc_3"]["legenda"])
         self.assertTrue(self.r["legenda_fara_risc"])
         self.assertIn("Verdele principal e pe Dacia", self.r["risc_3"]["confirmare"])
-        self.assertIn("10–15 s", self.r["manual_text"])
+        self.assertIn("≈20 s", self.r["manual_text"])
 
     def test_schema_raspunde_unde_asteapta_cele_mai_multe(self):
         n = self.r["normal"]
@@ -429,6 +436,8 @@ class TestServer(unittest.TestCase):
     def test_comenzile_gresite_se_resping(self):
         self.assertEqual(self.c.post("/api/command", json={"mod": "altceva"}).status_code, 400)
         self.assertEqual(self.c.post("/api/command", json={"mod": "manual", "faza": "x"}).status_code, 400)
+        self.assertEqual(self.c.post("/api/command", json={"mod": "manual", "faza": 5}).status_code, 400)
+        self.assertEqual(self.c.post("/api/command", json={"mod": "manual", "faza": -1}).status_code, 400)
         self.assertFalse((self.d / "command.json").exists())
         self.assertFalse((self.d / "comenzi.jsonl").exists())
 

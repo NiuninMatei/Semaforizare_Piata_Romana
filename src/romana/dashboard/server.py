@@ -89,6 +89,9 @@ def video():
     return resp
 
 
+FAZE_MANUALE = 5       # etapa scurtă, a șasea afișată, nu se cere: ea vine singură din plan
+
+
 @app.post("/api/command")
 def command():
     body = request.get_json(force=True, silent=True) or {}
@@ -100,6 +103,8 @@ def command():
         try:
             cmd["faza"] = int(body.get("faza", 0))
         except (TypeError, ValueError):
+            return jsonify({"eroare": "fază invalidă"}), 400
+        if not 0 <= cmd["faza"] < FAZE_MANUALE:
             return jsonify({"eroare": "fază invalidă"}), 400
     LIVE.mkdir(parents=True, exist_ok=True)
     (LIVE / "command.json").write_text(json.dumps(cmd), encoding="utf-8")

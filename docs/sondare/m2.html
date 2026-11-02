@@ -151,7 +151,7 @@ footer a{color:inherit;text-decoration:underline}
       <div class="moduri" role="group" aria-labelledby="t-auto">
         <button data-mod="program"><kbd>1</kbd><b>Planul observat</b><span id="d-program">Cel mai apropiat de semaforul real, măsurat din cameră.</span></button>
         <button data-mod="ai"><kbd>2</kbd><b>Agent IA</b><span id="d-ai">Un program antrenat în simulare alege faza, după cozi.</span></button>
-        <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, 12 s pietoni.</span></button>
+        <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni.</span></button>
         <button data-mod="max_pressure"><kbd>4</kbd><b>Presiune maximă</b><span>La câteva secunde, dă verde direcției cu cele mai lungi cozi.</span></button>
       </div>
       <h3 id="t-man">Decide un om, de la acest ecran</h3>
@@ -160,7 +160,7 @@ footer a{color:inherit;text-decoration:underline}
       </div>
       <p id="blocat" hidden tabindex="-1"></p>
       <div class="manual" id="manual">
-        <p class="sub">Alegeți direcția. Schimbarea se face singură: galben 3 s, apoi roșu 2 s pe toate direcțiile, cât se eliberează intersecția. Verdele ales ține cel mult 90 s: apoi faza următoare primește verde 10–15 s, iar semaforul revine la alegerea dumneavoastră.</p>
+        <p class="sub">Alegeți direcția. Schimbarea se face singură: galben 3 s, apoi roșu 2 s pe toate direcțiile, cât se eliberează intersecția. Verdele ales ține cel mult ≈100 s: apoi faza următoare primește verde ≈20 s, iar semaforul revine la alegerea dumneavoastră.</p>
         <div class="faze" id="faze"></div>
         <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
       </div>

@@ -1,8 +1,9 @@
 """Semaforul real, rejucat din cameră (§ 6.5): etapele măsurate ciclu cu ciclu, în locul unui plan fix.
 
 Semaforul real își schimbă durata de la un ciclu la altul, deci un plan fix îl aproximează doar. Aici, începutul și sfârșitul fiecărui val de vehicule de pe
-Magheru, din jurnalul public al zilei, dau etapele: verde N–S cât a ținut valul, apoi E–V până la următorul val, minus tranzițiile și etapa scurtă. Unde camera nu vede
-un val (trafic slab, o pauză a colectării), se pune ciclul obișnuit al orei. Pe un scenariu al zilei, e referința cea mai apropiată de ce s-a întâmplat acolo.
+Magheru, din jurnalul public al zilei, dau etapele: verde N–S cât a ținut valul, apoi E–V până la următorul val, minus tranzițiile și etapa scurtă. Doar etapa N–S e măsurată;
+E–V e restul ciclului, tăiat la 60 s prin ipoteză. Unde camera nu vede un val (trafic slab, o pauză a colectării), se pune ciclul obișnuit al orei, deci la trafic slab programul e
+în cea mai mare parte presupus: `detalii["acoperire"]` spune ce parte din oră vine din valuri măsurate. Sub 80%, nu i se spune „semaforul real”.
 """
 from __future__ import annotations
 
@@ -57,24 +58,49 @@ def cicluri(val: list[tuple[float, float, int]], orizont: float, t_med: float, g
         urm = val[k][0] if k < len(val) else None
         cap = val[k - 1][1] if k > 0 and val[k - 1][0] >= t - 1 else None
         g = float(np.clip(cap - t, 25, 110)) if cap is not None else g_med
-        if urm is None or urm - t > 1.6 * t_med:
-            d = t_med                         # niciun val măsurat curând: ciclul obișnuit
+        while urm is not None and urm - t < g + TRANZITII_S + ETAPA_SCURTA_S + VERDE_MIN_S:      # val prea apropiat: rămâne în aceeași etapă N–S
+            k += 1
+            g = float(np.clip(val[k - 1][1] - t, 25, 110))
+            urm = val[k][0] if k < len(val) else None
+        if urm is None or urm - t > 1.6 * t_med:     # niciun val măsurat curând: ciclul obișnuit; se verifică după lipire, altfel o pauză a jurnalului devine un singur ciclu
+            d = t_med
             g = min(g, d - TRANZITII_S - ETAPA_SCURTA_S - VERDE_MIN_S)
         else:
-            while urm - t < g + TRANZITII_S + ETAPA_SCURTA_S + VERDE_MIN_S:      # val prea apropiat: rămâne în aceeași etapă N–S
-                k += 1
-                if k >= len(val):
-                    break
-                cap2 = val[k - 1][1]
-                g = float(np.clip(cap2 - t, 25, 110))
-                urm = val[k][0]
-            d = (urm - t) if k < len(val) else t_med
-            if d < g + TRANZITII_S + ETAPA_SCURTA_S + VERDE_MIN_S:
-                d = g + TRANZITII_S + ETAPA_SCURTA_S + VERDE_MIN_S
+            d = urm - t
         g = max(g, d - TRANZITII_S - ETAPA_SCURTA_S - E_V_MAX_S)
         out.append((g, d))
         t += d
     return out
+
+
+def acoperire(val: list[tuple[float, float, int]], lista: list[tuple[float, float]], sfarsit: float = 3600.0) -> float:
+    """Ce parte din oră vine din valuri măsurate: ciclul începe la un val, următorul la alt val, iar verdele e chiar valul."""
+    if not val:
+        return 0.0
+    st = np.array([v[0] for v in val])
+    t, masurat = val[0][0], 0.0
+    for g, d in lista:
+        i, j = int(np.argmin(np.abs(st - t))), int(np.argmin(np.abs(st - (t + d))))
+        if t < sfarsit and abs(st[i] - t) < 1 and abs(st[j] - (t + d)) < 1 and j > i and abs(val[j - 1][1] - t - g) < 1:
+            masurat += min(t + d, sfarsit) - t
+        t += d
+    return masurat / sfarsit
+
+
+def etape_inceput(prima: float, t_med: float, g_med: float) -> tuple[list[tuple], float]:
+    """Până la primul val măsurat, cicluri obișnuite, ca el să înceapă la timp; se termină cu E–V și etapa scurtă, ca orice ciclu."""
+    g = max(g_med, t_med - TRANZITII_S - ETAPA_SCURTA_S - E_V_MAX_S)
+    n, rest = int(prima // t_med), prima % t_med
+    etape: list[tuple] = []
+    if rest >= 25:
+        e = rest - 2 * TRANZITII_S / 3 - ETAPA_SCURTA_S
+        if e > E_V_MAX_S + 30:
+            etape.append((0, e - E_V_MAX_S - TRANZITII_S / 3))
+            e = E_V_MAX_S
+        etape += [(1, e), (SCURTA, ETAPA_SCURTA_S)]
+        rest = 0
+    etape += [(0, g), (1, t_med - g - TRANZITII_S - ETAPA_SCURTA_S), (SCURTA, ETAPA_SCURTA_S)] * n
+    return etape, rest
 
 
 def fereastra_scenariu(stem: str) -> tuple[str, pd.Timestamp, pd.Timestamp]:
@@ -101,20 +127,14 @@ def program_rejucat(stem: str) -> tuple[list[tuple[str, float]], dict]:
     g_med = min(max(g_med, 25.0), t_med - TRANZITII_S - ETAPA_SCURTA_S - VERDE_MIN_S)
     val = [v for v in val if v[0] >= 0]
     prima = val[0][0] if val else 0.0
-    faze: list[tuple[str, float]] = []
-    if prima > 5:
-        # până la primul val, etapa E–V, care se termină cu tranziția spre N–S
-        faze += [(stari[1], max(prima - 5, 1)), ("y", 3), ("r", 2)]
-    lista = cicluri(val, ORIZONT_S - prima, t_med, g_med)
+    lista = cicluri(val, ORIZONT_S, t_med, g_med)
+    etape, rest = etape_inceput(prima, t_med, g_med)
     for g, d in lista:
-        faze += program_fix(stari, [(0, g), (1, d - g - TRANZITII_S - ETAPA_SCURTA_S), (SCURTA, ETAPA_SCURTA_S)], pietoni)
-    if faze and faze[1][0] == "y":                      # tranziția de la început, acum că se știe starea care urmează
-        from romana.control.signals import all_red_between, yellow_between
-
-        urm = faze[3][0]
-        faze[1] = (yellow_between(stari[1], urm), 3)
-        faze[2] = (all_red_between(stari[1], urm), 2)
-    return faze, {"zi": zi, "de_la": str(a), "pana_la": str(b), "cicluri": len(lista), "ciclu_median_s": round(t_med, 1), "verde_median_s": round(g_med, 1), "valuri_masurate": len(val)}
+        etape += [(0, g), (1, d - g - TRANZITII_S - ETAPA_SCURTA_S), (SCURTA, ETAPA_SCURTA_S)]
+    if rest:                                            # o bucată prea scurtă pentru o etapă proprie lungește primul verde
+        etape[0] = (etape[0][0], etape[0][1] + rest)
+    faze = program_fix(stari, etape, pietoni)           # o singură listă: tranzițiile și degajarea ies la fel peste tot
+    return faze, {"zi": zi, "de_la": str(a), "pana_la": str(b), "cicluri": len(lista), "ciclu_median_s": round(t_med, 1), "verde_median_s": round(g_med, 1), "valuri_masurate": len(val), "acoperire": round(acoperire(val, lista), 3)}
 
 
 class SemaforRejucat:
