@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 
 from romana.common import NET_DIR, load_json
-from romana.control.faze import faze_romana
+from romana.control.faze import controler, etape_plan, faze_romana, info_v2, pe_v2, program_fix
 from romana.control.signals import SignalController, all_red_between, yellow_between
 
 SAT_FLOW = 1800  # veh/h/bandă verde (valoare uzuală HCM)
@@ -81,6 +81,12 @@ class FixedWebster:
 
     def reset(self, traci):
         greens, _ = faze_romana(traci)
+        if pe_v2(traci):       # geamănul corectat: cu programul pietonilor (§ 6.5)
+            pietoni = info_v2()["pietoni"]
+            phases = [traci.trafficlight.Phase(d, s) for s, d in program_fix(greens, etape_plan(self.plan["verde_s"], pietoni), pietoni)]
+            traci.trafficlight.setProgramLogic("romana", traci.trafficlight.Logic("webster", 0, 0, phases))
+            traci.trafficlight.setProgram("romana", "webster")
+            return
         idx = fixed_phase_indices()
         phases = []
         for k, i in enumerate(idx):
@@ -110,7 +116,7 @@ class MaxPressure:
 
     def reset(self, traci):
         greens, names = faze_romana(traci)
-        self.ctrl = SignalController(traci, "romana", greens, names)
+        self.ctrl = controler(traci, "romana", greens, names)
         # doar fazele planului real: fazele „fără dozare” au cele mai multe legături verzi, deci
         # presiunea cea mai mare, dar umplu inelul și blochează piața (verificat: blocaj total)
         self.allowed = fixed_phase_indices()
@@ -156,7 +162,7 @@ class RLPolicy:
             else:
                 traci.trafficlight.setProgram(tid, "0")
                 g, n = green_phases_from_program(traci, tid), None
-            self.ctrls.append(SignalController(traci, tid, g, n))
+            self.ctrls.append(controler(traci, tid, g, n))
         self.maps = action_maps(self.controlled, self.ctrls, self.romana_phases)
         self.cap = {ln: max(1.0, traci.lane.getLength(ln) / 7.5) for c in self.ctrls for ln in c.in_lanes}
         if self.upstream_obs:

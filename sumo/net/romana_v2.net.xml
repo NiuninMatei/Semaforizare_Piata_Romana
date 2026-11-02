@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
 
-<!-- generated on 2026-11-02T05:10:27.681029+02:00 by Eclipse SUMO netconvert 1.28.0
+<!-- generated on 2026-11-02T06:49:21.246179+02:00 by Eclipse SUMO netconvert 1.28.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -29890,15 +29890,19 @@
         <phase duration="1"  state="rrrrrrrrrrrrrrrrrrrrrrrrrrr"/>
     </tlLogic>
     <tlLogic id="romana" type="static" programID="0" offset="0">
-    <phase duration="36" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr"/>
-    <phase duration="3" state="yyyyrrryyyrryyyyyyyGGGGGGrrrrrrrrrrGGyyyyGGGGGGGGrryyyyyrrryr"/>
+    <phase duration="20" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr"/>
+    <phase duration="10" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGGgrrrgr"/>
+    <phase duration="6" state="GGGGrrrGGGrrGGGGGGGGGGGGGrrrrrrrrrrGGGGGGGGGGGGGGrrGGGrrrrrrr"/>
+    <phase duration="3" state="yyyyrrryyyrryyyyyyyGGGGGGrrrrrrrrrrGGyyyyGGGGGGGGrryyyrrrrrrr"/>
     <phase duration="2" state="rrrrrrrrrrrrrrrrrrrGGGGGGrrrrrrrrrrGGrrrrGGGGGGGGrrrrrrrrrrrr"/>
-    <phase duration="28" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrGggrG"/>
-    <phase duration="3" state="rrrryyyrrryyrrrrrrryyyyyyyyyyyyyyyyyyrrrryyyyyyyyyyrrrrrGggrG"/>
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGggrG"/>
-    <phase duration="12" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGG"/>
-    <phase duration="3" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGyyyGy"/>
-    <phase duration="2" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGrrrGr"/>
+    <phase duration="22" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrGggrG"/>
+    <phase duration="6" state="rrrrGGGrrrGGrrrrrrrGGGGGGGGGGGGGGGGGGrrrrGGGGGGGGGGrrrrrrrrrr"/>
+    <phase duration="3" state="rrrryyyrrryyrrrrrrryyyyyyyyyyyyyyyyyyrrrryyyyyyyyyyrrrrrrrrrr"/>
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"/>
+    <phase duration="6" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrGGGGGGG"/>
+    <phase duration="6" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"/>
+    <phase duration="3" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"/>
+    <phase duration="2" state="rrrrrrrGGGrrGGGrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"/>
     </tlLogic>
 
     <junction id="1005917707" type="dead_end" x="1741.61" y="25.46" incLanes="-1393797833_0" intLanes="" shape="1738.47,24.85 1735.52,24.28 1738.47,24.85"/>

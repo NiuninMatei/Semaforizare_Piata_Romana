@@ -120,8 +120,15 @@ def estimate_interval(sub: pd.DataFrame, cfg: dict, hours: float) -> dict:
     prior = np.array([[cfg["prior_destinatii"].get(o, {}).get(d, 0.0) for d in arms] for o in origins])
     prior = prior / prior.sum(axis=1, keepdims=True)
     seed = obs + cfg.get("pondere_prior", 2.0) * prior / hours
-    if cfg.get("cote_fixe"):
-        seed = aplica_cote_fixe(seed, origins, arms, cfg["cote_fixe"])
+    cote = dict(cfg.get("cote_fixe") or {})
+    # viraje pe care camera le vede aproape pe toate: numărul lor e o măsură directă, iar din proporții ar ieși umflate, fiindcă celelalte
+    # destinații, mai îndepărtate, ajung mult mai rar la traiectorii complete (§ 4.3)
+    for o, dest in (cfg.get("viraje_numarate") or {}).items():
+        total = rows[origins.index(o)]
+        if total > 0:
+            cote[o] = {**cote.get(o, {}), **{d: min(0.9, get("viraj", o, d) * k / hours / total) for d, k in dest.items()}}
+    if cote:
+        seed = aplica_cote_fixe(seed, origins, arms, cote)
     use_cols = None
     measured_in, measured_out = rows.sum(), cols.sum()
     if cfg.get("echilibrare") == "doar_intrari":
