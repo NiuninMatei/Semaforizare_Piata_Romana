@@ -6,7 +6,8 @@ const DATE_SONDARE = {
 "E–V: Dacia în jurul insulei",
 "Pietoni: toate trecerile, axa centrală se golește",
 "N–S, cu intrările Dacia deschise (fără dozare)",
-"E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+"E–V, cu intrările Magheru/Catargiu deschise (fără dozare)",
+"Golirea centrului, fără pietoni"
 ],
 "PLAN": [
 [
@@ -18,13 +19,15 @@ const DATE_SONDARE = {
 48
 ],
 [
-2,
+5,
 3
 ]
 ],
 "GALBEN": 3,
 "ROSU": 2,
 "VERDE_MIN": 10,
+"INTARZIERE_PIETONI": 24,
+"DEGAJARE_PIETONI": 6,
 "PAS_COMANDA": 5,
 "VERDE_PE_DACIA": [
 1,

@@ -53,9 +53,10 @@ LUNGIME_TEXT = 300
 
 FAZE = ["N–S: Magheru ↔ Lascăr Catargiu prin centru", "E–V: Dacia în jurul insulei",
         "Pietoni: toate trecerile, axa centrală se golește", "N–S, cu intrările Dacia deschise (fără dozare)",
-        "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"]
-PLAN = [(0, 72), (1, 48), (2, 3)]               # planul observat din geamăn (§ 6.5): verde 72/48/3 s, apoi galben 3 s și roșu 2 s
+        "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)", "Golirea centrului, fără pietoni"]
+PLAN = [(0, 72), (1, 48), (5, 3)]               # planul observat din geamăn (§ 6.5): verde 72/48/3 s, apoi galben 3 s și roșu 2 s
 GALBEN, ROSU, VERDE_MIN, PAS_COMANDA = 3, 2, 10, 5    # ca în SignalController și în bucla geamănului (comanda se citește la 5 s)
+INTARZIERE_PIETONI, DEGAJARE_PIETONI = 24, 6     # ca în SemaforCuPietoni: pietonii pornesc după vehicule și termină traversarea înaintea galbenului
 VERDE_PE_DACIA = (1, 3, 4)                      # schema arată verde pe Dacia în aceste faze
 VERDE_PE_MAGHERU = (0, 3, 4)
 AUTOMATE = ("ai", "fix", "max_pressure", "program")
@@ -189,7 +190,7 @@ def pasi(ordine: tuple[str, str] = ("m1", "m2")) -> list[dict]:
 
 def date_pagina() -> dict:
     """Ce are nevoie pagina: pașii și situația simulată. Versiunea din pași se pune în browser, după ordinea din link."""
-    return {"VERSIUNE": VERSIUNE_PAGINA, "FAZE": FAZE, "PLAN": PLAN, "GALBEN": GALBEN, "ROSU": ROSU, "VERDE_MIN": VERDE_MIN,
+    return {"VERSIUNE": VERSIUNE_PAGINA, "FAZE": FAZE, "PLAN": PLAN, "GALBEN": GALBEN, "ROSU": ROSU, "VERDE_MIN": VERDE_MIN, "INTARZIERE_PIETONI": INTARZIERE_PIETONI, "DEGAJARE_PIETONI": DEGAJARE_PIETONI,
             "PAS_COMANDA": PAS_COMANDA, "VERDE_PE_DACIA": VERDE_PE_DACIA, "VERDE_PE_MAGHERU": VERDE_PE_MAGHERU, "AUTOMATE": AUTOMATE,
             "COZI": COZI, "INTRARI": INTRARI, "IESIRI": IESIRI, "ALEGE_CONDUCE": ALEGE_CONDUCE, "LUNGIME_TEXT": LUNGIME_TEXT,
             "URL_PROIECT": URL_PROIECT, "PE_TELEFON": PE_TELEFON, "PASI": pasi()}

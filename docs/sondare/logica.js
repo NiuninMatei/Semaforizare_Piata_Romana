@@ -7,9 +7,9 @@ const secunde = () => Date.now() / 1000;
 const rotunjit = x => Math.round(x * 100) / 100;
 
 // Aceleași câmpuri ca outputs/live/state.json și sim_state.json. Reacția la o comandă e ca în geamăn: faza veche rămâne
-// până la pasul de citire a comenzii (5 s), apoi galben 3 s și roșu 2 s, iar faza nouă vine abia după ele. Fiindcă planul
-// stă pe faza N–S cu verdele minim deja atins la sarcina de verde, aici reacția durează 5–10 s; în geamănul adevărat
-// poate ajunge la ≈24 s (§ 8).
+// până la pasul de citire a comenzii (5 s), pietonii au 6 s să termine traversarea, apoi galben 3 s și roșu 2 s, iar faza nouă
+// vine abia după ele. Fiindcă planul stă pe faza N–S cu verdele minim deja atins la sarcina de verde, aici reacția durează
+// 11–16 s; în geamănul adevărat poate ajunge la ≈30 s (§ 8).
 class Banc {
   constructor(D, ceas = secunde, salvat = null) {
     this.D = D;
@@ -61,7 +61,7 @@ class Banc {
         this.tranzitie = null;
       } else if (!(this.mod === "manual" && noua === this.faza_manual)) {
         const citire = acum + Math.max(D.VERDE_MIN - verde, 0);
-        const t_g = this.t0 + Math.ceil((citire - this.t0) / D.PAS_COMANDA) * D.PAS_COMANDA;
+        const t_g = this.t0 + Math.ceil((citire - this.t0) / D.PAS_COMANDA) * D.PAS_COMANDA + (this.pietoniVerde(f, verde) ? D.DEGAJARE_PIETONI : 0);
         this.tranzitie = [f, verde, acum, t_g];
         this.faza_manual = noua;
         this.t_manual = t_g + D.GALBEN + D.ROSU;
@@ -84,6 +84,13 @@ class Banc {
     this.nemiscat = false;
     this.mod = mod;
     return {ok: true, mod, timestamp: acum, ...(mod === "manual" ? {faza: this.faza_manual} : {})};
+  }
+
+  // Pietonii, ca în SemaforCuPietoni: în etapa N–S pornesc după vehicule; într-un plan, se opresc înaintea galbenului.
+  pietoniVerde(f, verde) {
+    const D = this.D, pas = this.mod === "manual" ? null : D.PLAN.find(([g]) => g === f);
+    if (pas && verde >= pas[1] - D.DEGAJARE_PIETONI) return false;
+    return f === 2 || f === 1 || (f === 0 && verde >= D.INTARZIERE_PIETONI);
   }
 
   // [faza, etapa, verde_s]: ca în geamăn, verde_s rămâne cât a ținut verdele și în galben și în roșu.
@@ -128,7 +135,7 @@ class Banc {
     for (let i = 0; i < 120; i++) istoric.push([t - 600 + 5 * i, Math.max(0, Math.trunc(total + 6 * Math.sin(i / 9) + 3 * Math.sin(i / 2.3)))]);
     const intrari = D.INTRARI[this.runda];
     const simulare = {timestamp: acum, timp_sim: t, mod: this.mod, mod_program: this.mod === "program" ? "plan_observat" : null,
-      sursa: "camera live", faza, faza_nume: D.FAZE[faza], etapa, verde_s: verde, faze: D.FAZE, model_ai: true,
+      sursa: "camera live", faza, faza_nume: D.FAZE[faza], etapa, verde_s: verde, faze: D.FAZE, model_ai: true, pietoni_verde: this.pietoniVerde(faza, verde),
       coada_brate: cozi, coada_total: total, vehicule_in_retea: 90 + total, vehicule_injectate: 412, pietoni_in_retea: 31,
       pietoni_injectati: 140, debite_folosite: intrari, debit_echilibrat_veh_h: 2800, pietoni_h_folositi: 620,
       istoric_coada: istoric, _varsta_s: 0.4};

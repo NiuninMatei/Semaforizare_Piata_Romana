@@ -250,6 +250,34 @@ def compara(stem: str, strategie: str, seed: int, cfg: Path | None = None) -> pd
     return d
 
 
+def figura(p: dict, cale: str) -> None:
+    """Patru panouri cu câte două curbe, camera și geamănul, pe același ceas: intrările mari și ieșirea care le deosebește cel mai greu."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    panouri = (("intrare magheru", "Intrarea Magheru"), ("intrare catargiu", "Intrarea Lascăr Catargiu"), ("intrare dacia_est", "Intrarea Dacia est"), ("ieșire dacia_est", "Ieșirea Dacia est, parte din total"))
+    fig, axe = plt.subplots(2, 2, figsize=(10, 5.4), sharex=True)
+    x = (np.arange(BINI) + 0.5) * BIN_S
+    for ax, (k, titlu) in zip(axe.flat, panouri):
+        c, g = p["profile"][k]
+        ax.plot(x, c, color="#8a8984", linewidth=2, label="camera")
+        ax.plot(x, g, color="#1f6f8b", linewidth=2, label="geamănul")
+        ax.set_title(titlu, fontsize=10, loc="left")
+        ax.set_ylim(bottom=0)
+        ax.grid(axis="y", color="#e4e3df", linewidth=0.8)
+        ax.set_axisbelow(True)
+        for s in ("top", "right"):
+            ax.spines[s].set_visible(False)
+        ax.legend(frameon=False, fontsize=8, loc="upper right")
+    for ax in axe[1]:
+        ax.set_xlabel("secunde de la începutul valului de pe Magheru")
+    for ax in axe[:, 0]:
+        ax.set_ylabel("pe ciclu, la 10 s")
+    fig.tight_layout()
+    fig.savefig(cale, dpi=130)
+
+
 def una(sarcina: tuple) -> tuple[pd.DataFrame, dict]:
     stem, strategie, seed = sarcina
     import os
@@ -269,6 +297,7 @@ def main(argv=None) -> None:
     ap.add_argument("--procese", type=int, default=4)
     ap.add_argument("--out", default=None)
     ap.add_argument("--profile", action="store_true", help="afișează și profilele pe ciclu")
+    ap.add_argument("--figura", default=None, help="PNG cu profilele primului scenariu")
     a = ap.parse_args(argv)
     sarcini = [(s, a.strategie, int(k)) for s in a.scenarii for k in a.seeds.split(",")]
     from concurrent.futures import ProcessPoolExecutor
@@ -291,6 +320,8 @@ def main(argv=None) -> None:
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         tot.to_csv(a.out, index=False)
+    if a.figura:
+        figura(rez[0][1], a.figura)
 
 
 if __name__ == "__main__":

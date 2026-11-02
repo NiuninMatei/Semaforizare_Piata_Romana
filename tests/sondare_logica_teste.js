@@ -95,7 +95,7 @@ const VERDE = {r1_verde: [["manual", 1]], r1_automat: [["program"]]};
   const st = b.stare();
   for (const k of ["mod", "mod_program", "faza", "faza_nume", "etapa", "verde_s", "faze", "model_ai", "coada_brate", "vehicule_in_retea", "pietoni_in_retea", "sursa", "istoric_coada", "_varsta_s"]) verifica("câmpul simulării " + k, k in st.simulare);
   for (const k of ["conectat", "fps", "vehicule_urmarite", "intrari_veh_h", "iesiri_veh_h", "pietoni_h", "secunde_interval", "_varsta_s"]) verifica("câmpul camerei " + k, k in st.camera);
-  verifica("cinci faze", st.simulare.faze.length === 5);
+  verifica("șase faze", st.simulare.faze.length === 6);
   verifica("starea e mereu proaspătă", st.camera._varsta_s < 15 && st.simulare._varsta_s < 10);
 }
 

@@ -241,7 +241,7 @@ setInterval(()=>{ $("ceas").textContent=new Date().toLocaleTimeString("ro-RO");
 
 function starea(s,b,etapa,verzi){ if(!s) return "necunoscut"; if(!verzi.includes(b)) return "roșu"; return etapa=="yellow"?"galben":etapa=="red"?"roșu de degajare":"verde" }
 function schema(s,viu){
-  const cx=150, cy=135, verzi=s?FAZA_BRATE[s.faza]||[]:[], etapa=s?s.etapa:"", inPlus=etapa=="green"?BRATE_IN_PLUS[s.faza]||[]:[], vechi=!!s&&!viu, pietoniVerde=!!s&&s.faza==2&&etapa=="green";
+  const cx=150, cy=135, verzi=s?FAZA_BRATE[s.faza]||[]:[], etapa=s?s.etapa:"", inPlus=etapa=="green"?BRATE_IN_PLUS[s.faza]||[]:[], vechi=!!s&&!viu, pietoniVerde=!!s&&(s.pietoni_verde??s.faza==2)&&etapa=="green";
   let brate="", lumini="", texte="", descriere=[];
   for(const [b,[ang,tip,xl,yl,anc]] of Object.entries(BRATE)){
     const a=ang*Math.PI/180, x1=cx+37*Math.cos(a), y1=cy+37*Math.sin(a), x2=cx+102*Math.cos(a), y2=cy+90*Math.sin(a);
@@ -290,7 +290,7 @@ function grafic(ist,viu){
 }
 function faze(s){
   if(!s||!s.faze||$("faze").children.length) return;
-  const btn=(i)=>`<button data-faza="${i}"><b>${FAZE_CLARE[i]||s.faze[i]}</b></button>`, toate=s.faze.map((_,i)=>i);
+  const btn=(i)=>`<button data-faza="${i}"><b>${FAZE_CLARE[i]||s.faze[i]}</b></button>`, toate=s.faze.map((_,i)=>i).filter(i=>i<FAZE_CLARE.length);
   $("faze").innerHTML=toate.filter(i=>!FAZE_RISC.includes(i)).map(btn).join(""); $("faze-risc").innerHTML=toate.filter(i=>FAZE_RISC.includes(i)).map(btn).join("");
   document.querySelectorAll("[data-faza]").forEach(b=>b.onclick=()=>alegeFaza(+b.dataset.faza,b));
 }

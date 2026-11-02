@@ -2128,7 +2128,7 @@ colectează nu e implicat, fiindcă toată pagina rulează în browserul persoan
 în zilele de test, iar o demonstrație în Chrome pe același calculator a coborât rata de la ≈6,0 la ≈4,9 cadre/s. Sunt 4 sarcini pe
 fiecare variantă: cine schimbă culorile semaforului, unde e coada cea mai lungă, verde pe Bulevardul Dacia, înapoi la calculator. După
 fiecare, ecranul se acoperă și persoana răspunde din ce a văzut. Situațiile sunt simulate, ca toți să aibă aceleași și răspunsul corect
-să se știe, deci comenzile nu ajung la geamăn. Reacția la o comandă durează aici 5–10 s, iar în geamănul adevărat poate ajunge la ≈24 s.
+să se știe, deci comenzile nu ajung la geamăn. Reacția la o comandă durează aici 11–16 s, iar în geamănul adevărat poate ajunge la ≈30 s, fiindcă pietonii primesc timp să termine traversarea (§ 6.5).
 Imaginea camerei e fotografia publicată, cu persoanele și plăcuțele estompate: o cameră în direct ar arăta traficul adevărat, care poate
 contrazice schema simulată, așa că persoana poate vedea piața în direct separat, pe site-ul Webcam România. În ambele variante, panoul
 camerei spune că e o fotografie fixă și nu mai arată indicatorii de flux, cadre pe secundă sau vehicule urmărite, care ar fi falși. Variantele sunt cea de la
