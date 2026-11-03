@@ -34,15 +34,40 @@ class Pasi(unittest.TestCase):
         c = comenzi(L.pasi_dupa("2026-11-04", ["cor_zi_2026-11-04_varf"], ["PLAN_60_40_3", "models/e15.zip"], ["ACTUATED"], False, Path("nu_exista.json")))
         self.assertIn("--seeds 11-15", c["test_normal"])
         self.assertIn("PLAN_72_48_3 REAL PLAN_60_40_3 models/e15.zip ACTUATED", c["test_normal"])
-        self.assertIn("--in-vigoare PLAN_72_48_3 REAL --candidati PLAN_60_40_3 models/e15.zip --poarta outputs/validare/poarta_cor_2026-11-04.json", c["decizie"])
+        self.assertIn("--in-vigoare PLAN_72_48_3 REAL --candidati PLAN_60_40_3 e15 --poarta outputs/validare/poarta_cor_2026-11-04.json", c["decizie"])
+        self.assertNotIn("models/e15.zip", c["decizie"])      # `validare` scrie agentul în CSV cu numele fișierului, iar regula îl caută după el
         self.assertNotIn("ACTUATED", c["decizie"])           # o strategie raportată nu poate câștiga
 
     def test_zilele_de_test_sunt_sigilate_pana_la_desigilare(self):
         ore = ["cor_zi_2026-11-05_varf"]
-        self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-05", ore, ["X"], [], False, Path("nu_exista.json")))), ["geaman"])
-        self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-05", ore, ["X"], [], True, Path("nu_exista.json")))), ["geaman", "test_indisciplinat", "test_normal", "decizie"])
-        self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-07", ore, ["X"], [], False, Path("nu_exista.json")))), ["geaman"])
-        self.assertIn("--seeds 1-10", comenzi(L.pasi_dupa("2026-11-05", ore, ["X"], [], True, Path("nu_exista.json")))["test_normal"])
+        with tempfile.TemporaryDirectory() as d:
+            dec = Path(d) / "cor_decizie_2026-11-04.json"
+            dec.write_text(json.dumps({"poarta": {"descriptiv": False}, "candidati": [{"strategie": "X", "eligibil": True}]}), encoding="utf-8")
+            with mock.patch.object(L, "DECIZIE_VALIDARE", dec):
+                self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-05", ore, ["X"], [], False, Path("nu_exista.json")))), ["geaman"])
+                self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-05", ore, ["X"], [], True, Path("nu_exista.json")))), ["geaman", "test_indisciplinat", "test_normal", "decizie"])
+                self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-07", ore, ["X"], [], False, Path("nu_exista.json")))), ["geaman"])
+                self.assertIn("--seeds 1-10", comenzi(L.pasi_dupa("2026-11-05", ore, ["X"], [], True, Path("nu_exista.json")))["test_normal"])
+
+    def test_pe_zilele_de_test_ruleaza_doar_candidatii_trecuti_de_validare(self):
+        ore, lista = ["cor_zi_2026-11-05_varf"], ["A", "B", "models/e15.zip"]
+        with tempfile.TemporaryDirectory() as d:
+            dec = Path(d) / "cor_decizie_2026-11-04.json"
+            with mock.patch.object(L, "DECIZIE_VALIDARE", dec):
+                # fără decizia validării, testul nu se deschide
+                self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-05", ore, lista, ["ACTUATED"], True, Path("nu_exista.json")))), ["geaman"])
+                dec.write_text(json.dumps({"poarta": {"descriptiv": False}, "candidati": [{"strategie": "A", "eligibil": True}, {"strategie": "B", "eligibil": False},
+                                                                                        {"strategie": "e15", "eligibil": True}]}), encoding="utf-8")
+                c = comenzi(L.pasi_dupa("2026-11-05", ore, lista, ["ACTUATED"], True, Path("nu_exista.json")))
+                self.assertIn("PLAN_72_48_3 REAL A models/e15.zip ACTUATED --scenarii", c["test_normal"])
+                self.assertIn("--candidati A e15 --poarta", c["decizie"])
+                # o validare doar descriptivă nu lasă pe nimeni să treacă, oricât de bine ar ieși
+                dec.write_text(json.dumps({"poarta": {"descriptiv": True}, "candidati": [{"strategie": "A", "eligibil": True}]}), encoding="utf-8")
+                self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-06", ore, lista, [], True, Path("nu_exista.json")))), ["geaman"])
+
+    def test_lantul_nu_mai_adauga_planul_36_28_12(self):
+        c = comenzi(L.pasi_dupa("2026-11-04", ["cor_zi_2026-11-04_varf"], ["A"], [], False, Path("nu_exista.json")))
+        self.assertIn("--fara-alegere --fara-fix", c["test_normal"])
 
     def test_pragurile_inghetate_intra_cand_exista(self):
         with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:

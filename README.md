@@ -12,6 +12,10 @@
 > antrenare, geamănul trece poarta din § 9.11 (debitele de pe Magheru, Lascăr Catargiu și Dacia est, teleportările, ciocnirile și
 > vehiculele neintrate) pe 8 din 12 ore, dar tot nu e validat: pe Dacia vest, în zilele lucrătoare, duce mult mai puțin decât camera,
 > iar timpii virajelor nu se potrivesc (§ 6.5).
+>
+> **Candidații, 3.11.2026.** Din orele zilelor de antrenare care trec poarta s-au ales, pentru zilele noi, planurile fixe 60/40/3 și
+> 45/30/3 și agentul E15. În geamăn, nu pe stradă, ei trebuie să bată și planul observat, și semaforul rejucat: întâi pe ziua de validare,
+> 4.11, apoi pe zilele de test, 5 și 6.11 (§ 9.11).
 
 Cât timp ar câștiga participanții la trafic din Piața Romană, în București, dacă s-ar schimba **doar programul
 semafoarelor existente**, fără nicio lucrare pe stradă? Proiectul caută răspunsul în simulare.

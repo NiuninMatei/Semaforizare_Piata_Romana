@@ -53,6 +53,12 @@ class Referinte(unittest.TestCase):
         self.assertEqual(d["castigator"], "C")
         self.assertEqual(d["candidati"][0]["alte_referinte"]["REAL"]["fata_de_in_vigoare"]["n"], 20)   # doar vârful, cele 2 comportamente × 10 seed-uri
 
+    def test_agentul_se_poate_da_prin_calea_modelului(self):
+        # ca în `config/candidati_v2.json`: lista dă calea, iar rezultatele au numele fișierului
+        p = {"e15": {"varf": 80, "linistit": 10}, "PLAN_72_48_3": {"varf": 100, "linistit": 12}, "REAL": {"varf": 90, "linistit": 12}}
+        d = self.ruleaza(p, "--in-vigoare", "PLAN_72_48_3", "REAL", "--candidati", "models/e15.zip")
+        self.assertEqual(d["castigator"], "e15")
+
     def test_fara_nicio_ora_acoperita_se_opreste(self):
         p = {"C": {"varf": 80, "linistit": 10}, "PLAN_72_48_3": {"varf": 100, "linistit": 12}, "REAL": {"varf": 90, "linistit": 12}}
         with self.assertRaises(SystemExit):
@@ -104,6 +110,19 @@ class Poarta(unittest.TestCase):
         self.assertEqual(d["poarta"]["nu_trec"], ["cor_zi_2026-11-05_linistit"])
         self.assertEqual(d["candidati"][0]["fata_de_in_vigoare"]["n"], 20)
         self.assertEqual(d["castigator"], "C")
+
+    def test_portile_a_doua_zile_de_test_se_unesc(self):
+        with tempfile.TemporaryDirectory() as d:
+            csv, out, p1, p2 = Path(d) / "r.csv", Path(d) / "d.json", Path(d) / "p1.json", Path(d) / "p2.json"
+            pd.DataFrame(rulari(self.PIERDERI)).to_csv(csv, index=False)
+            p1.write_text(json.dumps({"commit": "a", "scenarii": {"cor_zi_2026-11-05_varf": {"trece": True}}}), encoding="utf-8")
+            p2.write_text(json.dumps({"commit": "b", "scenarii": {"cor_zi_2026-11-05_linistit": {"trece": False}}}), encoding="utf-8")
+            with mock.patch.object(decizie, "debite", lambda sc: {s: 5000.0 if "varf" in s else 1000.0 for s in sc}):
+                decizie.main([str(csv), "--out", str(out), "--program", "X=lejer:PLAN_A,moderat:PLAN_A,greu:PLAN_A", "--in-vigoare", "PLAN_A",
+                              "--candidati", "C", "--poarta", str(p1), str(p2)])
+            r = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual((r["poarta"]["trec"], r["poarta"]["nu_trec"]), (["cor_zi_2026-11-05_varf"], ["cor_zi_2026-11-05_linistit"]))
+        self.assertEqual(r["poarta"]["commit_validare"], ["a", "b"])
 
     def test_sub_jumatate_din_ore_ziua_e_descriptiva(self):
         d = self.ruleaza(set())

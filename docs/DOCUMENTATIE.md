@@ -158,18 +158,19 @@ trimitere la locul unde sunt prezentate în detaliu.
 | agent | Program antrenat cu PPO care decide, la fiecare 5 s, ce fază primește verde; astfel stabilește ordinea și durata fazelor. Agenții de până acum aleg doar dintre cele 3 faze ale planului de referință, iar E15 doar între N–S și E–V. Galbenul, roșul de degajare și verdele minim și maxim îi sunt impuse, ca să nu poată crea o situație periculoasă. Un specialist este un agent antrenat pentru un singur tip de trafic. | § 7.1, § 7.2 |
 | recompensă | Nota primită de agent după fiecare decizie: suma vehiculelor oprite pe benzile de intrare, a pietonilor care așteaptă la treceri și a vehiculelor care nu pot intra în rețea, împărțită la 100 și luată cu semnul minus. Cu cât așteaptă mai puțini, cu atât nota e mai mare. | § 7.1 |
 | agentul oficial | `ppo_romana`, agentul antrenat pe scenariile reale din 21.10 și ales pe seed-urile de validare 11–13; în § 9.5 apare și ca v1. În programul realist conduce traficul lejer. | § 9.1, § 9.5 |
-| E1–E14 | Experimentele de antrenare a agenților, numerotate în ordinea în care s-au făcut; fiecare agent poartă numele experimentului din care provine. Cele mai multe au dat rezultate negative și rămân documentate ca încercări. E5–E7 sunt specialiști pentru traficul greu, E8 pentru cel moderat și E9 pentru cel lejer; E7 a ieșit echivalent cu planul 46/48/12, păstrat pentru că e mai simplu, iar E12 este E3 antrenat în continuare pe aceleași scenarii ca E13. | § 9.5 |
+| E1–E15 | Experimentele de antrenare a agenților, numerotate în ordinea în care s-au făcut; fiecare agent poartă numele experimentului din care provine. Cele mai multe au dat rezultate negative și rămân documentate ca încercări. E5–E7 sunt specialiști pentru traficul greu, E8 pentru cel moderat și E9 pentru cel lejer; E7 a ieșit echivalent cu planul 46/48/12, păstrat pentru că e mai simplu, iar E12 este E3 antrenat în continuare pe aceleași scenarii ca E13. | § 9.5 |
 | E3 | `ppo_romana_zn3`: agentul oficial antrenat în continuare pe datele renumărate din 21–22.10, cu o rată de învățare de 10 ori mai mică. A ieșit cel mai bun la prânz, așa că a condus traficul moderat în programele din § 9.2 și, în programul realist, și traficul greu. Pe 28 și 29.10 a ieșit practic egal cu planul de referință. | § 9.4, § 9.5, § 9.10 |
 | E9 | `ppo_romana_lejer`: specialistul pentru trafic lejer, antrenat doar pe scenariile liniștite din 21–22.10. Conduce traficul lejer în programul marginii de sus. | § 9.2, § 9.5 |
 | E13 | `ppo_romana_cal`: agentul oficial antrenat încă 300 000 de pași pe scenariile calibrate din 21–22.10, cu participanți disciplinați și indisciplinați. Pe 26.10 a fost cel mai constant agent, așa că a intrat în testul final ca singurul agent candidat. Acolo a fost eligibil, dar al treilea după pierderea totală, și nu s-a deosebit semnificativ de planul 12/14/12 (p = 0,82); pe 29.10 a pierdut cu 3,4% mai mult decât planul. | § 9.5, § 9.9, § 9.10 |
 | E14 | E13 antrenat încă 300 000 de pași pe scenariile zilei de validare, luni 26.10, cu capacitatea calibrată. Pe validare a ieșit mai slab decât E13, deci nu a devenit candidat. | § 9.5, § 9.9 |
+| E15 | `ppo_e15`: agentul antrenat în ziua de 3.11, pe geamănul înghețat, doar pe orele din 25 și 26.10 și 1.11 care trec poarta, fără date din 3.11. Imită întâi planul observat, apoi învață cu PPO, și alege doar între N–S și E–V. Pe zilele de antrenare pierde cu 1,7% mai mult decât planul observat, dar e pe lista candidaților din 3.11, cum s-a scris pe 1.11. | § 9.5, § 9.11 |
 | programul realist, `REALIST` | Programul ales pe validarea cu participanți indisciplinați: agentul oficial la trafic lejer și E3 la trafic moderat și greu. A fost varianta implicită a geamănului în timp real până pe 29.10 și strategia în vigoare față de care s-a judecat testul final; `REALIST` e numele lui în comenzi. | § 9.4, § 9.10 |
 | `TOD_DEBIT` | Program din planuri fixe, cu cazurile stabilite după debit: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens. Candidat în testul final: pe 28.10 a avut cea mai mică pierdere totală dintre candidați, dar diferența față de 12/14/12, de 0,3%, nu a fost semnificativă, așa că a câștigat planul mai simplu. | § 9.9, § 9.10 |
 | `TOD_FIX` | Aceleași planuri, cu cazurile stabilite după numele scenariilor: 16/10/12 în scenariile liniștite și la prânz, 12/14/12 în rest. A fost ales chiar pe datele de validare, deci estimarea de acolo e optimistă; în teste a fost doar raportat, nu candidat. | § 9.9, § 9.10 |
 | `PLAN_12_14_12`, `PLAN_a_b_c` | Numele de cod ale planurilor fixe: `PLAN_a_b_c` are a, b și c secunde de verde pentru N–S, E–V și pietoni. La planul observat, 72/48/3, c e golirea centrului, fără pietoni. `PLAN_12_14_12` a câștigat testul din 28.10, rezultat retras pe 2.11 (§ 6.5); între 29.10 și 2.11 a fost varianta implicită a geamănului în timp real, `plan_scurt`. | § 9.10, § 11.8 |
 | `FIX`, `ACTUATED` | Numele de cod ale planului de referință 36/28/12 și ale semaforizării actuated, în comenzi și în fișierele de rezultate. | § 11.8 |
-| grila de planuri fixe | Încercarea sistematică a mai multor planuri fixe, cu alte durate de verde, ca să se găsească cel mai bun: 10 planuri pe calibrările anterioare și 23 pe geamănul calibrat, pe validarea din 26.10. A doua grilă a arătat că ciclurile scurte câștigă. | § 9.5, § 9.9 |
-| candidat, strategia în vigoare, strategie raportată | Candidații testului final, fixați dinainte, au fost planul 12/14/12, `TOD_DEBIT` și E13. Strategia în vigoare, cu care au fost comparați, era programul realist. Strategiile raportate, de exemplu planul 16/10/12 singur, agentul oficial sau `TOD_FIX`, au fost rulate și prezentate, dar nu puteau câștiga. | § 9.9, § 9.10 |
+| grila de planuri fixe | Încercarea sistematică a mai multor planuri fixe, cu alte durate de verde, ca să se găsească cel mai bun: 10 planuri pe calibrările anterioare, 23 pe geamănul calibrat, pe validarea din 26.10, și 8 pe geamănul înghețat, pe zilele de antrenare, pe 3.11. A doua grilă arăta că ciclurile scurte câștigă, dar geamănul ei avea coliziuni și teleportări în masă (§ 6.5). Pe geamănul înghețat, planurile foarte scurte nu duc traficul, iar pierderea cea mai mică iese la un ciclu de ≈93 s. | § 6.5, § 9.5, § 9.9, § 9.11 |
+| candidat, strategia în vigoare, strategie raportată | Candidații testului final, fixați dinainte, au fost planul 12/14/12, `TOD_DEBIT` și E13. Strategia în vigoare, cu care au fost comparați, era programul realist. Strategiile raportate, de exemplu planul 16/10/12 singur, agentul oficial sau `TOD_FIX`, au fost rulate și prezentate, dar nu puteau câștiga. Pe zilele noi din § 9.11, candidații sunt planurile 60/40/3 și 45/30/3 și E15, comparați cu planul observat și cu semaforul rejucat; actuated e raportat. | § 9.9, § 9.10, § 9.11 |
 | regula „cel mai bun câștigă” | Regula de decizie fixată de autor pe 28.10, înaintea testului final: câștigă candidatul cu cea mai mică pierdere totală, dacă e semnificativ mai bun decât strategia în vigoare și nu e semnificativ mai slab în niciunul dintre cele două comportamente. Dacă primii doi candidați nu se deosebesc semnificativ, câștigă cel mai simplu. | § 9.9 |
 | coridorul | Varianta în care un singur agent conduce deodată Piața Romană și cele 4 intersecții vecine care o alimentează. Rezultatul a fost negativ: +35,4% față de planul fix. | § 6.1, § 9.5 |
 
@@ -1901,7 +1902,7 @@ Comparația s-a rescris. Nu mai are un scor total, ci rânduri pe grupuri, iar u
 * *Nu se potrivește.* Dacia vest în zilele lucrătoare: geamănul duce cel mult ≈590 de vehicule pe oră, iar camera numără 766–1 063, deci rămân vehicule neintrate. De aceea pică poarta seara din 26.10 și vârful și prânzul din 2.11, ziua cu cel mai mult trafic pe Dacia vest; pe 2.11, la prânz, scade și Dacia est, cu 12%. Ora liniștită din 2.11 are 28 de teleportări pe rulare, cu o cauză încă necercetată. Ziua de 2.11 nu trece pe nicio oră, deci, după regula din § 9.11, ar fi doar descriptivă. Tot la vârful din 26.10, virajul Magheru → Dacia est trece piața mai repede decât în cameră: mediana e 2,6 s față de 3,1 s, iar un sfert dintre vehicule au nevoie de peste 3,6 s, față de 5,9 s. Nu se potrivesc nici debitul de vârf pe 20 s de pe Dacia est (0,60 față de 0,74 vehicule pe secundă), ieșirea spre Dacia est din secundele 24–60 ale etapei N–S (4,9 față de 6,1 vehicule pe etapă), histograma pietonilor și formele ieșirilor.
 * *Gemenii greșiți dinadins.* Geamănul cu vehicule mai rapide se deosebește de cel de bază pe 15–33 de rânduri din fiecare oră, afară de ora liniștită din 2.11. Geamănul fără niciun pieton, în schimb, se deosebește pe cel mult 4 rânduri dintr-o oră, iar pe jumătate din ore pe niciunul. Comparația cu camera nu poate deci confirma pietonii din geamăn.
 
-**Ce spune geamănul despre planuri.** Planurile scurte nu duc traficul la orele încărcate: socoteala din cameră, de mai sus, dă pentru 12/14/12 cel mult ≈1 300 de vehicule pe oră pe Magheru, față de ≈2 550 numărate. Pe grila din 2.11, făcută cu o cerere de dinainte de îngheț, 12/14/12 pierdea de câteva ori mai mult decât semaforul rejucat, iar 36/28/12 cu aproximativ jumătate mai mult. Între planurile cu ciclul apropiat de cel real, diferențele sunt de aceeași mărime cu rezultatul retras, deci aici nu se dă niciun procent. Decizia se ia doar după regula din § 9.11, pe zilele de după îngheț.
+**Ce spune geamănul despre planuri.** Planurile scurte nu duc traficul la orele încărcate: socoteala din cameră, de mai sus, dă pentru 12/14/12 cel mult ≈1 300 de vehicule pe oră pe Magheru, față de ≈2 550 numărate. Grila de după îngheț o confirmă, pe cele 8 ore ale zilelor de antrenare care trec poarta, cu variantele lor ×0,8 și ×1,2, adică pe 14 scenarii, și cu 3 seed-uri, pe toate cele 84 de perechi, cu orele liniștite cu tot: 12/14/12 pierde de ≈7,5 ori mai mult timp decât semaforul rejucat cu participanții disciplinați și de ≈5,7 ori mai mult cu cei indisciplinați, iar 36/28/12, cu ≈⅔ și, respectiv, cu ≈¼ mai mult. Planurile cu ciclul între ≈93 și ≈138 s se deosebesc între ele cu câteva procente, cât rezultatul retras, deci aici nu se dă niciun procent ca rezultat: din grilă se aleg doar candidații regulii din § 9.11, care decide pe zilele de după îngheț. Rezultatele sunt în `docs/rezultate/grila_inghet_normal.csv` și `grila_inghet_indisciplinat.csv`, iar planurile 52/35/3 și 36/24/3 și agentul E15, încercați apoi doar pe orele care trec poarta, în `grila_inghet_ciclu.csv` și `grila_inghet_e15.csv`.
 
 **Ce rămâne nesigur.** Setările s-au ales pe orele de antrenare și pe rândurile de comparație, în mai multe runde. Pietonii din geamăn sunt o cerere efectivă, iar cei de pe celelalte brațe se văd slab: zebra de pe Magheru se poate număra pe clipuri, cele de pe Lascăr Catargiu și Dacia vest nu. Pe Dacia vest nu e sigură nici cererea: factorul ei variază de la 1,03 la 1,58 între clipuri, iar o cincime din numărătoarea automată cade în bucăți în care adnotatorii nu văd aproape niciun vehicul, deci la vârfurile zilelor lucrătoare debitul real poate fi de ordinul 750–1 250 de vehicule pe oră. Pe întuneric și pe ploaie, detectorul poate pierde mult mai multe vehicule decât acoperă factorul; rândul porții prinde asta doar la trafic mare, iar pragul lui stă pe o singură seară. Semafoarele vecine sunt programele generate de `netconvert`. Pe Dacia est, primele vehicule vin la ≈12 s după începutul etapei din program, iar în geamăn imediat, din cauze nelămurite. Nu există o măsurare a lungimii cozilor, deci potrivirea e verificată pe ce trece prin zone, nu direct pe timpii de așteptare. Geamănul în timp real din dispecerat are proporții declarate și debite brute, deci nu arată geamănul de mai sus; Lascăr Catargiu e acolo de 2–3 ori sub cel real.
 
@@ -2244,7 +2245,7 @@ Actuated este semaforul acționat de trafic: el prelungește verdele cât timp d
 Max-Pressure alege la fiecare decizie faza cu cea mai mare diferență dintre cozile dinaintea intersecției și cele de
 după ea. Agenții AI sunt programe antrenate cu metoda învățării prin întărire: au învățat, din multe încercări în
 simulare, ce fază să aleagă și cât s-o țină (§ 7). În afară de agentul oficial, `ppo_romana`, agenții poartă numele
-experimentului din care provin, de la E1 la E14 (§ 9.5).
+experimentului din care provin, de la E1 la E15 (§ 9.5).
 
 **Alegere pe unele simulări, verificare pe altele.** Într-o simulare, felul în care conduc șoferii este tras la sorți,
 iar momentele în care pleacă participanții sunt fixate în scenariu. Fiecare simulare depinde de un seed, valoarea care pornește generatorul de
@@ -2435,7 +2436,7 @@ scenariilor normale nu sunt afectate, lucru verificat.
 ### 9.5 Drumul până la rezultat: ce nu a mers
 
 Rezultatul final nu a venit din prima încercare. Tabelul de mai jos adună încercările care nu au mers, dar și cele
-câteva care au fost păstrate. Experimentele cu agenți AI sunt numerotate E1–E14, în ordinea în care au fost făcute.
+câteva care au fost păstrate. Experimentele cu agenți AI sunt numerotate E1–E15, în ordinea în care au fost făcute.
 Dacă nu se spune altfel, fiecare procent arată cu cât se schimbă pierderea totală de timp a tuturor participanților față
 de planul fix de referință: un procent negativ înseamnă mai puțin timp pierdut, deci o strategie mai bună. „Pe validare”
 înseamnă pe seed-urile folosite la alegere, iar „pe test”, pe seed-uri nefolosite la alegere.
@@ -2463,6 +2464,7 @@ actualizare. Un **specialist** este un agent antrenat pentru un singur tip de tr
 | E11 – experimentul din 26.10: un agent nou, antrenat de la zero 1 000 000 de pași pe scenariile de zi lucrătoare, cu participanți disciplinați și indisciplinați amestecați | Cel mai bun punct intermediar, cel de la 500 000 de pași, obține −6,9% pe validarea cu participanți indisciplinați, față de −13,4% la E3. Modelul final ajunge la +4,6% (`docs/rezultate/validare_indisciplinat_e11.csv`) | negativ: nici antrenarea de la zero pe ambele comportamente nu ajunge la nivelul lui E3 |
 | E12 și E13 – în noaptea de 26–27.10, E3 și agentul oficial au mai fost antrenați câte 300 000 de pași, cu rata de învățare 3·10⁻⁵, pe cele 20 de scenarii calibrate de zi lucrătoare din 21–22.10, cu participanți disciplinați și indisciplinați. Din E3 a rezultat E12, iar din agentul oficial, E13. Punctele intermediare de la +100 000 și +200 000 de pași au intrat și ele în alegere | Validarea s-a făcut cu participanți indisciplinați, pe seed-urile 11–15, cu medii pe perechi, ca în § 9.8–9.9. E12 obține −5,9% la punctul de la +100 000 de pași (`cand_romana_cal3_100k`), față de −2,3% la E3, dar modelul final ajunge la +1,7%. E13, adică modelul final `ppo_romana_cal`, obține −9,3%, față de −10,1% la agentul oficial, cel mai bun în validare. Cu media pe scenarii, convenția din `_alegere.json` și din rândurile E10 și E11, cele cinci valori devin, în aceeași ordine, −6,3% / −3,0% / +1,1% / −9,6% / −10,5%. Pe test, adică pe seed-urile 1–5, s-a rulat programul realist cu fiecare componentă înlocuită cu varianta ei reantrenată: E13 în locul agentului oficial la trafic lejer și E12 în locul lui E3 în rest. Programul a fost fixat înainte de rulare. Față de planul fix, el obține −6,7% cu participanți indisciplinați și −3,9% cu disciplinați; e mai bun în 40 din 50 de perechi, respectiv în 37 din 50. Față de programul realist, diferența e de +1,0% (p = 0,86 / 0,59) și, respectiv, de −0,5% (p = 0,22 / 0,25). Fișierele: `validare_calibrat.csv`, `test_reantrenare_*.csv` | echivalent statistic cu programul realist, deci programul realist rămâne. Scenariile de antrenare din 21–22.10 sunt subnumărate (§ 4.6), iar geamănul avea capacitatea implicită (§ 6.4), așa că reantrenarea pe ele nu poate repara vârfurile |
 | E14 – în noaptea de 27–28.10, E13 a mai fost antrenat 300 000 de pași, cu rata de învățare 3·10⁻⁵, pe cele 12 scenarii de luni 26.10 cu capacitatea calibrată, cu participanți disciplinați și indisciplinați. Punctele intermediare de la +100 000 și +200 000 de pași au intrat și ele în alegere | Validarea s-a făcut pe ziua de luni, pe seed-urile 11–15, cu ambele comportamente, adică pe 60 de perechi. Era aceeași zi ca la antrenare, deci testul îi era favorabil lui E14. Modelul final obține −6,3% față de planul fix, în timp ce E13 obține −7,9%, iar agentul oficial −7,6%. Direct față de E13, E14 iese mai slab, cu +2,2%, și e mai bun în 27 din 60 de perechi (p = 0,06 / 0,09). Punctele intermediare ies și mai slabe: +4,5% și +5,0% față de E13 (p ≤ 0,03). Fișierul: `validare_e14.csv` | negativ: nici reantrenarea pe geamănul calibrat, chiar pe ziua de validare, nu întrece E13, deci E14 nu devine candidat. Candidații finali ai protocolului din § 9.9 sunt planul 12/14/12, `TOD_DEBIT`, adică programul din planuri fixe pe cazuri de trafic, și E13; câștigătorul e în § 9.10 |
+| E15 – antrenat în ziua de 3.11, pe geamănul înghețat, fără date din 3.11: agent nou, care imită întâi planul observat, 72/48, cu un acord de 94% pe 40 000 de decizii, apoi învață 300 000 de pași cu PPO, pe cele 14 scenarii ale zilelor de antrenare care trec poarta, cu participanți disciplinați și indisciplinați. Alege doar între N–S și E–V | Pe aceleași 14 scenarii, cu seed-urile 1–3, pierde cu 1,7% mai mult decât planul observat: cu 5,7% mai mult cu participanții disciplinați, mai ales la vârfurile ×1,2, și cu 5,0% mai puțin cu cei indisciplinați. Față de semaforul rejucat, pe orele acoperite de valuri măsurate, pierde cu 8,9% mai puțin. Fișierul: `grila_inghet_e15.csv` | regula nu l-ar găsi eligibil pe zilele de antrenare; intră totuși pe lista candidaților, cum s-a scris pe 1.11, iar validarea decide (§ 9.11) |
 | Grila de 10 planuri fixe, cu diferite combinații de durate de verde pentru axele N–S și E–V și pentru pietoni, pe datele din 21–22.10 și cu capacitatea implicită | planul actual 36/28/12 e cel mai bun în medie; 46/48/12 câștigă la vârf | **46/48/12 adoptat pentru traficul greu** în programul pentru marginea de sus |
 
 **Lecția metodologică.** Diferențele de 1–2 puncte procentuale își schimbau semnul între seed-urile de validare și cele
@@ -3451,7 +3453,80 @@ simulări a zilei de validare, iar zilele de validare și de test nu au fost pri
   Pragurile sunt în `docs/rezultate/praguri_geaman.json`, iar comparația cu camera pe zilele de antrenare, în
   `docs/rezultate/validare_geaman.csv`.
 
-**Agentul următor.** Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
+**Lista candidaților, fixată pe 3.11.2026.** Lista s-a alcătuit după îngheț, doar din zilele de antrenare 25 și 26.10 și 1.11,
+înainte de a privi datele din 3.11. Ziua de 2.11 nu contează: niciuna dintre orele ei nu trece poarta. Lista nu se mai schimbă până la
+termen, deși și 3.11 este zi de antrenare; rezultatele acelei zile se raportează, dar nu mai mută nimic.
+
+Pe zilele de antrenare trec poarta 8 ore, care, cu variantele lor ×0,8 și ×1,2, dau 14 scenarii. Pe ele, cu ambele comportamente și cu
+seed-urile 1–3, adică pe 84 de perechi, s-au încercat semaforul rejucat, planul observat 72/48/3, planurile fixe 90/50/3, 60/40/3,
+52/35/3, 45/30/3, 36/24/3, 36/28/12 și 12/14/12, programul actuated și agentul E15. Planurile cu golirea centrului de 3 s au aceleași
+etape ca planul observat. Toate, afară de 90/50/3, păstrează raportul de 1,5 dintre verdele N–S și cel E–V, deci se deosebesc mai ales prin
+ciclu: ≈158 s la 90/50/3, ≈138 s la planul observat, apoi ≈118, 105, 93 și 78 s. Pierderea totală scade pe măsură ce ciclul se scurtează, până la ≈93 s. La 78 s crește la loc, cât la planul
+observat: cu participanții disciplinați, planul 36/24/3 pierde mult la vârfurile ×1,2.
+
+Regula din § 9.11, aplicată pe aceste zile doar ca descriere, dă cifrele de mai jos. Ele nu sunt un rezultat: diferențele dintre
+planurile apropiate au mărimea rezultatului retras (§ 6.5) și servesc doar la alcătuirea listei. Procentele privesc pierderea totală de timp.
+Semaforul rejucat se compară doar pe orele acoperite cel puțin 80% de valuri măsurate, adică pe 48 de perechi, ca în regulă.
+
+| Strategia | Față de planul observat | Disciplinați / indisciplinați | Față de semaforul rejucat | Regula |
+|---|---|---|---|---|
+| planul 45/30/3 | −7,9% | −4,3% / −13,9% | −18,4% | eligibil |
+| planul 52/35/3 | −6,4% | −4,7% / −9,2% | −17,2% | eligibil |
+| planul 60/40/3 | −5,6% | −3,5% / −9,2% | −16,6% | eligibil |
+| planul 36/24/3 | +0,2% | +6,0% / −9,6% | −10,4% | nu |
+| agentul E15 | +1,7% | +5,7% / −5,0% | −8,9% | nu |
+| actuated | +8,6% | +10,3% / +5,7% | −2,6% | nu |
+
+Candidații, de la cel mai simplu la cel mai complex:
+
+1. **Planul 60/40/3.** Păstrează etapele planului de azi și îi scurtează ciclul de la ≈138 la ≈118 s, deci e schimbarea cea mai mică.
+   Dacă semafoarele vecine sunt coordonate cu planul de azi, un ciclu apropiat strică mai puțin coordonarea. E o ipoteză: în geamăn,
+   vecinii au programele generate de `netconvert`, nu pe cele reale (§ 6.3).
+2. **Planul 45/30/3**, cu cea mai mică pierdere totală pe zilele de antrenare. Față de 60/40/3, pierde cu 2,4% mai puțin și e mai bun pe
+   74 din 84 de perechi.
+3. **Agentul E15**, fiindcă regulile scrise pe 1.11 l-au trecut pe listă dinainte: „intră pe ea ca un singur model”. Pe zilele de
+   antrenare, regula nu l-ar găsi eligibil: în total pierde cu 1,7% mai mult decât planul observat, fiindcă, deși câștigă cu participanții
+   indisciplinați, cu cei disciplinați pierde la vârfurile ×1,2; nici față de semaforul rejucat nu e semnificativ mai bun. Validarea decide
+   și pentru el.
+
+Programul actuated se raportează alături, fără să poată câștiga. Planul 52/35/3, eligibil și el, nu intră: s-a încercat abia după ce
+s-a văzut grila, iar cu el lista ar avea trei planuri aproape la fel și nu ar mai avea loc pentru E15. Niciun candidat nu este program pe
+cazuri de trafic, deci lista nu are praguri. Lista stă în `config/candidati_v2.json`, iar rezultatele, în
+`docs/rezultate/grila_inghet_*.csv`. Modelul E15 s-a comis odată cu lista, în `models/ppo_e15.zip`, `.npz` și `.json`; ultimul păstrează
+lista scenariilor de antrenare, cum cer regulile din 1.11. Înaintea lui, pe 2.11, s-a antrenat un pilot, `ppo_e15_pilot`, pe geamănul de
+dinaintea înghețului, cu imitația planului 62/40; nu e pe listă și nu se publică.
+
+**Cum se aplică regula pe zilele noi.** Odată cu lista s-au schimbat trei lucruri în cod, înaintea primei simulări a zilei de validare:
+
+* regula primește un agent și prin calea modelului, ca în listă, și îl caută după numele lui din fișierele de rezultate, `ppo_e15`;
+  înainte s-ar fi oprit;
+* pe zilele de test și de generalizare, lanțul de noapte rulează doar candidații trecuți de validare, adică cei eligibili în
+  `outputs/validare/cor_decizie_2026-11-04.json`; dacă nu trece niciunul, acele zile rămân fără simulări;
+* lanțul nu mai rulează planul 36/28/12, pe care `validare` îl adăuga singur.
+
+Bucla lanțului, pornită pe 3.11 înaintea acestor schimbări, s-a repornit după commit, ca să ruleze codul nou. Dacă pe ziua de validare trec
+poarta sub jumătate dintre ore, validarea e doar descriptivă: niciun candidat nu trece de ea, chiar dacă regula l-ar găsi eligibil,
+testul nu se deschide, iar runda se încheie. La fel, dacă regula nu se poate aplica, de exemplu fiindcă nicio oră trecută prin poartă nu e
+acoperită de valuri măsurate, niciun candidat nu trece. Rolurile nu se mută din aceste cauze. Pe zilele de test, regula se aplică o
+singură dată, pe cele două zile reunite, doar cu candidații trecuți de validare, dați cu numele din fișierele de rezultate:
+`python -m romana.control.decizie outputs/validare/cor_test_2026-11-05_*.csv outputs/validare/cor_test_2026-11-06_*.csv --in-vigoare
+PLAN_72_48_3 REAL --candidati <candidații trecuți> --poarta outputs/validare/poarta_cor_2026-11-05.json
+outputs/validare/poarta_cor_2026-11-06.json`. Fișierele `cor_decizie_<zi>.json` scrise de lanț pe fiecare zi de test sunt doar
+descriptive.
+
+**Ce nu spune lista.** Grila are doar 3 seed-uri pe 8 ore, iar două dintre planuri s-au adăugat după ce s-a văzut prima parte. Aproape
+jumătate din câștigul planurilor, 47–54%, vine dintr-un singur scenariu ipotetic, vârful ×1,2 din 26.10, unde planul observat are un seed
+cu o pierdere mult mai mare decât celelalte. Doar pe orele observate, fără variante, cele trei planuri rămân eligibile, iar 45/30/3 iese
+cu 6,5% sub planul observat. La vârful observat din 26.10, singurul vârf de zi lucrătoare care trece poarta, planul observat rămâne cel mai
+bun cu participanții disciplinați, iar ziua de validare, o miercuri, va avea probabil vârfuri asemănătoare. Tot acolo, geamănul duce pe
+Dacia vest cu 23% mai puțin decât camera, 587 față de 766 de vehicule pe oră, deci un ciclu scurt poate părea mai bun decât ar fi pe
+stradă; și de aceea 60/40/3 stă înaintea lui 45/30/3. Pe 2.11, o zi lucrătoare, nicio oră nu a trecut poarta, deci se poate ca și zilele de
+validare și de test să aibă puține ore judecate (§ 6.5). Un ciclu mai scurt schimbă și coordonarea cu semafoarele vecine, iar geamănul, cu
+programele generate de `netconvert` la vecini, nu poate arăta efectul real. Nici lista nu e independentă de ce s-a văzut înainte:
+planurile 60/40/3 și 45/30/3 apăreau deja pe grilele din 2.11, făcute cu geamănul de dinaintea înghețului. Ce scria pe 1.11, că E15
+pornește de la planul ales pe 28 și 29.10, nu mai e adevărat: E15 pornește de la planul observat.
+
+**Agentul următor.** *(Scris pe 1.11; din 2.11, E15 imită planul observat, nu planul 12/14/12, vezi schimbările de mai sus.)* Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
 la 5 s, deci imitația ajunge la un verde de 15/15/15 s, cu un ciclu de 60 s în loc de 53 s; comparația de la capăt se face tot cu
 planul 12/14/12, rulat exact. Se antrenează doar pe scenariile măsurii noi din zilele de antrenare, cu lista dată explicit, care
 rămâne în fișierul modelului. Modelul se comite până la termenul listei de candidați și intră pe ea ca un singur model, ales doar
@@ -3966,7 +4041,7 @@ scenariile corecte, agentul care dădea −4,6% a ajuns la **+5,2%**. Rezultatul
 iar acest lucru a fost raportat ca atare. Autorul a corectat și o greșeală a asistentului: acesta „văzuse” pe Dacia
 est, în Street View, o singură bandă pe sens. În realitate sunt două, iar rețeaua era corectă.
 
-**Etapa 6 – specialiști în loc de un agent universal (24–25.10).** Experimentele cu agenți, numerotate E1–E14, sunt
+**Etapa 6 – specialiști în loc de un agent universal (24–25.10).** Experimentele cu agenți, numerotate E1–E15, sunt
 rezumate în § 9.5. O reantrenare scurtă (E2) a înrăutățit agentul. Următoarea reantrenare (E3), cu pași de învățare
 de 10 ori mai mici, deci mai prudentă, l-a făcut cel mai bun la prânz. Ideea care a deblocat proiectul a fost un
 **program pe tipuri de trafic**: agentul AI acolo unde e cel mai bun, un plan fix bine reglat la vârf. Un agent
@@ -4112,7 +4187,7 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 | Bornă | Data | Prezentarea |
 |---|---|---|
 | M1 | 01.11.2026 | proiectul cap-coadă și demonstrația dispeceratului (`docs/prezentari/Prezentare_M1.pdf`) |
-| M2 | 08.11.2026 | dispeceratul evaluat și reparat cu evaluatori AI, plus sondarea cu oameni, dacă se adună răspunsuri până atunci; numărătoarea pe întuneric; programul real al semaforului, măsurat din cameră; geamănul corectat și retragerea rezultatului de −7% |
+| M2 | 08.11.2026 | dispeceratul evaluat și reparat cu evaluatori AI, plus sondarea cu oameni, dacă se adună răspunsuri până atunci; numărătoarea pe întuneric; programul real al semaforului, măsurat din cameră; geamănul corectat și retragerea rezultatului de −7%; lista candidaților pentru zilele noi |
 
 **Schimbările de la M1 la M2.** Lista completă este în istoricul Git, în commit-urile „Borna M2: …”. Pe scurt:
 
@@ -4127,6 +4202,9 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 * **Înghețul (3.11):** cererea finală, cu ieșirile greu de urmărit numărate direct pe felii; o verificare adversarială a cererii, a
   scenariilor și a textelor; poarta, cu rândul nou al pierderii de detecție pe întuneric; pragurile și comparația cu camera pe zilele
   de antrenare (§ 5.1, § 6.5, § 9.11).
+* **Lista candidaților (3.11):** grila planurilor fixe pe zilele de antrenare, agentul E15 și lista pentru zilele noi: planurile
+  60/40/3 și 45/30/3 și E15, în `config/candidati_v2.json`; o verificare adversarială a listei; lanțul de noapte rulează pe zilele
+  de test doar candidații trecuți de validare (§ 6.5, § 9.11).
 * **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
   care le judecă (§ 9.11).
 
@@ -4582,6 +4660,9 @@ publicate în `models/`: `ppo_romana_final_a/b`, `ppo_romana_nou_375k/600k/800k/
 | `program_real_2026-10-26.csv`, `program_real_2026-11-01.csv` | Programul real al semaforului, măsurat din jurnalul public al vehiculelor (§ 6.5): ciclul pe intervale și pe fiecare 20 de minute, cât curge fiecare intrare, debitul de vârf. | arborele curent | `romana.vision.program_real --zi <zi> --pe-zi --interval … --out …` |
 | `geaman_camera_2026-10-26.csv` | Vehicule pe ciclu și debit de vârf, pe fiecare intrare, în cameră și în prima corectură a geamănului, cea cu al doilea defect (§ 6.5). Rămâne doar ca istoric. | arborele curent | `romana.control.compara_camera` |
 | `validare_geaman.csv`, `poarta_geaman.json`, `praguri_geaman.json` | Comparația geamănului corectat cu camera la îngheț (§ 6.5, § 9.11): pe 12 ore din zilele de antrenare, câte un rând pe măsură, cu camera, geamănul pe seed-uri, abaterea, pragul și verdictul, pentru geamănul de bază și pentru cei doi gemeni greșiți dinadins; verdictul porții pe fiecare oră; pragurile calculate, mediana pe ore, fixate pentru zilele noi. Fiecare rând poartă commitul, factorii și data rulării. | măsura nouă, `cor_` | `romana.control.valideaza_geaman` (comanda din § 11.8) |
+| `grila_inghet_normal.csv`, `grila_inghet_indisciplinat.csv` | Grila de după îngheț, pe zilele de antrenare (25.10, 26.10, 1.11, 2.11), cu ambele comportamente și seed-urile 1–3: semaforul rejucat, planul observat 72/48/3, planurile 60/40/3, 45/30/3, 90/50/3, 36/28/12, 12/14/12 și programul actuated; câte un rând pe simulare, cu pierderea totală și pe tipuri de participanți, teleportările, ciocnirile și vehiculele nesosite (§ 6.5, § 9.11). | măsura nouă, `cor_` | `romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1,2,3 --fara-alegere --fara-fix` |
+| `grila_inghet_ciclu.csv` | Planurile 36/24/3 și 52/35/3, cu același raport al verdelui ca planul observat, pe cele 14 scenarii ale zilelor de antrenare care trec poarta, cu ambele comportamente și seed-urile 1–3, în același format ca grila (§ 9.11). | măsura nouă, `cor_` | `romana.control.validare PLAN_36_24_3 PLAN_52_35_3 --scenarii <cele 28 de scenarii> --seeds 1,2,3 --fara-alegere --fara-fix` |
+| `grila_inghet_e15.csv` | Agentul E15 pe aceleași 14 scenarii, cu ambele comportamente și seed-urile 1–3, în același format ca grila (§ 9.5, § 9.11). | măsura nouă, `cor_` | `romana.control.validare models/ppo_e15.zip --scenarii <cele 28 de scenarii> --seeds 1,2,3 --fara-alegere --fara-fix` |
 | `referinta_v2/` | Numărătoarea de referință a măsurii noi pe 11 clipuri din 1.11 și 2.11 (pe ținte și bucăți de 30 s), factorii de corecție pe zi, pe întuneric și pe tot, cu intervalele de încredere, și momentele pietonilor pe valuri, fără imagini (§ 4.3). | – (din clipuri) | `romana.vision.referinta factori` |
 | `grila_calibrat.csv` | Grila de 23 de planuri fixe încercate pe geamănul calibrat (§ 9.9), pe luni 26.10, cu ambele comportamente și seed-urile 11–15, la care se adaugă planul fix de referință. | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` | Testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12, pe seed-urile 1–10. Pierderea de timp e dată și pe tipuri de participanți, în coloanele `pierdere_h_<tip>`. | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |

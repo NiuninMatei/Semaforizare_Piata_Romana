@@ -25,12 +25,15 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from romana.common import CONFIG_DIR, DEMAND_DIR, OUTPUT_DIR, ROOT, TRAJ_RAW_DIR
+from romana.control.validare import strategy_name
 from romana.lant_zilnic import DIR_LANT, PY, ROLURI, ROLURI_SIGILATE, SEEDURI_ROL, SEEDURI_TEST, Pas, _iso, _m, excluderi_zi, noteaza, prioritate_scazuta, ruleaza, uneste, zi_valida
 
 DIR_COR = OUTPUT_DIR / "lant_cor"
 CANDIDATI = CONFIG_DIR / "candidati_v2.json"
 PRAGURI = ROOT / "docs" / "rezultate" / "praguri_geaman.json"
 REFERINTE = ("PLAN_72_48_3", "REAL")
+# decizia zilei de validare: pe zilele de test și de generalizare rulează doar candidații trecuți de ea (§ 9.11)
+DECIZIE_VALIDARE = OUTPUT_DIR / "validare" / f"cor_decizie_{min(z for z, r in ROLURI.items() if r == 'validare')}.json"
 PROCESE_VALIDARE = "3"
 PROCESE_TEST = "8"
 SEEDURI_GEAMAN = "1,2,3,4,5"
@@ -50,6 +53,18 @@ def strategii_raportate(cale: Path = CANDIDATI) -> list[str]:
     if not cale.exists():
         return []
     return list(json.loads(cale.read_text(encoding="utf-8")).get("raportate", []))
+
+
+def trecuti_de_validare(candidati: list[str]) -> list[str]:
+    """Candidații eligibili în decizia zilei de validare, în ordinea listei. O validare doar descriptivă, sub jumătate din ore trecute
+    prin poartă, sau o decizie nescrisă nu lasă pe nimeni să treacă: testul nu se deschide."""
+    if not DECIZIE_VALIDARE.exists():
+        return []
+    d = json.loads(DECIZIE_VALIDARE.read_text(encoding="utf-8"))
+    if d.get("poarta", {}).get("descriptiv"):
+        return []
+    eligibili = {c["strategie"] for c in d.get("candidati", []) if c.get("eligibil")}
+    return [c for c in candidati if strategy_name(c) in eligibili]
 
 
 def ore_observate(zi: str) -> list[str]:
@@ -76,16 +91,21 @@ def pasi_dupa(zi: str, ore: list[str], candidati: list[str], raportate: list[str
     poarta = f"outputs/validare/poarta_cor_{zi}.json"
     fixate = ["--praguri", str(praguri)] if praguri.exists() else []
     lista = [Pas("geaman", _m("romana.control.valideaza_geaman", *ore, "--seeds", SEEDURI_GEAMAN, "--procese", PROCESE_VALIDARE, *fixate, "--poarta", poarta, "--out", f"outputs/validare/geaman_cor_{zi}.csv"), depinde=("scenarii",), iesiri=(poarta,))]
-    if sigilata(zi) and not desigilat:
-        return lista
+    if sigilata(zi):
+        if not desigilat:
+            return lista
+        candidati = trecuti_de_validare(candidati)
+        if not candidati:                   # niciun candidat trecut de validare: zilele de test rămân fără simulări
+            return lista
     seeduri = SEEDURI_ROL.get(ROLURI.get(zi), SEEDURI_TEST)
     strategii = list(dict.fromkeys([*REFERINTE, *candidati, *raportate]))
     out = {c: f"outputs/validare/cor_test_{zi}_{c}.csv" for c in ("indisciplinat", "normal")}
     for comp, tip, dep in (("indisciplinat", f"indisciplinat_cor_zi_{zi}_*", "indisciplinat"), ("normal", f"cor_zi_{zi}_*", "scenarii")):
-        lista.append(Pas(f"test_{comp}", _m("romana.control.validare", *strategii, "--scenarii", tip, "--seeds", seeduri, "--fara-alegere", "--procese", PROCESE_TEST, "--out", out[comp]), depinde=(dep,), iesiri=(out[comp],)))
+        lista.append(Pas(f"test_{comp}", _m("romana.control.validare", *strategii, "--scenarii", tip, "--seeds", seeduri, "--fara-alegere", "--fara-fix", "--procese", PROCESE_TEST, "--out", out[comp]), depinde=(dep,), iesiri=(out[comp],)))
     if candidati:
+        # regula caută strategiile după numele din CSV: un agent, dat în listă prin calea modelului, apare acolo cu numele fișierului
         dec = f"outputs/validare/cor_decizie_{zi}.json"
-        lista.append(Pas("decizie", _m("romana.control.decizie", *out.values(), "--in-vigoare", *REFERINTE, "--candidati", *candidati, "--poarta", poarta, "--out", dec), depinde=("geaman", "test_indisciplinat", "test_normal"), iesiri=(dec,)))
+        lista.append(Pas("decizie", _m("romana.control.decizie", *out.values(), "--in-vigoare", *REFERINTE, "--candidati", *map(strategy_name, candidati), "--poarta", poarta, "--out", dec), depinde=("geaman", "test_indisciplinat", "test_normal"), iesiri=(dec,)))
     return lista
 
 
