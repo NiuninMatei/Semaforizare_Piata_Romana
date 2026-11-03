@@ -68,7 +68,7 @@ def main(argv=None) -> None:
     real = json.loads(cale.read_text(encoding="utf-8"))[a.interval]
     factori = json.loads((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8"))["factor_corectie_detectie"]
     mijloc = pd.Timestamp(f"{a.zi} {a.interval.split('-')[0]}") + (pd.Timestamp(f"{a.zi} {a.interval.split('-')[1].replace('24:00', '23:59')}") - pd.Timestamp(f"{a.zi} {a.interval.split('-')[0]}")) / 2
-    factor = {b: factor_brat(v, mijloc) for b, v in factori.items()}       # la fel ca în cerere: după cum e Soarele în mijlocul intervalului
+    factor = {b: factor_brat(v, mijloc) for b, v in factori.items()}       # aproximație: cererea pune eticheta pe începutul fiecărui sfert, iar aici se ia una singură, la mijlocul intervalului
     ev, T, stare = treceri_geaman(a.scenariu, a.plan, a.seed)
     randuri, curbe = [], {}
     Tr = real["ciclu_s"]

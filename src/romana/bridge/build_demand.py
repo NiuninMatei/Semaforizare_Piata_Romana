@@ -67,6 +67,15 @@ def write_vtypes() -> None:
     ET.ElementTree(root).write(VTYPES, encoding="UTF-8", xml_declaration=True)
 
 
+def fara_ora_dublata(df, nume: str):
+    """Măsura nouă: la trecerea la ora de iarnă, ora 03:xx apare de două ori în numărători, iar rândurile 03:45 → 03:00 au sfârșitul înaintea începutului. Un interval de 60 s, ieșit din ele,
+    face routeSampler să taie toată ora în bucăți de 60 s și să piardă relațiile mici, deci o fereastră care atinge acea oră se refuză; se folosește `--exclude 03:00-04:00`."""
+    df = df[df["sfarsit"] > df["inceput"]]
+    if df.duplicated(["inceput", "sfarsit", "tip", "origine", "destinatie", "vehicul"]).any():
+        raise SystemExit(f"{nume}: fereastra atinge ora dublată de la schimbarea orei; --exclude 03:00-04:00")
+    return df
+
+
 def route_edges(route_file: Path):
     for _, el in ET.iterparse(route_file):
         if el.tag == "vehicle":
@@ -296,9 +305,9 @@ def pedestrians(recs: list[dict], cfg: dict, path: Path) -> int:
 def pedestrians_treceri(recs: list[dict], cfg: dict, path: Path) -> int:
     """Măsura nouă (§ 9.11): fiecare pieton traversează o singură dată, pe un braț al pieței, de pe un trotuar pe celălalt.
 
-    `pietoni_h` e numărul măsurat înmulțit cu factorul de extrapolare. Camera vede bine doar trecerea de pe Dacia est, care primește
-    numărul măsurat; restul se împarte în mod egal între celelalte brațe. Traseele vechi aveau în medie ≈700 m și mai multe treceri
-    pe drum, deci același pieton număra de câteva ori."""
+    `pietoni_h` e numărul detectorului, pe toate zonele, ≈95% de pe Dacia est, înmulțit cu factorul de cerere ales și cu cel de extrapolare.
+    Camera vede bine doar trecerea de pe Dacia est, care primește numărul detectorului × factorul de cerere; restul se împarte în mod egal
+    între celelalte brațe. Traseele vechi aveau în medie ≈700 m și mai multe treceri pe drum, deci același pieton număra de câteva ori."""
     capete = cfg["pietoni_pe_treceri"]
     f = cfg.get("factor_extrapolare_pietoni", 1.0)
     alte = [b for b in capete if b != "dacia_est"]
@@ -370,7 +379,8 @@ def main(argv=None) -> None:
         recs = reference_profile(cfg)
     else:
         files = [Path(p) for p in args.counts] if args.counts else sorted(COUNTS_DIR.glob("numaratori_*.csv"))
-        recs = estimate(load_counts(files, args.start, args.end), cfg)
+        df = load_counts(files, args.start, args.end)
+        recs = estimate(fara_ora_dublata(df, args.nume) if cfg.get("retea") else df, cfg)
     if args.scala != 1.0:
         for r in recs:
             r["od_veh_h"] = [[v * args.scala for v in row] for row in r["od_veh_h"]]
@@ -400,6 +410,10 @@ def main(argv=None) -> None:
                   log=out_dir / f"routeSampler_{vt}.log")
         geh = re.findall(r"GEH<5 for ([\d.]+)%", log)
         report["tipuri"][vt] = {"viraje_tinta": n, "GEH<5_%": float(geh[-1]) if geh else None}
+        scrise = rf.read_text(encoding="utf-8").count("<vehicle ")
+        report["tipuri"][vt]["rute"] = scrise
+        if cfg.get("retea") and scrise != n:
+            raise SystemExit(f"{args.nume}/{vt}: routeSampler a scris {scrise} din {n} vehicule; intervale de lungimi diferite?")
         route_files.append(rf)
     bg = out_dir / "fond.rou.xml"
     report["vehicule_fond"] = background(recs, cfg, bg)

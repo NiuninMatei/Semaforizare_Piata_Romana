@@ -44,7 +44,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from romana.bridge.od_estimation import factor_brat
+from romana.bridge.od_estimation import PRAG_INTUNERIC_GRADE, factor_brat, inaltime_soare
 from romana.common import CONFIG_DIR, COUNTS_COR_DIR, DEMAND_DIR, OUTPUT_DIR, ROOT, TRAJ_DIR, TRAJ_RAW_DIR
 from romana.control.faze import info_v2
 from romana.control.rejucat import ORIZONT_S, evenimente_zi, fereastra_scenariu, program_rejucat, valuri
@@ -89,7 +89,11 @@ ORE_NEATINSE = {"cor_zi_2026-11-01_seara", "cor_zi_2026-10-25_varf"}
 # iar autorul le fixează într-un fișier (--praguri) înaintea zilei de validare. „pietoni_detectie”: cât de bine prinde camera pietonii, pe zebra din prim-plan.
 PRAGURI = {"debit": 0.10, "timp_departe": 0.25, "pietoni_detectie": 0.10, "teleportari": 5, "ciocniri_vehicule": 5, "pieton_in_miscare_fractie": 0.01, "neintrate_fractie": 0.02}
 # Poarta din § 9.11: geamănul duce cererea orei, fără teleportări în masă. Dacia vest nu intră, fiindcă se știe că acolo nu trece (§ 6.5), dar lipsa de capacitate se vede la vehiculele neintrate.
-POARTA = ("debit, veh/h: magheru", "debit, veh/h: catargiu", "debit, veh/h: dacia_est", "teleportări", "ciocniri între vehicule văzute de SUMO", "vehicule neintrate sau nesosite la final, parte din vehicule")
+POARTA = ("debit, veh/h: magheru", "debit, veh/h: catargiu", "debit, veh/h: dacia_est", "teleportări", "ciocniri între vehicule văzute de SUMO", "vehicule neintrate sau nesosite la final, parte din vehicule", "pierdere de detecție pe întuneric")
+# Seara din 2.11, pe întuneric și pe asfalt ud: pe Dacia vest, referința e de ≈3 ori peste detector, deși ziua, pe ploaie, factorii rămân normali, iar debitul real nu scade (ieșirile din prim-plan
+# îl confirmă). Doar din cameră, fără simulare: X = ieșirile Dacia est fără virajul Magheru → Dacia est, V = intrările Dacia vest. Pe lumină, X/V e cel mult 1,44, iar pe 26.10 pe întuneric, cel mult 1,40;
+# pe 2.11, 17:00–20:00, 2,27–3,67. Pragul stă pe o singură seară dintre zilele permise, deci e o ipoteză declarată (§ 9.11). Ora marcată iese din decizie, cu variantele ei.
+PIERDERE_DETECTIE = {"raport": 1.8, "magheru": 600, "x": 100}
 # Rândurile la care s-a renunțat și de ce, ca istoria validării să se vadă (§ 6.5)
 RENUNTATE = {
     "Total în prag": "nu deosebește nimic: un geamăn greșit dinadins avea aproape același scor cu cel de bază;",
@@ -107,7 +111,7 @@ LIMITE = {
     "bara din față": "camera virtuală folosește bara din față a vehiculului, camera punctul de contact cu solul. La timpul zonă–zonă, diferența se scade; pe momentele de pe capete rămâne, necorectată și nemăsurată: cam jumătate de vehicul, deci ≈0,5 s la 5 m/s;",
     "ceasul": "`evaluate.run_one` dă observatorului indicele buclei, `t`, iar ceasul SUMO după pas e t + 1. În `Contoare`, ce s-a întâmplat în pas are momentul t + 0,5, cu o eroare de citire de cel mult 0,5 s, pozițiile sunt ale sfârșitului pasului, t + 1, iar starea "
               "semaforului rămâne la t, fiindcă se schimbă la începutul pasului (măsurat: primul vehicul de la linie iese de pe muchie chiar în pasul t);",
-    "pietonii": "detectorul pierde persoanele din mulțimi: pe clipurile din 2.11, pe aceleași bucăți, adnotatorii văd mult mai multe. De aceea numărul de comparat e numărătoarea pe persoane × factorul din referință, deci rândul verifică doar că geamănul duce cererea, iar histograma camerei nu e un criteriu;",
+    "pietonii": "detectorul pierde persoanele din mulțimi: pe clipurile din 2.11, pe aceleași bucăți, adnotatorii văd mult mai multe. De aceea numărul de comparat e numărătoarea pe persoane × factorul de cerere ales, deci rândul verifică doar că geamănul duce cererea, iar histograma camerei nu e un criteriu;",
     "factorii": "tabelul folosește factorii de acum din demand_v2.json, iar rutele pe cei cu care s-au făcut; generatorul scrie în rezumatul zilei amprenta cererii folosite. Validarea avertizează dacă amprenta diferă sau, pe scenariile mai vechi, dacă fișierul e mai nou decât rutele, și dacă "
                 f"cererea din rute se abate cu peste {TOLERANTA_CERERE:.0%} de cameră × factor. Eroarea factorilor nu e măsurată, deci nu intră în pragul vârfului: rândul dă cât s-ar muta abaterea la factor ×0,9 și ×1,1."}
 _GOL = float("nan")
@@ -951,6 +955,25 @@ def factori_folositi() -> dict:
     return {"sha256": hashlib.sha256(text.encode()).hexdigest()[:16], **{k: c.get(k) for k in ("factor_corectie_detectie", "factor_pietoni_masurati", "factor_extrapolare_pietoni", "viraje_numarate", "cote_fixe")}}
 
 
+def factor_pe_sferturi(valoare, a: float, a_ts, momente: np.ndarray) -> float:
+    """Factorul mediu al brațului pe vehiculele numărate: cererea pune eticheta de zi sau de întuneric pe începutul fiecărui sfert, deci o oră care trece peste prag are factori amestecați."""
+    if not isinstance(valoare, dict) or not len(momente):
+        return factor_brat(valoare, a_ts)
+    k, n = np.unique(((momente - a) // 900).astype(int), return_counts=True)
+    return float(sum(c * factor_brat(valoare, pd.Timestamp(a_ts) + pd.Timedelta(seconds=900 * int(i))) for i, c in zip(k, n)) / n.sum())
+
+
+def pierdere_detectie(intrari: dict, iesiri: dict, miscari: list, a: float, mijloc) -> dict:
+    """Doar din cameră, pe toată ora: vezi `PIERDERE_DETECTIE`. Pe trafic mic, raportul nu spune nimic, de aceea cere un minim pe Magheru și pe X."""
+    in_ora = lambda v: int(((v >= a) & (v < a + SFARSIT_S)).sum())     # noqa: E731
+    viraj = sum(1 for o, d, _, td in miscari if o == "magheru" and d == "dacia_est" and a <= td < a + SFARSIT_S)
+    x, v, m = in_ora(iesiri["dacia_est"]) - viraj, in_ora(intrari["dacia_vest"]), in_ora(intrari["magheru"])
+    raport = x / max(v, 1)
+    intuneric = inaltime_soare(pd.Timestamp(mijloc).to_pydatetime()) <= PRAG_INTUNERIC_GRADE
+    return {"x": x, "v": v, "m": m, "raport": raport, "intuneric": bool(intuneric),
+            "marcata": bool(intuneric and m >= PIERDERE_DETECTIE["magheru"] and x >= PIERDERE_DETECTIE["x"] and raport >= PIERDERE_DETECTIE["raport"])}
+
+
 def date_camera(stem: str, zone: list) -> dict:
     """Tot ce trebuie din cameră pe un scenariu, pe ceasul scenariului: fără simulare."""
     zi, a_ts, b_ts = fereastra_scenariu(stem)
@@ -958,7 +981,6 @@ def date_camera(stem: str, zone: list) -> dict:
     real = camera_zi(zi, zone)
     cerere = json.loads((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8"))
     fact = cerere["factor_corectie_detectie"]
-    mij = pd.Timestamp(a_ts) + pd.Timedelta(seconds=(INCALZIRE_S + SFARSIT_S) / 2)
     fereastra = lambda m: m[(m >= a + INCALZIRE_S) & (m < a + SFARSIT_S)] - a     # noqa: E731
     m = real["intrari"]["magheru"]
     val = valuri_in_fereastra(m[(m >= a - 200) & (m < a + ORIZONT_S)] - a)
@@ -967,7 +989,10 @@ def date_camera(stem: str, zone: list) -> dict:
     ns, ev = intervale_etape(faze, info["green_states"], min(info["pietoni"]["treceri"]))
     pc = pietoni_camera(zi, a + INCALZIRE_S, a + SFARSIT_S, zone)
     od = json.loads((DEMAND_DIR / stem / "od_estimat.json").read_text(encoding="utf-8"))["rezumat"]
-    return {"stem": stem, "zi": zi, "a": a, "f": {b: factor_brat(fact[b], mij) for b in BRATE}, "intrari": {b: fereastra(v) for b, v in real["intrari"].items()}, "iesiri": {b: fereastra(v) for b, v in real["iesiri"].items()},
+    return {"stem": stem, "zi": zi, "a": a, "f": {b: factor_pe_sferturi(fact[b], a, a_ts, real["intrari"][b][(real["intrari"][b] >= a + INCALZIRE_S) & (real["intrari"][b] < a + SFARSIT_S)]) for b in BRATE},
+            "f_ora": {b: factor_pe_sferturi(fact[b], a, a_ts, real["intrari"][b][(real["intrari"][b] >= a) & (real["intrari"][b] < a + SFARSIT_S)]) for b in BRATE},
+            "pierdere_detectie": pierdere_detectie(real["intrari"], real["iesiri"], real["miscari"], a, pd.Timestamp(a_ts) + pd.Timedelta(seconds=SFARSIT_S / 2)),
+            "intrari": {b: fereastra(v) for b, v in real["intrari"].items()}, "iesiri": {b: fereastra(v) for b, v in real["iesiri"].items()},
             "intrari_ora": {b: int(((real["intrari"][b] >= a) & (real["intrari"][b] < a + SFARSIT_S)).sum()) for b in BRATE},
             "val": val, "sc": np.array([v[0] for v in val]), "ns": ns, "ev": ev, "detalii": detalii, "pietoni": None if pc is None else pc - a, "pietoni_pe_ora": pietoni_numarati(zi, a_ts, b_ts), "persoane_pe_ora": pietoni_numarati(zi, a_ts, b_ts, ("trecere_dacia_est_iesire", "trecere_dacia_est_intrare")), "f_pietoni": float(cerere.get("factor_pietoni_masurati", 1.0)),
             "miscari": [(o, d, to - a, td - a) for o, d, to, td in real["miscari"]], "od": od}
@@ -993,7 +1018,7 @@ def verifica_cererea(od: dict, intrari_ora: dict, f: dict, toleranta: float = TO
         asteptat = n * f[b]
         cerere = sum(v for k, v in od.get("od_vehicule", {}).items() if k.split(">")[0] == b)
         if abs(cerere - asteptat) > max(toleranta * asteptat, 3):
-            out.append(f"ATENȚIE: pe {b}, rutele au {cerere:.0f} vehicule, iar camera × factorul de acum, {f[b]:g}, dă {asteptat:.0f}: rutele par făcute cu alți factori.")
+            out.append(f"ATENȚIE: pe {b}, cererea are {cerere:.0f} vehicule, iar camera × factorul de acum, {f[b]:g}, dă {asteptat:.0f}: scenariul pare făcut cu alți factori.")
     return out
 
 
@@ -1020,7 +1045,7 @@ def avertismente_scenariu(stem: str, cam: dict) -> list[str]:
     rez = DEMAND_DIR / f"cor_zi_{cam['zi']}_rezumat.json"
     amprenta = json.loads(rez.read_text(encoding="utf-8")).get("cerere_sha256") if rez.exists() else None
     out = [avertisment_factori(CONFIG_DIR / "demand_v2.json", fisiere_rute(cfg), amprenta)] if cfg.exists() else []
-    return [x for x in out if x] + verifica_cererea(cam["od"], cam["intrari_ora"], cam["f"]) + verifica_valuri(cam["sc"], cam["ns"], cam["intrari"]["magheru"], m)
+    return [x for x in out if x] + verifica_cererea(cam["od"], cam["intrari_ora"], cam.get("f_ora", cam["f"])) + verifica_valuri(cam["sc"], cam["ns"], cam["intrari"]["magheru"], m)
 
 
 # --------------------------------------------------------------------- rândurile
@@ -1251,7 +1276,7 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
         if cam["pietoni_pe_ora"] is not None:       # numărătoarea e pe sferturi, deci pe toată ora; geamănul, la fel
             n_p, f_p = cam.get("persoane_pe_ora", cam["pietoni_pe_ora"]), cam.get("f_pietoni", 1.0)
             c, v = n_p * f_p, [int(((np.asarray(r["pietoni"], float) >= 0) & (np.asarray(r["pietoni"], float) < SFARSIT_S)).sum()) * 3600 / SFARSIT_S for r in rez]
-            sursa = f"camera: persoanele numărate pe Dacia est, {n_p:.0f} pe oră, × factorul din referință, {f_p:g}; ambele pe toată ora; detectorul singur, doar pe zebra de ieșire: {cam['pietoni_pe_ora']:.0f}, iar traversările văzute: {vazuti:.0f} pe oră"
+            sursa = f"camera: persoanele numărate pe Dacia est, {n_p:.0f} pe oră, × factorul de cerere ales, {f_p:g}; ambele pe toată ora; detectorul singur, doar pe zebra de ieșire: {cam['pietoni_pe_ora']:.0f}, iar traversările văzute: {vazuti:.0f} pe oră"
         else:
             c, v = vazuti, [len(x) * 3600 / n_s for x in P]
             sursa = f"fără numărătoarea orei (data/counts_cor): doar traversările văzute, pe {INCALZIRE_S}–{SFARSIT_S} s, la fel la geamăn; fără cei care așteaptă la bordură"
@@ -1338,6 +1363,9 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
     raport("intrări pe zebre pe roșu, parte din intrări", "rosu", parti, pieton=True, nota="din deblocare, la ≈60 s; nu e o dovadă de realism")
     raport("așteptarea evitată de cei intrați pe roșu, ore", "rosu", evitate, pieton=True)
     T.rand("D", "neintrate", "vehicule neintrate sau nesosite la final, parte din vehicule", [r["r"]["nefinalizate"] / s for r, s in zip(rez, sositi)], mod="valoare", prag=T.prag("neintrate_fractie", PRAGURI["neintrate_fractie"], "scris"))
+    pd_cam = cam.get("pierdere_detectie") or {}
+    T.rand("D", "pierdere_detectie", "pierdere de detecție pe întuneric", camera=pd_cam.get("raport", _GOL), din_simulare=False, verdict="peste prag" if pd_cam.get("marcata") else "în prag",
+           nota=f"din cameră: ieșirile Dacia est fără virajul Magheru → Dacia est, {pd_cam.get('x', 0)}, față de intrările Dacia vest, {pd_cam.get('v', 0)}; contează doar pe întuneric, la trafic mare; raport peste {PIERDERE_DETECTIE['raport']:g}: ora iese din decizie")
     raport(f"vehicule neintrate la secunda {SFARSIT_S}: toate", "neintrate", [r["neintrate"]["total"] for r in rez])
     raport(f"vehicule neintrate la secunda {SFARSIT_S}: Dacia vest", "neintrate", [r["neintrate"]["dacia_vest"] for r in rez])
     raport("pierdere totală, ore", "pierdere", [r["r"]["pierdere_totala_h"] for r in rez])
