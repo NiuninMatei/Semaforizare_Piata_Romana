@@ -320,6 +320,18 @@ class TestRaspuns(Primite):
         self.assertEqual({r["grup"] for r in cu_durata}, {"c"})
         self.assertNotIn("secret", dest.read_text(encoding="utf-8"))
 
+    def test_raspunsurile_de_pe_telefon_se_numara_separat(self):
+        for k in range(3):
+            self.pune(text(k=k))
+        self.pune(text(k=7).replace("ecran 1536x730", "ecran 390x844"))
+        grup = {(r["grup"], r["masura"], r["versiune"]): r for r in s.pe_grup(s.rezumat(self.dosar))}
+        self.assertEqual(grup[("a", "sarcina 3: verde pe Dacia", "m1")]["persoane"], 3)
+        self.assertEqual(grup[("a_telefon", "sarcina 3: verde pe Dacia", "m1")]["persoane"], 1)
+        dest = self.dosar / "public.csv"
+        s.publica(self.dosar, dest)
+        with open(dest, encoding="utf-8") as f:
+            self.assertEqual({r["grup"] for r in csv.DictReader(f)}, {"a"})     # o singură persoană pe telefon rămâne afară
+
     def test_nu_se_publica_sub_trei_persoane(self):
         self.pune(text())
         with self.assertRaises(SystemExit):

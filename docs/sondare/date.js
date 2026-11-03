@@ -115,7 +115,7 @@ const DATE_SONDARE = {
 "Răspundeți sus"
 ],
 [
-"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului",
+"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă",
 "Dacă jos nu se vede tot, derulați cu degetul"
 ]
 ],
@@ -182,7 +182,7 @@ const DATE_SONDARE = {
 "text": [
 "Imaginați-vă că lucrați într-un centru care supraveghează semafoarele din Piața Romană. Încercați fără grijă: aici nu se dau note.",
 "În stânga primiți, pe rând, câte o sarcină. O faceți în partea din dreapta, apoi apăsați „Am terminat”. Partea din dreapta se acoperă și răspundeți la o întrebare, din ce ați văzut.",
-"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului. Imaginea de la cameră e, în acest test, o fotografie fixă a pieței.",
+"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă. Imaginea de la cameră e, în acest test, o fotografie fixă a pieței.",
 "Dacă nu reușiți, apăsați „Nu reușesc”. Nu e nicio problemă.",
 "Veți vedea două variante ale aceluiași ecran, pe rând."
 ],

@@ -79,7 +79,7 @@ AJUTOR = ["Nu", "Doar la mouse sau la citit", "Da, la înțelegerea sarcinilor"]
 # Pe un ecran îngust, ghidul stă deasupra dispeceratului.
 PE_TELEFON = [("în partea din dreapta", "în partea de jos"), ("partea din dreapta", "partea de jos"), ("Partea din dreapta", "Partea de jos"),
               ("ecranul din dreapta", "ecranul de jos"), ("În stânga primiți", "Sus primiți"), ("Răspundeți în stânga", "Răspundeți sus"),
-              ("Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului", "Dacă jos nu se vede tot, derulați cu degetul")]
+              ("Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă", "Dacă jos nu se vede tot, derulați cu degetul")]
 NUME_SARCINA = {1: "cine schimbă culorile", 2: "cea mai lungă coadă", 3: "verde pe Dacia", 4: "înapoi la calculator"}
 
 
@@ -175,7 +175,7 @@ def pasi(ordine: tuple[str, str] = ("m1", "m2")) -> list[dict]:
             "Imaginați-vă că lucrați într-un centru care supraveghează semafoarele din Piața Romană. Încercați fără grijă: aici nu se dau note.",
             "În stânga primiți, pe rând, câte o sarcină. O faceți în partea din dreapta, apoi apăsați „Am terminat”. "
             "Partea din dreapta se acoperă și răspundeți la o întrebare, din ce ați văzut.",
-            "Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului. Imaginea de la cameră e, în acest test, o fotografie fixă a pieței.",
+            "Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă. Imaginea de la cameră e, în acest test, o fotografie fixă a pieței.",
             "Dacă nu reușiți, apăsați „Nu reușesc”. Nu e nicio problemă.",
             "Veți vedea două variante ale aceluiași ecran, pe rând."],
          "buton": "Am înțeles"},
@@ -292,9 +292,11 @@ INTREBARI = {"verde_r": "culoarea pe Magheru", "verde_vazut": "a văzut schimbar
 RASPUNS_SARCINA = {1: "conduce_r", 2: "coada_r"}
 TEXT_LIBER = {"incurcat": "ce a încurcat"}
 PROFIL = ("profil_calculator", "vazut_inainte", "ajutor")
-COLOANE = ["cod", "grup", "terminat", "versiune", "runda", "masura", "durata_s", "reusit", "clicuri", "comenzi", "nu_reuseste", "raspuns"]
+COLOANE = ["cod", "grup", "ecran", "terminat", "versiune", "runda", "masura", "durata_s", "reusit", "clicuri", "comenzi", "nu_reuseste", "raspuns"]
 COLOANE_GRUP = ["grup", "masura", "versiune", "persoane", "reusite", "persoane_prima_runda", "reusite_prima_runda"]
 COLOANE_DURATA = ["durata_mediana_s", "clicuri_mediana"]
+# Sub această lățime, pagina pune ghidul deasupra dispeceratului: e alt ecran, deci răspunsurile se numără separat.
+LATIME_TELEFON = 900
 
 
 def citeste_raspuns(text: str) -> dict | None:
@@ -357,12 +359,25 @@ def raspunsuri_primite(dosar: Path = DOSAR) -> list[tuple[str, dict]]:
     return rez
 
 
+def pe_telefon(ecran: str) -> bool:
+    """„390x844” → True: lățimea din antetul răspunsului e sub LATIME_TELEFON."""
+    try:
+        return 0 < int(str(ecran).lower().split("x")[0]) < LATIME_TELEFON     # 0 = lățime necunoscută
+    except ValueError:
+        return False
+
+
+def grup_raportat(r: dict) -> str:
+    """Grupul din totaluri: răspunsurile de pe telefon formează un grup al lor, de exemplu „a_telefon”."""
+    return r["grup"] + ("_telefon" if pe_telefon(r.get("ecran", "")) else "")
+
+
 def rezumat(dosar: Path = DOSAR) -> list[dict]:
     """Un rând pe participant, versiune și măsură; plus părerile și profilul (doar local)."""
     randuri = []
     for cod, rasp in raspunsuri_primite(dosar):
         pe_id = {o["id"]: o for o in rasp["pasi"]}
-        baza0 = {"cod": cod, "grup": rasp["grup"], "terminat": rasp["terminat"]}
+        baza0 = {"cod": cod, "grup": rasp["grup"], "ecran": rasp["ecran"], "terminat": rasp["terminat"]}
         for runda in (0, 1):
             r = f"r{runda + 1}"
             baza = {**baza0, "runda": runda + 1}
@@ -412,8 +427,9 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
     """Totaluri pe grup, versiune și măsură, doar pentru cei care au terminat: fără coduri, fără text liber, fără profil.
 
     Prima rundă se dă separat: e singura la prima vedere, deci singura fără efectul exercițiului. Duratele, doar `local` sau la colegi:
-    între persoane de vârste foarte diferite nu se pot compara, iar colegii au vârste apropiate."""
-    terminati = [r for r in randuri if r.get("terminat")]
+    între persoane de vârste foarte diferite nu se pot compara, iar colegii au vârste apropiate. Răspunsurile de pe telefon
+    au grupul lor (`grup_raportat`), fiindcă acolo pagina arată altfel."""
+    terminati = [{**r, "grup": grup_raportat(r)} for r in randuri if r.get("terminat")]
     grupe: dict[tuple, list[dict]] = {}
     for r in terminati:
         if r.get("versiune") and r["masura"] not in TEXT_LIBER.values():
@@ -423,7 +439,7 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
         prima = [r for r in lista if r.get("runda") == 1]
         rand = {"grup": grup, "masura": masura, "versiune": versiune, "persoane": len(lista), "reusite": sum(bool(r.get("reusit")) for r in lista),
                 "persoane_prima_runda": len(prima), "reusite_prima_runda": sum(bool(r.get("reusit")) for r in prima)}
-        if local or grup == "c":
+        if local or grup.split("_")[0] == "c":       # colegii, și cei de pe telefon
             durate = [r["durata_s"] for r in lista if r.get("durata_s") is not None]
             clicuri = [r["clicuri"] for r in lista if r.get("clicuri") is not None]
             rand["durata_mediana_s"] = round(st.median(durate), 1) if durate else ""
@@ -444,7 +460,11 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
 def publica(dosar: Path = DOSAR, destinatie: Path = PUBLICAT, minim: int = 3) -> Path:
     """Totalurile publice, pe grupuri; un grup sub `minim` persoane care au terminat rămâne afară, fiindcă un rând ar fi chiar răspunsul cuiva."""
     _, randuri = scrie_rezumat(dosar)
-    destule = {g for g in GRUPURI if len({r["cod"] for r in randuri if r.get("terminat") and r["grup"] == g}) >= minim}
+    coduri: dict[str, set] = {}
+    for r in randuri:
+        if r.get("terminat"):
+            coduri.setdefault(grup_raportat(r), set()).add(r["cod"])
+    destule = {g for g, c in coduri.items() if len(c) >= minim}
     if not destule:
         raise SystemExit(f"Niciun grup nu are cel puțin {minim} persoane care au terminat.")
     destinatie.parent.mkdir(parents=True, exist_ok=True)
