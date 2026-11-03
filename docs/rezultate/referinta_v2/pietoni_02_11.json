@@ -1,0 +1,1464 @@
+{
+ "2026-11-02_0745": {
+  "decalaj_s": 8.0,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -207.3,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": -82.5,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": 66.4,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 25.6,
+     "evenimente": 63,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 28.6,
+     "evenimente": 64,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": 192.4,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 30.4,
+     "evenimente": 26,
+     "prima_bucata_5s": 27.558000087738037
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 31.6,
+     "evenimente": 18,
+     "prima_bucata_5s": 27.558000087738037
+    }
+   },
+   {
+    "inceput_val": 327.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 140.0,
+   "detector": 65,
+   "pe_bucati_ref": [
+    0.0,
+    0.0,
+    0.0,
+    23.5,
+    8.0,
+    0.0,
+    0.0,
+    91.0,
+    17.5,
+    0.0
+   ],
+   "pe_bucati_det": [
+    1,
+    1,
+    2,
+    15,
+    6,
+    3,
+    1,
+    27,
+    6,
+    3
+   ],
+   "interval": [
+    102.0,
+    186.5
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 128.0,
+   "detector": 24,
+   "pe_bucati_ref": [
+    0.0,
+    0.0,
+    0.0,
+    21.5,
+    10.5,
+    0.0,
+    0.0,
+    64.5,
+    31.5,
+    0.0
+   ],
+   "pe_bucati_det": [
+    1,
+    1,
+    0,
+    2,
+    4,
+    0,
+    0,
+    7,
+    9,
+    0
+   ],
+   "interval": [
+    89.5,
+    179.5
+   ]
+  },
+  "dreapta": {
+   "referinta": 16.0,
+   "complete": 10,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "pe_bucati_ref": [
+    2.0,
+    6.0,
+    4.0,
+    2.0,
+    2.0
+   ],
+   "pe_bucati_det": [
+    2,
+    0,
+    4,
+    2,
+    2
+   ]
+  },
+  "P_magheru": {
+   "referinta": 48.0,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ },
+ "2026-11-02_0815": {
+  "decalaj_s": 8.0,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -164.2,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": 1.9,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 29.1,
+     "evenimente": 107,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 28.6,
+     "evenimente": 76,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": 146.9,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 26.9,
+     "evenimente": 29,
+     "prima_bucata_5s": 23.124000072479248
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 26.4,
+     "evenimente": 31,
+     "prima_bucata_5s": 23.124000072479248
+    }
+   },
+   {
+    "inceput_val": 288.5,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 72.0,
+   "detector": 25,
+   "pe_bucati_ref": [
+    0.0,
+    49.5,
+    4.0,
+    0.0,
+    0.0,
+    2.0,
+    13.5,
+    2.0,
+    1.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    1,
+    9,
+    2,
+    2,
+    0,
+    1,
+    5,
+    3,
+    2,
+    0
+   ],
+   "interval": [
+    56.0,
+    93.0
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 60.0,
+   "detector": 32,
+   "pe_bucati_ref": [
+    0.0,
+    37.0,
+    1.0,
+    0.0,
+    0.0,
+    8.0,
+    11.0,
+    3.0,
+    0.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    3,
+    13,
+    1,
+    0,
+    2,
+    3,
+    5,
+    2,
+    1,
+    2
+   ],
+   "interval": [
+    46.0,
+    81.0
+   ]
+  },
+  "dreapta": {
+   "referinta": 46.0,
+   "complete": 25,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "pe_bucati_ref": [
+    5.0,
+    3.5,
+    4.0,
+    8.0,
+    5.0,
+    7.0,
+    2.5,
+    3.0,
+    7.0,
+    1.0
+   ],
+   "pe_bucati_det": [
+    5,
+    3,
+    6,
+    1,
+    0,
+    4,
+    2,
+    3,
+    0,
+    1
+   ]
+  },
+  "P_magheru": {
+   "referinta": 29.5,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ },
+ "2026-11-02_1230": {
+  "decalaj_s": 3.0,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -169.6,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": -15.0,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 35.0,
+     "evenimente": 63,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 35.5,
+     "evenimente": 24,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": 110.1,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 14.9,
+     "evenimente": 86,
+     "prima_bucata_5s": 39.91600012779236
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 2.9,
+     "evenimente": 111,
+     "prima_bucata_5s": 39.91600012779236
+    }
+   },
+   {
+    "inceput_val": 243.3,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 25.2,
+     "evenimente": 19,
+     "prima_bucata_5s": 21.66599988937378
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 21.7,
+     "evenimente": 15,
+     "prima_bucata_5s": 21.66599988937378
+    }
+   },
+   {
+    "inceput_val": 377.5,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 650.0,
+   "detector": 154,
+   "pe_bucati_ref": [
+    62.5,
+    162.5,
+    0.0,
+    0.0,
+    57.5,
+    132.0,
+    0.0,
+    0.0,
+    12.0,
+    223.5
+   ],
+   "pe_bucati_det": [
+    22,
+    21,
+    5,
+    0,
+    18,
+    33,
+    8,
+    6,
+    6,
+    35
+   ],
+   "interval": [
+    437.5,
+    955.5
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 518.5,
+   "detector": 41,
+   "pe_bucati_ref": [
+    70.0,
+    110.0,
+    0.0,
+    6.5,
+    40.5,
+    87.5,
+    0.5,
+    0.0,
+    1.0,
+    202.5
+   ],
+   "pe_bucati_det": [
+    1,
+    11,
+    2,
+    2,
+    3,
+    7,
+    3,
+    2,
+    0,
+    10
+   ],
+   "interval": [
+    344.5,
+    750.5
+   ]
+  },
+  "dreapta": {
+   "referinta": 18.0,
+   "complete": 18,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "pe_bucati_ref": [
+    7.0,
+    4.0,
+    2.0,
+    1.0,
+    4.0
+   ],
+   "pe_bucati_det": [
+    8,
+    2,
+    5,
+    0,
+    3
+   ]
+  },
+  "P_magheru": {
+   "referinta": 45.0,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ },
+ "2026-11-02_1400": {
+  "decalaj_s": 3.0,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -202.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": -100.1,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 140.6,
+     "evenimente": 12,
+     "prima_bucata_5s": 140.135999917984
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 146.1,
+     "evenimente": 7,
+     "prima_bucata_5s": 145.135999917984
+    }
+   },
+   {
+    "inceput_val": 54.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 25.7,
+     "evenimente": 34,
+     "prima_bucata_5s": 25.206000089645386
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 3.2,
+     "evenimente": 38,
+     "prima_bucata_5s": 0.20600008964538574
+    }
+   },
+   {
+    "inceput_val": 189.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 5.7,
+     "evenimente": 22,
+     "prima_bucata_5s": 5.206000089645386
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 0.2,
+     "evenimente": 33,
+     "prima_bucata_5s": 0.20600008964538574
+    }
+   },
+   {
+    "inceput_val": 327.4,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 314.5,
+   "detector": 116,
+   "pe_bucati_ref": [
+    0.0,
+    6.5,
+    100.0,
+    110.5,
+    2.0,
+    0.0,
+    2.0,
+    85.5,
+    8.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    2,
+    11,
+    11,
+    23,
+    6,
+    2,
+    14,
+    32,
+    7,
+    8
+   ],
+   "interval": [
+    215.0,
+    445.0
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 254.0,
+   "detector": 51,
+   "pe_bucati_ref": [
+    0.0,
+    4.5,
+    51.0,
+    99.0,
+    1.0,
+    0.0,
+    25.5,
+    68.0,
+    5.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    1,
+    2,
+    2,
+    9,
+    6,
+    5,
+    7,
+    12,
+    4,
+    3
+   ],
+   "interval": [
+    175.0,
+    362.5
+   ]
+  },
+  "dreapta": {
+   "referinta": 42.5,
+   "complete": 23,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "pe_bucati_ref": [
+    10.0,
+    2.0,
+    4.5,
+    2.0,
+    1.0,
+    2.0,
+    3.0,
+    8.0,
+    4.0,
+    6.0
+   ],
+   "pe_bucati_det": [
+    0,
+    1,
+    4,
+    2,
+    3,
+    1,
+    5,
+    4,
+    3,
+    0
+   ]
+  }
+ },
+ "2026-11-02_1630": {
+  "decalaj_s": 2.5,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -200.2,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": -95.9,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 140.9,
+     "evenimente": 2,
+     "prima_bucata_5s": 140.93600010871887
+    }
+   },
+   {
+    "inceput_val": 47.4,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 12.6,
+     "evenimente": 36,
+     "prima_bucata_5s": 12.645999908447266
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 1.6,
+     "evenimente": 23,
+     "prima_bucata_5s": 32.645999908447266
+    }
+   },
+   {
+    "inceput_val": 187.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 3.7,
+     "evenimente": 24,
+     "prima_bucata_5s": 2.1559998989105225
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 6.2,
+     "evenimente": 25,
+     "prima_bucata_5s": 27.155999898910522
+    }
+   },
+   {
+    "inceput_val": 317.3,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 104.5,
+   "detector": 56,
+   "pe_bucati_ref": [
+    0.0,
+    0.0,
+    16.5,
+    22.0,
+    1.0,
+    0.0,
+    1.0,
+    62.0,
+    2.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    2,
+    2,
+    12,
+    11,
+    0,
+    1,
+    3,
+    18,
+    4,
+    3
+   ],
+   "interval": [
+    73.5,
+    146.5
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 82.0,
+   "detector": 39,
+   "pe_bucati_ref": [
+    0.0,
+    2.5,
+    21.5,
+    9.0,
+    0.0,
+    0.0,
+    1.0,
+    44.0,
+    4.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    0,
+    1,
+    6,
+    10,
+    1,
+    1,
+    2,
+    12,
+    4,
+    2
+   ],
+   "interval": [
+    60.5,
+    109.5
+   ]
+  },
+  "dreapta": {
+   "referinta": 34.0,
+   "complete": 25,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "pe_bucati_ref": [
+    1.0,
+    3.0,
+    1.0,
+    4.0,
+    4.0,
+    2.0,
+    8.0,
+    6.0,
+    4.0,
+    1.0
+   ],
+   "pe_bucati_det": [
+    0,
+    1,
+    3,
+    2,
+    0,
+    0,
+    8,
+    4,
+    7,
+    0
+   ]
+  }
+ },
+ "2026-11-02_1745": {
+  "decalaj_s": 11.5,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -210.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": -38.9,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 76.4,
+     "evenimente": 2,
+     "prima_bucata_5s": 73.85400032997131
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 74.9,
+     "evenimente": 2,
+     "prima_bucata_5s": 73.85400032997131
+    }
+   },
+   {
+    "inceput_val": 37.7,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 3.8,
+     "evenimente": 23,
+     "prima_bucata_5s": 2.324000358581543
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 3.8,
+     "evenimente": 18,
+     "prima_bucata_5s": 2.324000358581543
+    }
+   },
+   {
+    "inceput_val": 138.1,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 51.4,
+     "evenimente": 21,
+     "prima_bucata_5s": 46.87400031089783
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 47.9,
+     "evenimente": 23,
+     "prima_bucata_5s": 46.87400031089783
+    }
+   },
+   {
+    "inceput_val": 295.5,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 178.5,
+   "detector": 55,
+   "pe_bucati_ref": [
+    0.0,
+    4.0,
+    71.0,
+    0.0,
+    1.0,
+    0.0,
+    88.0,
+    13.5,
+    1.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    0,
+    2,
+    15,
+    1,
+    5,
+    4,
+    20,
+    5,
+    1,
+    2
+   ],
+   "interval": [
+    123.5,
+    251.0
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 146.5,
+   "detector": 49,
+   "pe_bucati_ref": [
+    0.0,
+    4.0,
+    46.0,
+    1.0,
+    0.0,
+    0.0,
+    84.5,
+    11.0,
+    0.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    10,
+    3,
+    6,
+    4,
+    2,
+    3,
+    14,
+    4,
+    2,
+    1
+   ],
+   "interval": [
+    104.5,
+    202.5
+   ]
+  },
+  "dreapta": {
+   "referinta": 18.5,
+   "complete": 20,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ],
+   "pe_bucati_ref": [
+    2.0,
+    1.5,
+    0.0,
+    3.0,
+    1.0,
+    4.0,
+    2.0,
+    3.0,
+    1.0,
+    1.0
+   ],
+   "pe_bucati_det": [
+    0,
+    0,
+    1,
+    5,
+    0,
+    5,
+    4,
+    5,
+    0,
+    0
+   ]
+  },
+  "P_magheru": {
+   "referinta": 43.5,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  }
+ },
+ "2026-11-02_1815": {
+  "decalaj_s": 8.5,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -125.7,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 126.7,
+     "evenimente": 2,
+     "prima_bucata_5s": 125.72499990463257
+    }
+   },
+   {
+    "inceput_val": 9.6,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 19.4,
+     "evenimente": 30,
+     "prima_bucata_5s": 15.365000009536743
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 22.9,
+     "evenimente": 14,
+     "prima_bucata_5s": 20.365000009536743
+    }
+   },
+   {
+    "inceput_val": 134.8,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 25.7,
+     "evenimente": 25,
+     "prima_bucata_5s": 25.15499997138977
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 24.7,
+     "evenimente": 13,
+     "prima_bucata_5s": 20.15499997138977
+    }
+   },
+   {
+    "inceput_val": 262.7,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 6.8,
+     "evenimente": 12,
+     "prima_bucata_5s": 2.304999828338623
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 0.1,
+     "evenimente": 19,
+     "prima_bucata_5s": 2.304999828338623
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 171.0,
+   "detector": 40,
+   "pe_bucati_ref": [
+    1.0,
+    60.0,
+    0.0,
+    4.0,
+    0.0,
+    56.5,
+    0.0,
+    0.0,
+    3.0,
+    46.5
+   ],
+   "pe_bucati_det": [
+    1,
+    8,
+    1,
+    1,
+    0,
+    14,
+    2,
+    0,
+    2,
+    11
+   ],
+   "interval": [
+    121.5,
+    234.0
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 156.5,
+   "detector": 32,
+   "pe_bucati_ref": [
+    2.0,
+    65.0,
+    0.0,
+    4.0,
+    0.0,
+    49.5,
+    1.0,
+    0.0,
+    4.5,
+    30.5
+   ],
+   "pe_bucati_det": [
+    1,
+    13,
+    0,
+    3,
+    1,
+    5,
+    2,
+    0,
+    3,
+    4
+   ],
+   "interval": [
+    109.5,
+    214.5
+   ]
+  },
+  "dreapta": {
+   "referinta": 14.5,
+   "complete": 13,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "pe_bucati_ref": [
+    2.5,
+    5.0,
+    2.0,
+    1.0,
+    4.0
+   ],
+   "pe_bucati_det": [
+    2,
+    4,
+    3,
+    0,
+    4
+   ]
+  }
+ },
+ "2026-11-02_1930": {
+  "decalaj_s": 7.5,
+  "bucati": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9
+  ],
+  "valuri": [
+   {
+    "inceput_val": -206.9,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    }
+   },
+   {
+    "inceput_val": -95.0,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 114.5,
+     "evenimente": 2,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 110.5,
+     "evenimente": 2,
+     "prima_bucata_5s": 110.0
+    }
+   },
+   {
+    "inceput_val": 30.7,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 28.3,
+     "evenimente": 17,
+     "prima_bucata_5s": 24.34000015258789
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 30.8,
+     "evenimente": 12,
+     "prima_bucata_5s": 29.34000015258789
+    }
+   },
+   {
+    "inceput_val": 155.7,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": 37.3,
+     "evenimente": 13,
+     "prima_bucata_5s": 34.25999999046326
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 38.3,
+     "evenimente": 19,
+     "prima_bucata_5s": 34.25999999046326
+    }
+   },
+   {
+    "inceput_val": 292.1,
+    "P_dacia_est_iesire": {
+     "primul_eveniment_s": null,
+     "evenimente": 0,
+     "prima_bucata_5s": null
+    },
+    "P_dacia_est_intrare": {
+     "primul_eveniment_s": 2.9,
+     "evenimente": 4,
+     "prima_bucata_5s": 2.870000123977661
+    }
+   }
+  ],
+  "P_dacia_est_iesire": {
+   "referinta": 74.0,
+   "detector": 32,
+   "pe_bucati_ref": [
+    1.0,
+    1.0,
+    34.0,
+    0.0,
+    0.0,
+    0.0,
+    33.5,
+    4.5,
+    0.0,
+    0.0
+   ],
+   "pe_bucati_det": [
+    2,
+    3,
+    14,
+    1,
+    2,
+    2,
+    7,
+    0,
+    1,
+    0
+   ],
+   "interval": [
+    54.5,
+    103.0
+   ]
+  },
+  "P_dacia_est_intrare": {
+   "referinta": 73.0,
+   "detector": 29,
+   "pe_bucati_ref": [
+    1.0,
+    0.0,
+    30.0,
+    0.0,
+    0.0,
+    0.0,
+    39.0,
+    1.0,
+    0.0,
+    2.0
+   ],
+   "pe_bucati_det": [
+    2,
+    1,
+    12,
+    0,
+    0,
+    2,
+    8,
+    2,
+    1,
+    1
+   ],
+   "interval": [
+    56.0,
+    101.0
+   ]
+  },
+  "dreapta": {
+   "referinta": 19.0,
+   "complete": 10,
+   "bucati": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "pe_bucati_ref": [
+    2.0,
+    4.0,
+    5.0,
+    2.5,
+    5.5
+   ],
+   "pe_bucati_det": [
+    0,
+    4,
+    3,
+    3,
+    0
+   ]
+  }
+ }
+}

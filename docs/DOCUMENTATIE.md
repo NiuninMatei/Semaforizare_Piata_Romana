@@ -650,13 +650,17 @@ deosebi sensurile. Ca și pe 26.10, au numărat doi adnotatori AI independenți,
 *Ce trece de fapt pe Lascăr Catargiu.* Numărătoarea a arătat că prin acel loc nu trece un singur flux, ci trei:
 
 - **banda principală**, spre Magheru, adică traficul pe care îl voiam;
-- **drumul de sus**, ≈26% din traficul bulevardului, pe care vehiculele se pierd din vedere spre Dacia vest; detectorul nu le poate
-  urmări până la capăt, deci în simulare destinația lor se dă ca o cotă fixă, declarată (§ 5.1);
+- **drumul de sus**, ≈31% din traficul bulevardului, numărat ca flux în etapa Magheru–Catargiu. Cea mai mare parte continuă pe inel;
+  spre Dacia vest merg doar ≈4% din vehiculele de pe Catargiu, numărate direct pe banda ieșirii. Detectorul nu le poate urmări până
+  la capăt, deci în simulare destinația lor se dă ca o cotă fixă, declarată (§ 5.1);
 - **inelul dinspre est**, care circulă exact în fazele în care Catargiu are roșu. El nu e trafic de pe Catargiu și nu trebuie numărat
-  acolo. Vehiculele de pe inel sunt cam tot atâtea câte intră dinspre Dacia est, deci aproape nimeni din Dacia est nu iese spre
-  Catargiu, deși traiectoriile rupte par să arate altceva.
+  acolo. Pe inel trec aproape tot atâtea vehicule câte intră dinspre Dacia est, dar asta nu înseamnă că nimeni din Dacia est nu iese
+  spre Catargiu, cum am crezut întâi: pe inel trec și vehiculele de pe Magheru care ocolesc piața. Numărate direct, ≈40% din cele de
+  pe Dacia est ies spre Catargiu, cum arătau și traiectoriile.
 
-Tabelul dă numărătoarea de referință pe cele trei clipuri din 1.11, vehicule în 5 minute. Primul clip e pe lumină, iar celelalte
+Numărătorile de referință ale măsurii noi, pe toate cele 11 clipuri din 1.11 și 2.11, factorii de corecție și momentele pietonilor
+pe valuri sunt publicate, fără imagini, în `docs/rezultate/referinta_v2/`. Tabelul dă numărătoarea de referință pe cele trei clipuri
+din 1.11, vehicule în 5 minute. Primul clip e pe lumină, iar celelalte
 două sunt după apus, care a fost la ≈17:05.
 
 | Locul | 16:45 | 17:45 | 18:30 |
@@ -716,9 +720,9 @@ acest prag, numărarea automată pe trecerile de pe Dacia est ajunge la 95–110
 zonele de așteptare. Eșantionul este însă mic: 2–3 bucăți de 30 s pe fiecare zebră.
 
 **Corectură, 2.11.2026.** Numărătoarea de referință pe clipurile din 2.11 arată că rezultatul de mai sus nu se generalizează. Detectorul
-pierde mulțimile: pe aceleași bucăți, adnotatorii găsesc pe zebrele de pe Dacia est de peste două ori mai multe persoane decât el, iar
-la prânz, pe ploaie, de câteva ori mai multe. În mulțimile dense, numărul adnotatorilor e doar un ordin de mărime. Urmarea pentru
-geamăn e în § 6.5, la cauza 8.
+pierde mulțimile: pe aceleași bucăți, adnotatorii găsesc pe o zebră de pe Dacia est, în medie, de 1,86 ori mai multe persoane decât
+numără el (intervalul de încredere pe clipuri, 1,38–2,32), iar la prânz, pe ploaie, de ≈3 ori mai multe. În mulțimile dense, numărul
+adnotatorilor e doar un ordin de mărime. Urmarea pentru geamăn e în § 6.5, la cauza 8.
 
 În tabelele cu numărători, salvate ca fișiere CSV, pietonii apar pe rânduri de tip `pietoni`, cu brațul și trecerea.
 Debitul de pietoni măsurat, adică numărul lor pe oră, se extinde la toată piața prin înmulțire cu
@@ -1198,7 +1202,7 @@ sfert fără date nu avea niciun rând, așa că fereastra unea sferturile de o 
 care nu a existat. Zilele 21.10 și 22.10 au astfel de goluri: orele false existau și acolo, dar niciuna nu a fost
 aleasă. Într-o probă pe datele din 28.10, cu un gol pus lângă vârf, scriptul se oprea cu o eroare. De pe 29.10,
 profilul zilei se întinde pe grila completă de 15 minute, adică pe toate sferturile de oră, cu sau fără date. Golurile
-rămân goale, deci nicio fereastră nu mai trece peste ele. O verificare independentă a arătat că ferestrele și
+rămân goale, deci nicio fereastră nu mai trece peste ele. O verificare separată, făcută tot de agenți Claude, a arătat că ferestrele și
 profilurile zilelor 21–28.10 au rămas identice.
 
 Mai e un efect. Sfertul în care colectarea repornește are date doar de la repornire, dar `recount`, care reface
@@ -1305,12 +1309,34 @@ sus, probabil chiar peste ea, pentru că zilele 21–22.10 sunt subnumărate (§
 `sumo/scenarios` folosesc această calibrare (§ 5.4).
 
 **Cererea măsurii noi (2.11.2026).** Măsura nouă, `cor_`, are fișierul ei, `config/demand_v2.json`, iar `config/demand.json` a rămas
-neatins. Ea se deosebește în patru puncte. Intrările vin din zonele noi (§ 4.3), iar pietonii sunt numărați pe persoane. Factorii de
-corecție pot fi diferiți ziua și pe întuneric, după înălțimea Soarelui la acel moment, iar pragul este apusul, cu Soarele la 0,833° sub orizont.
-Două proporții de viraj sunt fixate, fiindcă traiectoriile rupte le arată greșit, iar `cote_fixe` le declară: ≈20% din Lascăr Catargiu
-merge spre Dacia vest, cifră provizorie, din trei clipuri de duminică, iar drumul de sus, unde detectorul pierde vehiculele, duce și spre alte ieșiri; pe Dacia est, vehiculele numărate pe inel sunt cam tot atâtea
-câte intră, de aceea cota spre Catargiu e fixată mică, deși traiectoriile complete arată mai mult, iar restul destinațiilor de acolo rămân distribuția a priori, o ipoteză declarată.
-În fine, rutele și pietonii sunt cei din § 6.5.
+neatins. Ea se deosebește în patru puncte. Intrările vin din zonele noi (§ 4.3), iar pietonii sunt numărați pe persoane.
+
+Factorii de corecție pot fi diferiți ziua și pe întuneric. Eticheta unui sfert de oră se ia după înălțimea Soarelui la începutul lui,
+cu pragul de 3,5° sub orizont. Detecția nu se schimbă la apus, ci cu Soarele la ≈4° sub orizont, cu o abatere de ≈1° între zile; am
+măsurat asta pe 6 seri și 4 dimineți, pe indici care nu depind de volum. În această bandă de lumină nu există clipuri de referință.
+Gradele sunt ale formulei aproximative din cod, care în octombrie–noiembrie pune Soarele cu ≈0,24° mai sus decât o efemeridă exactă:
+pragul de 3,5° e, de fapt, ≈3,75° sub orizont.
+
+Două proporții de viraj sunt fixate, fiindcă traiectoriile rupte le arată greșit, iar `cote_fixe` le declară. Amândouă s-au numărat
+direct, pe felii, de doi adnotatori, pe clipurile din 1.11 și 2.11:
+
+- din Lascăr Catargiu, spre Dacia vest merg ≈3–5%: pe banda ieșirii trec, în etapa Magheru–Catargiu, 23,5 vehicule la 478,5 intrări
+  fără inel, adică 4,9%, dar 10 dintre ele vin dintr-un singur clip; fără el rămân 3,2%, cât dă și o numărare automată separată. În
+  cerere, 0,04;
+- din Dacia est, spre Catargiu ies ≈40%: pe 8 etape ale Bulevardului Dacia văzute cap-coadă, ieșirile spre Catargiu sunt 0,41 din
+  intrări, cu o incertitudine mare între etape (0,32–0,52) și 0,34–0,48 după cum se aleg ferestrele. Duminica și lunea nu se deosebesc,
+  deci în cerere rămâne 0,40, în toate zilele.
+
+Restul rândului Dacia est e ales, nu numărat: Dacia vest 0,305 și Căderea Bastiliei 0,07 vin din distribuția a priori, iar Mendeleev
+urcă la 0,085, fiindcă la vârful din 25.10 sunt mai multe traiectorii complete spre el; diferența se ia din Magheru și din întoarcere.
+Pe banda ieșirii spre Dacia vest, Dacia est pare să ducă mai mult, ≈0,33–0,42, dar acolo iese și o parte din vehiculele rămase pe inel,
+deci rezultatele se dau și cu 0,39. Două lucruri nu intră în cerere și rămân limite declarate: vehiculele de pe Magheru care ocolesc pe
+inel, ≈5–6% din Magheru în zilele lucrătoare și ≈8–10% duminica, față de 1,1–3,0% în cerere, și drumul de sus spre Magheru, care în
+geamăn nu are rută. Varianta cu ocolirea pe inel, de 6%, se raportează separat.
+
+O verificare grosieră: ieșirea spre Magheru, numărată de cameră fără factori, e ziua la 0,97–1,08 din virajul Lascăr Catargiu →
+Magheru din cerere (1,19 în zorii din 25.10), iar pe întuneric la 0,77–0,88, unde detectorul vede mai prost zona de ieșire. Raportul nu poate fi mai precis,
+fiindcă pe aceeași ieșire ajung și vehicule din alte direcții. În fine, rutele și pietonii sunt cei din § 6.5.
 
 ### 5.2 De la O–D la vehicule în SUMO
 
@@ -1766,7 +1792,7 @@ luni cu capacitatea calibrată este în § 9.9, iar testul final, pe miercuri 28
 
 **Pe scurt.** Pe 2.11 s-au găsit două greșeli grave în geamăn, ambele din alegerile noastre de simulare, nu din date. Prima: din 28.10, simulările de evaluare rulau cu vehicule care se ciocnesc și sunt mutate instantaneu mai departe pe drum, adică teleportate. Geamănul părea să facă față traficului real doar din această cauză, deci rezultatele obținute pe el, inclusiv câștigul de −7% al planului 12/14/12 din § 9.10, **nu mai sunt valabile**. A doua: prima corectură, din aceeași noapte, potrivea debitele cu camera lăsând vehiculele să treacă prin pietoni. A găsit-o o revizie separată, făcută de alți agenți Claude decât cei care au scris corectura, cerută tocmai ca să o dărâme.
 
-Geamănul de acum nu mai are teleportări în masă, iar atingerile dintre vehicule și pietoni au scăzut mult, fără să ajungă la zero. **Geamănul nu e validat.** Pe unele măsuri se apropie de cameră, pe altele nu, iar lista e mai jos. El poate susține concluzii mari, care nu depind de reglaje: ciclul real și faptul că planurile scurte nu duc traficul la orele încărcate. Nu poate decide încă între planuri apropiate. Cifrele marcate „provizoriu” se refac după numărătoarea de referință din 2.11, înainte de înghețul din § 9.11.
+Geamănul de acum nu mai are teleportări în masă, iar atingerile dintre vehicule și pietoni au scăzut mult, fără să ajungă la zero. **Geamănul nu e validat.** Pe unele măsuri se apropie de cameră, pe altele nu, iar lista e mai jos. El poate susține concluzii mari, care nu depind de reglaje: ciclul real și faptul că planurile scurte nu duc traficul la orele încărcate. Nu poate decide încă între planuri apropiate. Cifrele de mai jos sunt cele de la înghețul din 3.11 (§ 9.11), făcut înainte de a privi datele din 3.11.
 
 **Ce a mers prost.** Subcapitolul 6.4 a ales intervalul `tau` = 0,8 s, iar simularea avansează cu pași de 1 s. Un șofer simulat își
 poate reconsidera viteza doar o dată pe pas, așa că, dacă intervalul dorit e mai mic decât pasul, nu mai poate frâna la timp. SUMO
@@ -1821,10 +1847,10 @@ fază doar a lor.
 2. *O bandă ducea nicăieri.* Muchia 778823270, virajul la dreapta de pe Magheru spre Dacia est, rămăsese fără nicio legătură mai departe, iar vehiculele care o nimereau blocau și banda vecină până la teleportarea de după 300 s.
 3. *Legături ghicite.* OSM nu spune mereu ce bandă duce în ce bandă, deci `netconvert` a ghicit. Pe Dacia vest spre inel și pe inel spre Dacia est rămăsese practic o singură bandă, iar traiectoriile arată două fire de vehicule.
 4. *Șoferi care nu văd.* La o legătură care cedează trecerea, un șofer simulat vede implicit doar de la 4,5 m, așa că încetinește aproape până la oprire, chiar dacă nu vine nimeni.
-5. *Un viraj umflat de proporții.* Virajul Magheru → Dacia est intra în cerere cu ≈670 de vehicule pe oră, deși camera numără direct 348 de traiectorii complete. Virajul se calcula din proporții, iar traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete decât cele spre Dacia est, din prim-plan, deci cota ieșea aproape dublă. Cu atâtea vehicule, banda dreaptă rămânea plină, iar benzile vecine se blocau după ea. Virajul se ia acum din numărul lui, înmulțit cu un factor din numărătoarea de referință, fiindcă nici aici nu toate traiectoriile ajung complete: ≈1,5, provizoriu.
+5. *Un viraj umflat de proporții.* Virajul Magheru → Dacia est intra în cerere cu ≈670 de vehicule pe oră, deși camera numără direct 348 de traiectorii complete. Virajul se calcula din proporții, iar traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete decât cele spre Dacia est, din prim-plan, deci cota ieșea aproape dublă. Cu atâtea vehicule, banda dreaptă rămânea plină, iar benzile vecine se blocau după ea. Virajul se ia acum din numărul lui, înmulțit cu un factor din numărătoarea de referință, fiindcă nici aici nu toate traiectoriile ajung complete: 1,25, numărat vehicul cu vehicul pe 36 de bucăți din etapa Magheru–Catargiu (intervalul de încredere 1,18–1,35). O primă estimare, ≈1,5, număra și vehiculele venite din Dacia vest, care trec prin același loc în altă etapă.
 6. *Pietonii, la momentul greșit.* A treia etapă a planului dădea verde tuturor trecerilor până cu 5 s înainte de etapa N–S, iar traversarea celei de pe Magheru ține ≈10 s, deci primele vehicule așteptau mereu ultimii pietoni. Numărătoarea de referință din 2.11 arată că, pe Dacia est, pietonii pornesc aproape toți odată, la ≈28 s de la începutul valului de pe Magheru, iar la valurile de peste 90 s mai târziu. Geamănul urmează acum acest program pe Dacia, la etapele a căror durată se știe dinainte. Pe Magheru, pietonii merg după sfârșitul etapei N–S. Pe celelalte treceri, camera nu-i vede destul, deci programul e prin analogie. Înaintea oricărei schimbări de etapă, pietonii au 6 s să termine traversarea, cu vehiculele încă pe verde (`control/faze.py`).
 7. *Modelul pietonilor din SUMO.* Îi ținea blocați pe zebră și pe insulele înguste mult mai mult decât se vede în cameră. Prea puțină răbdare îi face să forțeze roșul, iar prea multă îi ține pe loc: cu 150 s, un pieton pierdea ≈160 s. Valorile alese sunt la mijloc. Cei ≈5–7% care intră pe roșu vin din mecanismul de deblocare, la ≈60 s, fără să aleagă un gol, deci procentul nu e o dovadă de realism.
-8. *Un pieton din geamăn nu e un om.* Numărătoarea de referință din 2.11 arată că detectorul pierde mulțimile: pe aceleași bucăți, adnotatorii găsesc pe zebrele de pe Dacia est de peste două ori mai multe persoane decât el, iar în mulțimile dense numărul lor e doar un ordin de mărime (§ 4.4). Puși însă toți în SUMO, vehiculele nu mai trec: cu pietonii dublați, la vârful din 26.10, Magheru scade cu 13–17%, iar pierderea totală se apropie de dublu. Pe zebră, oamenii merg în grup, iar SUMO îi tratează pe fiecare separat, așa că un pieton simulat oprește mașinile cam cât un grup întreg. De aceea, cererea de pietoni din geamăn e **efectivă**: e aleasă ca vehiculele să treacă printre pietoni ca în cameră, nu e numărul real. Timpul pierdut de pietoni în geamăn nu e deci cel real, iar rezultatele se dau și cu pietonii cântăriți altfel.
+8. *Un pieton din geamăn nu e un om.* Numărătoarea de referință din 2.11 arată că detectorul pierde mulțimile: pe aceleași bucăți, adnotatorii găsesc pe o zebră de pe Dacia est, în medie, de 1,86 ori mai multe persoane decât numără el, iar în mulțimile dense numărul lor e doar un ordin de mărime (§ 4.4). Puși însă toți în SUMO, vehiculele care virează spre Dacia est întârzie mult mai mult decât în cameră. Deja cu 0,66 agenți pe Dacia est la o persoană numărată de detector, de 2,6 ori mai mulți decât în geamănul final, la vârful din 26.10, debitul de pe Magheru rămâne același, dar un sfert dintre vehiculele care virează au nevoie de peste ≈8,9 s ca să treacă din zona de intrare în cea de ieșire, față de ≈5,9 s în cameră. Pe zebră, oamenii merg în grup, iar SUMO îi tratează pe fiecare separat, așa că un pieton simulat oprește mașinile cam cât un grup. De aceea, cererea de pietoni din geamăn e **efectivă**: e aleasă ca vehiculele să treacă printre pietoni ca în cameră, nu e numărul real. Valoarea, 0,25 agenți la o persoană numărată de detector pe Dacia est, s-a ales pe vârful din 26.10, cu cererea finală, dintre 0,15, 0,25, 0,33 și 0,42: e singura la care cele patru rânduri ale comparației despre pietoni stăteau sub pragurile calculate atunci, pe acea oră. Cu pragurile înghețate, mediana pe 12 ore, timpii virajului Magheru → Dacia est rămân peste prag la orice valoare încercată: în geamăn, vehiculele virează mai repede decât în cameră. Timpul pierdut de pietoni în geamăn nu e deci cel real, iar rezultatele se dau și cu pietonii cântăriți altfel.
 
 **Geamănul corectat.** Se construiește cu `python -m romana.network.retea_v2`, din `config/retea_v2.json`, în fișiere separate: `sumo/net/romana_v2.net.xml`, `network_info_v2.json`, `tls_actuated_v2.add.xml`, `sumo/demand/vtypes_v2.add.xml` și `vtypes_indisciplinat_v2.add.xml`. Străzile, benzile, trecerile și semafoarele rămân cele din OSM; rețeaua, fazele și scenariile vechi nu s-au atins.
 
@@ -1848,16 +1874,36 @@ Parametrii `sigma` și `minGap`, aleși inițial pe debitul din cameră, au reve
 
 **Cum se compară cu camera.** Semaforul fiind același, camera și geamănul se pot pune pe același ceas: secundele de la începutul fiecărui val. Comanda e `python -m romana.control.valideaza_geaman`. Prima variantă a comparației era prea slabă, iar revizia a arătat-o: un model fără nicio fizică, cu debit constant în fereastra rejucată, trecea mai multe rânduri de profil decât geamănul, un geamăn fără niciun pieton trecea și el, iar unul cu 44% mai puțină pierdere abia se deosebea. De aceea, „reproduce camera”, cum scrie în mesajul unui commit din 2.11, nu rezistă, iar „pietonii nu mai sunt fantome”, din alt mesaj, e prea tare.
 
-Comparația s-a rescris. Nu mai are un scor total, ci rânduri pe grupuri, iar un rând al cărui interval dintre seed-uri trece peste prag rămâne nedecis. Are și gemeni greșiți dinadins, ca să se vadă ce rânduri deosebesc ceva. Profilele verifică ceasul și ferestrele, nu dinamica. Măsurile s-au stabilit în mai multe runde, pe aceleași ore, după ce s-au văzut rezultatele. Se îngheață la un commit numit, iar prima judecată curată va fi o zi nouă.
+Comparația s-a rescris. Nu mai are un scor total, ci rânduri pe grupuri, iar un rând al cărui interval dintre seed-uri trece peste prag rămâne nedecis. Are și gemeni greșiți dinadins, ca să se vadă ce rânduri deosebesc ceva. Profilele verifică ceasul și ferestrele, nu dinamica. Măsurile s-au stabilit în mai multe runde, pe aceleași ore, după ce s-au văzut rezultatele. S-au înghețat pe 3.11, la un commit numit (§ 9.11), iar prima judecată curată e o zi nouă.
 
-**Ce se potrivește și ce nu, deocamdată.** Toate cifrele de aici sunt provizorii: 9 ore din 25.10, 26.10 și 1.11, seed-urile 1, 3 și 4. Tabelul final intră aici la îngheț.
+**Ce se potrivește și ce nu, la îngheț.** Comparația finală s-a făcut pe zilele de antrenare: 12 ore din 25.10, 26.10, 1.11 și 2.11, câte 5 seed-uri, cu semaforul rejucat. Rezultatele sunt în `docs/rezultate/validare_geaman.csv`, iar pragurile, în `docs/rezultate/praguri_geaman.json`. Tabelul dă debitul pe fiecare intrare, în vehicule pe oră, în geamăn și în cameră (numărătoarea înmulțită cu factorul de corecție), cu abaterea; apoi partea din vehicule rămase neintrate la sfârșitul orei, teleportările pe rulare și verdictul porții.
 
-* *Se apropie.* Debitele de pe Magheru, Lascăr Catargiu și Dacia est trec poarta din § 9.11 pe 7 din cele 9 ore, inclusiv pe cele două ținute deoparte, ambele de duminică. Teleportările sunt excepții. La vârful din 26.10, ieșirea spre Dacia est curge aproape ca în cameră: 5,84 vehicule pe etapă în secundele 24–60, față de 6,14.
-* *Nu se potrivește.* Dacia vest în ziua lucrătoare: −21% la vârful din 26.10 și −43% seara, când rămân și vehicule neintrate. Debitul de vârf pe 20 s de pe Dacia est: ≈−35%, fiindcă aproape tot traficul merge pe o singură cale de bandă. Momentul în care pornește Dacia est: cu ≈8–13 s mai târziu în cameră. Formele ieșirilor. Seara din 26.10 și o oră liniștită din 25.10, cu debite foarte mici, nu trec poarta.
+| Ora | Magheru | Lascăr Catargiu | Dacia est | Dacia vest | Neintrate | Teleportări | Poarta |
+|---|---|---|---|---|---|---|---|
+| luni 26.10, vârf, 14:30–15:30 | 2 669 / 2 676 (0%) | 1 669 / 1 731 (−4%) | 483 / 475 (+2%) | 587 / 766 (−23%) | 0,0% | 0 | trece |
+| luni 26.10, seara, 17:30–18:30 | 1 822 / 1 884 (−3%) | 1 051 / 1 030 (+2%) | 551 / 548 (+1%) | 590 / 1 063 (−44%) | 6,4% | 0 | nu: neintrate |
+| luni 26.10, liniștit, 23:00–00:00 | 819 / 801 (+2%) | 649 / 633 (+3%) | 119 / 116 (+3%) | 127 / 126 (0%) | 0,0% | 0 | trece |
+| duminică 25.10, vârf, 15:30–16:30 | 2 356 / 2 350 (0%) | 1 677 / 1 640 (+2%) | 308 / 303 (+1%) | 372 / 385 (−3%) | 0,0% | 0 | trece |
+| duminică 25.10, liniștit, 06:30–07:30 | 597 / 585 (+2%) | 362 / 366 (−1%) | 92 / 90 (+2%) | 90 / 102 (−12%) | 0,0% | 0 | trece |
+| duminică 1.11, vârf, 13:15–14:15 | 2 438 / 2 482 (−2%) | 1 506 / 1 538 (−2%) | 386 / 393 (−2%) | 459 / 459 (0%) | 0,0% | 0 | trece |
+| duminică 1.11, prânz, 12:00–13:00 | 2 463 / 2 386 (+3%) | 1 536 / 1 517 (+1%) | 369 / 394 (−6%) | 344 / 362 (−5%) | 0,0% | 0 | trece |
+| duminică 1.11, seara, 17:30–18:30 | 2 242 / 2 231 (+1%) | 1 400 / 1 404 (0%) | 386 / 369 (+4%) | 675 / 654 (+3%) | 0,0% | 0 | trece |
+| duminică 1.11, liniștit, 23:00–00:00 | 651 / 625 (+4%) | 509 / 497 (+2%) | 107 / 108 (−1%) | 65 / 66 (−1%) | 0,0% | 0 | trece |
+| luni 2.11, vârf, 13:00–14:00 | 2 650 / 2 592 (+2%) | 1 909 / 1 897 (+1%) | 583 / 591 (−1%) | 482 / 955 (−50%) | 4,1% | 0 | nu: neintrate |
+| luni 2.11, prânz, 12:00–13:00 | 2 767 / 2 765 (0%) | 1 503 / 1 498 (0%) | 499 / 568 (−12%) | 342 / 995 (−66%) | 7,7% | 0 | nu: debit Dacia est, neintrate |
+| luni 2.11, liniștit, 03:15–04:15 | 198 / 196 (+1%) | 93 / 95 (−3%) | 21 / 21 (+1%) | 97 / 87 (+12%) | 0,0% | 28 | nu: teleportări |
 
-**Ce spune geamănul despre planuri, deocamdată.** Planurile scurte nu duc traficul la orele încărcate: pe o grilă provizorie, 12/14/12 pierde de câteva ori mai mult decât semaforul rejucat, iar 36/28/12 cu aproximativ jumătate mai mult. Între planurile cu ciclul apropiat de cel real, diferențele sunt de aceeași mărime cu rezultatul retras, deci aici nu se dă niciun procent. Decizia se ia doar după regula din § 9.11.
+![Geamănul lângă cameră, pe același ceas, la vârful din 26.10](imagini/geaman_camera.png)
 
-**Ce rămâne nesigur.** Setările s-au ales pe vârful și pe prânzul din 26.10 și pe rândurile de comparație; prânzul a fost prelucrat încetinit, deci nu reprezintă prânzul. Pietonii din geamăn sunt o cerere efectivă, iar cei de pe celelalte brațe se văd slab: zebra de pe Magheru se poate număra pe clipuri, cele de pe Lascăr Catargiu și Dacia vest nu. Semafoarele vecine sunt programele generate de `netconvert`. Pe Dacia est, primele vehicule vin la ≈12 s după începutul etapei din program, iar în geamăn imediat, din cauze nelămurite. Nu există o măsurare a lungimii cozilor, deci potrivirea e verificată pe ce trece prin zone, nu direct pe timpii de așteptare. Geamănul în timp real din dispecerat are proporții declarate și debite brute, deci nu arată geamănul de mai sus; Lascăr Catargiu e acolo de 2–3 ori sub cel real.
+*Figura 6.2 – Vârful din luni 26.10, 14:30–15:30: câte vehicule trec, pe ciclu, la fiecare 10 s de la începutul valului de pe Magheru, în cameră și în geamăn (media celor 5 seed-uri), cu semaforul rejucat. Ieșirea spre Dacia est e dată ca parte din total, fiindcă ieșirile nu intră în cerere. Pe Dacia est, geamănul pornește cu ≈10 s mai devreme decât camera.*
+
+* *Se apropie.* Pe 8 din cele 12 ore, debitele de pe Magheru, Lascăr Catargiu și Dacia est sunt la cel mult 6% de cameră, toate vehiculele intră, iar teleportările și ciocnirile văzute de SUMO lipsesc sau sunt excepții. Trec toate orele de duminică, inclusiv cele două ținute deoparte, și vârful de luni, 26.10.
+* *Nu se potrivește.* Dacia vest în zilele lucrătoare: geamănul duce cel mult ≈590 de vehicule pe oră, iar camera numără 766–1 063, deci rămân vehicule neintrate. De aceea pică poarta seara din 26.10 și vârful și prânzul din 2.11, ziua cu cel mai mult trafic pe Dacia vest; pe 2.11, la prânz, scade și Dacia est, cu 12%. Ora liniștită din 2.11 are 28 de teleportări pe rulare, cu o cauză încă necercetată. Ziua de 2.11 nu trece pe nicio oră, deci, după regula din § 9.11, ar fi doar descriptivă. Tot la vârful din 26.10, virajul Magheru → Dacia est trece piața mai repede decât în cameră: mediana e 2,6 s față de 3,1 s, iar un sfert dintre vehicule au nevoie de peste 3,6 s, față de 5,9 s. Nu se potrivesc nici debitul de vârf pe 20 s de pe Dacia est (0,60 față de 0,74 vehicule pe secundă), ieșirea spre Dacia est din secundele 24–60 ale etapei N–S (4,9 față de 6,1 vehicule pe etapă), histograma pietonilor și formele ieșirilor.
+* *Gemenii greșiți dinadins.* Geamănul cu vehicule mai rapide se deosebește de cel de bază pe 15–33 de rânduri din fiecare oră, afară de ora liniștită din 2.11. Geamănul fără niciun pieton, în schimb, se deosebește pe cel mult 4 rânduri dintr-o oră, iar pe jumătate din ore pe niciunul. Comparația cu camera nu poate deci confirma pietonii din geamăn.
+
+**Ce spune geamănul despre planuri.** Planurile scurte nu duc traficul la orele încărcate: socoteala din cameră, de mai sus, dă pentru 12/14/12 cel mult ≈1 300 de vehicule pe oră pe Magheru, față de ≈2 550 numărate. Pe grila din 2.11, făcută cu o cerere de dinainte de îngheț, 12/14/12 pierdea de câteva ori mai mult decât semaforul rejucat, iar 36/28/12 cu aproximativ jumătate mai mult. Între planurile cu ciclul apropiat de cel real, diferențele sunt de aceeași mărime cu rezultatul retras, deci aici nu se dă niciun procent. Decizia se ia doar după regula din § 9.11, pe zilele de după îngheț.
+
+**Ce rămâne nesigur.** Setările s-au ales pe orele de antrenare și pe rândurile de comparație, în mai multe runde. Pietonii din geamăn sunt o cerere efectivă, iar cei de pe celelalte brațe se văd slab: zebra de pe Magheru se poate număra pe clipuri, cele de pe Lascăr Catargiu și Dacia vest nu. Pe Dacia vest nu e sigură nici cererea: factorul ei variază de la 1,03 la 1,58 între clipuri, iar o cincime din numărătoarea automată cade în bucăți în care adnotatorii nu văd aproape niciun vehicul, deci la vârfurile zilelor lucrătoare debitul real poate fi de ordinul 750–1 250 de vehicule pe oră. Pe întuneric și pe ploaie, detectorul poate pierde mult mai multe vehicule decât acoperă factorul; rândul porții prinde asta doar la trafic mare, iar pragul lui stă pe o singură seară. Semafoarele vecine sunt programele generate de `netconvert`. Pe Dacia est, primele vehicule vin la ≈12 s după începutul etapei din program, iar în geamăn imediat, din cauze nelămurite. Nu există o măsurare a lungimii cozilor, deci potrivirea e verificată pe ce trece prin zone, nu direct pe timpii de așteptare. Geamănul în timp real din dispecerat are proporții declarate și debite brute, deci nu arată geamănul de mai sus; Lascăr Catargiu e acolo de 2–3 ori sub cel real.
 
 ## 7. Controlul inteligent al semafoarelor
 
@@ -3379,6 +3425,32 @@ simulări a zilei de validare, iar zilele de validare și de test nu au fost pri
   cântăriți altfel. Virajul Magheru → Dacia est se ia din numărul lui, nu din proporții.
 * Fișierele `test_<zi>_*` ale măsurii vechi nu mai intră în `docs/rezultate/`, ca să nu fie confundate cu rezultatele valabile.
 
+**Schimbările din 3.11.2026, înaintea înghețului**, făcute înainte de a privi datele din 3.11:
+
+* Cererea finală (§ 5.1): factorii de detecție, cotele numărate pe felii (Catargiu → Dacia vest 0,04; Dacia est → Catargiu 0,40, cu tot
+  rândul Dacia est fixat), virajele Magheru → Dacia est (1,25) și Magheru → Căderea Bastiliei (1,94) luate din numărul lor și cererea
+  efectivă de pietoni, 0,25 agenți la o persoană a detectorului (§ 6.5). Eticheta zi/întuneric a unui sfert se ia la începutul lui, cu
+  pragul de 3,5° sub orizont.
+* **Poarta are un rând nou, „pierdere de detecție pe întuneric”**, calculat doar din cameră. O oră cu Soarele, la mijlocul ei, la peste
+  3,5° sub orizont, cu cel puțin 600 de intrări pe Magheru și cel puțin 100 de ieșiri spre Dacia est fără virajul de pe Magheru, iese din
+  decizie, cu variantele ei, dacă aceste ieșiri sunt de cel puțin 1,8 ori intrările de pe Dacia vest: acolo detectorul pierde mult mai
+  multe vehicule decât acoperă factorul. Pragul stă pe o singură seară, 2.11, cu ploaie, deci e o ipoteză declarată. Ziua, rândul e
+  „fără obiect”, iar noaptea, sub minimul de trafic, „nejudecabil”; în ambele cazuri ora rămâne în decizie, dar factorii de întuneric nu
+  sunt verificați pe ea. Așa sunt orele liniștite de noapte din 26.10, 1.11 și 2.11.
+* Zilele de antrenare au sferturi scoase din alegerea ferestrelor, cu motivul în `config/excluderi_cor.json`, pe care îl citește singur
+  `scenarii_zi --masura cor`: 25.10, 00:00–06:30, fiindcă detecția pe Lascăr Catargiu pierdea vehicule, cu tot cu ora dublată de la
+  schimbarea orei; 1.11, 08:00–09:15 și 21:30–23:00, cu colectarea oprită; 2.11, 17:15–24:00, cu pierdere de detecție.
+* Pragurile calculate se scriu ca mediana pe ore, nu ca media: ora liniștită din 2.11, cu sub un pieton pe oră pe zebra văzută de
+  cameră, dădea pragul histogramei pietonilor 6×10⁸. Histograma se judecă doar cu cel puțin 30 de treceri în cameră.
+* Sensibilitățile, raportate după îngheț și fără efect pe decizie: 0,15 și 0,42 agenți pe persoană; pietonii de pe celelalte brațe
+  cu 1,53 în loc de 3,27; Catargiu → Dacia vest 0,08; Dacia est → Catargiu 0,32 și 0,48; Dacia est → Dacia vest 0,39; ocolirea pe inel
+  a vehiculelor de pe Magheru, 6%; virajul Magheru → Dacia est cu factorul 1,08 și 1,40; ponderea pietonilor, 3 și 8.
+* Cererea, scenariile și validarea au fost verificate adversarial înainte de îngheț, de alți agenți Claude decât cei care au făcut
+  calculele. Constatările care au rezistat au schimbat textele, excluderile și trei reguli din cod, nu și valorile cererii.
+* Măsurile s-au înghețat la commitul care adaugă acest paragraf, „Borna M2: înghețul măsurii noi”, înainte de a privi datele din 3.11.
+  Pragurile sunt în `docs/rezultate/praguri_geaman.json`, iar comparația cu camera pe zilele de antrenare, în
+  `docs/rezultate/validare_geaman.csv`.
+
 **Agentul următor.** Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
 la 5 s, deci imitația ajunge la un verde de 15/15/15 s, cu un ciclu de 60 s în loc de 53 s; comparația de la capăt se face tot cu
 planul 12/14/12, rulat exact. Se antrenează doar pe scenariile măsurii noi din zilele de antrenare, cu lista dată explicit, care
@@ -3622,7 +3694,7 @@ aduc pe rând pe ecran, în ordinea în care circulă datele:
 |---|---|---|
 | 1. Ochii sistemului | „Piata Romana – viziune artificiala” | participanții la trafic recunoscuți în imagine de YOLO11 și urmăriți de la un cadru la altul de ByteTrack; zonele de intrare, de ieșire și de trecere; debitele pe fiecare braț al pieței, în vehicule pe oră. Imaginea este redată fluent, cu o întârziere de 8 s |
 | 2. Geamănul digital | SUMO-GUI | replica fidelă a rețelei, după OpenStreetMap; cele 16 semafoare ale pieței, conduse împreună, ca un singur controler; traficul generat în timp real din debitele măsurate de cameră |
-| 3. Supravegherea umană | dispeceratul, http://localhost:8050 | imaginea camerei, ca flux video; faza curentă a semaforului, descrisă în cuvinte; cozile de pe brațe. Operatorul poate alege orice mod de control: „Agent AI”, „Plan fix”, „Max-Pressure”, „Manual” sau „Program pe cazuri de trafic”. Modul ales se aplică doar după „Confirm” |
+| 3. Supravegherea umană | dispeceratul, http://localhost:8050 | imaginea camerei, ca flux video; faza curentă a semaforului, descrisă în cuvinte; cozile de pe brațe. Operatorul poate alege orice mod de control: „Planul observat”, „Agent IA”, „Plan de referință”, „Presiune maximă” sau „Comandă manuală”. Modul ales se aplică doar după „Confirm” |
 | 4. Comparația în geamăn | `scripts\9_demo_comparatie.bat` | aceeași oră reală de trafic, simulată cu planul de referință, cu planul observat, cu Presiune maximă și cu agentul IA |
 | 5. Rezultate și limite | capitolele 9 și 10 | evaluarea oficială și limitările declarate ale proiectului |
 
@@ -3680,10 +3752,11 @@ Tabelul adună problemele întâlnite cel mai des și soluția fiecăreia.
 | Ce | Comanda |
 |---|---|
 | rețeaua, fazele și tipurile de vehicule | `python -m romana.network.retea_v2` |
+| cererea măsurii noi | `python -m romana.bridge.cerere_v2`, din `config/demand.json` și `config/factori_v2.json` |
 | numărătorile măsurii noi | `python -m romana.vision.recount --zi <zi> --camera camera_v2.json --pe-persoane --out data/counts_cor` |
-| scenariile | `python -m romana.bridge.scenarii_zi --zi <zi> --masura cor`, apoi `python -m romana.bridge.indisciplinat --scenarii "sumo/scenarios/cor_zi_*.sumocfg" --vtypes vtypes_indisciplinat_v2.add.xml --vechi vtypes_v2.add.xml` |
+| scenariile | `python -m romana.bridge.scenarii_zi --zi <zi> --masura cor`, care citește singur excluderile din `config/excluderi_cor.json`, apoi `python -m romana.bridge.indisciplinat --scenarii "sumo/scenarios/cor_zi_*.sumocfg" --vtypes vtypes_indisciplinat_v2.add.xml --vechi vtypes_v2.add.xml` |
 | programul real al semaforului | `python -m romana.vision.program_real --zi <zi> --interval 15:00-16:00 --pe-zi --profile outputs/program_real/profile_<zi>.json` |
-| geamănul lângă cameră, cu semaforul rejucat | `python -m romana.control.valideaza_geaman cor_zi_<zi>_varf cor_zi_<zi>_pranz --profile --out docs/rezultate/validare_geaman.csv --figura docs/imagini/geaman_camera.png` |
+| geamănul lângă cameră, cu semaforul rejucat, la îngheț | `python -m romana.control.valideaza_geaman cor_zi_2026-10-26_varf cor_zi_2026-10-26_seara cor_zi_2026-10-26_linistit cor_zi_2026-10-25_varf cor_zi_2026-10-25_linistit cor_zi_2026-11-01_varf cor_zi_2026-11-01_pranz cor_zi_2026-11-01_seara cor_zi_2026-11-01_linistit cor_zi_2026-11-02_varf cor_zi_2026-11-02_pranz cor_zi_2026-11-02_linistit --seeds 1,2,3,4,5 --proba fara_pietoni --proba rapid --seeds-proba 1,2,3 --procese 8 --scrie-praguri docs/rezultate/praguri_geaman.json --poarta docs/rezultate/poarta_geaman.json --out docs/rezultate/validare_geaman.csv --figura docs/imagini/geaman_camera.png`; pe o zi nouă, cu `--praguri docs/rezultate/praguri_geaman.json` în loc de `--scrie-praguri` |
 | strategiile, cu teleportări și ciocniri | `python -m romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1-10 --fara-alegere --out outputs/validare/<fișier>.csv` |
 
 Această secțiune arată cum se verifică rezultatele: statisticile din capitolul 9 se recalculează exact din fișierele
@@ -3975,7 +4048,15 @@ programe ar fi, de fapt, la fel de bune. Planul a fost mai bun în ambele compor
 disciplinat și indisciplinat. De data aceasta a avut și cea mai mică pierdere totală dintre candidați; pe 28.10
 câștigase prin regula simplității, la egalitate cu `TOD_DEBIT`. Geamănul care rulează în timp real rămâne pe acest
 plan (§ 9.10). Câștigul vine tot de la pietoni. Colectarea datelor de la cameră s-a oprit pe 30.10, la 08:30, și a reluat pe 1.11 (§ 9.11). Datele din noaptea și dimineața zilei de
-30.10 sunt publicate, dar din ele nu s-au mai construit scenarii.
+30.10 sunt publicate, dar din ele nu s-au mai construit scenarii. Rezultatul a fost retras pe 2.11 (etapa 12).
+
+**Etapa 12 – retragerea rezultatului și înghețul geamănului corectat (1–3.11).** La verificarea bornei M1 s-a văzut că,
+seara, Lascăr Catargiu aproape dispare din numărători; numărătoarea de referință pe clipuri de seară a dus la o măsură
+nouă, `cor_` (§ 4.3). Pe 2.11 s-au găsit cele două greșeli din geamăn: vehicule care se ciocneau și erau teleportate, apoi,
+în prima corectură, vehicule care treceau prin pietoni. Rezultatul de −7% s-a retras, iar tot din cameră s-a măsurat
+programul real al semaforului, cu un ciclu de ≈125–155 s (§ 6.5). Pe 3.11, după o numărare directă, pe felii, a ieșirilor
+pe care detectorul nu le poate urmări și după o verificare adversarială a cererii, măsurile s-au înghețat la un commit
+numit, înainte de a privi datele din 3.11 (§ 9.11).
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -4043,7 +4124,11 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 * **Programul real:** ciclul și etapele semaforului, măsurate din jurnalul public al vehiculelor (§ 6.5).
 * **Geamănul:** s-a găsit defectul coliziunilor, s-a construit geamănul corectat; o revizie separată, făcută de alți agenți Claude, a găsit că prima corectură făcea vehiculele să treacă prin pietoni; s-au găsit mai multe cauze, iar geamănul se compară acum cu camera pe același ceas, fără să fie validat; rezultatul de −7% s-a retras
   (§ 6.5, § 9.11).
-* **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, scrise dinainte (§ 9.11).
+* **Înghețul (3.11):** cererea finală, cu ieșirile greu de urmărit numărate direct pe felii; o verificare adversarială a cererii, a
+  scenariilor și a textelor; poarta, cu rândul nou al pierderii de detecție pe întuneric; pragurile și comparația cu camera pe zilele
+  de antrenare (§ 5.1, § 6.5, § 9.11).
+* **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
+  care le judecă (§ 9.11).
 
 ### 12.4 Ce am învățat
 
@@ -4143,7 +4228,7 @@ permisiunile și a verificat rezultatele. Tot de la el au venit ideile și corec
 * testul cu participanți indisciplinați;
 * organizarea documentației într-un singur document.
 
-Deciziile de proiectare și rezultatele experimentale au fost verificate prin rularea efectivă a codului. Afirmațiile
+Deciziile de proiectare și rezultatele experimentale au fost verificate rulând codul, dar asta nu le face corecte de la sine: rezultatul de −7% a trecut de aceste verificări și s-a retras abia pe 2.11, după ce geamănul a fost privit din nou (§ 6.5). Afirmațiile
 despre lumea reală se sprijină pe sursele de mai jos.
 
 ## 14. Bibliografie și licențe
@@ -4496,6 +4581,8 @@ publicate în `models/`: `ppo_romana_final_a/b`, `ppo_romana_nou_375k/600k/800k/
 | `durate_verde_agenti.csv` | Duratele de verde alese de E13 și de agentul oficial pe trei scenarii de validare din luni 26.10, cu seed 11 (§ 9.9): mediana pe fiecare fază, de câte ori a primit verde fiecare fază și ciclul median. | arborele curent | `romana.control.durate_verde` |
 | `program_real_2026-10-26.csv`, `program_real_2026-11-01.csv` | Programul real al semaforului, măsurat din jurnalul public al vehiculelor (§ 6.5): ciclul pe intervale și pe fiecare 20 de minute, cât curge fiecare intrare, debitul de vârf. | arborele curent | `romana.vision.program_real --zi <zi> --pe-zi --interval … --out …` |
 | `geaman_camera_2026-10-26.csv` | Vehicule pe ciclu și debit de vârf, pe fiecare intrare, în cameră și în prima corectură a geamănului, cea cu al doilea defect (§ 6.5). Rămâne doar ca istoric. | arborele curent | `romana.control.compara_camera` |
+| `validare_geaman.csv`, `poarta_geaman.json`, `praguri_geaman.json` | Comparația geamănului corectat cu camera la îngheț (§ 6.5, § 9.11): pe 12 ore din zilele de antrenare, câte un rând pe măsură, cu camera, geamănul pe seed-uri, abaterea, pragul și verdictul, pentru geamănul de bază și pentru cei doi gemeni greșiți dinadins; verdictul porții pe fiecare oră; pragurile calculate, mediana pe ore, fixate pentru zilele noi. Fiecare rând poartă commitul, factorii și data rulării. | măsura nouă, `cor_` | `romana.control.valideaza_geaman` (comanda din § 11.8) |
+| `referinta_v2/` | Numărătoarea de referință a măsurii noi pe 11 clipuri din 1.11 și 2.11 (pe ținte și bucăți de 30 s), factorii de corecție pe zi, pe întuneric și pe tot, cu intervalele de încredere, și momentele pietonilor pe valuri, fără imagini (§ 4.3). | – (din clipuri) | `romana.vision.referinta factori` |
 | `grila_calibrat.csv` | Grila de 23 de planuri fixe încercate pe geamănul calibrat (§ 9.9), pe luni 26.10, cu ambele comportamente și seed-urile 11–15, la care se adaugă planul fix de referință. | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` | Testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12, pe seed-urile 1–10. Pierderea de timp e dată și pe tipuri de participanți, în coloanele `pierdere_h_<tip>`. | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |
 | `sens_pietoni_28_indisciplinat.csv`, `sens_pietoni_28_normal.csv` | Sensibilitatea rezultatului la o fază de pietoni mai lungă (§ 9.10): planurile 12/14/18 și 36/28/18, pe aceleași scenarii și seed-uri ca testul din 28.10. Au fost rulate după test și se citesc împreună cu `test_28_*.csv`. | arborele curent | `romana.control.validare PLAN_12_14_18 PLAN_36_28_18 --seeds 1-10 --fara-alegere --fara-fix` |

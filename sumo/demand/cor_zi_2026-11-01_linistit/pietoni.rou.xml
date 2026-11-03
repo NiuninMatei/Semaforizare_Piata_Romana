@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+<routes>
+  <person id="pieton_0" depart="309.4" type="pieton" departPos="random">
+    <walk from="44499684#2" to="668307642#1" arrivalPos="random" />
+  </person>
+  <person id="pieton_1" depart="316.6" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_2" depart="408.4" type="pieton" departPos="random">
+    <walk from="1320256482" to="668307633#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_3" depart="495.3" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_4" depart="498.1" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_5" depart="897.0" type="pieton" departPos="random">
+    <walk from="1320256482" to="668307633#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_6" depart="911.0" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_7" depart="941.0" type="pieton" departPos="random">
+    <walk from="668307642#1" to="44499684#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_8" depart="949.1" type="pieton" departPos="random">
+    <walk from="232079775#2" to="119238380#1" arrivalPos="random" />
+  </person>
+  <person id="pieton_9" depart="992.3" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_10" depart="1013.9" type="pieton" departPos="random">
+    <walk from="668307642#1" to="44499684#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_11" depart="1162.9" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_12" depart="1166.6" type="pieton" departPos="random">
+    <walk from="-778823268#2" to="778823268#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_13" depart="1172.0" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_14" depart="1224.8" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_15" depart="1437.1" type="pieton" departPos="random">
+    <walk from="1320256482" to="668307633#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_16" depart="1474.1" type="pieton" departPos="random">
+    <walk from="778823268#2" to="-778823268#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_17" depart="1537.2" type="pieton" departPos="random">
+    <walk from="778823268#2" to="-778823268#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_18" depart="1577.5" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_19" depart="1649.4" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_20" depart="1749.7" type="pieton" departPos="random">
+    <walk from="778823268#2" to="-778823268#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_21" depart="1782.5" type="pieton" departPos="random">
+    <walk from="1320256482" to="668307633#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_22" depart="1873.1" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_23" depart="1940.9" type="pieton" departPos="random">
+    <walk from="232079775#2" to="119238380#1" arrivalPos="random" />
+  </person>
+  <person id="pieton_24" depart="2015.9" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_25" depart="2038.2" type="pieton" departPos="random">
+    <walk from="232079775#2" to="119238380#1" arrivalPos="random" />
+  </person>
+  <person id="pieton_26" depart="2167.7" type="pieton" departPos="random">
+    <walk from="1320256482" to="668307633#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_27" depart="2222.9" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_28" depart="2296.8" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_29" depart="2420.4" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_30" depart="2753.7" type="pieton" departPos="random">
+    <walk from="119238380#1" to="232079775#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_31" depart="3095.2" type="pieton" departPos="random">
+    <walk from="232079775#2" to="119238380#1" arrivalPos="random" />
+  </person>
+  <person id="pieton_32" depart="3121.8" type="pieton" departPos="random">
+    <walk from="668307642#1" to="44499684#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_33" depart="3235.5" type="pieton" departPos="random">
+    <walk from="-778823268#2" to="778823268#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_34" depart="3413.4" type="pieton" departPos="random">
+    <walk from="668307633#2" to="1320256482" arrivalPos="random" />
+  </person>
+  <person id="pieton_35" depart="3441.8" type="pieton" departPos="random">
+    <walk from="232079775#2" to="119238380#1" arrivalPos="random" />
+  </person>
+  <person id="pieton_36" depart="3529.1" type="pieton" departPos="random">
+    <walk from="-778823268#2" to="778823268#2" arrivalPos="random" />
+  </person>
+</routes>

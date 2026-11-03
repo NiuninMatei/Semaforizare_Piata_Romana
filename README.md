@@ -7,6 +7,11 @@
 > ≈125–155 s, nu de ≈91 s, cât presupuneam. Geamănul s-a corectat, dar **nu e validat**: prima corectură a avut ea însăși un defect, găsit
 > înainte de publicare, iar pe unele măsuri geamănul încă nu se potrivește cu camera. Explicația e în [§ 6.5 din documentație](docs/DOCUMENTATIE.md#65-geamănul-corectat-coliziunile-ascunse-și-programul-real-2112026). Textul de mai jos va fi rescris după
 > testele pe zilele noi; deocamdată rămâne ca istoric.
+>
+> **Înghețul, 3.11.2026.** Măsurile geamănului corectat s-au fixat la un commit numit, înainte de a privi datele din 3.11. Pe zilele de
+> antrenare, geamănul trece poarta din § 9.11 (debitele de pe Magheru, Lascăr Catargiu și Dacia est, teleportările, ciocnirile și
+> vehiculele neintrate) pe 8 din 12 ore, dar tot nu e validat: pe Dacia vest, în zilele lucrătoare, duce mult mai puțin decât camera,
+> iar timpii virajelor nu se potrivesc (§ 6.5).
 
 Cât timp ar câștiga participanții la trafic din Piața Romană, în București, dacă s-ar schimba **doar programul
 semafoarelor existente**, fără nicio lucrare pe stradă? Proiectul caută răspunsul în simulare.
