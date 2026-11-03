@@ -1,0 +1,18 @@
+{
+ "_descriere": "Sferturile scoase din alegerea ferestrelor măsurii noi, pe zile, cu motivul. Le citește singur `scenarii_zi --masura cor`, unite cu --exclude, deci scenariile înghețate se refac din depozit; lant_cor adaugă repornirile colectării și outputs/lant/excluderi.json.",
+ "_motive": {
+  "2026-10-25": "00:00-06:30: în noaptea 01:15–06:15, ieșirile spre Magheru sunt de 2,6–11 ori intrările de pe Lascăr Catargiu pe aproape toate sferturile (în noaptea de luni, 0,6–2,1), iar cererea ar fi lăsat coloana Magheru la 0,63 din ieșirile numărate; cauza nu e măsurată. Intervalul cuprinde și ora dublată de la schimbarea orei, 03:00-04:00.",
+  "2026-11-01": "08:00-09:15 și 21:30-23:00: colectarea oprită sau repornită.",
+  "2026-11-02": "17:15-24:00: pierdere de detecție pe ploaie și întuneric (§ 9.11). Rândul porții marchează orele până la 22:15; după ele, raportul rămâne peste 1,8, la trafic sub minim."
+ },
+ "2026-10-25": [
+  "00:00-06:30"
+ ],
+ "2026-11-01": [
+  "08:00-09:15",
+  "21:30-23:00"
+ ],
+ "2026-11-02": [
+  "17:15-24:00"
+ ]
+}

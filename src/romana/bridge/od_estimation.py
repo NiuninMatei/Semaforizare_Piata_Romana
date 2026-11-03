@@ -74,6 +74,7 @@ def inaltime_soare(moment: datetime, latitudine: float = 44.4478, longitudine: f
 
 # Eticheta unui sfert de oră se ia la începutul lui. Detecția nu se schimbă la apus, ci cu Soarele la ≈3,9° sub orizont, cu abatere de ≈1° între zile: măsurat pe 6 seri și 4 dimineți, pe indici
 # care nu depind de volum. Sferturile care decid: 26.10, 17:30 (−3,37°, încă zi) și 28.10, 17:30 (−3,88°, deja întuneric). Clipurile de referință nu acoperă banda dintre +1,9° și −7,4°.
+# Gradele sunt ale formulei de mai sus (declinația Spencer), care în octombrie–noiembrie dă Soarele cu ≈0,24° mai sus decât o efemeridă exactă: pragul de −3,5° e ≈−3,75° adevărate.
 PRAG_INTUNERIC_GRADE = -3.5
 
 
