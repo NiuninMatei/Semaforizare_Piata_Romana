@@ -36,12 +36,13 @@ SUBPASI = 5          # pași de simulare pe secundă (0,2 s): mișcare fluentă 
 PRAG_LEJER, PRAG_GREU = 2400, 4100
 # varianta programului (aleasă după testul din § 9.9, regula „cel mai bun câștigă”):
 #   "plan_scurt"   – planul fix 12/14/12, cel mai bun plan unic din grila pe geamănul calibrat; câștigătorul testului
-#                    pe miercuri 28.10 (§ 9.10): egal cu "tod_debit" și cu E13, deci cel mai simplu de pus în practică;
+#                    pe miercuri 28.10 (§ 9.10): egal cu "tod_debit" și cu E13 – rezultat retras pe 2.11, fiindcă geamănul avea
+#                    teleportări în masă (§ 6.5); varianta rămâne doar ca istoric;
 #   "realist"      – agentul oficial la trafic lejer, E3 la mediu și intens (în vigoare până pe 29.10, § 9.4);
 #   "e13"          – agentul E13 singur (oficialul reantrenat pe cererea calibrată, § 9.5);
 #   "tod_debit"    – planuri fixe pe cazuri: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens;
 #   "marginea_sus" – participanți disciplinați: E9 / E3 / planul 46/48/12 (§ 9.2, istoric)
-#   "plan_observat" – planul cel mai apropiat de semaforul real, măsurat din cameră (§ 6.5), în geamănul corectat
+#   "plan_observat" – planul observat, 72/48/3, măsurat din cameră pe orele încărcate (§ 6.5), în geamănul corectat
 VARIANTA_PROGRAM = "plan_observat"
 PLAN_LUNG = (46, 48, 12)
 PLAN_SCURT = (12, 14, 12)

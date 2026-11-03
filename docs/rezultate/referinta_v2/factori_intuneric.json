@@ -1,0 +1,135 @@
+{
+ "V_catargiu_curat": {
+  "factor": 1.56,
+  "ic90": [
+   1.42,
+   1.7
+  ],
+  "bucati": 28,
+  "referinta": 257.5,
+  "automat": 165,
+  "pe_clipuri": {
+   "2026-11-02_1745_traiectorii": {
+    "referinta": 1.0,
+    "automat": 3,
+    "procent_prins": 300.0
+   },
+   "2026-11-02_1815_traiectorii": {
+    "referinta": 4.5,
+    "automat": 1,
+    "procent_prins": 22.2
+   },
+   "2026-11-02_1930_traiectorii": {
+    "referinta": 11.0,
+    "automat": 3,
+    "procent_prins": 27.3
+   },
+   "2026-11-01_1745_traiectorii": {
+    "referinta": 127.5,
+    "automat": 91,
+    "procent_prins": 71.4
+   },
+   "2026-11-01_1830_traiectorii": {
+    "referinta": 113.5,
+    "automat": 67,
+    "procent_prins": 59.0
+   }
+  }
+ },
+ "V_dacia_est": {
+  "factor": 1.02,
+  "ic90": [
+   0.9,
+   1.15
+  ],
+  "bucati": 45,
+  "referinta": 177.0,
+  "automat": 174,
+  "pe_clipuri": {
+   "2026-11-02_1745_traiectorii": {
+    "referinta": 62.0,
+    "automat": 60,
+    "procent_prins": 96.8
+   },
+   "2026-11-02_1815_traiectorii": {
+    "referinta": 44.5,
+    "automat": 43,
+    "procent_prins": 96.6
+   },
+   "2026-11-02_1930_traiectorii": {
+    "referinta": 12.5,
+    "automat": 18,
+    "procent_prins": 144.0
+   },
+   "2026-11-01_1745_traiectorii": {
+    "referinta": 34.0,
+    "automat": 33,
+    "procent_prins": 97.1
+   },
+   "2026-11-01_1830_traiectorii": {
+    "referinta": 24.0,
+    "automat": 20,
+    "procent_prins": 83.3
+   }
+  }
+ },
+ "V_dacia_vest": {
+  "factor": 1.13,
+  "ic90": [
+   0.76,
+   1.42
+  ],
+  "bucati": 20,
+  "referinta": 78.0,
+  "automat": 69,
+  "pe_clipuri": {
+   "2026-11-01_1745_traiectorii": {
+    "referinta": 41.0,
+    "automat": 37,
+    "procent_prins": 90.2
+   },
+   "2026-11-01_1830_traiectorii": {
+    "referinta": 37.0,
+    "automat": 32,
+    "procent_prins": 86.5
+   }
+  }
+ },
+ "V_magheru": {
+  "factor": 1.39,
+  "ic90": [
+   1.25,
+   1.56
+  ],
+  "bucati": 50,
+  "referinta": 683.5,
+  "automat": 490,
+  "pe_clipuri": {
+   "2026-11-02_1745_traiectorii": {
+    "referinta": 66.5,
+    "automat": 87,
+    "procent_prins": 130.8
+   },
+   "2026-11-02_1815_traiectorii": {
+    "referinta": 152.0,
+    "automat": 95,
+    "procent_prins": 62.5
+   },
+   "2026-11-02_1930_traiectorii": {
+    "referinta": 136.0,
+    "automat": 71,
+    "procent_prins": 52.2
+   },
+   "2026-11-01_1745_traiectorii": {
+    "referinta": 172.5,
+    "automat": 111,
+    "procent_prins": 64.3
+   },
+   "2026-11-01_1830_traiectorii": {
+    "referinta": 156.5,
+    "automat": 126,
+    "procent_prins": 80.5
+   }
+  }
+ }
+}

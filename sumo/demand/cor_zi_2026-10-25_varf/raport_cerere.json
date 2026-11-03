@@ -1,0 +1,60 @@
+{
+  "tipuri": {
+    "bicycle": {
+      "viraje_tinta": 9,
+      "GEH<5_%": 100.0,
+      "rute": 9
+    },
+    "bus": {
+      "viraje_tinta": 87,
+      "GEH<5_%": 100.0,
+      "rute": 87
+    },
+    "motorcycle": {
+      "viraje_tinta": 12,
+      "GEH<5_%": 100.0,
+      "rute": 12
+    },
+    "passenger": {
+      "viraje_tinta": 4532,
+      "GEH<5_%": 100.0,
+      "rute": 4532
+    },
+    "truck": {
+      "viraje_tinta": 51,
+      "GEH<5_%": 100.0,
+      "rute": 51
+    }
+  },
+  "vehicule_fond": 705,
+  "pietoni": 742,
+  "sumocfg": "sumo\\scenarios\\cor_zi_2026-10-25_varf.sumocfg",
+  "rezumat_od": {
+    "vehicule_total": 4702,
+    "durata_s": 3600,
+    "od_vehicule": {
+      "catargiu>caderea_bastiliei": 4,
+      "catargiu>dacia_est": 94,
+      "catargiu>dacia_vest": 66,
+      "catargiu>magheru": 1464,
+      "catargiu>mendeleev": 25,
+      "dacia_est>caderea_bastiliei": 22,
+      "dacia_est>catargiu": 127,
+      "dacia_est>dacia_est": 5,
+      "dacia_est>dacia_vest": 97,
+      "dacia_est>magheru": 40,
+      "dacia_est>mendeleev": 27,
+      "dacia_vest>caderea_bastiliei": 2,
+      "dacia_vest>catargiu": 20,
+      "dacia_vest>dacia_est": 346,
+      "dacia_vest>magheru": 18,
+      "dacia_vest>mendeleev": 2,
+      "magheru>caderea_bastiliei": 50,
+      "magheru>catargiu": 2000,
+      "magheru>dacia_est": 250,
+      "magheru>dacia_vest": 10,
+      "magheru>magheru": 1,
+      "magheru>mendeleev": 32
+    }
+  }
+}

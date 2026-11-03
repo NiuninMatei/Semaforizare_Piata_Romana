@@ -1,0 +1,93 @@
+{
+ "_descriere": "Pragurile din zgomotul camerei și al seed-urilor, mediana pe scenarii; un rând fără prag pe o oră (de exemplu, histograma pietonilor sub 30 de treceri) nu intră. Se fixează înaintea zilei de validare și se comit.",
+ "commit": "af0c28eb18d95fc9228b58212a4527d78d2d79d2",
+ "data": "2026-11-03T10:00:24+02:00",
+ "scenarii": [
+  "cor_zi_2026-10-26_varf",
+  "cor_zi_2026-10-26_seara",
+  "cor_zi_2026-10-26_linistit",
+  "cor_zi_2026-10-25_varf",
+  "cor_zi_2026-10-25_linistit",
+  "cor_zi_2026-11-01_varf",
+  "cor_zi_2026-11-01_pranz",
+  "cor_zi_2026-11-01_seara",
+  "cor_zi_2026-11-01_linistit",
+  "cor_zi_2026-11-02_varf",
+  "cor_zi_2026-11-02_pranz",
+  "cor_zi_2026-11-02_linistit"
+ ],
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "factori": {
+  "sha256": "878da44799250c22",
+  "factor_corectie_detectie": {
+   "magheru": {
+    "zi": 1.19,
+    "intuneric": 1.39
+   },
+   "catargiu": {
+    "zi": 1.16,
+    "intuneric": 1.56
+   },
+   "dacia_est": 0.99,
+   "dacia_vest": 1.26
+  },
+  "factor_pietoni_masurati": 0.25,
+  "factor_extrapolare_pietoni": 3.27,
+  "viraje_numarate": {
+   "magheru": {
+    "dacia_est": 1.25,
+    "caderea_bastiliei": 1.94
+   }
+  },
+  "cote_fixe": {
+   "catargiu": {
+    "dacia_vest": 0.04
+   },
+   "dacia_est": {
+    "catargiu": 0.4,
+    "caderea_bastiliei": 0.07,
+    "dacia_vest": 0.305,
+    "magheru": 0.125,
+    "mendeleev": 0.085,
+    "dacia_est": 0.015
+   }
+  }
+ },
+ "praguri": {
+  "decalaj_iesire:catargiu": 2.0,
+  "decalaj_iesire:dacia_est": 3.1623,
+  "decalaj_iesire:dacia_vest": 6.2429,
+  "decalaj_iesire:magheru": 2.025,
+  "decalaj_intrare:catargiu": 2.0,
+  "decalaj_intrare:dacia_est": 4.05,
+  "decalaj_intrare:dacia_vest": 4.2006,
+  "decalaj_intrare:magheru": 1.7071,
+  "forma_iesire:catargiu": 0.1818,
+  "forma_iesire:dacia_est": 0.2516,
+  "forma_iesire:dacia_vest": 0.4524,
+  "forma_iesire:magheru": 0.186,
+  "iesire_24_60:nivel": 0.2822,
+  "iesire_24_60:panta": 0.3882,
+  "iesire_ns:forma": 0.3053,
+  "pietoni_zebra:histograma": 0.3605,
+  "pietoni_zebra:numar": 0.1821,
+  "profil_intrare:catargiu": 0.1804,
+  "profil_intrare:dacia_est": 0.3911,
+  "profil_intrare:dacia_vest": 0.3571,
+  "profil_intrare:magheru": 0.1945,
+  "timp:catargiu>magheru:p50": 0.324,
+  "timp:magheru>catargiu:p50": 0.25,
+  "timp:magheru>dacia_est:p50": 0.1676,
+  "timp:magheru>dacia_est:p75": 0.198,
+  "varf_20s:catargiu": 0.1351,
+  "varf_20s:dacia_est": 0.2209,
+  "varf_20s:dacia_vest": 0.3447,
+  "varf_20s:magheru": 0.1277
+ }
+}

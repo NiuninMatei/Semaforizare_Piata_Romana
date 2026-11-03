@@ -1,0 +1,170 @@
+{
+ "V_catargiu_curat": {
+  "factor": 1.16,
+  "ic90": [
+   1.07,
+   1.26
+  ],
+  "bucati": 35,
+  "referinta": 464.0,
+  "automat": 399,
+  "pe_clipuri": {
+   "2026-11-02_0745_traiectorii": {
+    "referinta": 83.0,
+    "automat": 72,
+    "procent_prins": 86.7
+   },
+   "2026-11-02_0815_traiectorii": {
+    "referinta": 86.0,
+    "automat": 65,
+    "procent_prins": 75.6
+   },
+   "2026-11-02_1230_traiectorii": {
+    "referinta": 85.0,
+    "automat": 69,
+    "procent_prins": 81.2
+   },
+   "2026-11-02_1400_traiectorii": {
+    "referinta": 71.5,
+    "automat": 68,
+    "procent_prins": 95.1
+   },
+   "2026-11-02_1630_traiectorii": {
+    "referinta": 51.0,
+    "automat": 46,
+    "procent_prins": 90.2
+   },
+   "2026-11-01_1645_traiectorii": {
+    "referinta": 87.5,
+    "automat": 79,
+    "procent_prins": 90.3
+   }
+  }
+ },
+ "V_dacia_est": {
+  "factor": 0.96,
+  "ic90": [
+   0.84,
+   1.08
+  ],
+  "bucati": 35,
+  "referinta": 151.0,
+  "automat": 157,
+  "pe_clipuri": {
+   "2026-11-02_0745_traiectorii": {
+    "referinta": 18.5,
+    "automat": 18,
+    "procent_prins": 97.3
+   },
+   "2026-11-02_0815_traiectorii": {
+    "referinta": 34.0,
+    "automat": 34,
+    "procent_prins": 100.0
+   },
+   "2026-11-02_1230_traiectorii": {
+    "referinta": 20.0,
+    "automat": 27,
+    "procent_prins": 135.0
+   },
+   "2026-11-02_1400_traiectorii": {
+    "referinta": 20.0,
+    "automat": 20,
+    "procent_prins": 100.0
+   },
+   "2026-11-02_1630_traiectorii": {
+    "referinta": 30.0,
+    "automat": 29,
+    "procent_prins": 96.7
+   },
+   "2026-11-01_1645_traiectorii": {
+    "referinta": 28.5,
+    "automat": 29,
+    "procent_prins": 101.8
+   }
+  }
+ },
+ "V_dacia_vest": {
+  "factor": 1.31,
+  "ic90": [
+   1.07,
+   1.5
+  ],
+  "bucati": 35,
+  "referinta": 248.5,
+  "automat": 190,
+  "pe_clipuri": {
+   "2026-11-02_0745_traiectorii": {
+    "referinta": 31.0,
+    "automat": 30,
+    "procent_prins": 96.8
+   },
+   "2026-11-02_0815_traiectorii": {
+    "referinta": 42.0,
+    "automat": 27,
+    "procent_prins": 64.3
+   },
+   "2026-11-02_1230_traiectorii": {
+    "referinta": 37.5,
+    "automat": 35,
+    "procent_prins": 93.3
+   },
+   "2026-11-02_1400_traiectorii": {
+    "referinta": 38.0,
+    "automat": 32,
+    "procent_prins": 84.2
+   },
+   "2026-11-02_1630_traiectorii": {
+    "referinta": 52.0,
+    "automat": 33,
+    "procent_prins": 63.5
+   },
+   "2026-11-01_1645_traiectorii": {
+    "referinta": 48.0,
+    "automat": 33,
+    "procent_prins": 68.8
+   }
+  }
+ },
+ "V_magheru": {
+  "factor": 1.19,
+  "ic90": [
+   1.13,
+   1.26
+  ],
+  "bucati": 35,
+  "referinta": 756.0,
+  "automat": 635,
+  "pe_clipuri": {
+   "2026-11-02_0745_traiectorii": {
+    "referinta": 115.5,
+    "automat": 95,
+    "procent_prins": 82.3
+   },
+   "2026-11-02_0815_traiectorii": {
+    "referinta": 124.5,
+    "automat": 107,
+    "procent_prins": 85.9
+   },
+   "2026-11-02_1230_traiectorii": {
+    "referinta": 132.5,
+    "automat": 107,
+    "procent_prins": 80.8
+   },
+   "2026-11-02_1400_traiectorii": {
+    "referinta": 104.0,
+    "automat": 85,
+    "procent_prins": 81.7
+   },
+   "2026-11-02_1630_traiectorii": {
+    "referinta": 114.5,
+    "automat": 102,
+    "procent_prins": 89.1
+   },
+   "2026-11-01_1645_traiectorii": {
+    "referinta": 165.0,
+    "automat": 139,
+    "procent_prins": 84.2
+   }
+  }
+ }
+}
