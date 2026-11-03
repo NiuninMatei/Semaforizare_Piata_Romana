@@ -131,5 +131,21 @@ class Poarta(unittest.TestCase):
         self.assertIn("descriptivă", d["motiv"])
 
 
+class VariantaLive(unittest.TestCase):
+    def test_orice_castigator_e_cunoscut_de_geamanul_in_timp_real(self):
+        # altfel geamănul ar rula pe tăcute alt program decât câștigătorul
+        from romana.bridge import live_twin
+        self.assertLessEqual(set(decizie.VARIANTA_LIVE.values()), set(live_twin.VARIANTE_PROGRAM))
+        self.assertIn(live_twin.VARIANTA_PROGRAM, live_twin.VARIANTE_PROGRAM)
+        for plan, durate in (("PLAN_72_48_3", (72, 48, 3)), ("PLAN_60_40_3", (60, 40, 3)), ("PLAN_45_30_3", (45, 30, 3))):
+            self.assertEqual(live_twin.PLANURI_FIXE[decizie.VARIANTA_LIVE[plan]], durate)
+        self.assertTrue(live_twin.MODEL_E15.exists())
+        # fiecare strategie care poate ieși câștigătoare are un nume în geamăn
+        from romana import lant_cor
+        from romana.control.validare import strategy_name
+        for c in [lant_cor.REFERINTE[0], *lant_cor.lista_candidati()]:
+            self.assertIn(strategy_name(c), decizie.VARIANTA_LIVE)
+
+
 if __name__ == "__main__":
     unittest.main()

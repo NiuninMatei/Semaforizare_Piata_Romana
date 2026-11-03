@@ -1,4 +1,6 @@
 """Lanțul măsurii noi: ce pași rulează, cu ce fișiere, pe ce roluri; măsura veche nu e atinsă."""
+import contextlib
+import io
 import json
 import tempfile
 import unittest
@@ -65,6 +67,11 @@ class Pasi(unittest.TestCase):
                 dec.write_text(json.dumps({"poarta": {"descriptiv": True}, "candidati": [{"strategie": "A", "eligibil": True}]}), encoding="utf-8")
                 self.assertEqual(list(comenzi(L.pasi_dupa("2026-11-06", ore, lista, [], True, Path("nu_exista.json")))), ["geaman"])
 
+    def test_desigilarea_poate_rula_pe_trei_procese(self):
+        c = comenzi(L.pasi_dupa("2026-11-04", ["cor_zi_2026-11-04_varf"], ["A"], [], False, Path("nu_exista.json"), procese="3"))
+        self.assertIn("--procese 3 --out", c["test_normal"])
+        self.assertIn("--procese 8 --out", comenzi(L.pasi_dupa("2026-11-04", ["cor_zi_2026-11-04_varf"], ["A"], [], False, Path("nu_exista.json")))["test_normal"])
+
     def test_lantul_nu_mai_adauga_planul_36_28_12(self):
         c = comenzi(L.pasi_dupa("2026-11-04", ["cor_zi_2026-11-04_varf"], ["A"], [], False, Path("nu_exista.json")))
         self.assertIn("--fara-alegere --fara-fix", c["test_normal"])
@@ -108,9 +115,28 @@ class Lant(unittest.TestCase):
         p = mock.patch.object(L.strategii_raportate, "__defaults__", (self.t / "nu.json",))
         p.start()
         self.addCleanup(p.stop)
-        p = mock.patch.object(L.pasi_dupa, "__defaults__", (self.t / "nu2.json",))
+        p = mock.patch.object(L.pasi_dupa, "__defaults__", (self.t / "nu2.json", L.PROCESE_TEST))
         p.start()
         self.addCleanup(p.stop)
+
+    def test_reluarea_pe_alt_numar_de_procese_nu_reface_pasii(self):
+        L.lant("2026-11-03", rulator=self.rulator())
+        self.rulate.clear()
+        L.lant("2026-11-03", reia=True, rulator=self.rulator(), procese="3")
+        self.assertEqual(self.rulate, [])
+
+    def test_procesele_ajung_la_pasii_de_test(self):
+        rulate, r = [], self.rulator()
+        L.lant("2026-11-03", rulator=lambda cmd, cale, note: rulate.append(cmd) or r(cmd, cale, note), procese="3")
+        teste = [c for c in rulate if "romana.control.validare" in c]
+        self.assertEqual(len(teste), 2)
+        self.assertTrue(all(c[c.index("--procese") + 1] == "3" for c in teste))
+
+    def test_uscat_arata_procesele_date(self):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            L.main(["--zi", "2026-11-03", "--uscat", "--procese", "3"])
+        self.assertIn("--procese 3 --out", buf.getvalue())
 
     def rulator(self, cod=lambda nume: 0):
         def r(cmd, cale, note):
@@ -147,6 +173,63 @@ class Lant(unittest.TestCase):
     def test_fara_jurnal_se_opreste(self):
         self.assertEqual(L.lant("2026-11-04", rulator=self.rulator()), 1)
         self.assertEqual(self.rulate, [])
+
+
+class RegulaFinala(unittest.TestCase):
+    def setUp(self):
+        d = tempfile.TemporaryDirectory()
+        self.addCleanup(d.cleanup)
+        self.t = Path(d.name)
+        self.dec, self.copie = self.t / "out" / "cor_decizie_2026-11-04.json", self.t / "docs" / "cor_decizie_2026-11-04.json"
+        self.dec.parent.mkdir(parents=True)
+        self.copie.parent.mkdir(parents=True)
+        text = json.dumps({"poarta": {"descriptiv": False}, "candidati": [{"strategie": "PLAN_45_30_3", "eligibil": True},
+                          {"strategie": "PLAN_60_40_3", "eligibil": True}, {"strategie": "ppo_e15", "eligibil": False}]})
+        self.dec.write_text(text, encoding="utf-8")
+        self.copie.write_text(text, encoding="utf-8")
+        lista = self.t / "candidati.json"
+        lista.write_text(json.dumps({"candidati": ["PLAN_60_40_3", "PLAN_45_30_3", "models/ppo_e15.zip"]}), encoding="utf-8")
+        for nume, val in (("DIR_COR", self.t / "cor"), ("ROOT", self.t), ("DECIZIE_VALIDARE", self.dec), ("COPIE_DECIZIE_VALIDARE", self.copie)):
+            p = mock.patch.object(L, nume, val)
+            p.start()
+            self.addCleanup(p.stop)
+        p = mock.patch.object(L.lista_candidati, "__defaults__", (lista,))
+        p.start()
+        self.addCleanup(p.stop)
+
+    def incheie(self, *zile, rezultat="gata"):
+        for z in zile:
+            (self.t / "cor" / z).mkdir(parents=True, exist_ok=True)
+            (self.t / "cor" / z / "stare.json").write_text(json.dumps({"rezultat": rezultat}), encoding="utf-8")
+            for f in (f"outputs/validare/cor_test_{z}_indisciplinat.csv", f"outputs/validare/cor_test_{z}_normal.csv", f"outputs/validare/poarta_cor_{z}.json"):
+                (self.t / f).parent.mkdir(parents=True, exist_ok=True)
+                (self.t / f).write_text("x", encoding="utf-8")
+
+    def test_asteapta_toate_cele_trei_zile(self):
+        self.incheie("2026-11-05", "2026-11-06")
+        self.assertIn("2026-11-07", L.comanda_regula_finala())
+        self.incheie("2026-11-07", rezultat="gata_fara_simulari")       # încheiată de buclă, dar încă sigilată
+        self.assertIn("2026-11-07", L.comanda_regula_finala())
+
+    def test_comanda_are_fisierele_si_ordinea_listei(self):
+        self.incheie("2026-11-05", "2026-11-06", "2026-11-07")
+        c = " ".join(L.comanda_regula_finala()[1:])
+        self.assertIn("--candidati PLAN_60_40_3 PLAN_45_30_3 --poarta", c)      # ordinea listei, nu a deciziei; E15 n-a trecut
+        self.assertIn("outputs/validare/cor_test_2026-11-05_indisciplinat.csv outputs/validare/cor_test_2026-11-05_normal.csv "
+                      "outputs/validare/cor_test_2026-11-06_indisciplinat.csv outputs/validare/cor_test_2026-11-06_normal.csv --in-vigoare", c)
+        self.assertIn("--poarta outputs/validare/poarta_cor_2026-11-05.json outputs/validare/poarta_cor_2026-11-06.json "
+                      "--out outputs/validare/cor_decizie_test_2026-11-05_2026-11-06.json", c)
+
+    def test_fara_copia_comisa_nu_ruleaza(self):
+        self.incheie("2026-11-05", "2026-11-06", "2026-11-07")
+        self.copie.write_text("altceva", encoding="utf-8")
+        self.assertIn("nu e comisă", L.comanda_regula_finala())
+
+    def test_fara_candidati_trecuti_runda_se_incheie(self):
+        text = json.dumps({"poarta": {"descriptiv": True}, "candidati": [{"strategie": "PLAN_60_40_3", "eligibil": True}]})
+        self.dec.write_text(text, encoding="utf-8")
+        self.copie.write_text(text, encoding="utf-8")
+        self.assertIn("rămâne planul observat", L.comanda_regula_finala())
 
 
 class Bucla(unittest.TestCase):

@@ -23,7 +23,7 @@ descriptivă: nu se poate schimba nimic, oricât de bine ar ieși un candidat.
 Exemple:
   python -m romana.control.decizie outputs/validare/test_28_indisciplinat.csv outputs/validare/test_28_normal.csv
   python -m romana.control.decizie outputs/validare/test_29_*.csv --confirma TOD_DEBIT
-  python -m romana.control.decizie outputs/validare/test_05_*.csv --in-vigoare PLAN_72_48_3 REAL --candidati PLAN_60_40_3 ACTUATED
+  python -m romana.lant_cor --regula-finala      # pe zilele de test reunite (§ 9.11): fișierele, ordinea candidaților și --out vin din cod
 """
 from __future__ import annotations
 
@@ -45,8 +45,10 @@ PROGRAME = ["REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3
             "TOD_DEBIT=lejer:PLAN_16_10_12,moderat:PLAN_16_10_12,greu:PLAN_12_14_12"]
 CANDIDATI = ["PLAN_12_14_12", "TOD_DEBIT", "ppo_romana_cal"]   # de la cel mai simplu la cel mai complex
 IN_VIGOARE = "REALIST"
+# numele din geamănul în timp real (live_twin.VARIANTE_PROGRAM) pentru câștigător; fără câștigător rămâne planul în vigoare
 VARIANTA_LIVE = {"PLAN_12_14_12": "plan_scurt", "TOD_DEBIT": "tod_debit", "ppo_romana_cal": "e13",
-                 "REALIST": "realist"}
+                 "REALIST": "realist", "PLAN_72_48_3": "plan_observat", "PLAN_60_40_3": "plan_60_40",
+                 "PLAN_45_30_3": "plan_45_30", "ppo_e15": "e15"}
 RE_SC = re.compile(r"(?P<masura>cor_)?zi_(?P<zi>\d{4}-\d{2}-\d{2})_(?P<fereastra>.+?)(?:_x(?P<a>\d)_(?P<b>\d))?$")
 
 
@@ -249,7 +251,10 @@ def main(argv=None) -> None:
                              "câștigă cel mai simplu de pus în practică")
         rez.update({"candidati": evals, "castigator": castig, "motiv": motiv,
                     "varianta_live": VARIANTA_LIVE.get(castig, castig)})
-        print(f"\ncâștigător: {castig} ({motiv}) → VARIANTA_PROGRAM = \"{rez['varianta_live']}\"")
+        if castig not in VARIANTA_LIVE:
+            print(f"atenție: {castig} nu are un nume în geamănul în timp real (VARIANTA_LIVE); live_twin l-ar refuza la pornire")
+        print(f"\ncâștigător: {castig} ({motiv}) → VARIANTA_PROGRAM = \"{rez['varianta_live']}\" "
+              "(doar după regula pe zilele de test reunite, § 9.11)")
     out = Path(args.out or f"outputs/validare/decizie_{'_'.join(rez['zi'])}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rez, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -6,7 +6,7 @@ categorii de participanți. Nu modifică rezultatele oficiale (outputs/eval, doc
 în outputs/demo. Evaluarea completă rămâne `python -m romana.control.evaluate` (vezi § 9).
 
 Exemple:
-  python -m romana.control.demo                                           # prânzul din 26.10, 5 seed-uri
+  python -m romana.control.demo                                           # vârful din 26.10, 5 seed-uri
   python -m romana.control.demo --scenariu sumo/scenarios/cor_zi_2026-10-26_varf.sumocfg --seeds 5
 """
 from __future__ import annotations
