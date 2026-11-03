@@ -55,7 +55,8 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   rămâne pe planul observat până după M2.
 - **Push din linia de comandă, din 03.11:** fără GitHub Desktop și fără computer use, deci fără ferestre de aprobare; comanda, în
   „Reguli operative”. Desktop rămâne rezervă (memoria push-prin-github-desktop).
-- Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Joi dimineață:** linkurile sondării și textul mesajului.
+- Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Linkurile sondării și textele mesajelor sunt generate
+  (03.11, seara), local, în `outputs/sondare/linkuri_2026-11-03.txt` și `mesaje_2026-11-03.txt`;** autorul le trimite, termen sâmbătă, 18:00.
 - **Prezentarea M2:** schița se construiește în `outputs/prezentare/surse_m2` (sablon_m2.html, construieste_m2.py, exporta_m2.py,
   verifica_m2.py, NOTE_M2.md), cu locuri goale pentru sondare (sâmbătă, după 18:00) și pentru verdicte.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
@@ -71,7 +72,8 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **Înaintea oricărei opriri voite a colectării:** întâi fișierul `outputs/live/fara_repornire`, altfel paznicul o repornește.
 - **Sondarea cu oameni:** pagină publică în `docs/sondare` (GitHub Pages), fără laptop; după orice schimbare în `static/` se refac
   fișierele cu `python -m romana.dashboard.sondare --pachet`. Dispeceratul și pagina sondării sunt înghețate din 03.11 seara (commitul
-  „Borna M2: înghețul dispeceratului și al paginii de sondare…”): `static/` nu se mai schimbă. Linkurile de invitație: `--linkuri`, joi
+  „Borna M2: înghețul dispeceratului și al paginii de sondare…”); textele ghidului s-au refăcut pe înțelesul oricui pe 03.11, ≈20:45,
+  înaintea primei invitații. După trimiterea linkurilor, `static/` nu se mai schimbă. Linkurile de invitație: `--linkuri`, joi
   dimineață; adresa formularului stă doar în `outputs/sondare/formular.json`, niciodată în depozit (§ 4.5, § 8).
 
 ## Reguli operative
