@@ -1,15 +1,26 @@
 {
-  "_stare": "PROVIZORII, din clipurile din 1.11 și din primele clipuri din 2.11; se refac după toate clipurile din 2.11, înainte de termenul din § 9.11.",
+  "_stare": "Din clipurile din 1.11 și 2.11, 11 clipuri de câte 5 minute (pe 2.11, ziua, vehiculele pe primele 2,5 minute; Dacia vest pe 8 clipuri), numărate de adnotatori pe foi și felii (§ 4.3, § 6.5). Valorile de întuneric sunt pentru noaptea fără pierdere de detecție: bucățile declarate proaste de ambii adnotatori ies, 25 pe Dacia vest și 7 pe Catargiu, toate din seara din 2.11, deci pe întuneric Dacia vest stă pe 2 clipuri de duminică, iar Catargiu pe 241 din 257,5. Ziua, factorii țin și pe ploaie. Pe o oră cu semnătura din § 9.11 sunt prea mici (2.11: Catargiu ≈2,5 [1,6; 3,8], Dacia vest ≈2,8 [2,0; 3,7], Magheru ≈1,7 [1,45; 2,1]), iar ora iese din decizie. Se schimbă doar prin regula din § 9.11, până la termen.",
   "factor_corectie_detectie": {
-    "magheru": {"zi": 1.2, "intuneric": 1.39},
-    "catargiu": {"zi": 1.21, "intuneric": 1.53},
-    "dacia_est": 1.05,
-    "dacia_vest": 1.24
+    "magheru": {
+      "zi": 1.19,
+      "intuneric": 1.39
+    },
+    "catargiu": {
+      "zi": 1.16,
+      "intuneric": 1.56
+    },
+    "dacia_est": 0.99,
+    "dacia_vest": 1.26
   },
-  "factor_pietoni_masurati": 0.33,
-  "_factor_pietoni_masurati": "PROVIZORIU. Cerere efectivă, nu numărul real: pe clipurile din 2.11, pe aceleași bucăți, adnotatorii numără pe zebrele de pe Dacia est de ≈2,7 ori mai multe persoane decât detectorul, care pierde mulțimile. Dublați în geamăn, Magheru cade cu 13–17%, iar pierderea crește cu peste 60%, fiindcă un pieton din SUMO oprește vehiculele mai mult decât unul real. Numărul se alege deci ca vehiculele să treacă prin trecere ca în cameră.",
+  "factor_pietoni_masurati": 0.25,
+  "_factor_pietoni_masurati": "Parametru ales, nu măsurat: o cerere efectivă. Pe 8 clipuri din 2.11, pe aceleași bucăți, adnotatorii numără pe o zebră de pe Dacia est de 1,86 ori mai multe persoane decât detectorul (IC90 pe clipuri 1,38–2,32), care pierde mulțimile. Numărul de agenți se alege ca vehiculele să treacă printre pietoni ca în cameră, deci agenții nu sunt persoane, iar timpul pierdut de pietoni în geamăn nu e cel real. Valoarea s-a ales pe 3.11, cu cererea finală, pe vârful din 26.10 (seed-urile 1, 3 și 4), dintre 0,15, 0,25, 0,33 și 0,42: la 0,25, cele patru rânduri ale pietonilor (nivelul și panta ieșirii spre Dacia est în secundele 24–60 ale etapei N–S, timpii p50 și p75 ai virajului Magheru → Dacia est) stau toate sub prag, iar la 0,33 nivelul trece de prag. Rezultatele se dau și cu 0,15 și 0,42.",
   "factor_extrapolare_pietoni": 3.27,
-  "_factor_extrapolare_pietoni": "PROVIZORIU. Pietonii de pe celelalte brațe, față de cei de pe Dacia est din cerere. Pe Magheru se pot număra pe clipuri (zebra de la marginea cadrului); pe celelalte brațe, nu se văd, deci rămân o ipoteză. Cu 3,0, cât era înainte, pietonii de pe Dacia vest țineau virajul Catargiu → Dacia vest și umpleau banda din dreapta de pe Catargiu.",
-  "viraje_numarate": {"magheru": {"dacia_est": 1.5}},
-  "_viraje_numarate": "PROVIZORIU. Viraje pe care camera le vede aproape pe toate, în prim-plan: se iau din numărul lor, cu factorul dat, nu din proporții. Din proporții, Magheru → Dacia est ar fi ieșit 672 de vehicule pe oră pe 26.10, 14:30–15:30, fiindcă traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete (§ 4.3). Factorul vine din referința de pe clipurile din 2.11: virajul numărat pe felii timp-spațiu, față de traiectoriile complete, pe aceleași bucăți."
+  "_factor_extrapolare_pietoni": "Parametru ales: pietonii de pe celelalte brațe, față de cei de pe Dacia est din cerere, ≈0,19 agenți pe fiecare braț la o persoană a detectorului. Pe zebra de pe Magheru, singura numărabilă dintre celelalte, adnotatorii văd 0,37 persoane la o persoană a detectorului de pe Dacia est (4 clipuri). Pe Catargiu și Dacia vest nu se văd, deci rămâne o ipoteză. Rezultatul se dă și cu 1,60, valoarea care ar pune pe Magheru același număr de persoane pe agent ca pe Dacia est (1 + 3 × 0,37 / 1,86).",
+  "viraje_numarate": {
+    "magheru": {
+      "dacia_est": 1.25,
+      "caderea_bastiliei": 1.94
+    }
+  },
+  "_viraje_numarate": "Viraje pe care camera le vede bine, în prim-plan: se iau din numărul lor, cu factorul dat, nu din proporții, fiindcă traiectoriile spre Catargiu, îndepărtat, ajung mult mai rar complete, mai ales pe întuneric (§ 4.3). Dacia est: din proporții, Magheru → Dacia est ar fi ieșit 666 de vehicule pe oră pe 26.10, 14:30–15:30. Factorul nu e raportul brut de pe felie (208,5 / 146 = 1,43): felia prinde și Dacia vest → Dacia est (≈60 de evenimente în afara etapei N–S), iar în N–S adnotatorii pierd vehicule. Vehicul cu vehicul, pe 36 de bucăți din N–S: 1,26 [1,18; 1,35], ziua 1,25, pe întuneric 1,29. Din jurnal, pe 6 ore încărcate, (Magheru → Dacia est + ieșiri fără origine + cele cu origine Catargiu) / Magheru → Dacia est = 1,22–1,27. Căderea Bastiliei: ieșirea de acolo în etapa N–S, față de traiectoriile complete, are un raport stabil, 1,6–2,4 pe 6 ferestre, global 1,94; din proporții, seara pe 26.10 ar fi ieșit 167 de vehicule pe oră, față de ≈50."
 }
