@@ -1,0 +1,12 @@
+{
+  "descriere": "Lista candidaților din § 9.11, de la cel mai simplu la cel mai complex, fixată pe 3.11.2026 doar din zilele de antrenare 25 și 26.10 și 1.11, pe geamănul înghețat la commitul „Borna M2: înghețul măsurii noi”, înainte de a privi datele din 3.11. Un candidat trebuie să bată și planul observat, 72/48/3, și semaforul rejucat. Strategiile raportate rulează alături, dar nu pot câștiga. Lista nu se mai schimbă.",
+  "candidati": ["PLAN_60_40_3", "PLAN_45_30_3", "models/ppo_e15.zip"],
+  "raportate": ["ACTUATED"],
+  "praguri": "niciun candidat nu este program pe cazuri de trafic, deci lista nu are praguri",
+  "dovezi": [
+    "docs/rezultate/grila_inghet_normal.csv",
+    "docs/rezultate/grila_inghet_indisciplinat.csv",
+    "docs/rezultate/grila_inghet_ciclu.csv",
+    "docs/rezultate/grila_inghet_e15.csv"
+  ]
+}

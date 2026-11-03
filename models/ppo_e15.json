@@ -1,0 +1,73 @@
+{
+  "model": "ppo_e15.zip",
+  "controlate": [
+    "romana"
+  ],
+  "scenarii": [
+    "cor_zi_2026-10-25_varf.sumocfg",
+    "indisciplinat_cor_zi_2026-10-25_varf.sumocfg",
+    "cor_zi_2026-10-25_varf_x1_2.sumocfg",
+    "indisciplinat_cor_zi_2026-10-25_varf_x1_2.sumocfg",
+    "cor_zi_2026-10-25_linistit.sumocfg",
+    "indisciplinat_cor_zi_2026-10-25_linistit.sumocfg",
+    "cor_zi_2026-10-25_linistit_x0_8.sumocfg",
+    "indisciplinat_cor_zi_2026-10-25_linistit_x0_8.sumocfg",
+    "cor_zi_2026-10-26_varf.sumocfg",
+    "indisciplinat_cor_zi_2026-10-26_varf.sumocfg",
+    "cor_zi_2026-10-26_varf_x1_2.sumocfg",
+    "indisciplinat_cor_zi_2026-10-26_varf_x1_2.sumocfg",
+    "cor_zi_2026-10-26_linistit.sumocfg",
+    "indisciplinat_cor_zi_2026-10-26_linistit.sumocfg",
+    "cor_zi_2026-10-26_linistit_x0_8.sumocfg",
+    "indisciplinat_cor_zi_2026-10-26_linistit_x0_8.sumocfg",
+    "cor_zi_2026-11-01_varf.sumocfg",
+    "indisciplinat_cor_zi_2026-11-01_varf.sumocfg",
+    "cor_zi_2026-11-01_varf_x1_2.sumocfg",
+    "indisciplinat_cor_zi_2026-11-01_varf_x1_2.sumocfg",
+    "cor_zi_2026-11-01_pranz.sumocfg",
+    "indisciplinat_cor_zi_2026-11-01_pranz.sumocfg",
+    "cor_zi_2026-11-01_seara.sumocfg",
+    "indisciplinat_cor_zi_2026-11-01_seara.sumocfg",
+    "cor_zi_2026-11-01_linistit.sumocfg",
+    "indisciplinat_cor_zi_2026-11-01_linistit.sumocfg",
+    "cor_zi_2026-11-01_linistit_x0_8.sumocfg",
+    "indisciplinat_cor_zi_2026-11-01_linistit_x0_8.sumocfg"
+  ],
+  "pasi": 300672,
+  "durata_min": 72.8,
+  "preantrenare_imitatie": {
+    "plan_verde_s": [
+      72.0,
+      48.0
+    ],
+    "perechi": 39999,
+    "acuratete": 0.942
+  },
+  "hiperparametri": {
+    "lr": 0.0003,
+    "n_steps": 384,
+    "medii_paralele": 3,
+    "batch": 128,
+    "gamma": 0.98,
+    "ent_coef": 0.003,
+    "retea": [
+      128,
+      128
+    ],
+    "delta_t_s": 5,
+    "verde_min_s": 10,
+    "verde_max_s": 90
+  },
+  "faze_romana": [
+    "N–S: Magheru ↔ Lascăr Catargiu prin centru",
+    "E–V: Dacia în jurul insulei",
+    "Pietoni: toate trecerile, axa centrală se golește",
+    "N–S, cu intrările Dacia deschise (fără dozare)",
+    "E–V, cu intrările Magheru/Catargiu deschise (fără dozare)"
+  ],
+  "faze_actiuni_romana": [
+    0,
+    1
+  ],
+  "obs_amonte": false
+}

@@ -36,17 +36,20 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (03.11.2026, ~10:30) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (03.11.2026, ~15:00) – pregătirea pentru M2 (08.11, 08:00, online)
 
-- **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), înainte de a privi datele din 3.11** (§ 9.11, memoria
-  geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
+- **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
+  memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
   `docs/rezultate/praguri_geaman.json`. Poarta trece pe 8 din 12 ore de antrenare; Dacia vest rămâne sub cameră în zilele lucrătoare.
   Măsurile nu se mai schimbă. Rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, nu mai sunt valabile.
-- **Push-ul așteaptă aprobarea autorului:** GitHub Desktop s-a actualizat la 3.6.10, iar accesul de computer use trebuie dat din nou
-  (memoria push-prin-github-desktop). Până la push nu se deschide nimic din 3.11.
-- **Până pe 05.11, 00:15:** `config/candidati_v2.json` (≤3 candidați, din grila `outputs/validare/grila_inghet_*.csv`), comis.
-  Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. Lanțul măsurii noi rulează din 03.11
-  (`romana.lant_cor --bucla --ora 03:30 --pana-la "2026-11-08 12:00"`). **Joi dimineață:** linkurile sondării și textul mesajului.
+- **Lista candidaților e fixată (3.11, commitul „Borna M2: lista candidaților…”), nu se mai schimbă:** `config/candidati_v2.json` =
+  PLAN_60_40_3, PLAN_45_30_3, models/ppo_e15.zip; raportat ACTUATED (§ 9.11). Pe 4.11 (validare, seed-urile 11–15) un candidat trebuie să
+  bată PLAN_72_48_3 și REAL; pe 5–6.11 lanțul rulează doar candidații eligibili în `outputs/validare/cor_decizie_2026-11-04.json`, abia după
+  ce decizia validării e comisă, cu `romana.lant_cor --zi <zi> --desigileaza --reia` pentru 5, 6 și 7.11. Regula finală, pe zilele de
+  test reunite, se rulează de mână (comanda în § 9.11). Rezultatele zilei de 3.11 se raportează, dar nu schimbă lista.
+- **Push:** GitHub Desktop 3.6.10 are acces de computer use în această sesiune („GitHub Desktop” + `githubdesktop.exe`); după o actualizare
+  sau într-o sesiune nouă, autorul trebuie să apese fereastra de acces (memoria push-prin-github-desktop). Nu-l întreb în text de permisiuni.
+- Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Joi dimineață:** linkurile sondării și textul mesajului.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).

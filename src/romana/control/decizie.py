@@ -38,6 +38,7 @@ from scipy import stats
 
 from romana.common import DEMAND_DIR
 from romana.control.analiza import add_program, load_results, parse_program, pivot
+from romana.control.validare import strategy_name
 
 PRAGURI = (2400.0, 4100.0)
 PROGRAME = ["REALIST=lejer:ppo_romana,moderat:ppo_romana_zn3,greu:ppo_romana_zn3",
@@ -122,10 +123,14 @@ def main(argv=None) -> None:
     ap.add_argument("--in-vigoare", nargs="+", default=[IN_VIGOARE], help="referința; cu mai multe, un candidat trebuie să le bată pe toate, iar dacă nu trece nimeni rămâne prima")
     ap.add_argument("--acoperire-minima", type=float, default=0.8, help="semaforul rejucat, REAL, se compară doar pe orele cu cel puțin atâta din oră din valuri măsurate")
     ap.add_argument("--program", action="append", default=None, help="implicit: REALIST și TOD_DEBIT")
-    ap.add_argument("--poarta", help="JSON-ul scris de `valideaza_geaman --poarta`: orele care nu trec nu intră în decizie")
+    ap.add_argument("--poarta", nargs="+", help="JSON-ul scris de `valideaza_geaman --poarta` (pe zilele de test reunite, câte unul pe zi): orele care nu trec nu intră în decizie")
     ap.add_argument("--confirma", help="pe o zi de confirmare: strategia aleasă înainte")
     ap.add_argument("--out", help="fișierul JSON cu decizia (implicit outputs/validare/decizie_<zi>.json)")
     args = ap.parse_args(argv)
+    # un agent se poate da și prin calea modelului, ca în `config/candidati_v2.json`; în rezultate apare cu numele fișierului
+    args.candidati = [strategy_name(c) for c in args.candidati]
+    if args.confirma:
+        args.confirma = strategy_name(args.confirma)
 
     df = load_results(args.fisiere)
     q = debite(sorted(df["scenariu"].unique()))
@@ -138,11 +143,12 @@ def main(argv=None) -> None:
     p = pivot(df)
     descriptiv, poarta_rez = False, None
     if args.poarta:
-        porti = json.loads(Path(args.poarta).read_text(encoding="utf-8"))
-        trec, nu_trec = ore_care_trec(p.index.get_level_values(0).unique(), porti["scenarii"])
+        porti = [json.loads(Path(f).read_text(encoding="utf-8")) for f in args.poarta]
+        trec, nu_trec = ore_care_trec(p.index.get_level_values(0).unique(), {o: v for x in porti for o, v in x["scenarii"].items()})
         descriptiv = len(trec) < len(nu_trec)
         print(f"poarta din § 9.11: trec {len(trec)} din {len(trec) + len(nu_trec)} ore; nu trec: {sorted(nu_trec)}" + (" → ziua e doar descriptivă" if descriptiv else ""))
-        poarta_rez = {"trec": sorted(trec), "nu_trec": sorted(nu_trec), "descriptiv": descriptiv, "commit_validare": porti.get("commit")}
+        poarta_rez = {"trec": sorted(trec), "nu_trec": sorted(nu_trec), "descriptiv": descriptiv,
+                     "commit_validare": porti[0].get("commit") if len(porti) == 1 else [x.get("commit") for x in porti]}
         if trec:
             p = p[[ora_de_baza(s) in trec for s, _ in p.index]]
         q = {s: v for s, v in q.items() if ora_de_baza(s) in trec} or q
