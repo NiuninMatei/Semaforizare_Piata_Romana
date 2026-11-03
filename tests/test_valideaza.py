@@ -975,12 +975,45 @@ class TestCitire(unittest.TestCase):
         cam, rez = sintetic()
         d = V.randuri(cam, rez)[0]
         self.assertTrue(V.poarta(d)["trece"], V.poarta(d))
-        self.assertEqual(d.set_index("masura").loc["pierdere de detecție pe întuneric", "verdict"], "în prag")
+        self.assertEqual(d.set_index("masura").loc["pierdere de detecție pe întuneric", "verdict"], "fără obiect")      # fără date de lumină: rândul nu judecă, dar nici nu oprește ora
         self.assertEqual(set(V.poarta(d)["randuri"]), set(V.POARTA))
         d2 = d.copy()
         d2.loc[d2["masura"] == "debit, veh/h: catargiu", "verdict"] = "nedecis"
         self.assertFalse(V.poarta(d2)["trece"])
         self.assertFalse(V.poarta(d[d["masura"] != "teleportări"])["trece"])       # un rând lipsă nu trece
+        for v, trece in (("nejudecabil", True), ("în prag", True), ("peste prag", False)):
+            d3 = d.copy()
+            d3.loc[d3["masura"] == "pierdere de detecție pe întuneric", "verdict"] = v
+            self.assertEqual(V.poarta(d3)["trece"], trece, v)
+        d4 = d.copy()
+        d4.loc[d4["masura"] == "teleportări", "verdict"] = "fără obiect"       # doar rândul pierderii de detecție are voie să nu judece
+        self.assertFalse(V.poarta(d4)["trece"])
+
+    def test_pierderea_de_detectie_spune_cand_nu_poate_judeca(self):
+        a = 0.0
+        ore = np.arange(0.0, V.SFARSIT_S, 1.0)
+        # 2.11, 18:00: întuneric; Magheru și ieșirile Dacia est mari, intrările Dacia vest mici: marcată
+        intrari = {"magheru": ore[::4], "dacia_vest": ore[::60]}
+        iesiri = {"dacia_est": ore[::20]}
+        r = V.pierdere_detectie(intrari, iesiri, [], a, pd.Timestamp("2026-11-02 18:00"))
+        self.assertTrue(r["intuneric"] and r["judecabil"] and r["marcata"], r)
+        # aceeași seară, cu trafic de noapte sub minim: nejudecabilă, nu „în prag”
+        r = V.pierdere_detectie({"magheru": ore[::20], "dacia_vest": ore[::600]}, {"dacia_est": ore[::100]}, [], a, pd.Timestamp("2026-11-02 18:00"))
+        self.assertTrue(r["intuneric"] and not r["judecabil"] and not r["marcata"], r)
+        # ziua: nici judecabilă, nici marcată
+        r = V.pierdere_detectie(intrari, iesiri, [], a, pd.Timestamp("2026-11-02 13:00"))
+        self.assertFalse(r["intuneric"] or r["judecabil"] or r["marcata"], r)
+
+    def test_histograma_pietonilor_cere_destule_treceri(self):
+        cam, rez = sintetic()
+        cam["pietoni_pe_ora"] = 900.0
+        sc = cam["sc"]
+        cam_putine = {**cam, "pietoni": np.sort(sc[:3] + 25.0)}       # trei treceri în toată fereastra
+        d = V.randuri(cam_putine, rez)[0].set_index("masura")
+        q = d.loc["pietoni pe zebra Dacia est: histograma intrărilor pe 10 s"]
+        self.assertEqual(q["verdict"], "neinformativ")
+        self.assertTrue(np.isnan(q["prag"]))
+        self.assertIn("sub 30", q["nota"])
 
     def test_ce_nu_acopera_randurile_e_spus(self):
         self.assertTrue(any("Mendeleev" in k for k in V.RENUNTATE))

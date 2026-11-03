@@ -81,8 +81,9 @@ RULARI_DIR = OUTPUT_DIR / "validare" / "rulari"
 GRUPURI = {"A": "din cerere", "B": "independente de cerere, măsoară fizica", "C": "verificarea ceasului și a ferestrelor", "D": "siguranță și limite"}
 CHEI_CAPAT = {"intrare": "brate", "ieșire": "iesiri"}
 CITIRE_NS = ("ieșire în N–S", "dacia_est")      # muchia ieșirii e chiar la zebră, deci după așteptare; zona camerei începe mult înainte
-# Orele care n-au influențat alegerea măsurilor, ambele de duminică: toate celelalte au fost privite în cele patru runde.
-# 1.11 seara: pe 2.11, un revizor a rulat un seed și a văzut rândurile ei; nicio reparație nu stă pe ele. Autorul hotărăște dacă rămâne aici.
+# Orele neatinse de rezultatele simulării la alegerea măsurilor, ambele de duminică: toate celelalte au fost privite în cele patru runde.
+# 1.11 seara: pe 2.11, un revizor a rulat un seed și a văzut rândurile ei; nicio reparație nu stă pe ele. Cererea ei folosește însă și clipul 17:45 din aceeași oră,
+# la cotele fixe și la factorii de întuneric, deci „neatinsă” privește simularea, nu cererea.
 ORE_NEATINSE = {"cor_zi_2026-11-01_seara", "cor_zi_2026-10-25_varf"}
 # Măsurile s-au stabilit în patru runde pe aceste ore, după ce s-au văzut rezultatele (§ 6.5); de la un commit numit se îngheață, iar prima judecată curată e o zi nouă.
 # Aici stau doar pragurile scrise de mână: abatere relativă sau valoare maximă pe rulare. Celelalte se calculează din reeșantionarea camerei și din zgomotul seed-urilor, pe braț,
@@ -94,6 +95,8 @@ POARTA = ("debit, veh/h: magheru", "debit, veh/h: catargiu", "debit, veh/h: daci
 # îl confirmă). Doar din cameră, fără simulare: X = ieșirile Dacia est fără virajul Magheru → Dacia est, V = intrările Dacia vest. Pe lumină, X/V e cel mult 1,44, iar pe 26.10 pe întuneric, cel mult 1,40;
 # pe 2.11, 17:00–20:00, 2,27–3,67. Pragul stă pe o singură seară dintre zilele permise, deci e o ipoteză declarată (§ 9.11). Ora marcată iese din decizie, cu variantele ei.
 PIERDERE_DETECTIE = {"raport": 1.8, "magheru": 600, "x": 100}
+# Sub atâtea treceri în cameră, histograma pietonilor nu spune nimic: reeșantionarea dă valuri fără niciun pieton, iar pragul explodează
+MIN_TRECERI_HISTOGRAMA = 30
 # Rândurile la care s-a renunțat și de ce, ca istoria validării să se vadă (§ 6.5)
 RENUNTATE = {
     "Total în prag": "nu deosebește nimic: un geamăn greșit dinadins avea aproape același scor cu cel de bază;",
@@ -970,8 +973,8 @@ def pierdere_detectie(intrari: dict, iesiri: dict, miscari: list, a: float, mijl
     x, v, m = in_ora(iesiri["dacia_est"]) - viraj, in_ora(intrari["dacia_vest"]), in_ora(intrari["magheru"])
     raport = x / max(v, 1)
     intuneric = inaltime_soare(pd.Timestamp(mijloc).to_pydatetime()) <= PRAG_INTUNERIC_GRADE
-    return {"x": x, "v": v, "m": m, "raport": raport, "intuneric": bool(intuneric),
-            "marcata": bool(intuneric and m >= PIERDERE_DETECTIE["magheru"] and x >= PIERDERE_DETECTIE["x"] and raport >= PIERDERE_DETECTIE["raport"])}
+    judecabil = bool(intuneric and m >= PIERDERE_DETECTIE["magheru"] and x >= PIERDERE_DETECTIE["x"])
+    return {"x": x, "v": v, "m": m, "raport": raport, "intuneric": bool(intuneric), "judecabil": judecabil, "marcata": bool(judecabil and raport >= PIERDERE_DETECTIE["raport"])}
 
 
 def date_camera(stem: str, zone: list) -> dict:
@@ -1283,12 +1286,15 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
         zc, zs = zgomot_statistica(matrice_valuri(pc, sc).sum(1), np.mean, rng), zgomot_seeduri_scalar(v) / c if c else _GOL
         T.rand("A", "pietoni_zebra", "pietoni pe zebra Dacia est, pe oră", v, c, mod="relativ", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:numar", prag_din_zgomot(zc, zs, PRAGURI["pietoni_detectie"])), nota=sursa)
         mat = matrice_valuri(pc, sc)
+        putine = mat.sum() < MIN_TRECERI_HISTOGRAMA
         pc_h = forma(mat.mean(0))
         pg_h = [forma(profil(x, s)) for x, s in zip(P, S)]
         medie_h = forma(np.mean([profil(x, s) for x, s in zip(P, S)], axis=0))
         zc, zs = zgomot_reesantionare(mat, rng, normat=True), zgomot_seeduri(pg_h)
         T.rand("B", "pietoni_zebra", "pietoni pe zebra Dacia est: histograma intrărilor pe 10 s", camera=_GOL, abateri=[abatere_profil(pc_h, p) for p in pg_h], abatere=abatere_profil(pc_h, medie_h),
-               mod="abatere", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:histograma", prag_din_zgomot(zc, zs)), nota="se raportează, chiar dacă pică; detectorul pierde începutul mulțimilor, deci histograma camerei e întârziată și lățită", profil_g=medie_h)
+               mod="abatere", zgomot=zc, z_seed=zs, pieton=True, prag=T.prag("pietoni_zebra:histograma", _GOL if putine else prag_din_zgomot(zc, zs)), verdict="neinformativ" if putine else None,
+               nota=(f"doar {mat.sum():.0f} treceri în cameră, sub {MIN_TRECERI_HISTOGRAMA}: histograma nu spune nimic, iar rândul nu dă prag" if putine else
+                     "se raportează, chiar dacă pică; detectorul pierde începutul mulțimilor, deci histograma camerei e întârziată și lățită"), profil_g=medie_h)
         profile["pietoni zebra dacia_est"] = (pc_h, medie_h)
     else:
         T.rand("B", "pietoni_zebra", "pietoni pe zebra Dacia est, pe oră", nota="fără jurnalul local al pietonilor", pieton=True)
@@ -1364,8 +1370,10 @@ def randuri(cam: dict, rez: list[dict], strategie: str = "REAL", fixate: dict | 
     raport("așteptarea evitată de cei intrați pe roșu, ore", "rosu", evitate, pieton=True)
     T.rand("D", "neintrate", "vehicule neintrate sau nesosite la final, parte din vehicule", [r["r"]["nefinalizate"] / s for r, s in zip(rez, sositi)], mod="valoare", prag=T.prag("neintrate_fractie", PRAGURI["neintrate_fractie"], "scris"))
     pd_cam = cam.get("pierdere_detectie") or {}
-    T.rand("D", "pierdere_detectie", "pierdere de detecție pe întuneric", camera=pd_cam.get("raport", _GOL), din_simulare=False, verdict="peste prag" if pd_cam.get("marcata") else "în prag",
-           nota=f"din cameră: ieșirile Dacia est fără virajul Magheru → Dacia est, {pd_cam.get('x', 0)}, față de intrările Dacia vest, {pd_cam.get('v', 0)}; contează doar pe întuneric, la trafic mare; raport peste {PIERDERE_DETECTIE['raport']:g}: ora iese din decizie")
+    v_pd = "peste prag" if pd_cam.get("marcata") else "în prag" if pd_cam.get("judecabil") else "nejudecabil" if pd_cam.get("intuneric") else "fără obiect"
+    T.rand("D", "pierdere_detectie", "pierdere de detecție pe întuneric", camera=pd_cam.get("raport", _GOL), din_simulare=False, verdict=v_pd,
+           nota=f"din cameră: ieșirile Dacia est fără virajul Magheru → Dacia est, {pd_cam.get('x', 0)}, față de intrările Dacia vest, {pd_cam.get('v', 0)}; Magheru {pd_cam.get('m', 0)} veh/h; "
+                f"contează doar pe întuneric, cu Magheru de cel puțin {PIERDERE_DETECTIE['magheru']} veh/h și ieșirile de cel puțin {PIERDERE_DETECTIE['x']}; raport peste {PIERDERE_DETECTIE['raport']:g}: ora iese din decizie")
     raport(f"vehicule neintrate la secunda {SFARSIT_S}: toate", "neintrate", [r["neintrate"]["total"] for r in rez])
     raport(f"vehicule neintrate la secunda {SFARSIT_S}: Dacia vest", "neintrate", [r["neintrate"]["dacia_vest"] for r in rez])
     raport("pierdere totală, ore", "pierdere", [r["r"]["pierdere_totala_h"] for r in rez])
@@ -1502,11 +1510,15 @@ def stare_git(scenarii: list[str] | None = None) -> dict:
     return {"commit": commit, "git_curat": not lista, "schimbate": lista}
 
 
+# Pe rândul pierderii de detecție, ziua („fără obiect”) și noaptea cu trafic sub minim („nejudecabil”) nu opresc ora: acolo rândul nu poate spune nimic, iar § 9.11 o declară
+POARTA_FARA_JUDECATA = {"pierdere de detecție pe întuneric": ("fără obiect", "nejudecabil")}
+
+
 def poarta(baza: pd.DataFrame) -> dict:
-    """Trece doar dacă toate rândurile porții sunt „în prag”; „nedecis” nu ajunge."""
+    """Trece doar dacă toate rândurile porții sunt „în prag” (sau, pe rândurile din POARTA_FARA_JUDECATA, nejudecabile); „nedecis” nu ajunge."""
     d = baza.set_index("masura")
     randuri = {m: str(d.loc[m, "verdict"]) if m in d.index else "lipsă" for m in POARTA}
-    return {"trece": all(v == "în prag" for v in randuri.values()), "randuri": randuri}
+    return {"trece": all(v == "în prag" or v in POARTA_FARA_JUDECATA.get(m, ()) for m, v in randuri.items()), "randuri": randuri}
 
 
 def figura(p: dict, cale: str) -> None:
@@ -1636,13 +1648,13 @@ def main(argv=None) -> None:
     print("\nLimite declarate:")
     for k, v in LIMITE.items():
         print(f"  {k}: {v}")
-    praguri =pd.concat(calculate).groupby("cheie_prag")["prag"].mean().round(4)
+    praguri = pd.concat(calculate).groupby("cheie_prag")["prag"].median().round(4)      # mediana: o oră aproape goală nu mai mută pragul tuturor
     if len(praguri):
         print("\nPraguri calculate acum, de fixat înaintea zilei de validare (--scrie-praguri, apoi --praguri):")
         print("  " + ", ".join(f"{k}={v}" for k, v in praguri.items()))
     if a.scrie_praguri:
         Path(a.scrie_praguri).parent.mkdir(parents=True, exist_ok=True)
-        Path(a.scrie_praguri).write_text(json.dumps({"_descriere": "Pragurile din zgomotul camerei și al seed-urilor, media pe scenarii. Se fixează înaintea zilei de validare și se comit.", "commit": git["commit"], "data": acum, "scenarii": a.scenarii, "seeds": seeds,
+        Path(a.scrie_praguri).write_text(json.dumps({"_descriere": "Pragurile din zgomotul camerei și al seed-urilor, mediana pe scenarii; un rând fără prag pe o oră (de exemplu, histograma pietonilor sub 30 de treceri) nu intră. Se fixează înaintea zilei de validare și se comit.", "commit": git["commit"], "data": acum, "scenarii": a.scenarii, "seeds": seeds,
                                                      "factori": factori, "praguri": {k: float(v) for k, v in praguri.items()}}, ensure_ascii=False, indent=1), encoding="utf-8")
     if a.poarta:
         Path(a.poarta).parent.mkdir(parents=True, exist_ok=True)

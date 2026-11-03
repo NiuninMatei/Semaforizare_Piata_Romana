@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import re
 
 import pandas as pd
@@ -116,6 +117,19 @@ def alege_ferestre(prof: pd.DataFrame, zi: str) -> dict[str, tuple[pd.Timestamp,
     return {k: (a, b) for k, (a, b) in windows.items() if k in ("varf", "linistit") or b <= a0 or a >= b0}
 
 
+EXCLUDERI_COR = CONFIG_DIR / "excluderi_cor.json"
+
+
+def excluderi_cor(zi: str) -> list[str]:
+    """Excluderile comise ale zilei pentru măsura nouă, din config/excluderi_cor.json (cheile cu „_” sunt explicații): scenariile înghețate se refac din depozit fără --exclude."""
+    if not EXCLUDERI_COR.exists():
+        return []
+    lista = json.loads(EXCLUDERI_COR.read_text(encoding="utf-8")).get(zi, [])
+    if not isinstance(lista, list):
+        raise SystemExit(f"{EXCLUDERI_COR.name}: se așteaptă o listă de intervale HH:MM-HH:MM pentru {zi}")
+    return list(lista)
+
+
 def amprenta_cerere() -> str:
     """Amprenta lui config/demand_v2.json, cu care s-au făcut rutele măsurii noi."""
     return hashlib.sha256((CONFIG_DIR / "demand_v2.json").read_text(encoding="utf-8").encode()).hexdigest()[:16]
@@ -136,14 +150,19 @@ def main(argv=None) -> None:
     prefix, cerere = ("cor_", ["--cerere", "demand_v2.json"]) if args.masura == "cor" else ("", [])
     path = (COUNTS_COR_DIR if args.masura == "cor" else COUNTS_DIR) / f"numaratori_{args.zi}.csv"
     df = pd.read_csv(path, parse_dates=["inceput", "sfarsit"])
-    prof = hourly_profile(df)
+    dublate = set()
+    if args.masura == "cor":            # ora dublată de la schimbarea orei (25.10): sferturile ei ar aduna ambele apariții, deci ies din profil
+        dublate = set(df.loc[df["sfarsit"] <= df["inceput"], "inceput"]) | set(df.loc[df.duplicated(["inceput", "sfarsit", "tip", "origine", "destinatie", "vehicul"], keep=False), "inceput"])
+        df = df[df["sfarsit"] > df["inceput"]]
+    prof = exclude(hourly_profile(df), dublate)
     profil = prof["echilibrat_veh_h"].dropna()        # profilul complet, pentru rezumat (debitele ferestrelor)
     if args.masura == "cor":            # măsura nouă nu folosește ferestre prelucrate încetinit (§ 9.11)
         from romana.vision.calitate import PRAG_PAS_MEDIAN
         incet = intervale_incetinite(args.zi, PRAG_PAS_MEDIAN)
     else:
         incet = intervale_incetinite(args.zi) if args.fara_incetinite else set()
-    alese = intervale_date(args.zi, args.exclude)
+    comise = excluderi_cor(args.zi) if args.masura == "cor" else []
+    alese = intervale_date(args.zi, [*args.exclude, *comise])
     if incet:
         print("Intervale excluse (prelucrare încetinită):", ", ".join(f"{t:%H:%M}" for t in sorted(incet)))
     if alese:
@@ -157,6 +176,10 @@ def main(argv=None) -> None:
         summary["incetinite_excluse"] = [str(t) for t in sorted(incet)]
     if alese:
         summary["intervale_excluse"] = [str(t) for t in sorted(alese)]
+    if dublate:
+        summary["ora_dublata"] = [str(t) for t in sorted(dublate)]
+    if comise:
+        summary["excluderi_comise"] = comise
     print("\nFerestre alese:", {k: f"{a:%H:%M}–{b:%H:%M}" for k, (a, b) in windows.items()})
     if args.doar_analiza:
         return
