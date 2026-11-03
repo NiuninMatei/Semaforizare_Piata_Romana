@@ -63,7 +63,7 @@ function rama() { return document.querySelector("#scena iframe"); }
 function deschide(versiune) {
   if (rama()) return;
   const f = document.createElement("iframe");
-  f.title = "Ecranul de supraveghere";
+  f.title = "Aplicația de supraveghere a semafoarelor";
   f.src = `${versiune}.html`;
   f.addEventListener("load", () => {
     f.contentDocument.addEventListener("click", e => {
@@ -82,7 +82,7 @@ function inchide() {
   const f = rama();
   if (f) f.remove();
   $("gol").style.display = "grid";
-  $("gol").textContent = "Ecranul de supraveghere e închis.";
+  $("gol").textContent = "Aplicația e închisă.";
 }
 function pregatesteRama(p) {
   const f = rama();
@@ -165,8 +165,8 @@ function arataFinal(g, adauga) {
   nota.id = "nota";
   nota.setAttribute("role", "status");
   if (INVITAT) adauga("p", "Dacă închideți fila fără să trimiteți, răspunsurile dispar.");
-  adauga("p", "Semafoarele de pe ecran erau simulate: nimic din ce ați apăsat nu a schimbat ceva pe stradă.");
-  if (INVITAT) adauga("p", "Vă rugăm să nu le povestiți celorlalți despre test până nu termină toți.");
+  adauga("p", "Semafoarele din aplicație erau simulate: nimic din ce ați apăsat nu a schimbat ceva pe stradă.");
+  if (INVITAT) adauga("p", "Vă rugăm să nu discutați cu alți participanți la acest sondaj despre răspunsuri, ca rezultatele să fie cât mai apropiate de opinia dumneavoastră reală.");
   const din_nou = document.createElement("div");
   din_nou.className = "butoane";
   din_nou.appendChild(buton("Altcineva vrea să încerce: de la capăt", "oprire", () => {

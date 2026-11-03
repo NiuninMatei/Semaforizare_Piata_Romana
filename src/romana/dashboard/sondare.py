@@ -78,7 +78,7 @@ CAT_DE_USOR = ["Foarte greu", "Greu", "Nici greu, nici ușor", "Ușor", "Foarte 
 AJUTOR = ["Nu", "Doar la mouse sau la citit", "Da, la înțelegerea sarcinilor"]
 # Pe un ecran îngust, ghidul stă deasupra dispeceratului.
 PE_TELEFON = [("în partea din dreapta", "în partea de jos"), ("partea din dreapta", "partea de jos"), ("Partea din dreapta", "Partea de jos"),
-              ("ecranul din dreapta", "ecranul de jos"), ("În stânga primiți", "Sus primiți"), ("Răspundeți în stânga", "Răspundeți sus"),
+              ("aplicația din dreapta", "aplicația de jos"), ("În stânga primiți", "Sus primiți"), ("Răspundeți în stânga", "Răspundeți sus"),
               ("Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă", "Dacă jos nu se vede tot, derulați cu degetul")]
 NUME_SARCINA = {1: "cine schimbă culorile", 2: "cea mai lungă coadă", 3: "verde pe Dacia", 4: "înapoi la calculator"}
 
@@ -103,11 +103,11 @@ def _runda(runda: int, versiune: str) -> list[dict]:
     reusit = "Când credeți că ați reușit, apăsați „Am terminat”."
     p = [
         {"id": f"{r}_deschide", "tip": "deschide", **v, "titlu": "Pornim prima variantă" if runda == 0 else "Pornim a doua variantă",
-         "text": ["Apăsați butonul de mai jos. Ecranul de supraveghere se deschide în partea din dreapta."] if runda == 0 else
-                 ["Puteți face o pauză, dacă doriți. Urmează aceleași sarcini, pe o altă variantă a ecranului.",
+         "text": ["Apăsați butonul de mai jos. Aplicația se deschide în partea din dreapta."] if runda == 0 else
+                 ["Puteți face o pauză, dacă doriți. Urmează aceleași sarcini, pe o altă variantă a aplicației.",
                   "Situația din piață s-a schimbat, așa că uitați-vă din nou cu atenție.",
                   "Când sunteți gata, apăsați butonul de mai jos."],
-         "buton": "Deschide ecranul de supraveghere", "sit": {"runda": runda, "mod": sit["mod"]}},
+         "buton": "Deschide aplicația", "sit": {"runda": runda, "mod": sit["mod"]}},
         {"id": f"{r}_conduce", "tip": "sarcina", **_sarcina(1), **ec,
          "text": ["Uitați-vă la partea din dreapta, fără să apăsați nimic pe ea.",
                   "**Cine schimbă acum culorile semaforului: un calculator sau un om?**", gata]},
@@ -121,21 +121,21 @@ def _runda(runda: int, versiune: str) -> list[dict]:
          "text": ["**Dați verde pe Bulevardul Dacia**, ca și cum ați schimba dumneavoastră culorile semaforului.", reusit]},
         {"id": f"{r}_verde_r", "tip": "alegere", **ac, "titlu": "Ce culoare avea semaforul pe Bulevardul Magheru când ați apăsat „Am terminat”?",
          "eticheta": "Culoarea pe Magheru", "optiuni": ["Verde", "Galben", "Roșu", NU_POT], "corect_din_banc": "magheru"},
-        {"id": f"{r}_verde_vazut", "tip": "alegere", **ac, "titlu": "Ați putut vedea pe ecran dacă s-a schimbat ce ați vrut?",
+        {"id": f"{r}_verde_vazut", "tip": "alegere", **ac, "titlu": "Ați putut vedea în aplicație dacă s-a schimbat ce ați vrut?",
          "eticheta": "A văzut schimbarea", "optiuni": AM_VAZUT},
         {"id": f"{r}_automat", "tip": "sarcina", **_sarcina(4), **ec, "verifica": "automat", "pregateste": "manual_dacia",
          "text": ["**Lăsați din nou calculatorul să schimbe singur culorile semaforului**, ca să nu mai fie nevoie de dumneavoastră.", reusit]},
-        {"id": f"{r}_automat_vazut", "tip": "alegere", **ac, "titlu": "Ați putut vedea pe ecran cine schimbă acum culorile?",
+        {"id": f"{r}_automat_vazut", "tip": "alegere", **ac, "titlu": "Ați putut vedea în aplicație cine schimbă acum culorile?",
          "eticheta": "A văzut cine conduce", "optiuni": AM_VAZUT},
-        {"id": f"{r}_inchide", "tip": "inchide", **ac, "titlu": "Închideți ecranul de supraveghere",
-         "text": ["Ați terminat sarcinile pe această variantă. Apăsați butonul de mai jos: ecranul din dreapta se închide."],
-         "buton": "Închide ecranul de supraveghere"},
+        {"id": f"{r}_inchide", "tip": "inchide", **ac, "titlu": "Închideți aplicația",
+         "text": ["Ați terminat sarcinile pe această variantă. Apăsați butonul de mai jos: aplicația din dreapta se închide."],
+         "buton": "Închide aplicația"},
     ]
     if runda == 0:         # doar la prima vedere: a doua oară s-ar repeta ce a răspuns persoana prima dată
         p += [{"id": f"{r}_culori", "tip": "alegere", **v, "titlu": "Pe desenul pieței, ce credeți că arată o linie roșie groasă pe o stradă?",
                "eticheta": "Linia roșie", "optiuni": ["O coadă lungă de mașini", "Semaforul e roșu pe strada aceea", "Strada e închisă", NU_POT],
                "corect": "O coadă lungă de mașini"},
-              {"id": f"{r}_real", "tip": "alegere", **v, "titlu": "Dacă apăsați un buton pe ecranul de supraveghere, se schimbă semaforul adevărat din piață?",
+              {"id": f"{r}_real", "tip": "alegere", **v, "titlu": "Dacă apăsați un buton în aplicație, se schimbă semaforul adevărat din piață?",
                "eticheta": "Semaforul adevărat", "optiuni": ["Da", "Nu", NU_POT], "corect": "Nu"}]
     p += [{"id": f"{r}_usor", "tip": "alegere", **v, "titlu": "Cât de ușor v-a fost să folosiți această variantă?", "eticheta": "Cât de ușor", "optiuni": CAT_DE_USOR},
           {"id": f"{r}_incurcat", "tip": "text", **v, "titlu": "Ce v-a încurcat la această variantă?", "eticheta": "Ce a încurcat",
@@ -147,10 +147,12 @@ def pasi(ordine: tuple[str, str] = ("m1", "m2")) -> list[dict]:
     """Lista pașilor unei persoane. `sit` e situația pe care o arată dispeceratul de la acel pas încolo."""
     return [
         {"id": "bun_venit", "tip": "info", "titlu": "Bun venit!", "text": [
-            "Vă mulțumim că ne ajutați. Verificăm dacă un ecran pentru supravegherea semafoarelor din Piața Romană este ușor de înțeles. "
-            "Este un proiect universitar.",
-            "**Testăm ecranul, nu pe dumneavoastră.** Dacă ceva nu merge sau nu se înțelege, vina e a ecranului, iar asta vrem să aflăm.",
-            "Durează între 10 și 20 de minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”."],
+            "Vă mulțumim că ne ajutați. Verificăm dacă o aplicație care arată semafoarele din Piața Romană și cozile de mașini, "
+            "într-o simulare pe calculator, este ușor de înțeles. Este un proiect universitar.",
+            "**Verificăm aplicația, nu pe dumneavoastră: nu există răspunsuri bune sau greșite.** Dacă ceva nu merge sau nu se înțelege, "
+            "e o problemă a aplicației, iar asta vrem să aflăm.",
+            "Durează între 10 și 20 de minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”.",
+            "**Vă rugăm să nu discutați cu alți participanți la acest sondaj despre răspunsuri**, ca rezultatele să fie cât mai apropiate de opinia dumneavoastră reală."],
          "buton": "Mai departe"},
         {"id": "acord", "tip": "info", "lung": True, "titlu": "Ce se întâmplă cu răspunsurile",
          "text_invitat": [
@@ -175,14 +177,14 @@ def pasi(ordine: tuple[str, str] = ("m1", "m2")) -> list[dict]:
             "Imaginați-vă că lucrați într-un centru care supraveghează semafoarele din Piața Romană. Încercați fără grijă: aici nu se dau note.",
             "În stânga primiți, pe rând, câte o sarcină. O faceți în partea din dreapta, apoi apăsați „Am terminat”. "
             "Partea din dreapta se acoperă și răspundeți la o întrebare, din ce ați văzut.",
-            "Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă. Imaginea de la cameră e, în acest test, o fotografie fixă a pieței.",
+            "Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă. Imaginea de la cameră e, aici, o fotografie fixă a pieței.",
             "Dacă nu reușiți, apăsați „Nu reușesc”. Nu e nicio problemă.",
-            "Veți vedea două variante ale aceluiași ecran, pe rând."],
+            "Veți vedea, pe rând, două variante ale aceleiași aplicații."],
          "buton": "Am înțeles"},
         *_runda(0, ordine[0]),
         *_runda(1, ordine[1]),
         {"id": "preferinta", "tip": "alegere", "titlu": "Care variantă v-a fost mai ușoară?", "eticheta": "Mai ușoară", "optiuni": ["Prima", "A doua", "La fel"]},
-        {"id": "vazut_inainte", "tip": "alegere", "titlu": "Ați mai văzut ecranul acesta înainte de azi?", "eticheta": "Văzut înainte", "optiuni": ["Nu", "Da"]},
+        {"id": "vazut_inainte", "tip": "alegere", "titlu": "Ați mai văzut aplicația aceasta înainte de azi?", "eticheta": "Văzut înainte", "optiuni": ["Nu", "Da"]},
         {"id": "ajutor", "tip": "alegere", "titlu": "V-a ajutat cineva la sarcini?", "eticheta": "A ajutat cineva", "optiuni": AJUTOR},
         {"id": "final", "tip": "final"},
     ]
@@ -207,7 +209,7 @@ RE_FONTURI = re.compile(r'<link rel="preconnect" href="https://fonts\.googleapis
 TITLU_CAMERA = "Piața Romană, fotografie fixă"
 TITLU_DEBITE = "Debite de trafic"
 ALT_CAMERA = "Fotografie a Pieței Romane, cu persoanele și plăcuțele estompate"
-NOTA_CAMERA = '<div class="sub" style="margin-top:10px">Pentru acest test, o fotografie fixă în locul camerei în direct.</div>\n'
+NOTA_CAMERA = '<div class="sub" style="margin-top:10px">În acest sondaj, o fotografie fixă în locul camerei în direct.</div>\n'
 STIL_CAMERA = "<style>.cam .stare,#sursa{display:none}</style>"
 SUBSOL_CAMERA = ("Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, "
                  "persoanele estompate, afișată doar local.")

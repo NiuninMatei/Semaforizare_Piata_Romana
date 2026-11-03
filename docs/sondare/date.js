@@ -103,8 +103,8 @@ const DATE_SONDARE = {
 "Partea de jos"
 ],
 [
-"ecranul din dreapta",
-"ecranul de jos"
+"aplicația din dreapta",
+"aplicația de jos"
 ],
 [
 "În stânga primiți",
@@ -125,9 +125,10 @@ const DATE_SONDARE = {
 "tip": "info",
 "titlu": "Bun venit!",
 "text": [
-"Vă mulțumim că ne ajutați. Verificăm dacă un ecran pentru supravegherea semafoarelor din Piața Romană este ușor de înțeles. Este un proiect universitar.",
-"**Testăm ecranul, nu pe dumneavoastră.** Dacă ceva nu merge sau nu se înțelege, vina e a ecranului, iar asta vrem să aflăm.",
-"Durează între 10 și 20 de minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”."
+"Vă mulțumim că ne ajutați. Verificăm dacă o aplicație care arată semafoarele din Piața Romană și cozile de mașini, într-o simulare pe calculator, este ușor de înțeles. Este un proiect universitar.",
+"**Verificăm aplicația, nu pe dumneavoastră: nu există răspunsuri bune sau greșite.** Dacă ceva nu merge sau nu se înțelege, e o problemă a aplicației, iar asta vrem să aflăm.",
+"Durează între 10 și 20 de minute, pe un calculator. Vă puteți opri oricând, fără nicio explicație, cu butonul „Mă opresc aici”.",
+"**Vă rugăm să nu discutați cu alți participanți la acest sondaj despre răspunsuri**, ca rezultatele să fie cât mai apropiate de opinia dumneavoastră reală."
 ],
 "buton": "Mai departe"
 },
@@ -182,9 +183,9 @@ const DATE_SONDARE = {
 "text": [
 "Imaginați-vă că lucrați într-un centru care supraveghează semafoarele din Piața Romană. Încercați fără grijă: aici nu se dau note.",
 "În stânga primiți, pe rând, câte o sarcină. O faceți în partea din dreapta, apoi apăsați „Am terminat”. Partea din dreapta se acoperă și răspundeți la o întrebare, din ce ați văzut.",
-"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă. Imaginea de la cameră e, în acest test, o fotografie fixă a pieței.",
+"Dacă în dreapta nu se vede tot, folosiți rotița mouse-ului sau două degete pe suprafața tactilă. Imaginea de la cameră e, aici, o fotografie fixă a pieței.",
 "Dacă nu reușiți, apăsați „Nu reușesc”. Nu e nicio problemă.",
-"Veți vedea două variante ale aceluiași ecran, pe rând."
+"Veți vedea, pe rând, două variante ale aceleiași aplicații."
 ],
 "buton": "Am înțeles"
 },
@@ -195,9 +196,9 @@ const DATE_SONDARE = {
 "runda": 0,
 "titlu": "Pornim prima variantă",
 "text": [
-"Apăsați butonul de mai jos. Ecranul de supraveghere se deschide în partea din dreapta."
+"Apăsați butonul de mai jos. Aplicația se deschide în partea din dreapta."
 ],
-"buton": "Deschide ecranul de supraveghere",
+"buton": "Deschide aplicația",
 "sit": {
 "runda": 0,
 "mod": "program"
@@ -306,7 +307,7 @@ const DATE_SONDARE = {
 "runda": 0,
 "ecran": true,
 "acoperit": true,
-"titlu": "Ați putut vedea pe ecran dacă s-a schimbat ce ați vrut?",
+"titlu": "Ați putut vedea în aplicație dacă s-a schimbat ce ați vrut?",
 "eticheta": "A văzut schimbarea",
 "optiuni": [
 "Da, clar",
@@ -336,7 +337,7 @@ const DATE_SONDARE = {
 "runda": 0,
 "ecran": true,
 "acoperit": true,
-"titlu": "Ați putut vedea pe ecran cine schimbă acum culorile?",
+"titlu": "Ați putut vedea în aplicație cine schimbă acum culorile?",
 "eticheta": "A văzut cine conduce",
 "optiuni": [
 "Da, clar",
@@ -351,11 +352,11 @@ const DATE_SONDARE = {
 "runda": 0,
 "ecran": true,
 "acoperit": true,
-"titlu": "Închideți ecranul de supraveghere",
+"titlu": "Închideți aplicația",
 "text": [
-"Ați terminat sarcinile pe această variantă. Apăsați butonul de mai jos: ecranul din dreapta se închide."
+"Ați terminat sarcinile pe această variantă. Apăsați butonul de mai jos: aplicația din dreapta se închide."
 ],
-"buton": "Închide ecranul de supraveghere"
+"buton": "Închide aplicația"
 },
 {
 "id": "r1_culori",
@@ -377,7 +378,7 @@ const DATE_SONDARE = {
 "tip": "alegere",
 "versiune": "m1",
 "runda": 0,
-"titlu": "Dacă apăsați un buton pe ecranul de supraveghere, se schimbă semaforul adevărat din piață?",
+"titlu": "Dacă apăsați un buton în aplicație, se schimbă semaforul adevărat din piață?",
 "eticheta": "Semaforul adevărat",
 "optiuni": [
 "Da",
@@ -420,11 +421,11 @@ const DATE_SONDARE = {
 "runda": 1,
 "titlu": "Pornim a doua variantă",
 "text": [
-"Puteți face o pauză, dacă doriți. Urmează aceleași sarcini, pe o altă variantă a ecranului.",
+"Puteți face o pauză, dacă doriți. Urmează aceleași sarcini, pe o altă variantă a aplicației.",
 "Situația din piață s-a schimbat, așa că uitați-vă din nou cu atenție.",
 "Când sunteți gata, apăsați butonul de mai jos."
 ],
-"buton": "Deschide ecranul de supraveghere",
+"buton": "Deschide aplicația",
 "sit": {
 "runda": 1,
 "mod": "manual"
@@ -533,7 +534,7 @@ const DATE_SONDARE = {
 "runda": 1,
 "ecran": true,
 "acoperit": true,
-"titlu": "Ați putut vedea pe ecran dacă s-a schimbat ce ați vrut?",
+"titlu": "Ați putut vedea în aplicație dacă s-a schimbat ce ați vrut?",
 "eticheta": "A văzut schimbarea",
 "optiuni": [
 "Da, clar",
@@ -563,7 +564,7 @@ const DATE_SONDARE = {
 "runda": 1,
 "ecran": true,
 "acoperit": true,
-"titlu": "Ați putut vedea pe ecran cine schimbă acum culorile?",
+"titlu": "Ați putut vedea în aplicație cine schimbă acum culorile?",
 "eticheta": "A văzut cine conduce",
 "optiuni": [
 "Da, clar",
@@ -578,11 +579,11 @@ const DATE_SONDARE = {
 "runda": 1,
 "ecran": true,
 "acoperit": true,
-"titlu": "Închideți ecranul de supraveghere",
+"titlu": "Închideți aplicația",
 "text": [
-"Ați terminat sarcinile pe această variantă. Apăsați butonul de mai jos: ecranul din dreapta se închide."
+"Ați terminat sarcinile pe această variantă. Apăsați butonul de mai jos: aplicația din dreapta se închide."
 ],
-"buton": "Închide ecranul de supraveghere"
+"buton": "Închide aplicația"
 },
 {
 "id": "r2_usor",
@@ -625,7 +626,7 @@ const DATE_SONDARE = {
 {
 "id": "vazut_inainte",
 "tip": "alegere",
-"titlu": "Ați mai văzut ecranul acesta înainte de azi?",
+"titlu": "Ați mai văzut aplicația aceasta înainte de azi?",
 "eticheta": "Văzut înainte",
 "optiuni": [
 "Nu",
