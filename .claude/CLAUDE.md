@@ -47,8 +47,8 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   bată PLAN_72_48_3 și REAL; pe 5–6.11 lanțul rulează doar candidații eligibili în `outputs/validare/cor_decizie_2026-11-04.json`, abia după
   ce decizia validării e comisă, cu `romana.lant_cor --zi <zi> --desigileaza --reia` pentru 5, 6 și 7.11. Regula finală, pe zilele de
   test reunite, se rulează de mână (comanda în § 9.11). Rezultatele zilei de 3.11 se raportează, dar nu schimbă lista.
-- **Push:** GitHub Desktop 3.6.10 are acces de computer use în această sesiune („GitHub Desktop” + `githubdesktop.exe`); după o actualizare
-  sau într-o sesiune nouă, autorul trebuie să apese fereastra de acces (memoria push-prin-github-desktop). Nu-l întreb în text de permisiuni.
+- **Push din linia de comandă, din 03.11:** fără GitHub Desktop și fără computer use, deci fără ferestre de aprobare; comanda, în
+  „Reguli operative”. Desktop rămâne rezervă (memoria push-prin-github-desktop).
 - Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Joi dimineață:** linkurile sondării și textul mesajului.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
@@ -67,9 +67,11 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 
 ## Reguli operative
 
-- **Git:** `C:\Users\Matei\AppData\Local\GitHubDesktop\app-3.6.7\resources\app\git\cmd\git.exe` (în Git Bash merge `git`).
+- **Git:** în Git Bash, `git` (Git for Windows, cu Git Credential Manager, care are deja conectarea contului).
   Mesajul de commit într-un fișier nou, UTF-8 fără BOM, cu `git commit -F`; commit doar pe fișiere numite, fără `git add -A`.
-  Push doar prin GitHub Desktop, grupat, niciodată în timpul simulărilor, fără să cer voie; înainte verific ce ajunge public (memoria push-prin-github-desktop).
+  Push: `GCM_INTERACTIVE=never GIT_TERMINAL_PROMPT=0 git -c credential.username=NiuninMatei push origin main` (fără numele contului,
+  git se oprește să întrebe ce cont folosește); grupat, niciodată în timpul simulărilor, fără să cer voie; înainte verific ce ajunge
+  public (memoria push-prin-github-desktop).
 - **Cât colectează camera:** nu se ating `run_vision.py`, `stream.py`, `od_counter.py`, `config/camera.json`,
   `config/demand.json`, `vtypes*`; `veghe.py` citește `fps` din `state.json`. `signals.py` nu se schimbă. Scenariile
   `zi_2026-10-2[89]_*` nu se regenerează sub același nume. `run_vision` se oprește doar curat (Ctrl+C), altfel jurnalul
