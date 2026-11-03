@@ -36,9 +36,17 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (02.11.2026, ~05:30) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (03.11.2026, ~10:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
-- **Geamănul a fost corectat pe 02.11 (§ 6.5, memoria geaman-coliziuni):** rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, stau pe coliziuni și teleportări și nu mai sunt valabile. Măsura nouă `cor_*` folosește geamănul v2 (`romana.network.retea_v2`, `config/retea_v2.json`, `config/demand_v2.json`). Orice simulare nouă raportează teleportările și ciocnirile. Referințele regulilor din § 9.11 sunt planul observat, 72/48/3, și semaforul rejucat; poarta validării spune ce ore contează.
+- **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), înainte de a privi datele din 3.11** (§ 9.11, memoria
+  geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
+  `docs/rezultate/praguri_geaman.json`. Poarta trece pe 8 din 12 ore de antrenare; Dacia vest rămâne sub cameră în zilele lucrătoare.
+  Măsurile nu se mai schimbă. Rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, nu mai sunt valabile.
+- **Push-ul așteaptă aprobarea autorului:** GitHub Desktop s-a actualizat la 3.6.10, iar accesul de computer use trebuie dat din nou
+  (memoria push-prin-github-desktop). Până la push nu se deschide nimic din 3.11.
+- **Până pe 05.11, 00:15:** `config/candidati_v2.json` (≤3 candidați, din grila `outputs/validare/grila_inghet_*.csv`), comis.
+  Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. Lanțul măsurii noi rulează din 03.11
+  (`romana.lant_cor --bucla --ora 03:30 --pana-la "2026-11-08 12:00"`). **Joi dimineață:** linkurile sondării și textul mesajului.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
@@ -46,8 +54,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   `outputs/prezentare/surse_m2/verificare_plan_m2.json`. Bugetul: memoria buget-tokeni. Regulile zilelor noi: § 9.11.
 - **Rulează în fundal, pornite pe 01.11 (până după M2):** `run_vision` (de la 09:04; jurnalul brut în
   `data/trajectories_brute`), paznicul (`outputs/logs/paznic_<zi>.log`), veghea (`outputs/logs/veghe_2026-11-01.csv`) și
-  prelucrarea de noapte (`romana.lant_zilnic --bucla`, la 00:15; `outputs/lant/<zi>/`). După o repornire a aplicației se pornesc
-  din nou: paznicul, veghea, lanțul cu `--reia`.
+  prelucrarea de noapte (`romana.lant_zilnic --bucla`, la 00:15; `outputs/lant/<zi>/`), plus, din 03.11, lanțul măsurii noi
+  (`romana.lant_cor --bucla`, la 03:30; `outputs/lant_cor/<zi>/`). După o repornire a aplicației se pornesc din nou: paznicul,
+  veghea și ambele lanțuri, cu `--reia`.
 - **Înaintea oricărei opriri voite a colectării:** întâi fișierul `outputs/live/fara_repornire`, altfel paznicul o repornește.
 - **Sondarea cu oameni:** pagină publică în `docs/sondare` (GitHub Pages), fără laptop; după orice schimbare în `static/` se refac
   fișierele cu `python -m romana.dashboard.sondare --pachet`. Linkurile de invitație: `--linkuri`, abia după reparațiile din
