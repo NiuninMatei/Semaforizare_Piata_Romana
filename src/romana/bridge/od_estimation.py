@@ -72,10 +72,15 @@ def inaltime_soare(moment: datetime, latitudine: float = 44.4478, longitudine: f
     return math.degrees(math.asin(math.sin(lat) * math.sin(decl) + math.cos(lat) * math.cos(decl) * math.cos(unghi_orar)))
 
 
+# Eticheta unui sfert de oră se ia la începutul lui. Detecția nu se schimbă la apus, ci cu Soarele la ≈3,9° sub orizont, cu abatere de ≈1° între zile: măsurat pe 6 seri și 4 dimineți, pe indici
+# care nu depind de volum. Sferturile care decid: 26.10, 17:30 (−3,37°, încă zi) și 28.10, 17:30 (−3,88°, deja întuneric). Clipurile de referință nu acoperă banda dintre +1,9° și −7,4°.
+PRAG_INTUNERIC_GRADE = -3.5
+
+
 def factor_brat(valoare, moment) -> float:
-    """Factorul unui braț: un număr sau, în măsura nouă, {"zi": ..., "intuneric": ...}, după cum e Soarele deasupra orizontului sau nu."""
+    """Factorul unui braț: un număr sau, în măsura nouă, {"zi": ..., "intuneric": ...}, după înălțimea Soarelui față de `PRAG_INTUNERIC_GRADE`."""
     if isinstance(valoare, dict):
-        return float(valoare["zi" if inaltime_soare(pd.Timestamp(moment).to_pydatetime()) > -0.833 else "intuneric"])
+        return float(valoare["zi" if inaltime_soare(pd.Timestamp(moment).to_pydatetime()) > PRAG_INTUNERIC_GRADE else "intuneric"])
     return float(valoare)
 
 

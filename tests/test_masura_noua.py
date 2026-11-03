@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from romana.bridge.build_demand import fara_ora_dublata
 from romana.bridge.od_estimation import aplica_cote_fixe, estimate_interval, factor_brat, inaltime_soare
 from romana.common import CONFIG_DIR
 
@@ -32,6 +33,27 @@ class TestSoare(unittest.TestCase):
         self.assertEqual(factor_brat(v, "2026-11-02 12:00"), 1.2)
         self.assertEqual(factor_brat(v, "2026-11-02 18:00"), 1.5)
         self.assertEqual(factor_brat(2.52, None), 2.52)
+
+    def test_pragul_de_lumina_e_sub_orizont(self):
+        # sferturile care decid pragul (§ 5.1): detecția se schimbă cu Soarele la ≈3,9° sub orizont, nu la apus
+        v = {"zi": 1.2, "intuneric": 1.5}
+        self.assertEqual(factor_brat(v, "2026-10-26 17:30"), 1.2)
+        self.assertEqual(factor_brat(v, "2026-10-28 17:30"), 1.5)
+        self.assertEqual(factor_brat(v, "2026-11-01 17:15"), 1.2)
+
+
+class TestOraDublata(unittest.TestCase):
+    def _rand(self, inceput, sfarsit, tip="intrare"):
+        return {"inceput": pd.Timestamp(inceput), "sfarsit": pd.Timestamp(sfarsit), "tip": tip, "origine": "magheru", "destinatie": "", "vehicul": "passenger", "numar": 1}
+
+    def test_randurile_cu_sfarsitul_inaintea_inceputului_ies(self):
+        df = pd.DataFrame([self._rand("2026-10-25 02:45", "2026-10-25 03:00"), self._rand("2026-10-25 03:45", "2026-10-25 03:00")])
+        self.assertEqual(len(fara_ora_dublata(df, "x")), 1)
+
+    def test_o_fereastra_pe_ora_dublata_se_refuza(self):
+        df = pd.DataFrame([self._rand("2026-10-25 03:00", "2026-10-25 03:15"), self._rand("2026-10-25 03:00", "2026-10-25 03:15")])
+        with self.assertRaises(SystemExit):
+            fara_ora_dublata(df, "x")
 
 
 class TestCote(unittest.TestCase):

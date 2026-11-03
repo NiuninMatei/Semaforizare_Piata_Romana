@@ -769,7 +769,7 @@ class TestRanduri(unittest.TestCase):
         q = V.randuri(cam, rez)[0].set_index("masura").loc["pietoni pe zebra Dacia est, pe oră"]
         self.assertEqual(q["camera"], 1500.0)
         self.assertEqual(q["grup"], "A")
-        self.assertIn("× factorul din referință, 1.5", q["nota"])
+        self.assertIn("× factorul de cerere ales, 1.5", q["nota"])
         self.assertIn("detectorul singur, doar pe zebra de ieșire: 900", q["nota"])
 
     def test_iesirea_in_ns_se_citeste_pe_zona_chiar_daca_pe_ora_se_citeste_pe_muchie(self):
@@ -975,6 +975,7 @@ class TestCitire(unittest.TestCase):
         cam, rez = sintetic()
         d = V.randuri(cam, rez)[0]
         self.assertTrue(V.poarta(d)["trece"], V.poarta(d))
+        self.assertEqual(d.set_index("masura").loc["pierdere de detecție pe întuneric", "verdict"], "în prag")
         self.assertEqual(set(V.poarta(d)["randuri"]), set(V.POARTA))
         d2 = d.copy()
         d2.loc[d2["masura"] == "debit, veh/h: catargiu", "verdict"] = "nedecis"

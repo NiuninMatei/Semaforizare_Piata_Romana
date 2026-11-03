@@ -294,6 +294,7 @@ TEXT_LIBER = {"incurcat": "ce a încurcat"}
 PROFIL = ("profil_calculator", "vazut_inainte", "ajutor")
 COLOANE = ["cod", "grup", "terminat", "versiune", "runda", "masura", "durata_s", "reusit", "clicuri", "comenzi", "nu_reuseste", "raspuns"]
 COLOANE_GRUP = ["grup", "masura", "versiune", "persoane", "reusite", "persoane_prima_runda", "reusite_prima_runda"]
+COLOANE_DURATA = ["durata_mediana_s", "clicuri_mediana"]
 
 
 def citeste_raspuns(text: str) -> dict | None:
@@ -410,8 +411,8 @@ def scrie_rezumat(dosar: Path = DOSAR) -> tuple[Path, list[dict]]:
 def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
     """Totaluri pe grup, versiune și măsură, doar pentru cei care au terminat: fără coduri, fără text liber, fără profil.
 
-    Prima rundă se dă separat: e singura la prima vedere, deci singura fără efectul exercițiului. Duratele, doar `local`:
-    între persoane de vârste foarte diferite nu se pot compara."""
+    Prima rundă se dă separat: e singura la prima vedere, deci singura fără efectul exercițiului. Duratele, doar `local` sau la colegi:
+    între persoane de vârste foarte diferite nu se pot compara, iar colegii au vârste apropiate."""
     terminati = [r for r in randuri if r.get("terminat")]
     grupe: dict[tuple, list[dict]] = {}
     for r in terminati:
@@ -422,7 +423,7 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
         prima = [r for r in lista if r.get("runda") == 1]
         rand = {"grup": grup, "masura": masura, "versiune": versiune, "persoane": len(lista), "reusite": sum(bool(r.get("reusit")) for r in lista),
                 "persoane_prima_runda": len(prima), "reusite_prima_runda": sum(bool(r.get("reusit")) for r in prima)}
-        if local:
+        if local or grup == "c":
             durate = [r["durata_s"] for r in lista if r.get("durata_s") is not None]
             clicuri = [r["clicuri"] for r in lista if r.get("clicuri") is not None]
             rand["durata_mediana_s"] = round(st.median(durate), 1) if durate else ""
@@ -447,10 +448,12 @@ def publica(dosar: Path = DOSAR, destinatie: Path = PUBLICAT, minim: int = 3) ->
     if not destule:
         raise SystemExit(f"Niciun grup nu are cel puțin {minim} persoane care au terminat.")
     destinatie.parent.mkdir(parents=True, exist_ok=True)
+    publice = [r for r in pe_grup(randuri) if r["grup"] in destule]
+    coloane = COLOANE_GRUP + (COLOANE_DURATA if any(c in r for r in publice for c in COLOANE_DURATA) else [])
     with open(destinatie, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, COLOANE_GRUP)
+        w = csv.DictWriter(f, coloane)
         w.writeheader()
-        w.writerows(r for r in pe_grup(randuri) if r["grup"] in destule)
+        w.writerows(publice)
     return destinatie
 
 

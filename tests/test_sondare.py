@@ -308,6 +308,18 @@ class TestRaspuns(Primite):
             rows = list(csv.DictReader(f))
         self.assertEqual({r["grup"] for r in rows}, {"a"})      # grupul sub 3 persoane rămâne afară
 
+    def test_la_colegi_se_publica_si_duratele_mediane(self):
+        for k in range(3):
+            self.pune(text(k=k, grup="c"))
+        dest = self.dosar / "public.csv"
+        s.publica(self.dosar, dest)
+        with open(dest, encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+        cu_durata = [r for r in rows if r["durata_mediana_s"]]
+        self.assertTrue(cu_durata)
+        self.assertEqual({r["grup"] for r in cu_durata}, {"c"})
+        self.assertNotIn("secret", dest.read_text(encoding="utf-8"))
+
     def test_nu_se_publica_sub_trei_persoane(self):
         self.pune(text())
         with self.assertRaises(SystemExit):
