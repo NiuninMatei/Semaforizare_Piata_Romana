@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (03.11.2026, ~18:30) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (03.11.2026, ~21:45) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
@@ -55,10 +55,17 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   rămâne pe planul observat până după M2.
 - **Push din linia de comandă, din 03.11:** fără GitHub Desktop și fără computer use, deci fără ferestre de aprobare; comanda, în
   „Reguli operative”. Desktop rămâne rezervă (memoria push-prin-github-desktop).
-- Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Linkurile sondării și textele mesajelor sunt generate
-  (03.11, seara), local, în `outputs/sondare/linkuri_2026-11-03.txt` și `mesaje_2026-11-03.txt`;** autorul le trimite, termen sâmbătă, 18:00.
-- **Prezentarea M2:** schița se construiește în `outputs/prezentare/surse_m2` (sablon_m2.html, construieste_m2.py, exporta_m2.py,
-  verifica_m2.py, NOTE_M2.md), cu locuri goale pentru sondare (sâmbătă, după 18:00) și pentru verdicte.
+- Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Invitațiile la sondare au plecat pe 03.11, 21:00–21:02**
+  (patru apropiați, cu ordinea ecranelor fixată în link, și colegii de an, cu un link și ordinea la întâmplare); textele și linkurile,
+  local, în `outputs/sondare/mesaje_2026-11-03.txt` și `linkuri_2026-11-03.txt`. Sondarea se închide sâmbătă, 7.11, la 18:00; apoi
+  `--rezumat`, `--publica` și pagina 5 a prezentării.
+- **Prezentarea M2:** schița „demonstrația întâi” (03.11, 21:17), verificată pe surse la 21:45: ≈3,5 minute de demonstrație pe laptop
+  din ≈6 min 10 s, limbaj simplu, 8 pagini care trec `verifica_m2.py`. Totul în `outputs/prezentare/surse_m2` (sablon_m2.html,
+  construieste_m2.py, exporta_m2.py, verifica_m2.py; scenariul demonstrației și deciziile, în NOTE_M2.md; prima ciornă, în
+  `ciorna_1/`). Locuri goale: pagina 5 (sâmbătă, după 18:00) și pagina 8 (proba pe 5.11, decizia pe 8.11). Pe 8.11 se pornesc doar
+  `6_geaman_digital.bat` și `7_dashboard.bat`, niciodată `PORNESTE_TOT.bat`, care ar porni o a doua colectare. **Pe 5.11, după
+  validare:** din duratele reale ale lanțului estimez dacă 7.11 se termină pe 8.11 până la ≈06:30; altfel, desigilarea zilei de 7.11
+  pe mai multe procese, cu nota în § 9.11.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
@@ -73,8 +80,8 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **Sondarea cu oameni:** pagină publică în `docs/sondare` (GitHub Pages), fără laptop; după orice schimbare în `static/` se refac
   fișierele cu `python -m romana.dashboard.sondare --pachet`. Dispeceratul și pagina sondării sunt înghețate din 03.11 seara (commitul
   „Borna M2: înghețul dispeceratului și al paginii de sondare…”); textele ghidului s-au refăcut pe înțelesul oricui pe 03.11, ≈20:45,
-  înaintea primei invitații. După trimiterea linkurilor, `static/` nu se mai schimbă. Linkurile de invitație: `--linkuri`, joi
-  dimineață; adresa formularului stă doar în `outputs/sondare/formular.json`, niciodată în depozit (§ 4.5, § 8).
+  înaintea primei invitații. Linkurile au plecat pe 03.11, deci `static/` nu se mai schimbă până la închiderea sondării. Adresa
+  formularului stă doar în `outputs/sondare/formular.json`, niciodată în depozit (§ 4.5, § 8).
 
 ## Reguli operative
 
