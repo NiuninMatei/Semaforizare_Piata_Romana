@@ -1,6 +1,6 @@
 "use strict";
 const DATE_SONDARE = {
-"VERSIUNE": "v1",
+"VERSIUNE": "v2",
 "FAZE": [
 "N–S: Magheru ↔ Lascăr Catargiu prin centru",
 "E–V: Dacia în jurul insulei",

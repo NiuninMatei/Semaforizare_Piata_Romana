@@ -800,7 +800,9 @@ Măsurile luate sunt următoarele.
   pagina, notează adresa IP a vizitatorilor, iar Google o vede la deschiderea formularului. Răspunsurile sunt pseudonimizate, nu
   anonime, fiindcă participanții sunt puțini și autorul poate bănui al cui e un răspuns. Ce citește asistentul Claude ajunge la Anthropic.
   Nu se înregistrează imagine sau sunet. Răspunsurile primite stau în foaia de calcul a formularului și în `outputs/sondare`; se publică
-  doar totaluri pe grup, de la cel puțin trei persoane. Datele se șterg după evaluarea academică sau mai devreme, la cerere.
+  doar totaluri pe grup, de la cel puțin trei persoane. Datele se șterg după evaluarea academică sau mai devreme, la cerere. Din 3.11,
+  seara, textul se încheie cu un cod de control, care arată dacă a ajuns neschimbat și care răspunsuri se potriveau cu ce arăta
+  aplicația, fără să le scrie pe ecran; dacă în aceeași filă a mai răspuns cineva, textul următor spune doar atât (§ 8).
 * **Imaginile publicate.** Singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru, din
   28.10.2026, ora 09:30. Același cadru apare și în prezentarea bornei M1 (`docs/prezentari/`). Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
   plăcuțelor de înmatriculare la toate vehiculele și textul publicitar suprapus de cameră. Pe oameni i-a găsit
@@ -2166,6 +2168,42 @@ apropiate autorului separat de colegi, și, separat, prima rundă, fără procen
 Răspunsurile date pe un ecran mai îngust de 900 px, de obicei de pe telefon, unde ghidul stă deasupra dispeceratului, se numără într-un
 grup al lor, cu același prag de cel puțin 3 persoane.
 Pagina nu se deosebește de restul codului: `--pachet` o construiește în `docs/sondare` din sursele din `static/`, iar GitHub Pages o servește.
+
+**Integritatea răspunsurilor (din 3.11.2026, seara).** În seara invitațiilor s-a văzut o slăbiciune a primei versiuni a paginii:
+ea scria răspunsul așteptat lângă unul greșit, iar textul pleacă printr-un formular Google completat dinainte, în care persoana îl
+mai poate schimba. Un răspuns se putea deci corecta după ce persoana vedea ce se aștepta. De atunci, pagina, în versiunea v2, nu
+mai scrie răspunsurile așteptate. La sfârșitul textului pune un cod de control, de forma „Cod de control: 4F7A-91C-2K”. Codul arată
+la citire dacă s-au schimbat răspunsurile, timpii sau apăsările și păstrează, fără să le scrie, care răspunsuri se potriveau cu ce
+arăta aplicația; ecranul final spune asta. Butonul „de la capăt” cere confirmarea că răspunde altă persoană și spune că un text
+netrimis se șterge. Textul următor din aceeași filă spune „Încercarea: 2”, la fel și după butonul vechi, de pe prima versiune.
+
+Regulile de numărare sunt publice din 3.11, seara, odată cu pagina v2, și se aplică tuturor răspunsurilor:
+
+* un text schimbat după ce l-a scris pagina nu se numără: codul nu se potrivește, lipsește deși textul e de pe pagina nouă sau,
+  la prima versiune, apare o corectură vizibilă, ca „X (așteptat: X)” ori un răspuns greșit fără adnotare. Foarte rar, un text cu
+  toate răspunsurile bune, scris de o pagină veche rămasă în memoria browserului în minutele de după publicare, poate fi socotit
+  schimbat;
+* ce e scris în afara textului paginii, de exemplu un salut în același mesaj, se ignoră;
+* aceeași trecere, primită de două ori, de exemplu prin formular și pe WhatsApp, se numără o singură dată, din copia cea mai bună;
+* o a doua trecere în aceeași filă se numără doar dacă cel care a trimis spune că a răspuns altă persoană; autorul notează doar
+  atât, fără nume, fiindcă aceeași persoană nu mai vede ecranele pentru prima oară;
+* celelalte dubluri posibile, cu același grup, aceeași ordine și același ecran, se numără, iar autorul nu le scoate după ce le vede
+  răspunsurile;
+* totalurile se publică o singură dată, după închiderea sondajului și după confirmări, iar un rând cu mai puțin de trei persoane
+  nu se publică.
+
+Nu se poate opri cineva care deschide linkul în altă filă sau pe alt dispozitiv și o ia de la capăt. Sarcinile, întrebările și
+ordinea lor au rămas aceleași, deci răspunsurile din cele două versiuni se adună. Cine a început pe prima versiune o termină pe ea
+dacă nu reîncarcă pagina; după o reîncărcare, continuă pe v2 de la pasul la care a rămas.
+
+*Pentru specialiști.* Codul conține amprenta FNV-1a pe 32 de biți a textului, adus întâi la o formă care nu ține de transport: forma
+Unicode NFC, fără rânduri goale, cu spațiile strânse și cu ghilimelele și liniuțele tipografice înlocuite. Urmează biții răspunsurilor
+așteptate, amestecați cu o a doua amprentă, care nu apare în text, totul în baza 32, fără literele I, L, O și U. Calculul e același în
+`static/sondare_logica.js` și în `sondare.py`, iar testele îl verifică pe textele scrise chiar de pagină. Codul nu e o semnătură: cine îl
+recalculează după codul public îl poate potrivi, dar o corectură de mână se vede. Rândurile „Ce a încurcat” nu intră în amprentă,
+ca persoana să-și poată șterge din formular ce a scris liber, fără să-și piardă răspunsul. Analiza citește doar blocul scris de pagină, de la
+rândul versiunii până la cod, cu aceleași reguli pentru spații și rânduri goale ca amprenta. Confirmările stau local, în
+`outputs/sondare/confirmari.json`, iar `--rezumat` arată, la „de știut”, ce nu se numără și de ce.
 
 Tabelul arată cum respectă dispeceratul cele 10 euristici ale lui Nielsen, regulile practice pentru interfețe ușor de folosit.
 
@@ -4236,6 +4274,10 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
   abia după toate cele trei zile; desigilarea pe 3 procese; geamănul în timp real poate rula candidații (§ 9.11). Pe pagina
   sondării, schema rămâne pe ecran și pe laptopurile obișnuite, iar răspunsurile de pe telefon se numără separat; apoi pagina
   s-a înghețat (§ 8). README spune ce rulează azi și marchează rezultatele retrase.
+* **Integritatea sondajului (3.11, seara):** prima versiune a paginii arăta răspunsurile așteptate, iar textul se putea corecta
+  în formular; pagina v2 nu le mai arată, pune la final un cod de control, care arată dacă s-au schimbat răspunsurile, timpii sau
+  apăsările, și marchează a doua trecere în aceeași filă; analiza citește ambele versiuni, cu regulile de numărare publice. Sarcinile
+  și întrebările au rămas aceleași; o revizie adversă, din cinci unghiuri, înainte de publicare (§ 8).
 * **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
   care le judecă (§ 9.11).
 

@@ -17,8 +17,13 @@ Rulare:     python -m romana.dashboard.sondare --pachet    → refac docs/sondar
             python -m romana.dashboard.sondare --local     → pagina, pe acest calculator: http://127.0.0.1:8060/sondare/
             python -m romana.dashboard.sondare --linkuri   → linkurile pentru invitați (din outputs/sondare/formular.json)
 Rezultate:  textele primite, în outputs/sondare/primite/R<n>.txt
-            python -m romana.dashboard.sondare --rezumat   → outputs/sondare/rezumat.csv și tabelul pe grupuri și versiuni
+            python -m romana.dashboard.sondare --rezumat   → outputs/sondare/rezumat.csv, tabelul pe grupuri și versiuni și ce nu se numără
             python -m romana.dashboard.sondare --publica   → docs/rezultate/sondare_m2.csv (doar totaluri)
+
+Integritatea (pagina v2, din 03.11.2026, seara): textul nu mai arată răspunsurile așteptate, iar la sfârșit are un cod de control.
+Un text schimbat după ce l-a scris pagina (codul nu se potrivește sau lipsește ori, la v1, o corectură ca „X (așteptat: X)”) nu se numără.
+O a doua trecere în aceeași filă („de la capăt”) se numără doar dacă autorul confirmă că e altă persoană, în
+outputs/sondare/confirmari.json: {"R5": "altă persoană"}.
 """
 from __future__ import annotations
 
@@ -30,7 +35,9 @@ import json
 import re
 import shutil
 import statistics as st
+import sys
 import threading
+import unicodedata
 import webbrowser
 from pathlib import Path
 
@@ -48,7 +55,7 @@ URL_PROIECT = "https://github.com/NiuninMatei/Semaforizare_Piata_Romana"
 URL_CAMERA = "https://webcamromania.ro/webcam-orase/webcam-piata-romana-bucuresti/"
 VERSIUNI = {"m1": STATIC / "m1" / "index.html", "m2": STATIC / "index.html"}
 GRUPURI = {"a": "persoane apropiate", "c": "colegi"}
-VERSIUNE_PAGINA = "v1"
+VERSIUNE_PAGINA = "v2"       # v1, până pe 03.11.2026, seara: răspunsurile așteptate la vedere, fără cod de control
 LUNGIME_TEXT = 300
 
 FAZE = ["N–S: Magheru ↔ Lascăr Catargiu prin centru", "E–V: Dacia în jurul insulei",
@@ -288,22 +295,98 @@ def linkuri(dosar: Path = DOSAR, baza: str = ADRESA_PUBLICA) -> dict[str, list[s
 
 RE_ANTET = re.compile(r"Grup (\S+), ordine (\S+), ecran (\S+), (terminat|oprit la \S+)")
 RE_SARCINA = re.compile(r"Sarcina (\d), [^:]*: (\d+) s, apăsări (\d+), comenzi (\d+)(?:, altă fereastră (\d+) s)?(, nu reușesc)?(, reușit|, nereușit)?(?:\. (.*))?$")
-RE_ASTEPTAT = re.compile(r"^(.*) \(așteptat: (.*)\)$")
+RE_ASTEPTAT = re.compile(r"^(.*) \(așteptat: (.*)\)$")      # doar pagina v1
+RE_ADNOTARE = re.compile(r" \(așteptat: [^)]*\)$")
+RE_VERSIUNE = re.compile(r"Sondare dispecerat Piața Romană, (v\d+)")      # căutat oriunde în rând: un prefix (WhatsApp, ghilimele) nu-l ascunde
+RE_INCERCARE = re.compile(r"Încercarea: (\d+)\b.*")
+RE_COD = re.compile(r"Cod de control: ([0-9A-Z]{4}-[0-9A-Z]{3}-[0-9A-Z]{2})\b.*")    # un „.” sau un emoji după cod nu-l ascunde
+CONFIRMARI = "confirmari.json"
+
+# Codul de control (pagina v2, § 8): același calcul ca `cod_control` din static/sondare_logica.js. Amprenta FNV-1a pe 32 de biți a
+# textului adus la o formă care nu ține de transport, apoi biții răspunsurilor așteptate, amestecați cu amprenta. Nu e o semnătură.
+ALFABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+TIPOGRAFIC = str.maketrans({chr(0x2026): "...", chr(0x201E): '"', chr(0x201C): '"', chr(0x201D): '"', chr(0x2018): "'", chr(0x2019): "'",
+                            chr(0x2013): "-", chr(0x2014): "-"})
+# spațiile, cu numerele lor, ca în sondare_logica.js: obișnuit, tab, neîntrerupt, cele tipografice, cel îngust, cel matematic,
+# cel ideografic și BOM
+SPATII = "".join(map(chr, [0x20, 0x09, 0xA0, *range(0x2000, 0x200B), 0x202F, 0x205F, 0x3000, 0xFEFF]))
+RE_SPATII = re.compile("[" + re.escape(SPATII) + "]+")
+
+
+def _normalizat(text: str) -> str:
+    linii = unicodedata.normalize("NFC", text).replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    return "\n".join(l for l in (RE_SPATII.sub(" ", x.translate(TIPOGRAFIC)).strip(" ") for x in linii) if l)
+
+
+def _fnv1a(text: str) -> int:
+    h = 0x811C9DC5
+    for b in text.encode("utf-8", "surrogatepass"):
+        h = ((h ^ b) * 0x01000193) & 0xFFFFFFFF
+    return h
+
+
+def _baza32(n: int, cifre: int) -> str:
+    s = ""
+    for _ in range(cifre):
+        s, n = ALFABET[n % 32] + s, n // 32
+    return s
+
+
+def cod_control(text: str, biti: list[bool]) -> str:
+    """`text`: tot ce e deasupra rândului codului; `biti`: pentru fiecare răspuns cu răspuns așteptat, în ordinea din text, dacă a fost cel așteptat.
+    Masca biților e amprenta textului fără biți, care nu apare în cod."""
+    forma = _normalizat(text)
+    h = _fnv1a(forma + "\n" + "".join("1" if b else "0" for b in biti))
+    n = sum(1 << i for i, b in enumerate(biti) if b)
+    a = _baza32(h, 7)
+    return f"{a[:4]}-{a[4:]}-{_baza32(n ^ (_fnv1a(forma) % 1024), 2)}"
+
+
+def verifica_cod(text: str, cod: str, n_biti: int) -> list[bool] | None:
+    """Biții răspunsurilor așteptate, dacă `text` (fără rândul codului) e chiar cel scris de pagină; None dacă a fost schimbat."""
+    m = re.fullmatch(r"([0-9A-Z]{4})-([0-9A-Z]{3})-([0-9A-Z]{2})", cod)
+    if not m or n_biti > 10 or any(c not in ALFABET for c in cod.replace("-", "")):
+        return None
+    h = functools.reduce(lambda s, c: s * 32 + ALFABET.index(c), m[1] + m[2], 0)
+    n = functools.reduce(lambda s, c: s * 32 + ALFABET.index(c), m[3], 0) ^ (_fnv1a(_normalizat(text)) % 1024)
+    if h >= 2 ** 32 or n >> n_biti:        # biți în plus: alt număr de răspunsuri decât în text
+        return None
+    biti = [bool(n >> i & 1) for i in range(n_biti)]
+    return biti if cod_control(text, biti) == cod else None
 INTREBARI = {"verde_r": "culoarea pe Magheru", "verde_vazut": "a văzut schimbarea", "automat_vazut": "a văzut cine conduce",
              "culori": "linia roșie", "real": "semaforul adevărat", "usor": "ușor sau foarte ușor"}
 RASPUNS_SARCINA = {1: "conduce_r", 2: "coada_r"}
 TEXT_LIBER = {"incurcat": "ce a încurcat"}
 PROFIL = ("profil_calculator", "vazut_inainte", "ajutor")
-COLOANE = ["cod", "grup", "ecran", "terminat", "versiune", "runda", "masura", "durata_s", "reusit", "clicuri", "comenzi", "nu_reuseste", "raspuns"]
+COLOANE = ["cod", "grup", "ecran", "terminat", "pagina", "integru", "incercarea", "modificat", "numarat",
+           "versiune", "runda", "masura", "durata_s", "reusit", "clicuri", "comenzi", "nu_reuseste", "raspuns"]
 COLOANE_GRUP = ["grup", "masura", "versiune", "persoane", "reusite", "persoane_prima_runda", "reusite_prima_runda"]
 COLOANE_DURATA = ["durata_mediana_s", "clicuri_mediana"]
 # Sub această lățime, pagina pune ghidul deasupra dispeceratului: e alt ecran, deci răspunsurile se numără separat.
 LATIME_TELEFON = 900
 
 
+def _curat(rand: str) -> str:
+    """Un rând, citit cum îl vede și codul de control: spațiile neobișnuite sau dublate devin unul singur, capetele se taie."""
+    return RE_SPATII.sub(" ", rand).strip(" ")
+
+
 def citeste_raspuns(text: str) -> dict | None:
-    """Textul trimis de o persoană → {"grup", "ordine", "ecran", "terminat", "pasi"}; None dacă nu e un răspuns al sondării."""
-    linii = [x.strip() for x in text.replace("\r\n", "\n").split("\n")]
+    """Textul trimis de o persoană → {"grup", "ordine", "ecran", "terminat", "pasi", "pagina", "incercarea", "integru", "cod",
+    "contradictii", "modificat", "in_afara", "cheie"}; None dacă nu e un răspuns al sondării.
+
+    Se citește doar blocul scris de pagină, de la rândul versiunii până la primul rând cu codul; ce e în afară (un salut în același
+    mesaj, ghilimelele unei celule copiate din foaie) se ignoră și se numără în `in_afara`. Rândurile goale nu contează, ca la cod.
+    `integru`: True dacă codul se potrivește; False dacă nu se potrivește sau lipsește deși textul e de pe pagina v2 (`cod` = "lipsă");
+    None la pagina v1, fără cod, unde o corectură se vede doar în `contradictii`: „X (așteptat: X)” sau un răspuns greșit fără adnotare."""
+    toate = unicodedata.normalize("NFC", text.lstrip(chr(0xFEFF))).replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    i0 = next((i for i, x in enumerate(toate) if RE_VERSIUNE.search(x)), 0)
+    if i0 < len(toate) and RE_VERSIUNE.search(toate[i0]):
+        toate[i0] = toate[i0][RE_VERSIUNE.search(toate[i0]).start():]
+    i1 = next((i for i in range(i0, len(toate)) if RE_COD.fullmatch(_curat(toate[i]))), None)
+    bloc = toate[i0:len(toate) if i1 is None else i1]
+    in_afara = sum(1 for x in toate[:i0] + ([] if i1 is None else toate[i1 + 1:]) if _curat(x))
+    linii = [_curat(x) for x in bloc]
     antet = next((RE_ANTET.fullmatch(x) for x in linii if RE_ANTET.fullmatch(x)), None)
     if antet is None:
         return None
@@ -312,15 +395,22 @@ def citeste_raspuns(text: str) -> dict | None:
         return None
     pasi_p = pasi(ordine)
     dupa_eticheta = {(p.get("runda"), p["eticheta"].split(",")[0] if p.get("sarcina") else p["eticheta"]): p for p in pasi_p if p.get("eticheta")}
-    rez = {"grup": antet[1], "ordine": ordine, "ecran": antet[3], "terminat": antet[4] == "terminat", "pasi": []}
+    versiune = next((RE_VERSIUNE.search(x)[1] for x in linii if RE_VERSIUNE.search(x)), None)
+    # formatul, după conținut: „(așteptat: …)” scrie doar logica v1, iar antetul vine din date.js, care poate fi din alt cache
+    v2 = i1 is not None or (versiune != "v1" and not any(RE_ADNOTARE.search(x) for x in linii))
+    rez = {"grup": antet[1], "ordine": ordine, "ecran": antet[3], "terminat": antet[4] == "terminat", "pasi": [], "pagina": versiune,
+           "incercarea": 1, "integru": None, "cod": None, "contradictii": [], "in_afara": in_afara,
+           "cheie": "\n".join(RE_ADNOTARE.sub("", l) for l in _normalizat("\n".join(bloc)).split("\n")
+                              if not l.startswith(("Sondare dispecerat", "Ce a încurcat:")))}
     runda = None
     for l in linii:
+        if RE_INCERCARE.fullmatch(l):
+            rez["incercarea"] = int(RE_INCERCARE.fullmatch(l)[1])
+            continue
         if l == "Prima variantă":
             runda = 0
         elif l == "A doua variantă":
             runda = 1
-        elif not l:             # un rând gol apare doar la schimbarea rundei
-            runda = None
         m = RE_SARCINA.match(l)
         if m:
             p = dupa_eticheta.get((runda, f"Sarcina {m[1]}"))
@@ -340,25 +430,55 @@ def citeste_raspuns(text: str) -> dict | None:
         r = {"id": p["id"], "tip_pas": p["tip"], "valoare": valoare}
         if "corect" in p or "corect_din_banc" in p:
             a = RE_ASTEPTAT.match(valoare)
-            r["valoare"], r["corect"] = (a[1], False) if a else (valoare, True)
+            r["valoare"] = a[1] if a else valoare
+            if "corect" in p:                         # răspunsul așteptat e fix, se știe din pași
+                r["corect"] = r["valoare"] == p["corect"]
+                if not v2 and (a is None) != r["corect"]:      # v1 scrie adnotarea exact când răspunsul diferă
+                    rez["contradictii"].append(p["id"])
+            else:                                     # la v1, din adnotare; la v2, din cod, mai jos
+                r["corect"] = a is None
+                if a and a[1] in a[2].split(" sau "):          # pagina nu scrie așa ceva: răspunsul a fost corectat de mână
+                    rez["contradictii"].append(p["id"])
         if "runda" in p:
             r["versiune"], r["runda"] = p["versiune"], p["runda"]
         rez["pasi"].append(r)
+    if v2:                  # pagina v2: răspunsurile așteptate vin din cod, nu din text
+        cu_asteptat = [r for r in rez["pasi"] if "corect" in r]
+        rez["cod"] = "lipsă" if i1 is None else RE_COD.fullmatch(_curat(toate[i1]))[1]
+        libere = tuple(p["eticheta"] + ":" for p in pasi_p if p["tip"] == "text")      # textul liber nu intră în amprentă
+        biti = None if i1 is None else verifica_cod("\n".join(x for x in bloc if not _curat(x).startswith(libere)), rez["cod"], len(cu_asteptat))
+        rez["integru"] = biti is not None
+        for r, b in zip(cu_asteptat, biti or [None] * len(cu_asteptat)):
+            r["corect"] = b
+    rez["modificat"] = rez["integru"] is False or bool(rez["contradictii"])
     return rez
+
+
+def _primite(dosar: Path) -> tuple[list[tuple[str, dict]], list[tuple[str, str]]]:
+    """(textele care se citesc, perechile (cod lăsat, cod păstrat) ale aceleiași treceri primite de două ori)."""
+    cale = dosar / "primite"
+    alese: dict[str, tuple[int, str, dict]] = {}
+    contopite = []
+    for f in sorted(cale.glob("R*.txt"), key=lambda p: int(p.stem[1:])) if cale.exists() else []:
+        r = citeste_raspuns(f.read_text(encoding="utf-8-sig").strip())
+        if r is None or r["grup"] not in GRUPURI:
+            continue
+        rang = {True: 2, None: 1, False: 0}[r["integru"]]
+        vechi = alese.get(r["cheie"])
+        if vechi is None:
+            alese[r["cheie"]] = (rang, f.stem, r)
+        elif rang > vechi[0]:          # se păstrează copia cea mai bună, ca o copie stricată sosită prima să n-o ascundă pe cea bună
+            contopite.append((vechi[1], f.stem))
+            alese[r["cheie"]] = (rang, f.stem, r)
+        else:
+            contopite.append((f.stem, vechi[1]))
+    return sorted(((c, r) for _, c, r in alese.values()), key=lambda x: int(x[0][1:])), contopite
 
 
 def raspunsuri_primite(dosar: Path = DOSAR) -> list[tuple[str, dict]]:
-    """Textele din primite/, în ordinea sosirii: fără cele identice, fără probe și fără ce nu e un răspuns."""
-    cale = dosar / "primite"
-    rez, vazute = [], set()
-    for f in sorted(cale.glob("R*.txt"), key=lambda p: int(p.stem[1:])) if cale.exists() else []:
-        text = f.read_text(encoding="utf-8").strip()
-        r = citeste_raspuns(text)
-        if r is None or r["grup"] not in GRUPURI or text in vazute:
-            continue
-        vazute.add(text)
-        rez.append((f.stem, r))
-    return rez
+    """Textele din primite/, în ordinea sosirii: fără probe, fără ce nu e un răspuns și cu aceeași trecere o singură dată (aceeași
+    `cheie`: textul paginii adus la formă, fără antetul versiunii, adnotări, cod și textul liber), din copia cea mai bună."""
+    return _primite(dosar)[0]
 
 
 def pe_telefon(ecran: str) -> bool:
@@ -374,12 +494,26 @@ def grup_raportat(r: dict) -> str:
     return r["grup"] + ("_telefon" if pe_telefon(r.get("ecran", "")) else "")
 
 
+def confirmari(dosar: Path = DOSAR) -> dict[str, str]:
+    """Trecerile a doua dintr-o filă despre care autorul a confirmat că sunt ale altei persoane: {"R5": "altă persoană"}."""
+    cale = dosar / CONFIRMARI
+    return json.loads(cale.read_text(encoding="utf-8")) if cale.exists() else {}
+
+
+def se_numara(cod: str, rasp: dict, confirmate: dict[str, str]) -> bool:
+    """Un text schimbat după ce l-a scris pagina nu se numără; nici o a doua trecere în aceeași filă, dacă nu e confirmată."""
+    return not rasp["modificat"] and (rasp["incercarea"] == 1 or cod in confirmate)
+
+
 def rezumat(dosar: Path = DOSAR) -> list[dict]:
     """Un rând pe participant, versiune și măsură; plus părerile și profilul (doar local)."""
     randuri = []
+    confirmate = confirmari(dosar)
     for cod, rasp in raspunsuri_primite(dosar):
         pe_id = {o["id"]: o for o in rasp["pasi"]}
-        baza0 = {"cod": cod, "grup": rasp["grup"], "ecran": rasp["ecran"], "terminat": rasp["terminat"]}
+        baza0 = {"cod": cod, "grup": rasp["grup"], "ecran": rasp["ecran"], "terminat": rasp["terminat"], "pagina": rasp["pagina"],
+                 "integru": rasp["integru"], "incercarea": rasp["incercarea"], "modificat": rasp["modificat"],
+                 "numarat": se_numara(cod, rasp, confirmate)}
         for runda in (0, 1):
             r = f"r{runda + 1}"
             baza = {**baza0, "runda": runda + 1}
@@ -430,8 +564,8 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
 
     Prima rundă se dă separat: e singura la prima vedere, deci singura fără efectul exercițiului. Duratele, doar `local` sau la colegi:
     între persoane de vârste foarte diferite nu se pot compara, iar colegii au vârste apropiate. Răspunsurile de pe telefon
-    au grupul lor (`grup_raportat`), fiindcă acolo pagina arată altfel."""
-    terminati = [{**r, "grup": grup_raportat(r)} for r in randuri if r.get("terminat")]
+    au grupul lor (`grup_raportat`), fiindcă acolo pagina arată altfel. Ce nu se numără (`se_numara`) rămâne afară."""
+    terminati = [{**r, "grup": grup_raportat(r)} for r in randuri if r.get("terminat") and r.get("numarat", True)]
     grupe: dict[tuple, list[dict]] = {}
     for r in terminati:
         if r.get("versiune") and r["masura"] not in TEXT_LIBER.values():
@@ -459,24 +593,65 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
     return rez
 
 
-def publica(dosar: Path = DOSAR, destinatie: Path = PUBLICAT, minim: int = 3) -> Path:
-    """Totalurile publice, pe grupuri; un grup sub `minim` persoane care au terminat rămâne afară, fiindcă un rând ar fi chiar răspunsul cuiva."""
+def publica(dosar: Path = DOSAR, destinatie: Path = PUBLICAT, minim: int = 3, forteaza: bool = False) -> Path:
+    """Totalurile publice, pe grupuri; un grup sub `minim` persoane care au terminat rămâne afară, fiindcă un rând ar fi chiar răspunsul cuiva.
+
+    Tot de aceea, un rând „x din N” cu N sub `minim` lipsește, iar prima rundă rămâne goală când ea sau restul au 1–2 persoane. Se publică
+    o singură dată: o publicare nouă, care diferă prin câteva persoane, le-ar arăta răspunsurile (`forteaza` doar pentru o greșeală)."""
+    if destinatie.exists() and not forteaza:
+        raise SystemExit(f"{destinatie} există deja: totalurile se publică o singură dată, după închidere și după confirmări.")
     _, randuri = scrie_rezumat(dosar)
     coduri: dict[str, set] = {}
     for r in randuri:
-        if r.get("terminat"):
+        if r.get("terminat") and r.get("numarat", True):
             coduri.setdefault(grup_raportat(r), set()).add(r["cod"])
     destule = {g for g, c in coduri.items() if len(c) >= minim}
     if not destule:
         raise SystemExit(f"Niciun grup nu are cel puțin {minim} persoane care au terminat.")
     destinatie.parent.mkdir(parents=True, exist_ok=True)
-    publice = [r for r in pe_grup(randuri) if r["grup"] in destule]
+    publice = []
+    for r in pe_grup(randuri):
+        if r["grup"] not in destule:
+            continue
+        if "reusite" in r:                       # rândurile „x din N”
+            if r["persoane"] < minim:
+                continue
+            pp = r["persoane_prima_runda"]
+            if 0 < pp < minim or 0 < r["persoane"] - pp < minim:
+                r["reusite_prima_runda"] = ""     # altfel prima rundă, sau restul, ar fi răspunsul a 1–2 persoane
+        publice.append(r)
     coloane = COLOANE_GRUP + (COLOANE_DURATA if any(c in r for r in publice for c in COLOANE_DURATA) else [])
     with open(destinatie, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, coloane)
         w.writeheader()
         w.writerows(publice)
     return destinatie
+
+
+def probleme(dosar: Path = DOSAR) -> list[str]:
+    """Ce nu se numără și de ce, plus dublurile posibile (același grup, aceeași ordine, același ecran); doar local, pentru autor."""
+    confirmate, rez, vazute = confirmari(dosar), [], {}
+    primite, contopite = _primite(dosar)
+    for lasat, pastrat in contopite:
+        rez.append(f"{lasat}: aceeași trecere ca {pastrat}; se numără o singură dată, din {pastrat}")
+    for cod, r in primite:
+        if r["cod"] == "lipsă":
+            rez.append(f"{cod}: fără cod de control, deși textul e de pe pagina nouă (rândul codului lipsește); nu se numără")
+        elif r["integru"] is False:
+            rez.append(f"{cod}: codul de control nu se potrivește cu textul; comparați întâi fișierul cu foaia formularului sau cu mesajul "
+                       "primit; până atunci nu se numără")
+        if r["contradictii"]:
+            rez.append(f"{cod}: corectat de mână la {', '.join(r['contradictii'])} (pagina v1); nu se numără")
+        if r["in_afara"]:
+            rez.append(f"{cod}: {r['in_afara']} rânduri în afara textului paginii (de exemplu un salut), ignorate")
+        if r["incercarea"] > 1:
+            rez.append(f"{cod}: încercarea {r['incercarea']} în aceeași filă; " + (f"se numără, confirmat: {confirmate[cod]}" if cod in confirmate
+                       else f"nu se numără până nu confirmă autorul, în {CONFIRMARI}, că e altă persoană"))
+        cheie = (r["grup"], r["ordine"], r["ecran"])
+        if cheie in vazute:
+            rez.append(f"{cod}: același grup, aceeași ordine și același ecran ca {vazute[cheie]}; poate fi aceeași persoană, de verificat")
+        vazute.setdefault(cheie, cod)
+    return rez
 
 
 def serveste_local(port: int = 8060, deschide: bool = True) -> None:
@@ -498,8 +673,11 @@ def main() -> None:
     ap.add_argument("--linkuri", action="store_true", help="afișează linkurile pentru invitați")
     ap.add_argument("--dosar", default=None, help="unde stau răspunsurile primite (implicit outputs/sondare)")
     ap.add_argument("--rezumat", action="store_true", help="scrie rezumat.csv și afișează rezultatele pe grupuri și versiuni")
-    ap.add_argument("--publica", action="store_true", help="scrie docs/rezultate/sondare_m2.csv, doar totaluri")
+    ap.add_argument("--publica", action="store_true", help="scrie docs/rezultate/sondare_m2.csv, doar totaluri, o singură dată")
+    ap.add_argument("--forteaza", action="store_true", help="cu --publica: rescrie totalurile publice (doar pentru o greșeală)")
     a = ap.parse_args()
+    for flux in (sys.stdout, sys.stderr):
+        flux.reconfigure(encoding="utf-8", errors="replace")
     dosar = Path(a.dosar) if a.dosar else DOSAR
     if a.pachet:
         print("pachet:", pachet())
@@ -513,8 +691,10 @@ def main() -> None:
         print(f"{cale}: {len(randuri)} rânduri")
         for r in pe_grup(randuri, local=True):
             print(r)
+        for p in probleme(dosar):
+            print("de știut:", p)
         if a.publica:
-            print("publicat:", publica(dosar))
+            print("publicat:", publica(dosar, forteaza=a.forteaza))
     if a.local:
         serveste_local(a.port, not a.fara_browser)
     elif not (a.pachet or a.linkuri or a.rezumat or a.publica):

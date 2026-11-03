@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import tempfile
 import threading
+import unicodedata
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -67,6 +68,21 @@ A ajutat cineva: Da, la înțelegerea sarcinilor
 def text(grup="a", ordine=1, sfarsit="terminat", k=0):
     # `k` schimbă o durată, ca în răspunsurile adevărate: două texte identice ar fi aceeași trimitere, de două ori
     return RASPUNS.format(grup=grup, ordine=ordine, sfarsit=sfarsit).replace(": 21 s", f": {21 + k} s")
+
+
+RE_CU_ASTEPTAT = re.compile(r"(Cine schimbă culorile|Cele mai multe mașini|Culoarea pe Magheru|Linia roșie|Semaforul adevărat): ")
+
+
+def text_v2(grup="a", ordine=1, sfarsit="terminat", k=0, incercarea=1):
+    """Același răspuns, ca pe pagina v2: fără „(așteptat: …)”, cu răspunsurile așteptate în codul de control de la sfârșit."""
+    vechi = text(grup, ordine, sfarsit, k)
+    biti = ["(așteptat: " not in l for l in vechi.splitlines() if RE_CU_ASTEPTAT.match(l)]
+    linii = re.sub(r" \(așteptat: [^)]*\)", "", vechi).replace(", v1\n", ", v2\n").splitlines()
+    if incercarea > 1:
+        linii.insert(2, f"Încercarea: {incercarea}, în aceeași filă")
+    corp = "\n".join(linii)
+    fara_liber = "\n".join(l for l in linii if not l.startswith("Ce a încurcat:"))      # textul liber nu intră în amprentă
+    return f"{corp}\n\nCod de control: {s.cod_control(fara_liber, biti)}\n"
 
 
 class Primite(unittest.TestCase):
@@ -338,6 +354,166 @@ class TestRaspuns(Primite):
             s.publica(self.dosar, self.dosar / "public.csv")
         self.assertFalse((self.dosar / "public.csv").exists())
 
+    # ------------------------------------------------------------- integritatea (pagina v2)
+    def test_pagina_v2_raspunsurile_asteptate_vin_din_cod(self):
+        r = s.citeste_raspuns(text_v2())
+        self.assertEqual((r["pagina"], r["integru"], r["modificat"], r["incercarea"]), ("v2", True, False, 1))
+        pe_id = {o["id"]: o for o in r["pasi"]}
+        self.assertEqual((pe_id["r1_conduce_r"]["valoare"], pe_id["r1_conduce_r"]["corect"]), ("Un om, de la acest ecran", False))
+        self.assertTrue(pe_id["r1_coada_r"]["corect"] and pe_id["r1_verde_r"]["corect"] and pe_id["r2_conduce_r"]["corect"])
+        self.assertFalse(pe_id["r1_real"]["corect"])
+        self.assertEqual((pe_id["r2_verde_r"]["valoare"], pe_id["r2_verde_r"]["corect"]), ("Galben", False))
+
+    def test_v1_si_v2_dau_acelasi_rezumat(self):
+        self.pune(text())
+        self.pune(text_v2(k=1))
+        randuri = s.rezumat(self.dosar)
+        al = lambda cod: [(r["masura"], r.get("versiune"), r.get("runda"), r.get("reusit"), r["raspuns"]) for r in randuri if r["cod"] == cod]
+        self.assertEqual(al("R1"), al("R2"))
+        self.assertTrue(all(r["numarat"] for r in randuri))
+
+    def test_textul_schimbat_nu_se_numara(self):
+        schimbat = text_v2().replace("Semaforul adevărat: Da", "Semaforul adevărat: Nu")
+        r = s.citeste_raspuns(schimbat)
+        self.assertEqual((r["integru"], r["modificat"]), (False, True))
+        self.assertIsNone({o["id"]: o for o in r["pasi"]}["r1_real"]["corect"])
+        for k in range(3):
+            self.pune(text_v2(k=k))
+        self.pune(schimbat)
+        grup = {(g["grup"], g["masura"], g["versiune"]): g for g in s.pe_grup(s.rezumat(self.dosar))}
+        self.assertEqual(grup[("a", "sarcina 3: verde pe Dacia", "m1")]["persoane"], 3)
+        self.assertTrue(any(p.startswith("R4: codul de control nu se potrivește") for p in s.probleme(self.dosar)))
+
+    def test_fara_cod_textul_v2_nu_trece_drept_corect(self):
+        t = text_v2()
+        cod = t.strip().splitlines()[-1]
+        corectat = t.replace("Semaforul adevărat: Da", "Semaforul adevărat: Nu")
+        for fara in (t.replace(cod, ""), t.replace(cod, "Cod de control:"), corectat.replace(cod, "")):
+            r = s.citeste_raspuns(fara)
+            self.assertEqual((r["cod"], r["integru"], r["modificat"]), ("lipsă", False, True))
+            self.assertTrue(all(o["corect"] is None for o in r["pasi"] if "corect" in o))
+        self.pune(t.replace(cod, ""))
+        self.assertTrue(any(p.startswith("R1: fără cod de control") for p in s.probleme(self.dosar)))
+        self.assertIsNone(s.citeste_raspuns(text())["integru"])        # pagina v1 nu avea cod: nu e „fără cod”
+
+    def test_codul_schimbat_e_prins_iar_ce_e_dupa_el_se_ignora(self):
+        t = text_v2()
+        cod = t.strip().splitlines()[-1]
+        self.assertFalse(s.citeste_raspuns(t.replace(cod, "Cod de control: ABCD-EFG-HJ"))["integru"])
+        for dupa in (cod + "\n", "Ce a încurcat: adăugat după\n", "Mulțumesc!\n"):
+            r = s.citeste_raspuns(t + dupa)
+            self.assertEqual((r["integru"], r["in_afara"]), (True, 1))
+            self.assertNotIn("adăugat", str(r["pasi"]))
+        self.assertTrue(s.citeste_raspuns(t.strip() + " 👍")["integru"])
+
+    def test_textul_liber_se_poate_sterge_fara_pierderea_raspunsului(self):
+        t = text_v2()
+        liber = "Ce a încurcat: text liber secret: unde era butonul"
+        for x in (t.replace(liber + "\n", ""), t.replace(liber, "Ce a încurcat:"), t.replace(liber, "Ce a încurcat: unde era")):
+            self.assertTrue(s.citeste_raspuns(x)["integru"])
+        self.assertFalse(s.citeste_raspuns(t.replace("Cât de ușor: Ușor", "Cât de ușor: Foarte ușor"))["integru"])
+
+    def test_transportul_nu_strica_un_cod_bun(self):
+        t = text_v2()
+        fara_traseu = lambda r: {p["id"]: {k: v for k, v in p.items() if k != "traseu"} for p in r["pasi"]}
+        bun = s.citeste_raspuns(t)
+        transporturi = [
+            # sfârșit de rând Windows, ghilimele și liniuțe simple, spații în plus la capete și între cuvinte, rânduri goale la final
+            "  " + t.replace("\n", " \r\n").replace("„", '"').replace("”", '"').replace("–", "-").replace(", apăsări", ",  apăsări") + "\r\n\r\n",
+            t.replace("\n", "\n\n"),                    # rânduri goale între toate rândurile
+            t.replace("\n", "\r\r\n"),                  # CRLF salvat încă o dată pe Windows
+            unicodedata.normalize("NFD", t),            # diacritice descompuse, de pe Mac
+            "Gata, am terminat:\n" + t + "Mulțumesc!\n",   # un salut în același mesaj
+            "[21:34, 03.11.2026] X: " + t,              # prefixul WhatsApp, la copierea mai multor mesaje
+            '"' + t.strip() + '"',                      # o celulă copiată din foaia formularului
+        ]
+        for nr, x in enumerate(transporturi):
+            r = s.citeste_raspuns(x)
+            self.assertTrue(r["integru"], nr)
+            self.assertEqual(sum(o["tip_pas"] == "sarcina" for o in r["pasi"]), 8, nr)
+            self.assertEqual(fara_traseu(r), fara_traseu(bun), nr)
+
+    def test_corectura_de_mana_din_v1_se_vede(self):
+        t = text().replace("Culoarea pe Magheru: Galben (așteptat: Verde)", "Culoarea pe Magheru: Verde (așteptat: Verde)")
+        r = s.citeste_raspuns(t)
+        self.assertEqual((r["integru"], r["contradictii"], r["modificat"]), (None, ["r2_verde_r"], True))
+        self.assertFalse(s.citeste_raspuns(text())["modificat"])
+        self.pune(t)
+        self.assertEqual(s.pe_grup(s.rezumat(self.dosar)), [])
+        self.assertTrue(any(p.startswith("R1: corectat de mână la r2_verde_r") for p in s.probleme(self.dosar)))
+
+    def test_v1_adnotarea_stearsa_la_un_raspuns_fix_se_vede(self):
+        r = s.citeste_raspuns(text().replace("Semaforul adevărat: Da (așteptat: Nu)", "Semaforul adevărat: Da"))
+        self.assertEqual((r["contradictii"], r["modificat"]), (["r1_real"], True))
+        self.assertFalse({o["id"]: o for o in r["pasi"]}["r1_real"]["corect"])
+
+    def test_aceeasi_trecere_primita_de_doua_ori_se_numara_o_data(self):
+        bun = text_v2()
+        cod = bun.strip().splitlines()[-1]
+        self.pune(bun.replace(cod, cod[:-1] + ("0" if cod[-1] != "0" else "1")))    # întâi o copie stricată
+        self.pune("Gata:\n" + bun.replace("\n", "\r\n"))                               # apoi aceeași trecere, curată, pe WhatsApp
+        self.pune(text())                                                              # și textul ei de pe pagina v1
+        self.assertEqual([(c, r["integru"]) for c, r in s.raspunsuri_primite(self.dosar)], [("R2", True)])
+        probleme = s.probleme(self.dosar)
+        self.assertTrue(any(p.startswith("R1: aceeași trecere ca R2") for p in probleme))
+        self.assertTrue(any(p.startswith("R3: aceeași trecere ca R2") for p in probleme))
+
+    def test_fisierul_public_fara_celule_de_una_sau_doua_persoane(self):
+        for k, o in enumerate((1, 1, 1, 2)):
+            self.pune(text_v2(grup="c", ordine=o, k=k))
+        dest = self.dosar / "public.csv"
+        s.publica(self.dosar, dest)
+        with open(dest, encoding="utf-8") as f:
+            randuri = [r for r in csv.DictReader(f) if r["reusite"] != ""]
+        self.assertTrue(randuri)
+        for r in randuri:
+            n, pp = int(r["persoane"]), int(r["persoane_prima_runda"])
+            self.assertGreaterEqual(n, 3)
+            if 0 < pp < 3 or 0 < n - pp < 3:
+                self.assertEqual(r["reusite_prima_runda"], "")
+        with self.assertRaises(SystemExit):        # se publică o singură dată
+            s.publica(self.dosar, dest)
+        s.publica(self.dosar, dest, forteaza=True)
+
+    def test_a_doua_trecere_se_numara_doar_confirmata(self):
+        for k in range(3):
+            self.pune(text_v2(k=k))
+        self.pune(text_v2(k=9, incercarea=2))
+        self.assertEqual(s.citeste_raspuns(text_v2(incercarea=2))["incercarea"], 2)
+        persoane = lambda: {(g["grup"], g["masura"], g["versiune"]): g for g in s.pe_grup(s.rezumat(self.dosar))}[
+            ("a", "sarcina 3: verde pe Dacia", "m1")]["persoane"]
+        self.assertEqual(persoane(), 3)
+        self.assertTrue(any(p.startswith("R4: încercarea 2") for p in s.probleme(self.dosar)))
+        (self.dosar / s.CONFIRMARI).write_text(json.dumps({"R4": "altă persoană"}, ensure_ascii=False), encoding="utf-8")
+        self.assertEqual(persoane(), 4)
+
+    def test_dublurile_posibile_apar_pentru_autor(self):
+        self.pune(text_v2(k=1))
+        self.pune(text_v2(k=2))
+        self.pune(text_v2(k=3, grup="c"))
+        self.assertEqual([p[:3] for p in s.probleme(self.dosar)], ["R2:"])
+
+
+class TestCodControl(unittest.TestCase):
+    def test_fnv1a_vectorii_cunoscuti(self):
+        self.assertEqual((s._fnv1a(""), s._fnv1a("a")), (0x811C9DC5, 0xE40C292C))
+
+    def test_codul_poarta_bitii_si_se_verifica(self):
+        t = "Sondare dispecerat Piața Romană, v2\nGrup a, ordine 1, ecran 1x1, terminat\nLinia roșie: Strada e închisă"
+        for biti in ([True, False, True], [False] * 8, [True] * 8, [True] * 10, []):
+            cod = s.cod_control(t, biti)
+            self.assertRegex(cod, r"^[0-9A-Z]{4}-[0-9A-Z]{3}-[0-9A-Z]{2}$")
+            self.assertEqual(s.verifica_cod(t, cod, len(biti)), biti)
+
+    def test_orice_schimbare_de_continut_se_vede(self):
+        t = "Grup a, ordine 1, ecran 1x1, terminat\nSemaforul adevărat: Da"
+        cod = s.cod_control(t, [False])
+        self.assertIsNone(s.verifica_cod(t.replace(": Da", ": Nu"), cod, 1))
+        self.assertIsNone(s.verifica_cod(t.replace("1x1", "1x2"), cod, 1))
+        self.assertIsNone(s.verifica_cod(t, cod, 2))
+        self.assertIsNone(s.verifica_cod(t, cod[:-1] + ("0" if cod[-1] != "0" else "1"), 1))
+        self.assertIsNone(s.verifica_cod(t, "ILOU-ILO-IL", 1))
+
 
 class VerificaLogica:
     def verifica_logica(self, o):
@@ -345,11 +521,15 @@ class VerificaLogica:
         for nr, t in enumerate(o["texte"], 1):         # textul scris de JavaScript se citește înapoi în Python
             r = s.citeste_raspuns(t)
             self.assertEqual((r["grup"], r["ordine"]), ("a", {1: ("m1", "m2"), 2: ("m2", "m1")}[nr]))
+            self.assertNotIn("așteptat", t)
+            self.assertEqual((r["pagina"], r["integru"], r["modificat"]), ("v2", True, False), "codul de control: același calcul în JS și în Python")
             self.assertEqual({x["id"] for x in r["pasi"]}, {p["id"] for p in s.pasi() if p.get("eticheta")} - {"r2_incurcat"})
             pe_id = {x["id"]: x for x in r["pasi"]}
             self.assertFalse(pe_id["r1_real"]["corect"])
             self.assertEqual(pe_id["r1_incurcat"]["valoare"], "butonul: unde era?")
             self.assertTrue(pe_id["r2_coada"]["nu_reuseste"])
+        r = s.citeste_raspuns(o["text_incercare"])
+        self.assertEqual((r["incercarea"], r["integru"]), (2, True))
 
 
 class Tacut(http.server.SimpleHTTPRequestHandler):
@@ -386,6 +566,9 @@ class TestInBrowser(VerificaLogica, unittest.TestCase):
         self.assertLess(o["lungime_link"], 7500)
         r = s.citeste_raspuns(o["text"])
         self.assertTrue(r["terminat"])
+        for t in (o["text"], o["text_m2"], o["text_oprit"]):     # pagina adevărată scrie un cod pe care Python îl recunoaște
+            self.assertTrue(s.citeste_raspuns(t)["integru"], t[-200:])
+            self.assertNotIn("așteptat", t)
         pe_id = {x["id"]: x for x in r["pasi"]}
         self.assertTrue(pe_id["r1_verde"]["reusit"])
         self.assertTrue(pe_id["r1_automat"]["reusit"])

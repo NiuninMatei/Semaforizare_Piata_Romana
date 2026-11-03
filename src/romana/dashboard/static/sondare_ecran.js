@@ -20,6 +20,21 @@ function aldin(s) { return fara(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong
 function salveaza() {
   try { sessionStorage.setItem(CHEIE, JSON.stringify(ses.salvare())); } catch (e) { /* fără stocare, pagina merge până la închiderea filei */ }
 }
+// De câte ori s-a luat sondajul de la capăt în această filă (pagina v2): textul următor spune că nu e prima trecere. Se numără la
+// încărcare, nu la buton, ca să se prindă și butonul paginii v1, rămasă deschisă la cineva în clipa publicării: pagina își salvează
+// starea la fiecare încărcare, deci o reîncărcare fără stare vine doar de la „de la capăt”.
+const CHEIE_RELUARI = CHEIE + "_reluari", CHEIE_FARA_NUMAR = CHEIE + "_fara_numar";
+function reluari() {
+  try { return parseInt(sessionStorage.getItem(CHEIE_RELUARI), 10) || 0; } catch (e) { return 0; }
+}
+function numaraReluarea() {
+  try {
+    const nav = performance.getEntriesByType("navigation")[0];
+    const reincarcata = nav ? nav.type === "reload" : !!(performance.navigation && performance.navigation.type === 1);
+    if (sessionStorage.getItem(CHEIE_FARA_NUMAR)) sessionStorage.removeItem(CHEIE_FARA_NUMAR);
+    else if (reincarcata && sessionStorage.getItem(CHEIE) === null) sessionStorage.setItem(CHEIE_RELUARI, String(reluari() + 1));
+  } catch (e) { /* fără stocare: nu se poate ști */ }
+}
 function incarca() {
   try {
     const s = JSON.parse(sessionStorage.getItem(CHEIE));
@@ -120,12 +135,31 @@ function intrebaOprirea(zona, oprire) {
   zona.appendChild(buton("Nu, continui", "secundar", arata));
   setTimeout(() => { blocat = false; }, PAUZA_CLIC);
 }
+// „De la capăt” e pentru o altă persoană, pe același calculator; o a doua trecere a aceleiași persoane nu mai e la prima vedere.
+function reiaDeLaCapat(numara) {
+  try {
+    sessionStorage.removeItem(CHEIE);
+    if (!numara) sessionStorage.setItem(CHEIE_FARA_NUMAR, "1");
+  } catch (e) { /* fără stocare: pagina pornește oricum de la capăt */ }
+  location.reload();
+}
+function intrebaReluarea(zona, reia) {
+  // Fără nimic de trimis (proba deschisă) sau înainte ca aplicația să fi fost deschisă, trecerea următoare e tot la prima vedere.
+  if (!INVITAT || !ses.linii.some(r => r.id === "r1_deschide")) { reiaDeLaCapat(false); return; }
+  reia.remove();
+  const t = document.createElement("p");
+  t.textContent = "Butonul este pentru o altă persoană, pe același calculator. Dacă nu ați trimis încă răspunsurile de mai sus, trimiteți-le întâi: după „Da”, ele se șterg din această filă, iar textul următor va spune doar că este a doua încercare din fila aceasta. Dacă ați trimis deja, vă rugăm să nu reluați sondajul.";
+  zona.appendChild(t);
+  zona.appendChild(buton("Da, este altă persoană", "secundar", () => reiaDeLaCapat(true)));
+  zona.appendChild(buton("Înapoi", "secundar", arata));
+  setTimeout(() => { blocat = false; }, PAUZA_CLIC);
+}
 function adresaFormular(text) {
   return `https://docs.google.com/forms/d/e/${LINK.formular}/viewform?usp=pp_url&entry.${LINK.intrare}=${encodeURIComponent(text)}`;
 }
 function copiaza(text, zona) {
   const spune = mesaj => { $("nota").textContent = mesaj; blocat = false; };
-  const gata = () => spune("Textul e copiat. Îl puteți lipi într-un mesaj către persoana care v-a invitat.");
+  const gata = () => spune("Textul e copiat. Îl puteți lipi, neschimbat, într-un mesaj către persoana care v-a invitat.");
   const camp = zona.querySelector("textarea");
   const vechi = () => {
     camp.select();
@@ -137,7 +171,7 @@ function copiaza(text, zona) {
 }
 function arataFinal(g, adauga) {
   const dimensiuni = `${window.innerWidth}x${window.innerHeight}`;
-  const text = ses.text_final({grup: LINK.grup || "-", ordine: ses.ordine[0] === "m1" ? 1 : 2, ecran: dimensiuni});
+  const text = ses.text_final({grup: LINK.grup || "-", ordine: ses.ordine[0] === "m1" ? 1 : 2, ecran: dimensiuni, incercarea: reluari() + 1});
   adauga("h1", ses.oprit ? "V-ați oprit. Vă mulțumim!" : "Gata. Vă mulțumim!");
   adauga("p", INVITAT ? "Mai jos e tot ce s-a notat. Până acum nu a plecat nimic de pe acest calculator."
     : "Aceasta a fost o probă deschisă: nimic nu se trimite, iar când închideți fila totul dispare. Mai jos e ce s-a notat.");
@@ -156,7 +190,7 @@ function arataFinal(g, adauga) {
     if (adresa.length <= LUNGIME_MAXIMA_LINK) {
       const t = legatura("Trimite răspunsurile", adresa, "principal");
       t.id = "trimite";
-      t.addEventListener("click", () => { $("nota").textContent = "S-a deschis formularul Google, cu textul deja completat. Apăsați acolo „Trimite”, apoi puteți închide filele."; });
+      t.addEventListener("click", () => { $("nota").textContent = "S-a deschis formularul Google, cu textul deja completat. Apăsați acolo „Trimite”, fără să schimbați textul, apoi puteți închide filele."; });
       zona.appendChild(t);
     }
     zona.appendChild(buton("Copiază textul", "secundar", () => copiaza(text, zona)));
@@ -164,15 +198,14 @@ function arataFinal(g, adauga) {
   const nota = adauga("p", "");
   nota.id = "nota";
   nota.setAttribute("role", "status");
+  if (INVITAT) adauga("p", "Vă rugăm să nu schimbați nimic în text, nici în formular; puteți șterge doar ce ați scris liber, la „Ce a încurcat”. Codul de la sfârșit arată dacă textul a ajuns neschimbat. Tot în el se notează, fără să se scrie pe ecran, care răspunsuri se potriveau cu ce arăta aplicația; altceva nu conține.");
   if (INVITAT) adauga("p", "Dacă închideți fila fără să trimiteți, răspunsurile dispar.");
   adauga("p", "Semafoarele din aplicație erau simulate: nimic din ce ați apăsat nu a schimbat ceva pe stradă.");
   if (INVITAT) adauga("p", "Vă rugăm să nu discutați cu alți participanți la acest sondaj despre răspunsuri, ca rezultatele să fie cât mai apropiate de opinia dumneavoastră reală.");
   const din_nou = document.createElement("div");
   din_nou.className = "butoane";
-  din_nou.appendChild(buton("Altcineva vrea să încerce: de la capăt", "oprire", () => {
-    try { sessionStorage.removeItem(CHEIE); } catch (e) { /* nimic de șters */ }
-    location.reload();
-  }));
+  const reia = buton("Altă persoană vrea să încerce: de la capăt", "oprire", () => intrebaReluarea(din_nou, reia));
+  din_nou.appendChild(reia);
   g.appendChild(din_nou);
   const l = adauga("p", "");
   l.appendChild(legatura("Despre proiect, pe GitHub", D.URL_PROIECT, "simplu"));
@@ -241,6 +274,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 $("acoperit").innerHTML = loc($("acoperit").innerHTML);
+numaraReluarea();
 ses = incarca();
 salveaza();
 arata();
