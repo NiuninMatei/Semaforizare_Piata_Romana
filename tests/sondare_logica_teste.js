@@ -215,4 +215,20 @@ for (const [ordine, nr] of [[["m1", "m2"], 1], [["m2", "m1"], 2]]) {
   verifica("parcursul ajunge la final, ordinea " + nr, p.tip === "final");
   texte.push(s.text_final({grup: "a", ordine: nr, ecran: "1536x730"}));
 }
-document.getElementById("rezultat").textContent = JSON.stringify({trecute, esuate, texte});
+// ------------------------------------------------------------- codul de control și a doua trecere (pagina v2)
+verifica("FNV-1a: vectorii cunoscuți", fnv1a("") === 0x811c9dc5 && fnv1a("a") === 0xe40c292c, [fnv1a(""), fnv1a("a")]);
+verifica("forma textului nu ține de spații, rânduri goale sau ghilimele", normalizat("  „Da”  \r\n\r\n– …  b ") === '"Da"\n- ... b');
+let text_incercare = "";
+{
+  const [s, c] = nou();
+  parcurge(s, c, TIPAR);
+  const t = s.text_final({grup: "a", ordine: 1, ecran: "1536x730"});
+  const ultima = t.split("\n").pop();
+  verifica("răspunsurile așteptate nu mai apar în text", !t.includes("așteptat"), t);
+  verifica("textul se încheie cu codul de control", /^Cod de control: [0-9A-Z]{4}-[0-9A-Z]{3}-[0-9A-Z]{2}$/.test(ultima), ultima);
+  verifica("prima trecere nu scrie încercarea", !t.includes("Încercarea"));
+  text_incercare = s.text_final({grup: "a", ordine: 1, ecran: "1536x730", incercarea: 2});
+  verifica("a doua trecere în aceeași filă se scrie", text_incercare.split("\n")[2] === "Încercarea: 2, în aceeași filă", text_incercare.split("\n")[2]);
+  verifica("codul se schimbă odată cu textul", text_incercare.split("\n").pop() !== ultima);
+}
+document.getElementById("rezultat").textContent = JSON.stringify({trecute, esuate, texte, text_incercare});

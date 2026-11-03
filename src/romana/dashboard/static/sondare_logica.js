@@ -6,6 +6,56 @@
 const secunde = () => Date.now() / 1000;
 const rotunjit = x => Math.round(x * 100) / 100;
 
+// Codul de control de la sfârșitul textului (din 03.11.2026, pagina v2): arată, la citire, dacă textul a ajuns așa cum l-a scris
+// pagina, și poartă care răspunsuri erau cele așteptate, ca persoana să nu le vadă scrise și să nu aibă ce corecta în formular.
+// Nu e o semnătură: oprește corecturile de mână, nu pe cine ar recalcula codul. Același calcul în sondare.py (`cod_control`).
+// Înaintea amprentei, textul se aduce la o formă care nu ține de transport: rândurile goale, spațiile și ghilimelele tipografice.
+const ALFABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+const TIPOGRAFIC = [[0x2026, "..."], [0x201e, '"'], [0x201c, '"'], [0x201d, '"'], [0x2018, "'"], [0x2019, "'"], [0x2013, "-"], [0x2014, "-"]]
+  .map(([c, b]) => [String.fromCharCode(c), b]);
+// spațiile, cu numerele lor, ca în sondare.py: obișnuit, tab, neîntrerupt, cele tipografice, cel îngust, cel matematic, cel ideografic și BOM
+const SPATII = new Set([0x20, 0x09, 0xa0, 0x2000, 0x2001, 0x2002, 0x2003, 0x2004, 0x2005, 0x2006, 0x2007, 0x2008, 0x2009, 0x200a,
+  0x202f, 0x205f, 0x3000, 0xfeff]);
+function normalizat(text) {
+  return text.normalize("NFC").replace(/\r\n?/g, "\n").split("\n").map(l => {
+    const s = TIPOGRAFIC.reduce((t, [a, b]) => t.split(a).join(b), l);
+    let rez = "", spatiu = false;
+    for (const ch of s) {
+      if (SPATII.has(ch.codePointAt(0))) { spatiu = true; continue; }
+      if (spatiu && rez) rez += " ";
+      spatiu = false;
+      rez += ch;
+    }
+    return rez;
+  }).filter(l => l).join("\n");
+}
+function fnv1a(text) {        // FNV-1a pe 32 de biți, pe octeții UTF-8; fără TextEncoder, ca să meargă și în testele cu Node
+  let h = 0x811c9dc5;
+  const octet = b => { h = Math.imul(h ^ b, 0x01000193) >>> 0; };
+  for (const ch of text) {
+    const c = ch.codePointAt(0);
+    if (c < 0x80) octet(c);
+    else if (c < 0x800) { octet(0xc0 | (c >> 6)); octet(0x80 | (c & 63)); }
+    else if (c < 0x10000) { octet(0xe0 | (c >> 12)); octet(0x80 | ((c >> 6) & 63)); octet(0x80 | (c & 63)); }
+    else { octet(0xf0 | (c >> 18)); octet(0x80 | ((c >> 12) & 63)); octet(0x80 | ((c >> 6) & 63)); octet(0x80 | (c & 63)); }
+  }
+  return h >>> 0;
+}
+function baza32(n, cifre) {
+  let s = "";
+  for (let i = 0; i < cifre; i++) { s = ALFABET[n % 32] + s; n = Math.floor(n / 32); }
+  return s;
+}
+// biti: pentru fiecare răspuns cu răspuns așteptat, în ordinea din text, dacă a fost cel așteptat. Masca biților e amprenta textului
+// fără biți, care nu apare în cod: altfel, fără biți, ultimele două caractere ar repeta finalul amprentei afișate.
+function cod_control(text, biti) {
+  const forma = normalizat(text);
+  const h = fnv1a(forma + "\n" + biti.map(b => (b ? "1" : "0")).join(""));
+  const n = biti.reduce((s, b, i) => s + (b ? 2 ** i : 0), 0);
+  const a = baza32(h, 7);
+  return `${a.slice(0, 4)}-${a.slice(4)}-${baza32(n ^ (fnv1a(forma) % 1024), 2)}`;
+}
+
 // Aceleași câmpuri ca outputs/live/state.json și sim_state.json. Reacția la o comandă e ca în geamăn: faza veche rămâne
 // până la pasul de citire a comenzii (5 s), pietonii au 6 s să termine traversarea, apoi galben 3 s și roșu 2 s, iar faza nouă
 // vine abia după ele. Fiindcă planul stă pe faza N–S cu verdele minim deja atins la sarcina de verde, aici reacția durează
@@ -256,9 +306,13 @@ class Sesiune {
   adauga_timp_ascuns(s) { this.ascuns_s += s; }
 
   // Tot ce s-a notat, ca text pe care persoana îl citește și îl trimite ea, dacă vrea. `citeste_raspuns` din sondare.py îl citește înapoi.
-  text_final({grup = "-", ordine = "-", ecran = "-"} = {}) {
+  // Răspunsurile așteptate nu se mai scriu lângă cele date (până în v1: „Da (așteptat: Nu)”): stau în codul de control de la sfârșit.
+  // `incercarea` > 1: în aceeași filă, cineva a apăsat „de la capăt” după un final, deci textul nu e prima trecere prin sondaj.
+  text_final({grup = "-", ordine = "-", ecran = "-", incercarea = 1} = {}) {
     const L = [`Sondare dispecerat Piața Romană, ${this.D.VERSIUNE}`,
       `Grup ${grup}, ordine ${ordine}, ecran ${ecran}, ${this.oprit ? "oprit la " + this.oprit : "terminat"}`];
+    if (incercarea > 1) L.push(`Încercarea: ${incercarea}, în aceeași filă`);
+    const biti = [];
     let runda = null;
     for (const r of this.linii) {
       const p = this.pasi.find(x => x.id === r.id);
@@ -278,9 +332,13 @@ class Sesiune {
         if (p.verifica && r.traseu.length) l += ". " + (r.traseu.length > 12 ? [...r.traseu.slice(0, 4), "…", ...r.traseu.slice(-8)] : r.traseu).join(" > ");
         L.push(l);
       } else {
-        L.push(`${p.eticheta}: ${r.valoare}` + (r.corect === false ? ` (așteptat: ${r.asteptat})` : ""));
+        L.push(`${p.eticheta}: ${r.valoare}`);
+        if (typeof r.corect === "boolean") biti.push(r.corect);
       }
     }
+    // textul liber nu intră în amprentă: persoana îl poate șterge din formular fără să-și piardă răspunsul (nu intră nici în totaluri)
+    const libere = this.pasi.filter(p => p.tip === "text").map(p => p.eticheta + ":");
+    L.push("", `Cod de control: ${cod_control(L.filter(l => !libere.some(e => l.startsWith(e))).join("\n"), biti)}`);
     return L.join("\n");
   }
 }

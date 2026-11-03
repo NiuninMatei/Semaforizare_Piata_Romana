@@ -58,7 +58,10 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Invitațiile la sondare au plecat pe 03.11, 21:00–21:02**
   (patru apropiați, cu ordinea ecranelor fixată în link, și colegii de an, cu un link și ordinea la întâmplare); textele și linkurile,
   local, în `outputs/sondare/mesaje_2026-11-03.txt` și `linkuri_2026-11-03.txt`. Sondarea se închide sâmbătă, 7.11, la 18:00; apoi
-  `--rezumat`, `--publica` și pagina 5 a prezentării.
+  `--rezumat`, `--publica` și pagina 5 a prezentării. **Pagina v2 (03.11, seara, cerută de autor, fiindcă textul se putea corecta în formular):**
+  fără răspunsurile așteptate la vedere, cu cod de control la final și „de la capăt” cu confirmare; textele modificate nu se numără,
+  iar o a doua trecere în aceeași filă doar cu confirmarea autorului în `outputs/sondare/confirmari.json` (§ 8). Răspunsurile se
+  copiază exact din foaia formularului în `outputs/sondare/primite/R<n>.txt`; `--rezumat` arată la „de știut” ce nu se numără.
 - **Prezentarea M2:** schița „demonstrația întâi” (03.11, 21:17), verificată pe surse la 21:45: ≈3,5 minute de demonstrație pe laptop
   din ≈6 min 10 s, limbaj simplu, 8 pagini care trec `verifica_m2.py`. Totul în `outputs/prezentare/surse_m2` (sablon_m2.html,
   construieste_m2.py, exporta_m2.py, verifica_m2.py; scenariul demonstrației și deciziile, în NOTE_M2.md; prima ciornă, în
