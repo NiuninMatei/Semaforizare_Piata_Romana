@@ -4,7 +4,8 @@ const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:
   manual:{nume:"Comandă manuală",cine:"un om, de la acest ecran",text:"alegeți dumneavoastră direcția care primește verde"}};
 const ORDINE=["program","ai","fix","max_pressure","manual"];
 const SUBPROGRAM={plan_observat:"verde 72 s Magheru–Catargiu, apoi 48 s Dacia",plan_scurt:"verde 12 s Magheru–Catargiu, 14 s Dacia, 12 s pietoni",plan_mediu:"verde 16 s Magheru–Catargiu, 10 s Dacia, 12 s pietoni",plan_lung:"verde 46 s Magheru–Catargiu, 48 s Dacia, 12 s pietoni",
-  ai:"agentul IA",ai_pranz:"agentul IA pentru trafic mediu și intens",ai_lejer:"agentul IA pentru trafic lejer",ai_e13:"agentul IA reantrenat",fix:"planul de referință"};
+  plan_60_40:"verde 60 s Magheru–Catargiu, apoi 40 s Dacia",plan_45_30:"verde 45 s Magheru–Catargiu, apoi 30 s Dacia",
+  ai_e15:"agentul IA E15, antrenat pe geamănul corectat",ai:"agentul IA",ai_pranz:"agentul IA pentru trafic mediu și intens",ai_lejer:"agentul IA pentru trafic lejer",ai_e13:"agentul IA reantrenat",fix:"planul de referință"};
 const FAZE_CLARE=["Verde pe Magheru și Lascăr Catargiu","Verde pe Bd. Dacia, est și vest","Verde pentru pietoni, pe toate trecerile","Verde pe Magheru–Catargiu, prin centru; rămân deschise și intrările Dacia","Verde pe Dacia, în jurul insulei; rămân deschise și intrările Magheru și Catargiu"];
 const FAZE_RISC=[3,4];
 const RISC_EXPLICAT={3:"Verdele principal e pe Magheru și Catargiu; vehiculele de pe Dacia intră și ele în piață și așteaptă pe inelul din jurul insulei, deci piața se poate bloca.",4:"Verdele principal e pe Dacia; vehiculele de pe Magheru și Catargiu intră și ele în piață și așteaptă în fața centrului, deci piața se poate bloca."};
@@ -96,7 +97,7 @@ function butoane(s){
   document.querySelectorAll("[data-mod]").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.mod==mod); b.disabled=!!blocat||trimitem||(b.dataset.mod=="ai"&&!!s&&!s.model_ai) });
   $("revino").disabled=!!blocat||trimitem;
   $("d-ai").textContent=s&&!s.model_ai?"Indisponibil: pe acest calculator nu există un agent antrenat.":"Un program antrenat în simulare alege faza, după cozi."; $("d-ai").classList.toggle("motiv",!!s&&!s.model_ai);
-  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`Dedus din cameră: ${SUBPROGRAM[s.mod_program]}.`:"Plan fix dedus din cameră, la vârful zilei de luni 26.10.";
+  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`${s.mod_program=="plan_observat"?"Dedus din cameră":["plan_60_40","plan_45_30","ai_e15"].includes(s.mod_program)?"Ales după regula zilelor noi":"Rulează"}: ${SUBPROGRAM[s.mod_program]}.`:"Plan fix dedus din cameră, la vârful zilei de luni 26.10.";
   $("blocat").hidden=!blocat; $("blocat").textContent=blocat;
   $("manual").classList.toggle("vizibil",mod=="manual");
   faze(s);

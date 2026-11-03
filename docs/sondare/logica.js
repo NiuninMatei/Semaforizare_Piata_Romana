@@ -9,7 +9,8 @@ const rotunjit = x => Math.round(x * 100) / 100;
 // Aceleași câmpuri ca outputs/live/state.json și sim_state.json. Reacția la o comandă e ca în geamăn: faza veche rămâne
 // până la pasul de citire a comenzii (5 s), pietonii au 6 s să termine traversarea, apoi galben 3 s și roșu 2 s, iar faza nouă
 // vine abia după ele. Fiindcă planul stă pe faza N–S cu verdele minim deja atins la sarcina de verde, aici reacția durează
-// 11–16 s; în geamănul adevărat poate ajunge la ≈45 s (§ 8).
+// 5–16 s: ≈5–10 s dacă verdele e cerut în primele 18 s ale sarcinii, înainte ca pietonii să-și primească verdele, și ≈11–16 s
+// după aceea; în geamănul adevărat poate ajunge la ≈45 s (§ 8).
 class Banc {
   constructor(D, ceas = secunde, salvat = null) {
     this.D = D;
@@ -139,6 +140,9 @@ class Banc {
       coada_brate: cozi, coada_total: total, vehicule_in_retea: 90 + total, vehicule_injectate: 412, pietoni_in_retea: 31,
       pietoni_injectati: 140, debite_folosite: intrari, debit_echilibrat_veh_h: 2800, pietoni_h_folositi: 620,
       istoric_coada: istoric, _varsta_s: 0.4};
+    // ca geamănul (live_twin.py): pe verde, faza de acum; pe galben și pe roșu, faza spre care se schimbă
+    simulare.faza_tinta = etapa === "green" ? faza : this.mod === "manual" ? this.faza_manual
+      : D.PLAN[(D.PLAN.findIndex(([g]) => g === faza) + 1) % D.PLAN.length][0];
     const camera = {timestamp: acum, fps: 5.9, conectat: true, reconectari: 0, vehicule_urmarite: 64,
       intrari_veh_h: intrari, iesiri_veh_h: D.IESIRI, pietoni_h: {dacia_est: 620}, secunde_interval: 480, _varsta_s: 0.4};
     return {camera, simulare, comanda: {mod: this.mod, timestamp: acum}, ora_server: acum};
@@ -270,7 +274,8 @@ class Sesiune {
         if (r.ascuns_s) l += `, altă fereastră ${r.ascuns_s} s`;
         if (r.nu_reuseste) l += ", nu reușesc";
         if ("reusit" in r) l += r.reusit ? ", reușit" : ", nereușit";
-        if (p.verifica && r.traseu.length) l += ". " + r.traseu.join(" > ");
+        // cel mult 12 apăsări, primele 4 și ultimele 8: un traseu întreg poate trece linkul precompletat de LUNGIME_MAXIMA_LINK
+        if (p.verifica && r.traseu.length) l += ". " + (r.traseu.length > 12 ? [...r.traseu.slice(0, 4), "…", ...r.traseu.slice(-8)] : r.traseu).join(" > ");
         L.push(l);
       } else {
         L.push(`${p.eticheta}: ${r.valoare}` + (r.corect === false ? ` (așteptat: ${r.asteptat})` : ""));
