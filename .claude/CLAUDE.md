@@ -72,6 +72,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   Push: `GCM_INTERACTIVE=never GIT_TERMINAL_PROMPT=0 git -c credential.username=NiuninMatei push origin main` (fără numele contului,
   git se oprește să întrebe ce cont folosește); grupat, niciodată în timpul simulărilor, fără să cer voie; înainte verific ce ajunge
   public (memoria push-prin-github-desktop).
+- **GitHub CLI:** `C:\Users\Matei\AppData\Local\Programs\GitHubCLI\bin\gh.exe` (2.103.3), conectat pe 03.11 ca NiuninMatei, cheia în
+  Windows: depozite, issues, versiuni, Actions, Pages, gists, proiecte, discuții, pachete, profil, organizații, webhook-uri, Codespaces;
+  fără ștergerea depozitelor sau a pachetelor și fără cheile de securitate ale contului (memoria github-cli-acces).
 - **Cât colectează camera:** nu se ating `run_vision.py`, `stream.py`, `od_counter.py`, `config/camera.json`,
   `config/demand.json`, `vtypes*`; `veghe.py` citește `fps` din `state.json`. `signals.py` nu se schimbă. Scenariile
   `zi_2026-10-2[89]_*` nu se regenerează sub același nume. `run_vision` se oprește doar curat (Ctrl+C), altfel jurnalul
