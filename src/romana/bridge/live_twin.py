@@ -43,15 +43,23 @@ PRAG_LEJER, PRAG_GREU = 2400, 4100
 #   "tod_debit"    – planuri fixe pe cazuri: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens;
 #   "marginea_sus" – participanți disciplinați: E9 / E3 / planul 46/48/12 (§ 9.2, istoric)
 #   "plan_observat" – planul observat, 72/48/3, măsurat din cameră pe orele încărcate (§ 6.5), în geamănul corectat
+#   "plan_60_40", "plan_45_30" – planurile 60/40/3 și 45/30/3, candidați pe zilele noi (§ 9.11), în geamănul corectat
+#   "e15"          – agentul E15, antrenat pe geamănul înghețat (§ 9.5, § 9.11)
+# Un nume din afara listei oprește geamănul la pornire, ca să nu ruleze pe tăcute alt program. Butonul din dispecerat se
+# numește tot „Planul observat”; ce rulează de fapt scrie dedesubt, după `mod_program`.
 VARIANTA_PROGRAM = "plan_observat"
+VARIANTE_PROGRAM = ("realist", "e13", "plan_scurt", "plan_observat", "plan_60_40", "plan_45_30", "e15", "tod_debit", "marginea_sus")
 PLAN_LUNG = (46, 48, 12)
 PLAN_SCURT = (12, 14, 12)
 PLAN_MEDIU = (16, 10, 12)
 PLAN_OBSERVAT = (72, 48, 3)
-PLANURI_FIXE = {"plan_lung": PLAN_LUNG, "plan_scurt": PLAN_SCURT, "plan_mediu": PLAN_MEDIU, "plan_observat": PLAN_OBSERVAT}   # verde N–S, E–V, pietoni (s)
+PLAN_60_40, PLAN_45_30 = (60, 40, 3), (45, 30, 3)
+PLANURI_FIXE = {"plan_lung": PLAN_LUNG, "plan_scurt": PLAN_SCURT, "plan_mediu": PLAN_MEDIU, "plan_observat": PLAN_OBSERVAT,
+                "plan_60_40": PLAN_60_40, "plan_45_30": PLAN_45_30}   # verde N–S, E–V, pietoni (s)
 MODEL_PRANZ = MODELS_DIR / "ppo_romana_zn3.zip"   # agentul E3, cel mai bun la trafic moderat (prânz)
 MODEL_LEJER = MODELS_DIR / "ppo_romana_lejer.zip"  # agentul E9, specialistul de trafic lejer (§ 9.2)
 MODEL_E13 = MODELS_DIR / "ppo_romana_cal.zip"     # agentul E13, oficialul reantrenat pe cererea calibrată (§ 9.5)
+MODEL_E15 = MODELS_DIR / "ppo_e15.zip"            # agentul E15, antrenat pe geamănul înghețat (§ 9.11)
 
 
 def load_route_pool(cfg: dict, vclass: str = "passenger") -> dict[tuple[str, str], list[list[str]]]:
@@ -117,6 +125,12 @@ def main(argv=None) -> None:
     ap.add_argument("--durata", type=int, default=0, help="secunde simulate până la oprire (0 = continuu)")
     ap.add_argument("--geaman-vechi", action="store_true", help="rețeaua, tipurile și rutele de dinainte de 2.11 (§ 6.5), doar pentru comparație")
     args = ap.parse_args(argv)
+    if VARIANTA_PROGRAM not in VARIANTE_PROGRAM:
+        raise SystemExit(f"VARIANTA_PROGRAM necunoscută: {VARIANTA_PROGRAM!r}; variantele: {', '.join(VARIANTE_PROGRAM)}")
+    if args.geaman_vechi and VARIANTA_PROGRAM in ("plan_60_40", "plan_45_30", "e15"):
+        raise SystemExit(f"Varianta {VARIANTA_PROGRAM} există doar pe geamănul corectat, nu cu --geaman-vechi.")
+    if VARIANTA_PROGRAM == "e15" and not Path(MODEL_E15).exists():
+        raise SystemExit(f"Varianta e15 cere {MODEL_E15}, care lipsește.")
 
     from romana.common import sumo_binary, sumo_home
 
@@ -179,6 +193,11 @@ def main(argv=None) -> None:
         rl_e13 = RLPolicy(Path(MODEL_E13))
         rl_e13.reset(traci)
         rl_e13.ctrls = [ctrl]
+    rl_e15 = None                                  # E15 se încarcă doar când e chiar varianta programului
+    if VARIANTA_PROGRAM == "e15":
+        rl_e15 = RLPolicy(Path(MODEL_E15))
+        rl_e15.reset(traci)
+        rl_e15.ctrls = [ctrl]
     from romana.control.controllers import fixed_phase_indices
 
     plan_cycle = fixed_phase_indices()            # planul fix de referință: N–S, E–V, pietoni
@@ -274,16 +293,18 @@ def main(argv=None) -> None:
                     sub = "ai_e13" if rl_e13 is not None else ("ai" if rl is not None else "fix")
                 elif VARIANTA_PROGRAM == "plan_scurt":
                     sub = "plan_scurt"
-                elif VARIANTA_PROGRAM == "plan_observat":
-                    sub = "plan_observat"
+                elif VARIANTA_PROGRAM in ("plan_observat", "plan_60_40", "plan_45_30"):
+                    sub = VARIANTA_PROGRAM
+                elif VARIANTA_PROGRAM == "e15":
+                    sub = "ai_e15"
                 elif VARIANTA_PROGRAM == "tod_debit":
                     sub = "plan_mediu" if tot <= PRAG_GREU else "plan_scurt"
-                else:   # "marginea_sus": participanți disciplinați, cererea = media intrări/ieșiri (§ 9.2)
+                else:   # "marginea_sus" (alt nume oprește geamănul la pornire): participanți disciplinați, cererea = media intrări/ieșiri (§ 9.2)
                     sub = (("ai_lejer" if rl_lejer is not None else "ai" if rl is not None else "fix") if tot < PRAG_LEJER else
                            ("ai_pranz" if rl_pranz is not None else "fix") if tot < PRAG_GREU else "plan_lung")
             efectiv = sub or mode
             if hasattr(ctrl, "via_scurta"):       # controlerul e comun tuturor modurilor: doar un agent pe două etape trece singur prin etapa scurtă
-                agent = {"ai": rl, "ai_pranz": rl_pranz, "ai_lejer": rl_lejer, "ai_e13": rl_e13}.get(efectiv)
+                agent = {"ai": rl, "ai_pranz": rl_pranz, "ai_lejer": rl_lejer, "ai_e13": rl_e13, "ai_e15": rl_e15}.get(efectiv)
                 ctrl.via_scurta = agent is not None and agent.romana_phases == [0, 1]
             if efectiv in PLANURI_FIXE or efectiv == "fix":
                 # planurile fixe se urmăresc în fiecare secundă, ca duratele să nu se rotunjească în sus (o verificare la 5 s ar fi făcut din 12 s, 15 s).
@@ -310,6 +331,8 @@ def main(argv=None) -> None:
                     rl_lejer.act(traci, t)
                 elif efectiv == "ai_e13":
                     rl_e13.act(traci, t)
+                elif efectiv == "ai_e15":
+                    rl_e15.act(traci, t)
                 elif efectiv == "max_pressure" and ctrl.can_switch():
                     p = ctrl.phase_pressure()              # doar fazele planului real (vezi MaxPressure)
                     ctrl.request(max(plan_cycle, key=lambda i: p[i]))

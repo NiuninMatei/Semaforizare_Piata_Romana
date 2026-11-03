@@ -1,5 +1,5 @@
 {
-  "model": "ppo_romana_greu_e7.zip",
+  "model": "ppo_romana_greu_e7_400k.zip",
   "controlate": [
     "romana"
   ],
@@ -10,8 +10,9 @@
     "zi_2026-10-22_varf_x1_2.sumocfg",
     "zi_2026-10-22_dimineata.sumocfg"
   ],
-  "pasi": 601600,
+  "pasi": 400960,
   "durata_min": 299.7,
+  "nota": "Punct intermediar al antrenării E7, la 400 960 de pași (E6 + 200 000); durata_min e a antrenării întregi, de 601 600 de pași, al cărei model final nu e publicat.",
   "preantrenare_imitatie": null,
   "hiperparametri": {
     "lr": 3e-05,

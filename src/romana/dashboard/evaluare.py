@@ -32,7 +32,7 @@ EFORT = "xhigh"
 
 CONTEXT = ("„Dispecerat Piața Romană” este interfața unui proiect universitar de licență la disciplina Interfețe om-calculator. O cameră publică numără traficul din Piața Romană, "
            "București, iar un geamăn digital (o simulare SUMO a intersecției) rulează în paralel, cu cererea de trafic măsurată. Dispeceratul arată ce se întâmplă în geamăn și în cameră și "
-           "îl lasă pe operator să aleagă cine conduce semaforul din simulare: agentul AI, un plan fix, Max-Pressure, comanda manuală sau un program pe cazuri de trafic. Comenzile ajung doar "
+           "îl lasă pe operator să aleagă cine conduce semaforul din simulare: o strategie automată (un plan fix, un agent antrenat în simulare sau o regulă după cozi) ori comanda manuală. Comenzile ajung doar "
            "la simulare, nu la semafoarele reale. Pagina e în limba română și e folosită de profesor, de colegi și, în sondare, de persoane fără pregătire în trafic.")
 EURISTICI = ("1 vizibilitatea stării sistemului; 2 potrivirea cu lumea reală; 3 controlul și libertatea utilizatorului; 4 consecvența și standardele; 5 prevenirea erorilor; "
               "6 recunoaștere, nu reamintire; 7 flexibilitate și eficiență; 8 estetică și minimalism; 9 ajutor la recunoașterea, diagnosticarea și repararea erorilor; 10 ajutor și documentație")

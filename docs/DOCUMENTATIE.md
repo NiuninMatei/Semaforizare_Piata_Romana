@@ -2154,14 +2154,17 @@ colectează nu e implicat, fiindcă toată pagina rulează în browserul persoan
 în zilele de test, iar o demonstrație în Chrome pe același calculator a coborât rata de la ≈6,0 la ≈4,9 cadre/s. Sunt 4 sarcini pe
 fiecare variantă: cine schimbă culorile semaforului, unde e coada cea mai lungă, verde pe Bulevardul Dacia, înapoi la calculator. După
 fiecare, ecranul se acoperă și persoana răspunde din ce a văzut. Situațiile sunt simulate, ca toți să aibă aceleași și răspunsul corect
-să se știe, deci comenzile nu ajung la geamăn. Reacția la o comandă durează aici 11–16 s, iar în geamănul adevărat poate ajunge la ≈45 s, fiindcă pietonii de pe Dacia își primesc întâi verdele, apoi au timp să termine traversarea (§ 6.5).
+să se știe, deci comenzile nu ajung la geamăn. Reacția la o comandă durează aici 5–16 s, după cât de repede se dă comanda: ≈5–10 s în primele 18 s ale sarcinii, înainte ca pietonii să-și primească verdele, și ≈11–16 s după aceea. În geamănul adevărat poate ajunge la ≈45 s, fiindcă pietonii de pe Dacia își primesc întâi verdele, apoi au timp să termine traversarea (§ 6.5).
 Imaginea camerei e fotografia publicată, cu persoanele și plăcuțele estompate: o cameră în direct ar arăta traficul adevărat, care poate
 contrazice schema simulată, așa că persoana poate vedea piața în direct separat, pe site-ul Webcam România. În ambele variante, panoul
 camerei spune că e o fotografie fixă și nu mai arată indicatorii de flux, cadre pe secundă sau vehicule urmărite, care ar fi falși. Variantele sunt cea de la
 borna M1, păstrată neschimbată în `static/m1`, și cea curentă, în ordine alternată. La final, persoana vede tot ce s-a notat și decide
 dacă trimite (§ 4.5). Autorul a parcurs pagina în 10 minute, deci pagina anunță 10–20 de minute. Sondarea e formativă și nesupravegheată: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general,
-iar locul în care s-a blocat cineva se vede doar din timpi și apăsări. Se dau doar totaluri pe grup, de forma „x din 4”, persoanele
+iar locul în care s-a blocat cineva se vede doar din timpi și apăsări; din apăsări, textul trimis păstrează cel mult 12 pe sarcină,
+primele 4 și ultimele 8, ca linkul spre formular să nu devină prea lung. Se dau doar totaluri pe grup, de forma „x din 4”, persoanele
 apropiate autorului separat de colegi, și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
+Răspunsurile date pe un ecran mai îngust de 900 px, de obicei de pe telefon, unde ghidul stă deasupra dispeceratului, se numără într-un
+grup al lor, cu același prag de cel puțin 3 persoane.
 Pagina nu se deosebește de restul codului: `--pachet` o construiește în `docs/sondare` din sursele din `static/`, iar GitHub Pages o servește.
 
 Tabelul arată cum respectă dispeceratul cele 10 euristici ale lui Nielsen, regulile practice pentru interfețe ușor de folosit.
@@ -2184,8 +2187,9 @@ a dialogului, prin confirmare urmată de starea actualizată, și sentimentul ut
 
 Pentru accesibilitate, pagina are contrast ridicat, iar elementul activ se vede clar la folosirea tastaturii. Schema și
 graficul au etichete ARIA, pe care le folosesc cititoarele de ecran pentru persoanele cu deficiențe de vedere. Setarea
-`prefers-reduced-motion`, prin care utilizatorul cere mai puține animații, este respectată, iar când fereastra are sub
-900 px lățime, conținutul se așază pe o singură coloană. Subsolul arată permanent atribuirile cerute pentru OSM,
+`prefers-reduced-motion`, prin care utilizatorul cere mai puține animații, este respectată. Așezarea urmează lățimea ferestrei:
+de la 1 200 px în sus, comanda și schema stau alăturate, sus, iar camera, graficul și debitele, în coloana din dreapta; între 761 și
+1 199 px, totul e pe o singură coloană, cu comanda și schema alăturate deasupra; sub 761 px, totul e pe o singură coloană, una sub alta. Subsolul arată permanent atribuirile cerute pentru OSM,
 Webcam România și SUMO, precum și legătura către codul sursă, publicat sub licența AGPL-3.0.
 
 ## 9. Rezultate
@@ -3509,10 +3513,32 @@ poarta sub jumătate dintre ore, validarea e doar descriptivă: niciun candidat 
 testul nu se deschide, iar runda se încheie. La fel, dacă regula nu se poate aplica, de exemplu fiindcă nicio oră trecută prin poartă nu e
 acoperită de valuri măsurate, niciun candidat nu trece. Rolurile nu se mută din aceste cauze. Pe zilele de test, regula se aplică o
 singură dată, pe cele două zile reunite, doar cu candidații trecuți de validare, dați cu numele din fișierele de rezultate:
-`python -m romana.control.decizie outputs/validare/cor_test_2026-11-05_*.csv outputs/validare/cor_test_2026-11-06_*.csv --in-vigoare
-PLAN_72_48_3 REAL --candidati <candidații trecuți> --poarta outputs/validare/poarta_cor_2026-11-05.json
-outputs/validare/poarta_cor_2026-11-06.json`. Fișierele `cor_decizie_<zi>.json` scrise de lanț pe fiecare zi de test sunt doar
-descriptive.
+`python -m romana.lant_cor --regula-finala`. Comanda ia din cod cele patru fișiere de rezultate ale zilelor de test, cele două porți,
+numele fișierului de ieșire, `outputs/validare/cor_decizie_test_2026-11-05_2026-11-06.json`, și candidații trecuți de validare, în
+ordinea listei. Ordinea contează: dacă primii doi nu se deosebesc semnificativ, câștigă cel scris primul, adică cel mai simplu, deci
+nu se poate alege după rezultate. Comanda refuză să ruleze dacă decizia validării nu e comisă sau dacă vreuna dintre cele trei zile nu
+și-a încheiat simulările. Fișierele `cor_decizie_<zi>.json` scrise de lanț pe fiecare zi de test sunt doar descriptive.
+
+**Precizările din 3.11.2026, seara**, scrise înaintea primei simulări a zilei de validare, după o trecere în revistă a pașilor din
+4–8.11. Ele nu schimbă nici regula, nici lista, nici pragurile, nici rolurile zilelor:
+
+* Regula pe zilele de test se aplică o singură dată, după ce s-au încheiat simulările tuturor celor trei zile, cele două de test și cea
+  de generalizare, cum scrie din 1.11; până atunci nu se citesc rezultatele niciuneia. După calendarul de acum, asta se întâmplă pe
+  8.11, dimineața devreme, după ce prelucrarea de noapte a încheiat ziua de 7.11. Dacă rolurile se mută, data se mută cu ele.
+* Pe zilele de test reunite, „sub jumătate dintre ore” se socotește pe orele ambelor zile la un loc, cum face comanda de mai sus.
+* O zi de test sau de generalizare se desigilează după ce prelucrarea de noapte a încheiat-o fără simulări și numai după ce decizia
+  validării, copiată în `docs/rezultate/`, a fost comisă: `python -m romana.lant_cor --zi <zi> --desigileaza --reia --procese 3`. Cu 3
+  simulări în paralel, în loc de 8, camera are loc să lucreze, inclusiv în ora liniștită din noapte, care e și ea unul dintre scenarii.
+  Numărul lor nu schimbă rezultatele: fiecare simulare pornește cu seed-ul ei, iar agentul ia mereu aceeași decizie în aceeași
+  situație. O reluare cu alt număr de procese nu reface pașii încheiați. Lanțul vechi nu mai decide nimic, fiindcă măsura nouă a fost
+  comisă înaintea termenului, deci zilele noi nu se mai desigilează și acolo: simulările lui, pe 11 procese, ar încărca fără folos
+  nopțile zilelor de test.
+* Tabelul care traduce câștigătorul în numele programului din geamănul în timp real, `varianta_live`, cuprinde acum planul observat și
+  cei trei candidați, iar geamănul îi poate rula pe toți. Înainte, dacă ar fi câștigat un candidat, geamănul nu i-ar fi recunoscut
+  numele și ar fi rulat, fără niciun avertisment, programul vechi din § 9.2; acum, la un nume necunoscut, se oprește la pornire.
+  Tabelul nu face parte din regulă: nu schimbă nici cine e eligibil, nici cine câștigă. Geamănul în timp real rămâne pe planul
+  observat până după M2, fiindcă dispeceratul numește încă modul „Planul observat”; trecerea la un câștigător vine odată cu numele
+  lui pe ecran.
 
 **Ce nu spune lista.** Grila are doar 3 seed-uri pe 8 ore, iar două dintre planuri s-au adăugat după ce s-a văzut prima parte. Aproape
 jumătate din câștigul planurilor, 47–54%, vine dintr-un singur scenariu ipotetic, vârful ×1,2 din 26.10, unde planul observat are un seed
@@ -4205,6 +4231,11 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 * **Lista candidaților (3.11):** grila planurilor fixe pe zilele de antrenare, agentul E15 și lista pentru zilele noi: planurile
   60/40/3 și 45/30/3 și E15, în `config/candidati_v2.json`; o verificare adversarială a listei; lanțul de noapte rulează pe zilele
   de test doar candidații trecuți de validare (§ 6.5, § 9.11).
+* **Pregătirea zilelor noi (3.11, seara):** o trecere în revistă a pașilor pentru 4–8.11, apoi o verificare adversarială a
+  reparațiilor; regula pe zilele de test se rulează dintr-o singură comandă, cu fișierele și ordinea candidaților fixate în cod,
+  abia după toate cele trei zile; desigilarea pe 3 procese; geamănul în timp real poate rula candidații (§ 9.11). Pe pagina
+  sondării, schema rămâne pe ecran și pe laptopurile obișnuite, iar răspunsurile de pe telefon se numără separat; apoi pagina
+  s-a înghețat (§ 8). README spune ce rulează azi și marchează rezultatele retrase.
 * **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
   care le judecă (§ 9.11).
 

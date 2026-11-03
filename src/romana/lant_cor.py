@@ -11,7 +11,8 @@ Ieșirile: outputs/lant_cor/<zi>/ (jurnal.txt, <pas>.txt, stare.json), outputs/v
 
 Rulare:
   python -m romana.lant_cor --zi 2026-11-03
-  python -m romana.lant_cor --zi 2026-11-05 --desigileaza --reia
+  python -m romana.lant_cor --zi 2026-11-05 --desigileaza --reia --procese 3
+  python -m romana.lant_cor --regula-finala                    # regula pe zilele de test reunite, după toate cele trei zile (§ 9.11)
   python -m romana.lant_cor --bucla --ora 03:30 --pana-la "2026-11-08 12:00"
   python -m romana.lant_cor --zi 2026-11-03 --uscat            # doar arată comenzile
 """
@@ -19,6 +20,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import subprocess
 import sys
 import time
 from datetime import date, datetime, timedelta
@@ -39,6 +42,7 @@ PROCESE_TEST = "8"
 SEEDURI_GEAMAN = "1,2,3,4,5"
 ASTEPTARE_LANT_VECHI_S = 5 * 3600.0     # cât așteaptă după lanțul vechi; după atât pornește oricum, renumărarea lui nu e o condiție
 PAS_ASTEPTARE_S = 60.0
+COPIE_DECIZIE_VALIDARE = ROOT / "docs" / "rezultate" / DECIZIE_VALIDARE.name   # copia comisă, cerută înaintea testului (§ 9.11)
 
 
 def lista_candidati(cale: Path = CANDIDATI) -> list[str]:
@@ -86,7 +90,8 @@ def pasi_inainte(zi: str, exclude=()) -> list[Pas]:
     ]
 
 
-def pasi_dupa(zi: str, ore: list[str], candidati: list[str], raportate: list[str], desigilat: bool, praguri: Path = PRAGURI) -> list[Pas]:
+def pasi_dupa(zi: str, ore: list[str], candidati: list[str], raportate: list[str], desigilat: bool, praguri: Path = PRAGURI,
+              procese: str = PROCESE_TEST) -> list[Pas]:
     """Geamănul față de cameră și, dacă rolul zilei o cere, strategiile și regula."""
     poarta = f"outputs/validare/poarta_cor_{zi}.json"
     fixate = ["--praguri", str(praguri)] if praguri.exists() else []
@@ -101,7 +106,7 @@ def pasi_dupa(zi: str, ore: list[str], candidati: list[str], raportate: list[str
     strategii = list(dict.fromkeys([*REFERINTE, *candidati, *raportate]))
     out = {c: f"outputs/validare/cor_test_{zi}_{c}.csv" for c in ("indisciplinat", "normal")}
     for comp, tip, dep in (("indisciplinat", f"indisciplinat_cor_zi_{zi}_*", "indisciplinat"), ("normal", f"cor_zi_{zi}_*", "scenarii")):
-        lista.append(Pas(f"test_{comp}", _m("romana.control.validare", *strategii, "--scenarii", tip, "--seeds", seeduri, "--fara-alegere", "--fara-fix", "--procese", PROCESE_TEST, "--out", out[comp]), depinde=(dep,), iesiri=(out[comp],)))
+        lista.append(Pas(f"test_{comp}", _m("romana.control.validare", *strategii, "--scenarii", tip, "--seeds", seeduri, "--fara-alegere", "--fara-fix", "--procese", procese, "--out", out[comp]), depinde=(dep,), iesiri=(out[comp],)))
     if candidati:
         # regula caută strategiile după numele din CSV: un agent, dat în listă prin calea modelului, apare acolo cu numele fișierului
         dec = f"outputs/validare/cor_decizie_{zi}.json"
@@ -128,10 +133,53 @@ def curata_scenarii(zi: str, note) -> None:
 
 def _sare(p: Pas, cmd: list[str], vechi: dict, refacute: set[str]) -> bool:
     v = vechi.get(p.nume) or {}
-    return v.get("cod") == 0 and (v.get("comanda") or [])[1:] == cmd[1:] and not refacute.intersection(p.depinde) and all((ROOT / f).exists() for f in p.iesiri)
+    return v.get("cod") == 0 and _fara_procese(v.get("comanda") or []) == _fara_procese(cmd) and not refacute.intersection(p.depinde) and all((ROOT / f).exists() for f in p.iesiri)
 
 
-def lant(zi: str, exclude=(), reia: bool = False, desigilat: bool = False, rulator=ruleaza) -> int:
+def _fara_procese(cmd: list[str]) -> list[str]:
+    """Comanda fără interpretor și fără `--procese N`: numărul de procese nu schimbă rezultatele, deci nu reface un pas încheiat."""
+    c = list(cmd[1:])
+    while "--procese" in c:
+        i = c.index("--procese")
+        del c[i:i + 2]
+    return c
+
+
+def zile_cu_rol(rol: str) -> list[str]:
+    return sorted(z for z, r in ROLURI.items() if r == rol)
+
+
+def comanda_regula_finala() -> list[str] | str:
+    """Regula din § 9.11 pe zilele de test reunite: fișierele, porțile, ieșirea și candidații trecuți de validare, în ordinea listei, vin
+    din cod, ca nimic să nu se poată alege după rezultate. Un text = motivul pentru care nu se aplică încă."""
+    if not COPIE_DECIZIE_VALIDARE.exists() or not DECIZIE_VALIDARE.exists() or COPIE_DECIZIE_VALIDARE.read_bytes() != DECIZIE_VALIDARE.read_bytes():
+        return f"decizia validării nu e comisă: {COPIE_DECIZIE_VALIDARE} lipsește sau diferă de {DECIZIE_VALIDARE}"
+    candidati = [strategy_name(c) for c in trecuti_de_validare(lista_candidati())]
+    if not candidati:
+        return "niciun candidat nu a trecut de validare: runda s-a încheiat, rămâne planul observat"
+    test = zile_cu_rol("test")
+    for zi in (*test, *zile_cu_rol("generalizare")):     # rezultatele se citesc abia când sunt gata toate cele trei zile
+        f = DIR_COR / zi / "stare.json"
+        rezultat = json.loads(f.read_text(encoding="utf-8")).get("rezultat") if f.exists() else None
+        if rezultat != "gata":
+            return f"{zi}: simulările nu s-au încheiat (stare: {rezultat or 'fără stare'}); regula se aplică după toate cele trei zile (§ 9.11)"
+    fisiere = [f"outputs/validare/cor_test_{z}_{c}.csv" for z in test for c in ("indisciplinat", "normal")]
+    porti = [f"outputs/validare/poarta_cor_{z}.json" for z in test]
+    lipsa = [f for f in (*fisiere, *porti) if not (ROOT / f).exists()]
+    if lipsa:
+        return "lipsesc: " + ", ".join(lipsa)
+    return _m("romana.control.decizie", *fisiere, "--in-vigoare", *REFERINTE, "--candidati", *candidati, "--poarta", *porti,
+              "--out", f"outputs/validare/cor_decizie_test_{'_'.join(test)}.json")
+
+
+def _numar_procese(text: str) -> str:
+    n = int(text)
+    if n < 1:
+        raise argparse.ArgumentTypeError("cel puțin un proces")
+    return str(n)
+
+
+def lant(zi: str, exclude=(), reia: bool = False, desigilat: bool = False, rulator=ruleaza, procese: str = PROCESE_TEST) -> int:
     d = DIR_COR / zi
     d.mkdir(parents=True, exist_ok=True)
     note = lambda mesaj: noteaza(d / "jurnal.txt", mesaj)    # noqa: E731
@@ -189,7 +237,7 @@ def lant(zi: str, exclude=(), reia: bool = False, desigilat: bool = False, rulat
         return 1
     if "scenarii" in esuate:
         return 1
-    if not ruleaza_pasi(pasi_dupa(zi, ore_observate(zi), lista_candidati(), strategii_raportate(), desigilat)):
+    if not ruleaza_pasi(pasi_dupa(zi, ore_observate(zi), lista_candidati(), strategii_raportate(), desigilat, procese=procese)):
         return 1
     stare["rezultat"] = "cu_esecuri: " + ", ".join(esuate) if esuate else ("gata_fara_simulari" if sigilata(zi) and not desigilat else "gata")
     scrie()
@@ -240,7 +288,23 @@ def main(argv=None) -> int:
     ap.add_argument("--bucla", action="store_true")
     ap.add_argument("--ora", default="03:30")
     ap.add_argument("--pana-la", default=None, help="AAAA-LL-ZZ HH:MM")
+    ap.add_argument("--procese", type=_numar_procese, default=None, help="procesele simulărilor de test (implicit 8; ziua, cât colectează camera, "
+                    "cel mult 3); rezultatele nu depind de ele: fiecare simulare are seed-ul ei")
+    ap.add_argument("--regula-finala", action="store_true", help="regula din § 9.11 pe zilele de test reunite, abia după toate cele trei zile; "
+                    "fișierele, ordinea candidaților și ieșirea vin din cod")
     a = ap.parse_args(argv)
+    if a.bucla and a.procese:
+        ap.error("--procese nu se aplică buclei, care rulează mereu cu valoarea implicită")
+    procese = a.procese or PROCESE_TEST
+    if a.regula_finala:
+        cmd = comanda_regula_finala()
+        if isinstance(cmd, str):
+            print(cmd)
+            return 1
+        print(" ".join(cmd[1:]), flush=True)
+        if a.uscat:
+            return 0
+        return subprocess.run(cmd, cwd=ROOT, env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONPATH": str(ROOT / "src")}).returncode
     if a.bucla:
         bucla(a.ora, datetime.strptime(a.pana_la, "%Y-%m-%d %H:%M"))
         return 0
@@ -249,10 +313,10 @@ def main(argv=None) -> int:
         for p in pasi_inainte(zi, uneste([])):
             print(p.nume, " ".join(p.comanda[1:]))
         ore = ore_observate(zi) if (DEMAND_DIR / f"cor_zi_{zi}_rezumat.json").exists() else [f"cor_zi_{zi}_<ora>"]
-        for p in pasi_dupa(zi, ore, lista_candidati(), strategii_raportate(), a.desigileaza):
+        for p in pasi_dupa(zi, ore, lista_candidati(), strategii_raportate(), a.desigileaza, procese=procese):
             print(p.nume, " ".join(p.comanda[1:]))
         return 0
-    return lant(zi, a.exclude, a.reia, a.desigileaza)
+    return lant(zi, a.exclude, a.reia, a.desigileaza, procese=procese)
 
 
 if __name__ == "__main__":

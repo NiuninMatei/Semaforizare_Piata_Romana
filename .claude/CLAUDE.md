@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (03.11.2026, ~15:00) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (03.11.2026, ~18:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
@@ -44,12 +44,20 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   Măsurile nu se mai schimbă. Rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, nu mai sunt valabile.
 - **Lista candidaților e fixată (3.11, commitul „Borna M2: lista candidaților…”), nu se mai schimbă:** `config/candidati_v2.json` =
   PLAN_60_40_3, PLAN_45_30_3, models/ppo_e15.zip; raportat ACTUATED (§ 9.11). Pe 4.11 (validare, seed-urile 11–15) un candidat trebuie să
-  bată PLAN_72_48_3 și REAL; pe 5–6.11 lanțul rulează doar candidații eligibili în `outputs/validare/cor_decizie_2026-11-04.json`, abia după
-  ce decizia validării e comisă, cu `romana.lant_cor --zi <zi> --desigileaza --reia` pentru 5, 6 și 7.11. Regula finală, pe zilele de
-  test reunite, se rulează de mână (comanda în § 9.11). Rezultatele zilei de 3.11 se raportează, dar nu schimbă lista.
+  bată PLAN_72_48_3 și REAL. Decizia validării (`outputs/validare/cor_decizie_2026-11-04.json`, pe 05.11 pe la 04:30) se copiază în
+  `docs/rezultate/` și se comite înaintea oricărei desigilări. Fiecare zi de test și de generalizare se desigilează noaptea, după buclă,
+  pe 3 procese, cu `bash outputs/unelte/desigileaza_zi.sh <zi> "<termen>"` pornit în fundal (verifică decizia comisă și completitudinea,
+  nu citește rezultate). Regula finală: `python -m romana.lant_cor --regula-finala`, abia după toate cele trei zile (pe 8.11, dimineața),
+  cu fișierele și ordinea din cod; până atunci nu se citesc rezultatele zilelor de test. Lanțul vechi nu se mai desigilează
+  (§ 9.11, precizările din 3.11). Rezultatele zilei de 3.11 se raportează, dar nu schimbă lista.
+- **Alarme în fundal, pornite pe 03.11 seara:** `outputs/unelte/alarma_lant.sh` pentru 3.11 (termen 04.11, 09:30) și pentru 4.11 (termen
+  05.11, 09:30); când sună, verific starea zilei, copiez în `docs/rezultate` ce cere § 9.11, comit și public. Geamănul în timp real
+  rămâne pe planul observat până după M2.
 - **Push din linia de comandă, din 03.11:** fără GitHub Desktop și fără computer use, deci fără ferestre de aprobare; comanda, în
   „Reguli operative”. Desktop rămâne rezervă (memoria push-prin-github-desktop).
 - Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Joi dimineață:** linkurile sondării și textul mesajului.
+- **Prezentarea M2:** schița se construiește în `outputs/prezentare/surse_m2` (sablon_m2.html, construieste_m2.py, exporta_m2.py,
+  verifica_m2.py, NOTE_M2.md), cu locuri goale pentru sondare (sâmbătă, după 18:00) și pentru verdicte.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
@@ -62,8 +70,9 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   veghea și ambele lanțuri, cu `--reia`.
 - **Înaintea oricărei opriri voite a colectării:** întâi fișierul `outputs/live/fara_repornire`, altfel paznicul o repornește.
 - **Sondarea cu oameni:** pagină publică în `docs/sondare` (GitHub Pages), fără laptop; după orice schimbare în `static/` se refac
-  fișierele cu `python -m romana.dashboard.sondare --pachet`. Linkurile de invitație: `--linkuri`, abia după reparațiile din
-  `static/index.html`; adresa formularului stă doar în `outputs/sondare/formular.json`, niciodată în depozit (§ 4.5, § 8).
+  fișierele cu `python -m romana.dashboard.sondare --pachet`. Dispeceratul și pagina sondării sunt înghețate din 03.11 seara (commitul
+  „Borna M2: înghețul dispeceratului și al paginii de sondare…”): `static/` nu se mai schimbă. Linkurile de invitație: `--linkuri`, joi
+  dimineață; adresa formularului stă doar în `outputs/sondare/formular.json`, niciodată în depozit (§ 4.5, § 8).
 
 ## Reguli operative
 
