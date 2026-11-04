@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (04.11.2026, ~07:10) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (04.11.2026, ~06:55) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în

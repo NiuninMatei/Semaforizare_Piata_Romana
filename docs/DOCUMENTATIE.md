@@ -3607,6 +3607,31 @@ scrie mai sus: dacă trec poarta sub jumătate dintre ore, validarea e doar desc
 rămâne în geamăn. Rezultatele strategiilor din 3.11 sunt publicate, ca toate celelalte, dar nu se citează ca procente: pe ore care nu
 trec poarta, ele nu spun nimic despre stradă. Lista candidaților rămâne aceeași.
 
+**De ce nu trece ziua de 3.11: diagnoza din 4.11.** Pe 4.11, dimineața, agenți Claude au căutat cauza doar citind fișierele și
+rulând probe în dosare separate. Fiecare constatare a trecut apoi pe la un alt agent, pus s-o dărâme, iar cifrele de care depinde
+concluzia le-am recitit direct în fișiere. Nimic din ce urmează nu schimbă runda de acum.
+
+* **Dacia vest.** Mașinile ajung la semafor, dar trec prea încet de el. Brațul e plin pe tot verdele, iar geamănul scoate de acolo
+  ≈0,4 vehicule pe secundă de verde, adică 17–21 pe ciclu, față de 33–37 câte vede camera. Frâna stă chiar după linia de oprire, în
+  primii ≈16 m, unde câteva noduri mărunte se leagă de inel: acolo cad 834 din cele 960 de secunde în care vehiculele merg încet pe
+  verde. Nu e vina drumului dinainte: cu un drum de plecare de 2 km, linia descarcă la fel, 520 față de 526 de vehicule pe oră, iar
+  după ora simulată, când celelalte brațe se golesc, același braț trece 33–38 de vehicule pe ciclu.
+* **Două probe, fiecare pe o singură oră,** arată unde se poate umbla, fără să lămurească mecanismul. Dacă se oprește regula prin
+  care SUMO nu lasă un vehicul să intre într-un nod pe care n-ar putea să-l părăsească, keepClear, la prânz trec cu 26–39% mai
+  multe vehicule, dar ciocnirile cu pietonii văzute de SUMO cresc de la 7 la 16. Dacă se scoate cedarea de la îmbinarea de după
+  linie, la vârf trec cu 12% mai multe, dar apar 24 de ciocniri între vehicule. Niciuna nu ajunge singură la nivelul camerei.
+* **Ora liniștită.** Toate teleportările sunt vehicule care au stat 300 s la roșu pe Dacia, în programul rejucat. Noaptea, camera
+  vede pe Magheru prea puține mașini ca valurile să apară la fiecare ciclu, iar programul rejucat ia drept ciclu obișnuit mediana
+  distanțelor dintre valuri: 358,8 s pe 3.11, deși ritmul intrărilor arată ≈124,5 s. Așa, roșul pe Dacia ajunge la 474 s. Cu planul
+  observat nu e nicio teleportare, iar programul rejucat refăcut pe ritmul de 124,5 s le face să dispară într-o probă pe noaptea de
+  2.11. Regula de decizie nu e atinsă, fiindcă ea compară cu programul rejucat doar orele acoperite în proporție de cel puțin 80% de
+  valuri măsurate, iar ora liniștită are 0%. Ora ar pica oricum, pe Dacia est.
+
+Reparațiile posibile țin de o rundă nouă, după M2, cu zile noi și roluri scrise dinainte: întâi programul rejucat, cu ciclul luat din
+ritmul intrărilor; apoi, ca schimbări declarate în fișierul de rețea, regula keepClear pe nodurile acelea și cedarea de la îmbinare,
+după clipuri care arată cine cedează pe stradă. Geometria, benzile, trecerile și semafoarele rămân cele din OSM. Dacia est, sub cameră
+dimineața, și pierderea de detecție de seară nu au fost cercetate.
+
 **Agentul următor.** *(Scris pe 1.11; din 2.11, E15 imită planul observat, nu planul 12/14/12, vezi schimbările de mai sus.)* Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
 la 5 s, deci imitația ajunge la un verde de 15/15/15 s, cu un ciclu de 60 s în loc de 53 s; comparația de la capăt se face tot cu
 planul 12/14/12, rulat exact. Se antrenează doar pe scenariile măsurii noi din zilele de antrenare, cu lista dată explicit, care
@@ -3628,8 +3653,8 @@ ales atunci. Istoricul arată ordinea pașilor, nu și ce a privit cineva pe cal
 
 ## 10. Limitări, aspecte etice și lucrări viitoare
 
-**Geamănul corectat** nu reproduce camera peste tot: pe Dacia vest, în ziua lucrătoare, nu duce traficul, iar cererea de pietoni e aleasă,
-nu numărată (§ 6.5). Rezultatele lui arată ce se întâmplă în geamăn, nu pe stradă.
+**Geamănul corectat** nu reproduce camera peste tot: pe Dacia vest, în ziua lucrătoare, nu duce traficul, fiindcă trece vehiculele prea
+încet chiar după semafor (§ 9.11, diagnoza din 4.11), iar cererea de pietoni e aleasă, nu numărată (§ 6.5). Rezultatele lui arată ce se întâmplă în geamăn, nu pe stradă.
 
 Rezultatele din capitolul 9 nu pot fi mai sigure decât datele camerei și simularea din care provin. De aceea,
 capitolul de față le arată deschis limitele, în trei grupe: limitele datelor camerei, ale simulării și ale folosirii
@@ -4298,6 +4323,9 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 * **Ziua de 3.11 (4.11, dimineața):** prima zi lucrătoare prelucrată cu măsurile înghețate; geamănul nu trece poarta pe nicio oră,
   mai ales din cauza Daciei vest, deci ziua e doar descriptivă, iar lista candidaților rămâne aceeași; numărătorile, jurnalul
   vehiculelor, scenariile și rezultatele ei sunt publice (§ 9.11).
+* **Diagnoza zilei de 3.11 (4.11):** pe Dacia vest, geamănul trece vehiculele prea încet chiar după semafor, iar teleportările de
+  noapte vin din programul rejucat, care noaptea ia un ciclu de aproape trei ori prea lung; probele arată unde se poate repara,
+  într-o rundă nouă, după M2. Runda de acum nu se schimbă (§ 9.11).
 * **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
   care le judecă (§ 9.11).
 
