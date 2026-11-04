@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (03.11.2026, ~21:45) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (04.11.2026, ~05:00) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
@@ -50,9 +50,13 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   nu citește rezultate). Regula finală: `python -m romana.lant_cor --regula-finala`, abia după toate cele trei zile (pe 8.11, dimineața),
   cu fișierele și ordinea din cod; până atunci nu se citesc rezultatele zilelor de test. Lanțul vechi nu se mai desigilează
   (§ 9.11, precizările din 3.11). Rezultatele zilei de 3.11 se raportează, dar nu schimbă lista.
-- **Alarme în fundal, pornite pe 03.11 seara:** `outputs/unelte/alarma_lant.sh` pentru 3.11 (termen 04.11, 09:30) și pentru 4.11 (termen
-  05.11, 09:30); când sună, verific starea zilei, copiez în `docs/rezultate` ce cere § 9.11, comit și public. Geamănul în timp real
-  rămâne pe planul observat până după M2.
+- **Ziua de 3.11, prelucrată de ambele lanțuri pe 4.11 (lant_cor gata la 04:51) și comisă:** poarta trece pe 0 din 5 ore. La vârf,
+  dimineața și la prânz, Dacia vest are 410–510 veh/h în geamăn, față de 820–920 în cameră, și 2,4–5,4% vehicule neintrate; în ora
+  liniștită pică la teleportări; seara, la pierderea de detecție pe întuneric. Ziua e doar descriptivă. Raportul e în § 9.11, iar
+  fișierele, în `docs/rezultate/*2026-11-03*`. Ziua de validare, 4.11, poate ieși la fel; atunci niciun candidat nu trece, testul nu se
+  deschide (lant_cor o face singur), iar pagina 8 a prezentării spune asta. **Alarma pentru 4.11** (`alarma_lant.sh`, termen 05.11,
+  09:30) rulează. Când sună: copiez decizia în `docs/rezultate` și o comit; desigilarea o pornesc doar dacă a trecut un candidat.
+  Geamănul în timp real rămâne pe planul observat până după M2.
 - **Push din linia de comandă, din 03.11:** fără GitHub Desktop și fără computer use, deci fără ferestre de aprobare; comanda, în
   „Reguli operative”. Desktop rămâne rezervă (memoria push-prin-github-desktop).
 - Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Invitațiile la sondare au plecat pe 03.11, 21:00–21:02**

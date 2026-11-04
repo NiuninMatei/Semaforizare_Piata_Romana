@@ -16,6 +16,10 @@
 > **Candidații, 3.11.2026.** Din orele zilelor de antrenare care trec poarta s-au ales, pentru zilele noi, planurile fixe 60/40/3 și
 > 45/30/3 și agentul E15. În geamăn, nu pe stradă, ei trebuie să bată și planul observat, și semaforul rejucat: întâi pe ziua de validare,
 > 4.11, apoi pe zilele de test, 5 și 6.11 (§ 9.11).
+>
+> **Ziua de 3.11, prelucrată pe 4.11.** E prima zi lucrătoare judecată cu măsurile înghețate. Geamănul nu trece poarta pe nicio oră, mai
+> ales din cauza Daciei vest, deci ziua e doar descriptivă. Dacă și ziua de validare iese la fel, testul nu se deschide, iar în geamăn
+> rămâne planul observat (§ 9.11).
 
 Cât timp ar câștiga participanții la trafic din Piața Romană, în București, dacă s-ar schimba **doar programul
 semafoarelor existente**, fără nicio lucrare pe stradă? Proiectul caută răspunsul în simulare.

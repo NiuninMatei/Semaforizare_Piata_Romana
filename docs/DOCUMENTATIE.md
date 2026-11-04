@@ -3590,6 +3590,23 @@ programele generate de `netconvert` la vecini, nu poate arăta efectul real. Nic
 planurile 60/40/3 și 45/30/3 apăreau deja pe grilele din 2.11, făcute cu geamănul de dinaintea înghețului. Ce scria pe 1.11, că E15
 pornește de la planul ales pe 28 și 29.10, nu mai e adevărat: E15 pornește de la planul observat.
 
+**Ziua de 3.11, prelucrată pe 4.11, dimineața.** Ziua de 3.11, o marți, e ultima zi de antrenare și prima zi lucrătoare prelucrată cu
+măsurile înghețate, care nu s-au potrivit pe ea. Geamănul nu trece poarta pe niciuna dintre cele 5 ore, deci ziua e doar descriptivă:
+
+* La vârf, dimineața și la prânz, geamănul duce pe Dacia vest 410–510 vehicule pe oră, iar camera numără 820–920. La sfârșitul orei
+  mai așteaptă să intre 290–395 de vehicule, mai ales pe Dacia vest, iar 2,4–5,4% din vehicule nu intră sau nu ajung la destinație
+  până la final, peste pragul de 2%. Dimineața, și pe Dacia est trec cu 12% mai puține vehicule decât în cameră.
+* În ora liniștită, noaptea, sunt 8,4 teleportări pe rulare, peste pragul de 5, iar pe Dacia est trec 38 de vehicule pe oră, față de
+  35 în cameră, adică 10,5% în plus, la un prag de 10%.
+* Seara, ieșirile spre Dacia est, fără virajul de pe Magheru, sunt de 2,2 ori intrările văzute pe Dacia vest, peste pragul de 1,8:
+  acolo detectorul pierde, pe întuneric, mult mai multe vehicule decât acoperă factorul.
+
+Cauza principală e cea cunoscută de pe 26.10 și 2.11: într-o zi lucrătoare, geamănul nu duce traficul de pe Dacia vest (§ 6.5, § 10).
+Măsurile nu se schimbă din această cauză. Ziua de validare, 4.11, e tot o zi lucrătoare, deci poate ieși la fel; atunci se aplică ce
+scrie mai sus: dacă trec poarta sub jumătate dintre ore, validarea e doar descriptivă, testul nu se deschide, iar planul observat
+rămâne în geamăn. Rezultatele strategiilor din 3.11 sunt publicate, ca toate celelalte, dar nu se citează ca procente: pe ore care nu
+trec poarta, ele nu spun nimic despre stradă. Lista candidaților rămâne aceeași.
+
 **Agentul următor.** *(Scris pe 1.11; din 2.11, E15 imită planul observat, nu planul 12/14/12, vezi schimbările de mai sus.)* Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
 la 5 s, deci imitația ajunge la un verde de 15/15/15 s, cu un ciclu de 60 s în loc de 53 s; comparația de la capăt se face tot cu
 planul 12/14/12, rulat exact. Se antrenează doar pe scenariile măsurii noi din zilele de antrenare, cu lista dată explicit, care
@@ -4278,6 +4295,9 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
   în formular; pagina v2 nu le mai arată, pune la final un cod de control, care arată dacă s-au schimbat răspunsurile, timpii sau
   apăsările, și marchează a doua trecere în aceeași filă; analiza citește ambele versiuni, cu regulile de numărare publice. Sarcinile
   și întrebările au rămas aceleași; o revizie adversă, din cinci unghiuri, înainte de publicare (§ 8).
+* **Ziua de 3.11 (4.11, dimineața):** prima zi lucrătoare prelucrată cu măsurile înghețate; geamănul nu trece poarta pe nicio oră,
+  mai ales din cauza Daciei vest, deci ziua e doar descriptivă, iar lista candidaților rămâne aceeași; numărătorile, jurnalul
+  vehiculelor, scenariile și rezultatele ei sunt publice (§ 9.11).
 * **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
   care le judecă (§ 9.11).
 
@@ -4736,6 +4756,7 @@ publicate în `models/`: `ppo_romana_final_a/b`, `ppo_romana_nou_375k/600k/800k/
 | `grila_inghet_normal.csv`, `grila_inghet_indisciplinat.csv` | Grila de după îngheț, pe zilele de antrenare (25.10, 26.10, 1.11, 2.11), cu ambele comportamente și seed-urile 1–3: semaforul rejucat, planul observat 72/48/3, planurile 60/40/3, 45/30/3, 90/50/3, 36/28/12, 12/14/12 și programul actuated; câte un rând pe simulare, cu pierderea totală și pe tipuri de participanți, teleportările, ciocnirile și vehiculele nesosite (§ 6.5, § 9.11). | măsura nouă, `cor_` | `romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1,2,3 --fara-alegere --fara-fix` |
 | `grila_inghet_ciclu.csv` | Planurile 36/24/3 și 52/35/3, cu același raport al verdelui ca planul observat, pe cele 14 scenarii ale zilelor de antrenare care trec poarta, cu ambele comportamente și seed-urile 1–3, în același format ca grila (§ 9.11). | măsura nouă, `cor_` | `romana.control.validare PLAN_36_24_3 PLAN_52_35_3 --scenarii <cele 28 de scenarii> --seeds 1,2,3 --fara-alegere --fara-fix` |
 | `grila_inghet_e15.csv` | Agentul E15 pe aceleași 14 scenarii, cu ambele comportamente și seed-urile 1–3, în același format ca grila (§ 9.5, § 9.11). | măsura nouă, `cor_` | `romana.control.validare models/ppo_e15.zip --scenarii <cele 28 de scenarii> --seeds 1,2,3 --fara-alegere --fara-fix` |
+| `poarta_cor_2026-11-03.json`, `geaman_cor_2026-11-03.csv`, `cor_test_2026-11-03_indisciplinat.csv`, `cor_test_2026-11-03_normal.csv`, `cor_decizie_2026-11-03.json`, `stare_lant_cor_2026-11-03.json` | Ziua de antrenare 3.11, prelucrată de lanțul măsurii noi pe 4.11 (§ 9.11): verdictul porții pe fiecare oră și comparația geamănului cu camera, pe 5 seed-uri; planul observat, semaforul rejucat, candidații și programul actuated pe cele 7 scenarii ale zilei, cu ambele comportamente și seed-urile 1–10; regula, aplicată doar descriptiv, fiindcă nicio oră nu trece poarta; pașii lanțului, cu comenzile, orele și codurile de ieșire, cu căile scrise față de depozit. | măsura nouă, `cor_` | `romana.lant_cor --zi 2026-11-03`; comenzile pașilor sunt în `stare_lant_cor_2026-11-03.json` |
 | `referinta_v2/` | Numărătoarea de referință a măsurii noi pe 11 clipuri din 1.11 și 2.11 (pe ținte și bucăți de 30 s), factorii de corecție pe zi, pe întuneric și pe tot, cu intervalele de încredere, și momentele pietonilor pe valuri, fără imagini (§ 4.3). | – (din clipuri) | `romana.vision.referinta factori` |
 | `grila_calibrat.csv` | Grila de 23 de planuri fixe încercate pe geamănul calibrat (§ 9.9), pe luni 26.10, cu ambele comportamente și seed-urile 11–15, la care se adaugă planul fix de referință. | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` | Testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12, pe seed-urile 1–10. Pierderea de timp e dată și pe tipuri de participanți, în coloanele `pierdere_h_<tip>`. | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |

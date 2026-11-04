@@ -1,0 +1,154 @@
+{
+ "zi": "2026-11-03",
+ "pornit": "2026-11-04T03:30:00",
+ "pasi": {
+  "recount": {
+   "cod": 0,
+   "inceput": "2026-11-04T03:30:00",
+   "sfarsit": "2026-11-04T03:33:14",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.vision.recount",
+    "--zi",
+    "2026-11-03",
+    "--camera",
+    "camera_v2.json",
+    "--pe-persoane",
+    "--out",
+    "data/counts_cor"
+   ]
+  },
+  "scenarii": {
+   "cod": 0,
+   "inceput": "2026-11-04T03:33:14",
+   "sfarsit": "2026-11-04T03:34:20",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.bridge.scenarii_zi",
+    "--zi",
+    "2026-11-03",
+    "--masura",
+    "cor"
+   ]
+  },
+  "indisciplinat": {
+   "cod": 0,
+   "inceput": "2026-11-04T03:34:20",
+   "sfarsit": "2026-11-04T03:34:21",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.bridge.indisciplinat",
+    "--scenarii",
+    "sumo\\scenarios\\cor_zi_2026-11-03_*.sumocfg",
+    "--vtypes",
+    "vtypes_indisciplinat_v2.add.xml",
+    "--vechi",
+    "vtypes_v2.add.xml"
+   ]
+  },
+  "geaman": {
+   "cod": 0,
+   "inceput": "2026-11-04T03:34:21",
+   "sfarsit": "2026-11-04T03:43:15",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.control.valideaza_geaman",
+    "cor_zi_2026-11-03_varf",
+    "cor_zi_2026-11-03_linistit",
+    "cor_zi_2026-11-03_dimineata",
+    "cor_zi_2026-11-03_pranz",
+    "cor_zi_2026-11-03_seara",
+    "--seeds",
+    "1,2,3,4,5",
+    "--procese",
+    "3",
+    "--praguri",
+    "docs\\rezultate\\praguri_geaman.json",
+    "--poarta",
+    "outputs/validare/poarta_cor_2026-11-03.json",
+    "--out",
+    "outputs/validare/geaman_cor_2026-11-03.csv"
+   ]
+  },
+  "test_indisciplinat": {
+   "cod": 0,
+   "inceput": "2026-11-04T03:43:15",
+   "sfarsit": "2026-11-04T04:18:00",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.control.validare",
+    "PLAN_72_48_3",
+    "REAL",
+    "PLAN_60_40_3",
+    "PLAN_45_30_3",
+    "models/ppo_e15.zip",
+    "ACTUATED",
+    "--scenarii",
+    "indisciplinat_cor_zi_2026-11-03_*",
+    "--seeds",
+    "1-10",
+    "--fara-alegere",
+    "--fara-fix",
+    "--procese",
+    "8",
+    "--out",
+    "outputs/validare/cor_test_2026-11-03_indisciplinat.csv"
+   ]
+  },
+  "test_normal": {
+   "cod": 0,
+   "inceput": "2026-11-04T04:18:00",
+   "sfarsit": "2026-11-04T04:51:30",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.control.validare",
+    "PLAN_72_48_3",
+    "REAL",
+    "PLAN_60_40_3",
+    "PLAN_45_30_3",
+    "models/ppo_e15.zip",
+    "ACTUATED",
+    "--scenarii",
+    "cor_zi_2026-11-03_*",
+    "--seeds",
+    "1-10",
+    "--fara-alegere",
+    "--fara-fix",
+    "--procese",
+    "8",
+    "--out",
+    "outputs/validare/cor_test_2026-11-03_normal.csv"
+   ]
+  },
+  "decizie": {
+   "cod": 0,
+   "inceput": "2026-11-04T04:51:30",
+   "sfarsit": "2026-11-04T04:51:33",
+   "comanda": [
+    ".venv\\Scripts\\python.exe",
+    "-m",
+    "romana.control.decizie",
+    "outputs/validare/cor_test_2026-11-03_indisciplinat.csv",
+    "outputs/validare/cor_test_2026-11-03_normal.csv",
+    "--in-vigoare",
+    "PLAN_72_48_3",
+    "REAL",
+    "--candidati",
+    "PLAN_60_40_3",
+    "PLAN_45_30_3",
+    "ppo_e15",
+    "--poarta",
+    "outputs/validare/poarta_cor_2026-11-03.json",
+    "--out",
+    "outputs/validare/cor_decizie_2026-11-03.json"
+   ]
+  }
+ },
+ "rezultat": "gata"
+}

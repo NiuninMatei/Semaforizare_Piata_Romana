@@ -1,0 +1,221 @@
+{
+ "zi": [
+  "2026-11-03"
+ ],
+ "praguri": [
+  2400.0,
+  4100.0
+ ],
+ "in_vigoare": "PLAN_72_48_3",
+ "debite": {
+  "cor_zi_2026-11-03_dimineata": 5187,
+  "cor_zi_2026-11-03_linistit": 246,
+  "cor_zi_2026-11-03_linistit_x0_8": 196,
+  "cor_zi_2026-11-03_pranz": 5061,
+  "cor_zi_2026-11-03_seara": 3106,
+  "cor_zi_2026-11-03_varf": 5278,
+  "cor_zi_2026-11-03_varf_x1_2": 6334,
+  "indisciplinat_cor_zi_2026-11-03_dimineata": 5187,
+  "indisciplinat_cor_zi_2026-11-03_linistit": 246,
+  "indisciplinat_cor_zi_2026-11-03_linistit_x0_8": 196,
+  "indisciplinat_cor_zi_2026-11-03_pranz": 5061,
+  "indisciplinat_cor_zi_2026-11-03_seara": 3106,
+  "indisciplinat_cor_zi_2026-11-03_varf": 5278,
+  "indisciplinat_cor_zi_2026-11-03_varf_x1_2": 6334
+ },
+ "cazuri": {
+  "cor_zi_2026-11-03_dimineata": "greu",
+  "cor_zi_2026-11-03_linistit": "lejer",
+  "cor_zi_2026-11-03_linistit_x0_8": "lejer",
+  "cor_zi_2026-11-03_pranz": "greu",
+  "cor_zi_2026-11-03_seara": "moderat",
+  "cor_zi_2026-11-03_varf": "greu",
+  "cor_zi_2026-11-03_varf_x1_2": "greu",
+  "indisciplinat_cor_zi_2026-11-03_dimineata": "greu",
+  "indisciplinat_cor_zi_2026-11-03_linistit": "lejer",
+  "indisciplinat_cor_zi_2026-11-03_linistit_x0_8": "lejer",
+  "indisciplinat_cor_zi_2026-11-03_pranz": "greu",
+  "indisciplinat_cor_zi_2026-11-03_seara": "moderat",
+  "indisciplinat_cor_zi_2026-11-03_varf": "greu",
+  "indisciplinat_cor_zi_2026-11-03_varf_x1_2": "greu"
+ },
+ "benzi_analiza": "lejer=cor_zi_2026-11-03_linistit,cor_zi_2026-11-03_linistit_x0_8,indisciplinat_cor_zi_2026-11-03_linistit,indisciplinat_cor_zi_2026-11-03_linistit_x0_8;moderat=cor_zi_2026-11-03_seara,indisciplinat_cor_zi_2026-11-03_seara;greu",
+ "referinte": [
+  "PLAN_72_48_3",
+  "REAL"
+ ],
+ "acoperire_minima": 0.8,
+ "poarta": {
+  "trec": [],
+  "nu_trec": [
+   "cor_zi_2026-11-03_dimineata",
+   "cor_zi_2026-11-03_linistit",
+   "cor_zi_2026-11-03_pranz",
+   "cor_zi_2026-11-03_seara",
+   "cor_zi_2026-11-03_varf"
+  ],
+  "descriptiv": true,
+  "commit_validare": "f40af6bc0d0fa6d5f3591c3435f2fb9dda233300"
+ },
+ "candidati": [
+  {
+   "strategie": "PLAN_60_40_3",
+   "pierdere_totala_h": 34004.87337777778,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -18.0337876984127,
+    "dif_medie_pct": 4.148704982307998,
+    "mai_bun": 104,
+    "p_wilcoxon": 0.00011701452201101075
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -35.570765277777774,
+    "dif_medie_pct": 10.531474920773356,
+    "mai_bun": 59,
+    "p_wilcoxon": 3.941452366963141e-06
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": -0.49681011904761885,
+    "dif_medie_pct": -2.23406495615736,
+    "mai_bun": 45,
+    "p_wilcoxon": 0.33277663704625393
+   },
+   "alte_referinte": {
+    "REAL": {
+     "fata_de_in_vigoare": {
+      "n": 100,
+      "dif_medie_h": -45.350819805555545,
+      "dif_medie_pct": -2.6589154156269528,
+      "mai_bun": 95,
+      "p_wilcoxon": 7.525779627405302e-14
+     },
+     "indisciplinati": {
+      "n": 50,
+      "dif_medie_h": -23.48954144444443,
+      "dif_medie_pct": 12.745275461727704,
+      "mai_bun": 46,
+      "p_wilcoxon": 1.3667570399888973e-06
+     },
+     "disciplinati": {
+      "n": 50,
+      "dif_medie_h": -67.21209816666666,
+      "dif_medie_pct": -18.06310629298161,
+      "mai_bun": 49,
+      "p_wilcoxon": 8.881784197001252e-15
+     }
+    }
+   },
+   "eligibil": true,
+   "dif_totala_pct": -6.91146364900076
+  },
+  {
+   "strategie": "PLAN_45_30_3",
+   "pierdere_totala_h": 30689.07625277777,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": -41.71805287698413,
+    "dif_medie_pct": -4.604143520757669,
+    "mai_bun": 110,
+    "p_wilcoxon": 5.659605032123593e-06
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": -88.01153242063492,
+    "dif_medie_pct": -6.713996534147345,
+    "mai_bun": 68,
+    "p_wilcoxon": 1.662730910418722e-11
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": 4.575426666666659,
+    "dif_medie_pct": -2.49429050736799,
+    "mai_bun": 42,
+    "p_wilcoxon": 0.42100718600151954
+   },
+   "alte_referinte": {
+    "REAL": {
+     "fata_de_in_vigoare": {
+      "n": 100,
+      "dif_medie_h": -78.40264805555557,
+      "dif_medie_pct": -13.517676840693502,
+      "mai_bun": 95,
+      "p_wilcoxon": 6.63525871478931e-15
+     },
+     "indisciplinati": {
+      "n": 50,
+      "dif_medie_h": -96.79484900000003,
+      "dif_medie_pct": -10.531597708775385,
+      "mai_bun": 48,
+      "p_wilcoxon": 8.22989321136447e-09
+     },
+     "disciplinati": {
+      "n": 50,
+      "dif_medie_h": -60.010447111111134,
+      "dif_medie_pct": -16.503755972611625,
+      "mai_bun": 47,
+      "p_wilcoxon": 3.6148861681795097e-12
+     }
+    }
+   },
+   "eligibil": true,
+   "dif_totala_pct": -15.988477339774088
+  },
+  {
+   "strategie": "ppo_e15",
+   "pierdere_totala_h": 43906.26076666667,
+   "fata_de_in_vigoare": {
+    "n": 140,
+    "dif_medie_h": 52.69040793650794,
+    "dif_medie_pct": 25.392512130264304,
+    "mai_bun": 71,
+    "p_wilcoxon": 0.0003693219475623159
+   },
+   "indisciplinati": {
+    "n": 70,
+    "dif_medie_h": 83.13236115079366,
+    "dif_medie_pct": 50.04604851666684,
+    "mai_bun": 40,
+    "p_wilcoxon": 0.3155476732664131
+   },
+   "disciplinati": {
+    "n": 70,
+    "dif_medie_h": 22.248454722222206,
+    "dif_medie_pct": 0.738975743861763,
+    "mai_bun": 31,
+    "p_wilcoxon": 0.00015835717667370925
+   },
+   "alte_referinte": {
+    "REAL": {
+     "fata_de_in_vigoare": {
+      "n": 100,
+      "dif_medie_h": 53.84542849999998,
+      "dif_medie_pct": 23.442812724527506,
+      "mai_bun": 80,
+      "p_wilcoxon": 1.060310144478976e-05
+     },
+     "indisciplinati": {
+      "n": 50,
+      "dif_medie_h": 142.85776072222222,
+      "dif_medie_pct": 58.03083741993001,
+      "mai_bun": 38,
+      "p_wilcoxon": 0.11393994202132163
+     },
+     "disciplinati": {
+      "n": 50,
+      "dif_medie_h": -35.16690372222223,
+      "dif_medie_pct": -11.145211970875,
+      "mai_bun": 42,
+      "p_wilcoxon": 2.434094703573919e-08
+     }
+    }
+   },
+   "eligibil": false,
+   "dif_totala_pct": 20.19364124688292
+  }
+ ],
+ "castigator": "PLAN_72_48_3",
+ "motiv": "geamănul trece poarta din § 9.11 pe sub jumătate din ore: ziua e doar descriptivă",
+ "varianta_live": "plan_observat"
+}
