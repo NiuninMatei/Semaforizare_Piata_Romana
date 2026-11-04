@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (04.11.2026, ~06:55) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (04.11.2026, ~18:45) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
@@ -61,6 +61,21 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   teleportările de noapte vin din REAL, care ia ciclul din mediana valurilor (358,8 s, față de 124,5 s în spectru). Raportul și dovezile,
   local, în `outputs/diagnoza/dacia_vest_2026-11-04*`. Reparațiile sunt pentru o rundă nouă, după M2; până atunci nu se atinge
   `rejucat.py`, fiindcă lant_cor îl citește în fiecare noapte.
+- **Reparațiile, pe ramura locală `reparatii-dupa-m2`** (copia `C:\Users\Matei\Documents\GitHub\Semaforizare_reparatii`, fără push;
+  nu se mai atinge până după M2):
+  - **3078dc0:** REAL cu ciclul din spectru, rețeaua v3 cu keepClear oprit în cutia Daciei vest, poarta v3 ca propunere și rulatorul
+    `probe_geaman`;
+  - **755efbd:** rezultatele probelor din 4.11, cu 355 de rulări;
+  - **8c01dd7:** amprenta intrărilor în cheia rulărilor.
+
+  Raportul, verificat de trei ori, e local, în `outputs/diagnoza/probe_reparatii_2026-11-04.md`:
+  - V0 reproduce exact runda înghețată;
+  - V1 scoate teleportările de noapte;
+  - V2 ridică ritmul Daciei vest, dar blochează circular inelul în 5 rulări, lasă mai multe vehicule pe zebre și mută întârzierea pe
+    Catargiu și Dacia est.
+
+  După M2, doar cu acordul autorului: V1 se poate adopta, V2 nu. Întâi se compară verdele Daciei vest din programul rejucat cu valurile
+  camerei, fără date noi; apoi vin clipurile îmbinării.
 - **Push din linia de comandă, din 03.11:** fără GitHub Desktop și fără computer use, deci fără ferestre de aprobare; comanda, în
   „Reguli operative”. Desktop rămâne rezervă (memoria push-prin-github-desktop).
 - Rolurile: 3.11 antrenare, 4.11 validare, 5–6.11 test, 7.11 generalizare. **Invitațiile la sondare au plecat pe 03.11, 21:00–21:02**
