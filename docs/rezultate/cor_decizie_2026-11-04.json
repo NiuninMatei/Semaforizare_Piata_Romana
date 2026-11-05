@@ -1,0 +1,216 @@
+{
+ "zi": [
+  "2026-11-04"
+ ],
+ "praguri": [
+  2400.0,
+  4100.0
+ ],
+ "in_vigoare": "PLAN_72_48_3",
+ "debite": {
+  "cor_zi_2026-11-04_linistit": 178,
+  "cor_zi_2026-11-04_linistit_x0_8": 142,
+  "cor_zi_2026-11-04_pranz": 5144,
+  "cor_zi_2026-11-04_seara": 3673,
+  "cor_zi_2026-11-04_varf": 5550,
+  "cor_zi_2026-11-04_varf_x1_2": 6661,
+  "indisciplinat_cor_zi_2026-11-04_linistit": 178,
+  "indisciplinat_cor_zi_2026-11-04_linistit_x0_8": 142,
+  "indisciplinat_cor_zi_2026-11-04_pranz": 5144,
+  "indisciplinat_cor_zi_2026-11-04_seara": 3673,
+  "indisciplinat_cor_zi_2026-11-04_varf": 5550,
+  "indisciplinat_cor_zi_2026-11-04_varf_x1_2": 6661
+ },
+ "cazuri": {
+  "cor_zi_2026-11-04_linistit": "lejer",
+  "cor_zi_2026-11-04_linistit_x0_8": "lejer",
+  "cor_zi_2026-11-04_pranz": "greu",
+  "cor_zi_2026-11-04_seara": "moderat",
+  "cor_zi_2026-11-04_varf": "greu",
+  "cor_zi_2026-11-04_varf_x1_2": "greu",
+  "indisciplinat_cor_zi_2026-11-04_linistit": "lejer",
+  "indisciplinat_cor_zi_2026-11-04_linistit_x0_8": "lejer",
+  "indisciplinat_cor_zi_2026-11-04_pranz": "greu",
+  "indisciplinat_cor_zi_2026-11-04_seara": "moderat",
+  "indisciplinat_cor_zi_2026-11-04_varf": "greu",
+  "indisciplinat_cor_zi_2026-11-04_varf_x1_2": "greu"
+ },
+ "benzi_analiza": "lejer=cor_zi_2026-11-04_linistit,cor_zi_2026-11-04_linistit_x0_8,indisciplinat_cor_zi_2026-11-04_linistit,indisciplinat_cor_zi_2026-11-04_linistit_x0_8;moderat=cor_zi_2026-11-04_seara,indisciplinat_cor_zi_2026-11-04_seara;greu",
+ "referinte": [
+  "PLAN_72_48_3",
+  "REAL"
+ ],
+ "acoperire_minima": 0.8,
+ "poarta": {
+  "trec": [],
+  "nu_trec": [
+   "cor_zi_2026-11-04_linistit",
+   "cor_zi_2026-11-04_pranz",
+   "cor_zi_2026-11-04_seara",
+   "cor_zi_2026-11-04_varf"
+  ],
+  "descriptiv": true,
+  "commit_validare": "587c48bfc669575a89467b01d6996f94bd992747"
+ },
+ "candidati": [
+  {
+   "strategie": "PLAN_60_40_3",
+   "pierdere_totala_h": 21221.47453333333,
+   "fata_de_in_vigoare": {
+    "n": 60,
+    "dif_medie_h": -9.864978287037054,
+    "dif_medie_pct": 5.409398837975739,
+    "mai_bun": 44,
+    "p_wilcoxon": 0.024281193144371254
+   },
+   "indisciplinati": {
+    "n": 30,
+    "dif_medie_h": -21.49697240740743,
+    "dif_medie_pct": 12.012907007472851,
+    "mai_bun": 22,
+    "p_wilcoxon": 0.049710121005773544
+   },
+   "disciplinati": {
+    "n": 30,
+    "dif_medie_h": 1.76701583333333,
+    "dif_medie_pct": -1.194109331521375,
+    "mai_bun": 22,
+    "p_wilcoxon": 0.28936620615422726
+   },
+   "alte_referinte": {
+    "REAL": {
+     "fata_de_in_vigoare": {
+      "n": 30,
+      "dif_medie_h": -60.87143351851851,
+      "dif_medie_pct": 9.526910327186878,
+      "mai_bun": 25,
+      "p_wilcoxon": 0.008142979815602303
+     },
+     "indisciplinati": {
+      "n": 15,
+      "dif_medie_h": -36.26949833333332,
+      "dif_medie_pct": 35.4904987197928,
+      "mai_bun": 12,
+      "p_wilcoxon": 0.25238037109375
+     },
+     "disciplinati": {
+      "n": 15,
+      "dif_medie_h": -85.47336870370371,
+      "dif_medie_pct": -16.436678065419034,
+      "mai_bun": 13,
+      "p_wilcoxon": 0.00201416015625
+     }
+    }
+   },
+   "eligibil": true,
+   "dif_totala_pct": -2.7134670597077193
+  },
+  {
+   "strategie": "PLAN_45_30_3",
+   "pierdere_totala_h": 13169.538872222225,
+   "fata_de_in_vigoare": {
+    "n": 60,
+    "dif_medie_h": -144.06390597222222,
+    "dif_medie_pct": -12.579870538723247,
+    "mai_bun": 45,
+    "p_wilcoxon": 0.008221982972823902
+   },
+   "indisciplinati": {
+    "n": 30,
+    "dif_medie_h": -295.03917990740746,
+    "dif_medie_pct": -24.486481798599257,
+    "mai_bun": 30,
+    "p_wilcoxon": 1.862645149230957e-09
+   },
+   "disciplinati": {
+    "n": 30,
+    "dif_medie_h": 6.911367962962951,
+    "dif_medie_pct": -0.6732592788472389,
+    "mai_bun": 15,
+    "p_wilcoxon": 0.10039735585451126
+   },
+   "alte_referinte": {
+    "REAL": {
+     "fata_de_in_vigoare": {
+      "n": 30,
+      "dif_medie_h": -329.31894296296304,
+      "dif_medie_pct": -30.098154256666877,
+      "mai_bun": 26,
+      "p_wilcoxon": 1.6838312149047852e-06
+     },
+     "indisciplinati": {
+      "n": 15,
+      "dif_medie_h": -580.0921544444445,
+      "dif_medie_pct": -45.645072016325216,
+      "mai_bun": 14,
+      "p_wilcoxon": 0.0008544921875
+     },
+     "disciplinati": {
+      "n": 15,
+      "dif_medie_h": -78.5457314814815,
+      "dif_medie_pct": -14.551236497008546,
+      "mai_bun": 12,
+      "p_wilcoxon": 0.00201416015625
+     }
+    }
+   },
+   "eligibil": true,
+   "dif_totala_pct": -39.626307526913315
+  },
+  {
+   "strategie": "ppo_e15",
+   "pierdere_totala_h": 15565.667300000001,
+   "fata_de_in_vigoare": {
+    "n": 60,
+    "dif_medie_h": -104.12843217592594,
+    "dif_medie_pct": -4.318579034995588,
+    "mai_bun": 35,
+    "p_wilcoxon": 0.3348604607292418
+   },
+   "indisciplinati": {
+    "n": 30,
+    "dif_medie_h": -234.92611740740742,
+    "dif_medie_pct": -9.940043494165547,
+    "mai_bun": 20,
+    "p_wilcoxon": 0.5291051845997572
+   },
+   "disciplinati": {
+    "n": 30,
+    "dif_medie_h": 26.669253055555558,
+    "dif_medie_pct": 1.3028854241743697,
+    "mai_bun": 15,
+    "p_wilcoxon": 0.03841841779649258
+   },
+   "alte_referinte": {
+    "REAL": {
+     "fata_de_in_vigoare": {
+      "n": 30,
+      "dif_medie_h": -247.4334006481482,
+      "dif_medie_pct": -14.354987665132889,
+      "mai_bun": 22,
+      "p_wilcoxon": 0.01283373311161995
+     },
+     "indisciplinati": {
+      "n": 15,
+      "dif_medie_h": -463.5028553703704,
+      "dif_medie_pct": -22.79091751111719,
+      "mai_bun": 12,
+      "p_wilcoxon": 0.072998046875
+     },
+     "disciplinati": {
+      "n": 15,
+      "dif_medie_h": -31.363945925925897,
+      "dif_medie_pct": -5.919057819148585,
+      "mai_bun": 10,
+      "p_wilcoxon": 0.0946044921875
+     }
+    }
+   },
+   "eligibil": false,
+   "dif_totala_pct": -28.641631280594172
+  }
+ ],
+ "castigator": "PLAN_72_48_3",
+ "motiv": "geamănul trece poarta din § 9.11 pe sub jumătate din ore: ziua e doar descriptivă",
+ "varianta_live": "plan_observat"
+}
