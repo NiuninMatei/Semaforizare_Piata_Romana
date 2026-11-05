@@ -36,7 +36,16 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (05.11.2026, ~19:35) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (05.11.2026, ~19:55) – pregătirea pentru M2 (08.11, 08:00, online)
+
+- **Direcția nouă, cerută de autor pe 05.11, ≈19:45 (memoriile m2-ce-e-mai-bun, absenta-6-8-11, iot-si-ioc, buget-tokeni):**
+  M2 trebuie să arate ce e mai bun și nou, nu „nu trece nimeni”; o schimbare de fond, aleasă de mine, cu mână liberă la
+  modificări fundamentale; proiectul e la IOT și IOC. Limita săptămânală, eșalonat până la ≈100% vineri, 23:00, fără blocaj.
+  Programul autorului până la M2 și mutarea repetiției lui: doar în memoria locală absenta-6-8-11, nu în depozit.
+- **Repornirea completă a laptopului (05.11, seara, cerută de autor):** înainte, `outputs/live/fara_repornire`, Ctrl+C curat în
+  consola ascunsă a colectării (`paznic.trimite_ctrl_c`), apoi oprite paznicul, veghea și cele două lanțuri (adormite până la
+  00:15 și 03:30). După repornire: se șterge `fara_repornire`, se pornesc paznicul (care pornește singur colectarea), veghea și
+  ambele lanțuri cu `--reia`, se cere din nou keep-awake, iar golul colectării se trece în `outputs/logs/reporniri_2026-11-05.csv`.
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
