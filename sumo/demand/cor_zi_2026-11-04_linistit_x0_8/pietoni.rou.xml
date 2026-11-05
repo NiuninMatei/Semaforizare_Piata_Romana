@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+<routes>
+  <person id="pieton_0" depart="577.3" type="pieton" departPos="random">
+    <walk from="668307642#1" to="44499684#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_1" depart="1382.6" type="pieton" departPos="random">
+    <walk from="778823268#2" to="-778823268#2" arrivalPos="random" />
+  </person>
+  <person id="pieton_2" depart="2673.4" type="pieton" departPos="random">
+    <walk from="232079775#2" to="119238380#1" arrivalPos="random" />
+  </person>
+</routes>
