@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (05.11.2026, ~19:55) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (05.11.2026, ~23:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Direcția nouă, cerută de autor pe 05.11, ≈19:45 (memoriile m2-ce-e-mai-bun, absenta-6-8-11, iot-si-ioc, buget-tokeni):**
   M2 trebuie să arate ce e mai bun și nou, nu „nu trece nimeni”; o schimbare de fond, aleasă de mine, cu mână liberă la
@@ -50,6 +50,17 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   geamănului e respinsă (Dacia vest 821–1 063 veh/h în cameră, față de ≈520 în geamăn). Nimic înghețat nu se atinge; „Oprește
   imaginea” rămâne obligatoriu. Rezerva: prezentarea v2 de pe 5.11, 14:05. Puncte de control: CP1 (1.11 refăcut identic) și CP2
   (2–4.11) joi seara; 5.11 vineri dimineața; fișa la 11:30; v3 completă la 15:00; vineri, la 22:30, consumul la 97–99%.
+  **Făcute joi seara:** CP1 și CP2 trec (9f4e319: 2–4.11 „măsurate”, mediana 135–137 s, p10 124–125 s, C0 0 rânduri la 85–97 s);
+  fișa senzorului, comisă (0e0bce9; la 05.11, 20:25:31: 107,35 h, 98,8% minute cu cadre, 5,98 cadre/s, 30 de pauze, 2 opriri
+  anunțate, 0 căderi neprevăzute, 6/6 lanțuri, 277 271 de vehicule, 15 reconectări în 10 episoade). Prezentarea v3: workflow-ul
+  wf_5e74fc63-208 (scriitor, 3 recenzori, corector; v2 păstrată în `surse_m2/ciorna_2/`), gata la ≈21:45: verifica_m2.py fără erori,
+  27 de constatări aplicate, 9 respinse (NOTE_M2.md, „Revizia v3 din 5.11, seara”). La 23:22, pagina 2 e completată din fișa
+  calculată până la 5.11, 23:20 (local, `outputs/fisa_senzor/`: 110,25 h scurse, 108 ore de colectare, 98,8%, 0 căderi
+  neprevăzute, ≈6 cadre/s, 283 265 de vehicule), iar PDF-ul e refăcut: 0 locuri goale, toate paginile trec. Vineri: ziua de 5.11
+  (CP3), fișa din nou la tăietura finală, în `docs/rezultate`, o verificare adversarială a cifrelor v3, documentația, exportul,
+  apoi autorul o vede până la 17:30. Consumul: 67% la 23:21, deci ≈31 de puncte de folosit util până vineri, 22:30 (recenzii
+  adversariale ale v3, documentația publică verificată față de rezultatele retrase, întrebări probabile verificate, documentația
+  pentru IOT & IOC, § 6.5 pe toate zilele, fișa senzorului în § 4.6).
 - **Repornirea completă a laptopului (05.11, seara, cerută de autor):** înainte, `outputs/live/fara_repornire`, Ctrl+C curat în
   consola ascunsă a colectării (`paznic.trimite_ctrl_c`), apoi oprite paznicul, veghea și cele două lanțuri (adormite până la
   00:15 și 03:30). După repornire: se șterge `fara_repornire`, se pornesc paznicul (care pornește singur colectarea), veghea și
