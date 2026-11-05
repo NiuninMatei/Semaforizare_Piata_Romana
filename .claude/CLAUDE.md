@@ -42,6 +42,14 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   M2 trebuie să arate ce e mai bun și nou, nu „nu trece nimeni”; o schimbare de fond, aleasă de mine, cu mână liberă la
   modificări fundamentale; proiectul e la IOT și IOC. Limita săptămânală, eșalonat până la ≈100% vineri, 23:00, fără blocaj.
   Programul autorului până la M2 și mutarea repetiției lui: doar în memoria locală absenta-6-8-11, nu în depozit.
+- **Decizia (05.11, ≈20:55, după wf_21ebd0cc-784: 5 inventare, 3 planuri, un judecător; tot planul, local, în
+  `outputs/prezentare/surse_m2/plan_v3/m2_plan_final.md`):** M2 v3 = camera publică, senzor IoT nesupravegheat al traficului și al
+  semaforului, plus un om care supraveghează printr-un ecran verificat. Lucrări noi: programul real pe 2–5.11, după criteriile
+  publicate înaintea rulării (`docs/rezultate/program_real_criterii.json`, c7d62d3); modulul testat `vision/fisa_senzor.py`; prezentarea
+  v3 (demonstrația pe paginile 3–4, cel mult 3 cifre mari pe pagină, negativul într-un rând, finalul „Încercați”). Runda a doua a
+  geamănului e respinsă (Dacia vest 821–1 063 veh/h în cameră, față de ≈520 în geamăn). Nimic înghețat nu se atinge; „Oprește
+  imaginea” rămâne obligatoriu. Rezerva: prezentarea v2 de pe 5.11, 14:05. Puncte de control: CP1 (1.11 refăcut identic) și CP2
+  (2–4.11) joi seara; 5.11 vineri dimineața; fișa la 11:30; v3 completă la 15:00; vineri, la 22:30, consumul la 97–99%.
 - **Repornirea completă a laptopului (05.11, seara, cerută de autor):** înainte, `outputs/live/fara_repornire`, Ctrl+C curat în
   consola ascunsă a colectării (`paznic.trimite_ctrl_c`), apoi oprite paznicul, veghea și cele două lanțuri (adormite până la
   00:15 și 03:30). După repornire: se șterge `fara_repornire`, se pornesc paznicul (care pornește singur colectarea), veghea și
