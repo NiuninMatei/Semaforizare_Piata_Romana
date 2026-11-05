@@ -1,6 +1,6 @@
 {
   "ce_este": "Criteriile după care se citește programul real al semaforului, măsurat din cameră cu romana.vision.program_real, pe zilele noi. Fixate și publicate înainte ca modulul să ruleze pe aceste zile.",
-  "scris_la": "2026-11-05T21:05:00+02:00",
+  "scris_la": "2026-11-05T20:55:00+02:00",
   "zile": ["2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05"],
   "nota_zile": "Ziua de 5.11 intră doar dacă prelucrarea ei de noapte s-a încheiat cu codul 0 și jurnalul ei public există. Zilele de 26.10 și 1.11 sunt deja publicate și nu se judecă din nou.",
   "rulare": {
