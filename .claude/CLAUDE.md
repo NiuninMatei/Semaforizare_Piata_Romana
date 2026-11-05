@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (05.11.2026, ~04:30) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (05.11.2026, ~14:10) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
@@ -86,7 +86,10 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   ore”). Totul în `outputs/prezentare/surse_m2` (sablon_m2.html, construieste_m2.py, exporta_m2.py, verifica_m2.py; scenariul
   demonstrației, întrebările probabile și deciziile, în NOTE_M2.md; prima ciornă, în `ciorna_1/`). Loc gol: doar pagina 5 (sâmbătă,
   după 18:00). Pagina 8 e completă din 5.11: „Proba: nu trece nimeni: simularea s-a potrivit cu camera pe 0 din 4 ore. Decizia: nu a
-  mai avut loc; rămâne programul de azi.” Pe 8.11 se pornesc doar geamănul și serverul dispeceratului, direct cu Python, după
+  mai avut loc; rămâne programul de azi.” A doua revizie, pe 5.11, după validare (wf_224f8d89-b21, 8 agenți, doar citire; 21 de
+  constatări confirmate din 51): benzile paginilor 3 și 6 și rândul pietonilor de pe pagina 6, aduse la surse; textul paginii 8 și
+  răspunsurile din NOTE_M2.md, aduse la rezultat, plus două întrebări noi; README-ul și § 9.11, aduse la zi. Rezultatul întreg, local,
+  în `surse_m2/revizie_m2_0511.json`, iar rezumatul, la sfârșitul NOTE_M2.md. Pe 8.11 se pornesc doar geamănul și serverul dispeceratului, direct cu Python, după
   `scripts\_mediu.bat`, în două file de Windows Terminal (NOTE_M2.md, pasul de la 07:35), niciodată `PORNESTE_TOT.bat`, care ar porni
   o a doua colectare. Fără desigilări, ziua de 7.11 e gata pe 8.11 pe la 03:45 (doar geamănul), deci dimineața nu mai rulează simulări.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
