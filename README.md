@@ -5,8 +5,8 @@
 > vehiculele se ciocneau și erau teleportate de ≈15 000 de ori pe oră. Planul 12/14/12 nici nu poate duce traficul: pe Magheru îi lasă cel
 > mult ≈1 300 de vehicule pe oră, față de ≈2 550 numărate la vârf. Tot din cameră a ieșit și programul real al semaforului: un ciclu de
 > ≈125–155 s, nu de ≈91 s, cât presupuneam. Geamănul s-a corectat, dar **nu e validat**: prima corectură a avut ea însăși un defect, găsit
-> înainte de publicare, iar pe unele măsuri geamănul încă nu se potrivește cu camera. Explicația e în [§ 6.5 din documentație](docs/DOCUMENTATIE.md#65-geamănul-corectat-coliziunile-ascunse-și-programul-real-2112026). Textul de mai jos va fi rescris după
-> testele pe zilele noi; deocamdată rămâne ca istoric.
+> înainte de publicare, iar pe unele măsuri geamănul încă nu se potrivește cu camera. Explicația e în [§ 6.5 din documentație](docs/DOCUMENTATIE.md#65-geamănul-corectat-coliziunile-ascunse-și-programul-real-2112026). Textul de mai jos rămâne ca
+> istoric: runda zilelor noi s-a încheiat pe 5.11 fără un program nou (mai jos).
 >
 > **Înghețul, 3.11.2026.** Măsurile geamănului corectat s-au fixat la un commit numit, înainte de a privi datele din 3.11. Pe zilele de
 > antrenare, geamănul trece poarta din § 9.11 (debitele de pe Magheru, Lascăr Catargiu și Dacia est, teleportările, ciocnirile și
@@ -211,8 +211,8 @@ comută; în dispecerat, modul se numește „Planul observat”. Variantele pro
 
 | Varianta | Trafic lejer | Trafic moderat (prânz) | Trafic greu (vârf, dimineață) | Unde se folosește |
 |---|---|---|---|---|
-| **plan observat**: programul semaforului real, măsurat din cameră (§ 6.5) | planul fix 72/48/3 s | planul fix 72/48/3 s | planul fix 72/48/3 s | geamănul în timp real, ca variantă implicită din 2.11 (`"plan_observat"` în `live_twin.py`) |
-| candidații zilelor noi (§ 9.11) | planul 60/40/3 s, planul 45/30/3 s sau agentul E15 | la fel | la fel | testele din 4–6.11; geamănul în timp real îi poate rula (`"plan_60_40"`, `"plan_45_30"`, `"e15"`) |
+| **plan observat**: un plan fix dedus din cameră pentru vârful zilei de luni, 26.10, care doar aproximează semaforul real (§ 6.5) | planul fix 72/48/3 s | planul fix 72/48/3 s | planul fix 72/48/3 s | geamănul în timp real, ca variantă implicită din 2.11 (`"plan_observat"` în `live_twin.py`) |
+| candidații zilelor noi (§ 9.11) | planul 60/40/3 s, planul 45/30/3 s sau agentul E15 | la fel | la fel | proba din 4.11, în care n-a trecut niciunul (§ 9.11); geamănul în timp real îi poate rula (`"plan_60_40"`, `"plan_45_30"`, `"e15"`) |
 | plan scurt: câștigătorul testului din 28.10, retras pe 2.11 (§ 9.10) | planul fix 12/14/12 s | planul fix 12/14/12 s | planul fix 12/14/12 s | geamănul în timp real, pe 29.10–2.11 (`"plan_scurt"`) |
 | planuri fixe pe cazuri (`TOD_DEBIT`), candidat | planul fix 16/10/12 s | planul fix 16/10/12 s | planul fix 12/14/12 s | evaluarea; geamănul în timp real (`"tod_debit"`) |
 | marginea de sus | agentul E9 (`ppo_romana_lejer`) | agentul E3 (`ppo_romana_zn3`) | planul fix 46/48/12 s | evaluarea; geamănul în timp real (`VARIANTA_PROGRAM = "marginea_sus"`) |
@@ -334,7 +334,7 @@ Prezentările bornelor cursului *Interfețe om-calculator*: [M1, 01.11.2026](doc
 | Limita | Ce înseamnă |
 |---|---|
 | Baza de comparație este ipotetică | Duratele planului de referință sunt o ipoteză, iar majoritatea intersecțiilor din BTMS, sistemul de management al traficului din București, funcționează adaptiv (§ 1, § 10). Față de actuated, câștigul depinde de calibrare: în zilele lucrătoare, −3,2% la marginea de sus, practic zero la marginea de jos (+0,4%, p = 0,62) și −18,4% cu participanți indisciplinați. Duminică, la marginea de jos, actuated a fost mai bun |
-| Puține date | Câteva zile. Intervalul de la miercuri 21.10, ora 11:45, până joi 22.10, ora 11:00, și încă ≈1,6 h din seara demonstrației în direct (18:41–19:11 și 20:48–21:54) au fost înregistrate cu urmărire sacadată, deci sunt subnumărate (§ 4.6). Duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11), miercuri 28.10 (00:10–24:00) și joi 29.10 (00:00–24:00) au fost înregistrate continuu. Din marți 27.10 există doar noaptea (00:00–06:04), iar din vineri 30.10, intervalul 00:00–08:30, publicat fără scenarii. Din 1.11, ora 09:04, colectarea merge continuu, cu reporniri automate scurte (§ 9.11). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9), miercurea și joia (§ 9.10, rezultat retras), iar pe măsura nouă, zilele 4–6.11 (§ 9.11). Cazul lejer de zi (1 200–2 400 veh/h) nu intră în scenariile zilelor de test, iar noaptea din 28.10 a căzut pe o încetinire a prelucrării (§ 4.6) |
+| Puține date | Câteva zile. Intervalul de la miercuri 21.10, ora 11:45, până joi 22.10, ora 11:00, și încă ≈1,6 h din seara demonstrației în direct (18:41–19:11 și 20:48–21:54) au fost înregistrate cu urmărire sacadată, deci sunt subnumărate (§ 4.6). Duminică 25.10 (de la 01:14), luni 26.10 (de la 09:11), miercuri 28.10 (00:10–24:00) și joi 29.10 (00:00–24:00) au fost înregistrate continuu. Din marți 27.10 există doar noaptea (00:00–06:04), iar din vineri 30.10, intervalul 00:00–08:30, publicat fără scenarii. Din 1.11, ora 09:04, colectarea merge continuu, cu reporniri automate scurte (§ 9.11). Testele pe zile noi: duminica (§ 9.3), lunea (§ 9.9), miercurea și joia (§ 9.10, rezultat retras), iar pe măsura nouă, ziua de validare, 4.11, doar descriptivă (§ 9.11). Cazul lejer de zi (1 200–2 400 veh/h) nu intră în scenariile zilelor de test, iar noaptea din 28.10 a căzut pe o încetinire a prelucrării (§ 4.6) |
 | Indisciplina este o ipoteză | Ipoteza se aplică tuturor participanților. Autoturismele și camioanele trec pe roșu în primele 2 s și, după 1 s de așteptare, intră în intersecție chiar dacă o blochează; autobuzele, motocicletele și bicicletele au valori proprii. Pietonii traversează pe roșu în primele 5 s și uneori ignoră vehiculele. Parametrii sunt aleși, nu măsurați, iar cifra de −16% depinde de ei |
 | Geamănul în timp real | Simulează participanți disciplinați. Varianta implicită din 2.11, planul observat, nu comută. Folosește numărările brute ale camerei, nu cererea măsurii noi (§ 5.5). La variantele care comută, de exemplu programul realist, comutarea în timp real nu a fost evaluată: cifrele lor sunt compuse din rulările componentelor, după cazul de trafic al scenariului |
 | Reproductibilitate parțială | Statisticile din § 9 se refac din `docs/rezultate/` cu `romana.control.analiza`; validările și testele, cu `romana.control.validare`; scenariile `indisciplinat_*`, cu `romana.bridge.indisciplinat`; factorii de corecție și modelul camerei, din `docs/rezultate/referinta/` (§ 11.8). Simulările sunt deterministe: cu aceleași fișiere și același seed dau același rezultat. Fișierele mai vechi cer însă versiunea scenariilor din istoricul git (`e1d0f77`, `7a79502`). Pentru cele marcate „tipurile vechi” se aduc doar tipurile de vehicule din `75592d3`; pentru cele din 21–22.10 și pentru codul de atunci, vezi Anexa A. În plus, câteva validări conțin candidați sau puncte intermediare ale antrenării care nu sunt publicate |
@@ -397,14 +397,15 @@ din 20.10.2026, **Claude** (Anthropic), modelul Claude Opus 5.5, prin Claude Cod
 scris aproape tot codul și documentația și a rulat colectarea datelor, antrenarea și evaluarea. Commiturile lui, adică
 versiunile salvate de el în istoric, poartă linia `Co-Authored-By: Claude …`.
 
-**Starea proiectului (3.11.2026).** Prima bornă a cursului, M1, s-a prezentat pe 1.11. De atunci (lista schimbărilor, § 12.3):
+**Starea proiectului (5.11.2026).** Prima bornă a cursului, M1, s-a prezentat pe 1.11. De atunci (lista schimbărilor, § 12.3):
 
 - dispeceratul a fost evaluat de evaluatori AI declarați, reparat în trei ture și pregătit pentru o sondare cu oameni,
   pe o pagină publică (§ 8);
 - programul real al semaforului a fost măsurat din cameră, iar geamănul a fost corectat; rezultatul de −7% s-a retras
   (§ 6.5);
 - măsura nouă s-a înghețat pe 3.11, iar pentru zilele noi s-au fixat candidații: planurile 60/40/3 și 45/30/3 și
-  agentul E15 (§ 9.11).
+  agentul E15; pe ziua de validare, 4.11, geamănul nu s-a potrivit cu camera în nicio oră, deci n-a trecut niciun
+  candidat, iar runda s-a încheiat fără un program nou (§ 9.11).
 
 Până pe 30.10, Borna 9 adusese experimentele E10–E14 (§ 9.5), veghea fluxului de cadre (§ 4.6), capacitatea geamănului
 (§ 6.4) și testele pe zilele de luni, miercuri și joi (§ 9.9, § 9.10). Colectarea datelor s-a oprit pe 30.10, la 08:30,
