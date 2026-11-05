@@ -3632,6 +3632,26 @@ ritmul intrărilor; apoi, ca schimbări declarate în fișierul de rețea, regul
 după clipuri care arată cine cedează pe stradă. Geometria, benzile, trecerile și semafoarele rămân cele din OSM. Dacia est, sub cameră
 dimineața, și pierderea de detecție de seară nu au fost cercetate.
 
+**Ziua de validare, 4.11, prelucrată pe 5.11, dimineața.** Ziua de 4.11, o miercuri, e ziua de validare. Ora de dimineață, 07:30–08:30,
+se suprapune cu vârful zilei, 08:00–09:00, deci, după regula din `scenarii_zi`, ziua are 4 ore observate, nu 5. Geamănul nu trece
+poarta pe niciuna, deci și validarea e doar descriptivă:
+
+* La vârf, la prânz și seara, geamănul duce pe Dacia vest 396–516 vehicule pe oră, iar camera numără 867–922. La sfârșitul orei mai
+  așteaptă să intre 287–506 vehicule, aproape toate pe Dacia vest, iar 2,2–6,6% din vehicule nu intră sau nu ajung la destinație până
+  la final, peste pragul de 2%. La vârf și seara, acesta e singurul rând care pică. La prânz, și debitul de pe Dacia est, cu 9,4% sub
+  cameră, iese nedecis față de pragul de 10%.
+* În ora liniștită, noaptea, sunt 25 de teleportări în fiecare dintre cele 5 rulări, peste pragul de 5, iar pe Dacia est trec 24 de
+  vehicule pe oră, față de 29 în cameră, adică cu 18% mai puține.
+* Seara, pierderea de detecție pe întuneric, care pe 3.11 scotea ora, rămâne acum în prag: 1,35, la un prag de 1,8.
+
+Tiparul e cel din 3.11, pe care îl explică diagnoza de mai sus; pe 4.11, cauzele nu le-am mai verificat separat. Decizia validării,
+scrisă de lanț pe 5.11, la 04:16, s-a copiat octet cu octet în `docs/rezultate/cor_decizie_2026-11-04.json` și s-a comis la 04:23,
+înaintea oricărei zile de test. Ea păstrează planul observat, 72/48/3, iar în geamăn varianta `plan_observat`. Fiindcă validarea e
+descriptivă, niciun candidat nu trece de ea, deci zilele de 5, 6 și 7.11 se prelucrează noaptea doar până la geamăn și poartă, fără
+strategii, chiar dacă s-ar desigila, iar `--regula-finala` răspunde că runda s-a încheiat și că rămâne planul observat. Rulările
+strategiilor din 4.11 sunt publicate, ca toate celelalte, dar, ca pe 3.11, nu se citează ca procente. Runda se încheie fără un program
+nou; reparațiile țin de o rundă nouă, după M2, cum scrie mai sus.
+
 **Agentul următor.** *(Scris pe 1.11; din 2.11, E15 imită planul observat, nu planul 12/14/12, vezi schimbările de mai sus.)* Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
 la 5 s, deci imitația ajunge la un verde de 15/15/15 s, cu un ciclu de 60 s în loc de 53 s; comparația de la capăt se face tot cu
 planul 12/14/12, rulat exact. Se antrenează doar pe scenariile măsurii noi din zilele de antrenare, cu lista dată explicit, care
@@ -4326,6 +4346,10 @@ departe, deci formează lista schimbărilor de la o bornă la alta. Prezentăril
 * **Diagnoza zilei de 3.11 (4.11):** pe Dacia vest, geamănul trece vehiculele prea încet chiar după semafor, iar teleportările de
   noapte vin din programul rejucat, care noaptea ia un ciclu de aproape trei ori prea lung; probele arată unde se poate repara,
   într-o rundă nouă, după M2. Runda de acum nu se schimbă (§ 9.11).
+* **Ziua de validare, 4.11 (5.11, dimineața):** ca pe 3.11, geamănul nu trece poarta pe nicio oră, tot din cauza Daciei vest și a
+  teleportărilor de noapte, deci validarea e doar descriptivă: niciun candidat nu trece, zilele de test nu se deschid, iar în geamăn
+  rămâne planul observat. Decizia s-a comis înaintea zilelor de test; numărătorile, jurnalul vehiculelor, scenariile și rezultatele
+  zilei sunt publice (§ 9.11).
 * **Date în siguranță:** veghea fluxului, paznicul colectării, prelucrarea de noapte, regulile zilelor noi, comise înaintea zilelor pe
   care le judecă (§ 9.11).
 
