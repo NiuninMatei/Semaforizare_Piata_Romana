@@ -1,0 +1,30 @@
+{
+  "ce_este": "Criteriile după care se citește programul real al semaforului, măsurat din cameră cu romana.vision.program_real, pe zilele noi. Fixate și publicate înainte ca modulul să ruleze pe aceste zile.",
+  "scris_la": "2026-11-05T21:05:00+02:00",
+  "zile": ["2026-11-02", "2026-11-03", "2026-11-04", "2026-11-05"],
+  "nota_zile": "Ziua de 5.11 intră doar dacă prelucrarea ei de noapte s-a încheiat cu codul 0 și jurnalul ei public există. Zilele de 26.10 și 1.11 sunt deja publicate și nu se judecă din nou.",
+  "rulare": {
+    "comanda": "PYTHONPATH=src .venv/Scripts/python -m romana.vision.program_real --zi <zi> --interval 09:30-10:30 --interval 12:00-14:00 --interval 17:30-18:30 --interval 19:00-21:00 --interval 23:00-23:59 --pe-zi --out docs/rezultate/program_real_<zi>.csv",
+    "modul": "src/romana/vision/program_real.py, neschimbat (căutarea ciclului între 100 și 200 s, PERIOADE)",
+    "proba_de_reproducere": "Înainte, ziua de 1.11 se rulează din nou cu aceleași opțiuni; valorile trebuie să fie identice cu docs/rezultate/program_real_2026-11-01.csv, altfel zilele noi nu se rulează."
+  },
+  "rand_de_incredere": {
+    "ce": "Un rând de 20 de minute din „--pe-zi” e de încredere dacă îndeplinește toate trei condițiile.",
+    "ferestre": "= 2",
+    "tarie": ">= 0.42",
+    "ciclu_s": "între 101 și 198 s, inclusiv (nu lipit de marginile căutării)"
+  },
+  "zi_masurata": "O zi e „măsurată” dacă are cel puțin 30 de rânduri de încredere din 45 de rânduri de zi.",
+  "verificari": {
+    "C1": "Pe o zi măsurată, a zecea percentilă a ciclului din rândurile de încredere e de cel puțin 115 s (ciclul nu e cel de 91 s presupus la M1).",
+    "C2": "Pe o zi măsurată, medianele pe ore ale ciclului (orele cu cel puțin 2 rânduri de încredere) diferă între ele cu cel puțin 10 s (programul se schimbă de-a lungul zilei).",
+    "C0": "Proba de control pentru 91 s: aceeași căutare, lărgită la 80–240 s cu un script separat care nu schimbă modulul, găsește cel mult 5% dintre rândurile de încredere ale zilei între 85 și 97 s."
+  },
+  "ce_se_poate_spune": {
+    "C1_si_C0_trec": "Pe ziua respectivă, camera măsoară un ciclu de cel puțin 115 s în nouă rânduri din zece, iar un ciclu de ≈91 s nu apare.",
+    "C2_trece": "Programul semaforului se schimbă de-a lungul zilei.",
+    "o_verificare_pica": "Se publică verdictul zilei, fără a schimba criteriile; ziua nu intră în figura prezentării.",
+    "zi_nemasurata": "Ziua nu intră în figură; se spune câte rânduri de încredere a avut."
+  },
+  "nu_se_schimba": "După publicare, criteriile, comanda și pragurile nu se mai modifică pentru aceste zile."
+}
