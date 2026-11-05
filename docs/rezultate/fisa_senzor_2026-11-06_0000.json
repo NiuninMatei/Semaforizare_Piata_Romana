@@ -1,0 +1,462 @@
+{
+ "taietura": "2026-11-06T00:00:00",
+ "inceput": "2026-11-01T09:04:46",
+ "sursa_inceputului": "data creării lui viziune_2026-11-01.log",
+ "durata": {
+  "ore": 110.92,
+  "secunde": 399313
+ },
+ "minute": {
+  "intregi": 6655,
+  "cu_cadre": 6578,
+  "fara_cadre": 77,
+  "pondere_cu_cadre": 0.98843,
+  "fara_rand_veghe": 31
+ },
+ "timp": {
+  "oprit_s": 4730,
+  "pauze_s": 715,
+  "pondere_colectare_pornita": 0.98815,
+  "pondere_cu_cadre": 0.98636
+ },
+ "veghe": {
+  "randuri": 6547,
+  "randuri_dublate_lasate": 0,
+  "primul": "2026-11-01T09:07:00",
+  "ultimul": "2026-11-05T23:59:00",
+  "tacere_inainte_de_taietura_s": 0
+ },
+ "cadre_pe_secunda": {
+  "mediana": 5.98,
+  "randuri": 6525,
+  "mediana_toate_randurile": 5.98,
+  "media": 5.82,
+  "minim": 3.07,
+  "maxim": 7.05
+ },
+ "pauze": {
+  "numar": 30,
+  "durata_s": 715,
+  "cea_mai_lunga_s": 51,
+  "mediana_s": 22.0,
+  "lista": [
+   {
+    "inceput": "2026-11-01T11:14:55",
+    "durata_s": 11
+   },
+   {
+    "inceput": "2026-11-01T18:40:29",
+    "durata_s": 25
+   },
+   {
+    "inceput": "2026-11-02T02:04:53",
+    "durata_s": 32
+   },
+   {
+    "inceput": "2026-11-02T07:40:44",
+    "durata_s": 21
+   },
+   {
+    "inceput": "2026-11-02T11:21:59",
+    "durata_s": 24
+   },
+   {
+    "inceput": "2026-11-02T13:11:57",
+    "durata_s": 22
+   },
+   {
+    "inceput": "2026-11-02T15:03:26",
+    "durata_s": 37
+   },
+   {
+    "inceput": "2026-11-02T16:58:47",
+    "durata_s": 26
+   },
+   {
+    "inceput": "2026-11-02T18:49:24",
+    "durata_s": 17
+   },
+   {
+    "inceput": "2026-11-03T04:12:20",
+    "durata_s": 30
+   },
+   {
+    "inceput": "2026-11-03T04:12:50",
+    "durata_s": 33
+   },
+   {
+    "inceput": "2026-11-03T06:09:45",
+    "durata_s": 14
+   },
+   {
+    "inceput": "2026-11-03T08:01:17",
+    "durata_s": 13
+   },
+   {
+    "inceput": "2026-11-03T09:54:18",
+    "durata_s": 18
+   },
+   {
+    "inceput": "2026-11-03T11:43:59",
+    "durata_s": 22
+   },
+   {
+    "inceput": "2026-11-03T12:45:00",
+    "durata_s": 33
+   },
+   {
+    "inceput": "2026-11-03T14:51:28",
+    "durata_s": 22
+   },
+   {
+    "inceput": "2026-11-03T15:28:28",
+    "durata_s": 41
+   },
+   {
+    "inceput": "2026-11-03T19:09:13",
+    "durata_s": 13
+   },
+   {
+    "inceput": "2026-11-03T21:07:48",
+    "durata_s": 23
+   },
+   {
+    "inceput": "2026-11-04T11:06:10",
+    "durata_s": 27
+   },
+   {
+    "inceput": "2026-11-04T14:52:54",
+    "durata_s": 22
+   },
+   {
+    "inceput": "2026-11-04T20:33:24",
+    "durata_s": 23
+   },
+   {
+    "inceput": "2026-11-04T22:24:05",
+    "durata_s": 51
+   },
+   {
+    "inceput": "2026-11-05T01:15:10",
+    "durata_s": 12
+   },
+   {
+    "inceput": "2026-11-05T03:07:02",
+    "durata_s": 38
+   },
+   {
+    "inceput": "2026-11-05T05:03:06",
+    "durata_s": 18
+   },
+   {
+    "inceput": "2026-11-05T08:46:39",
+    "durata_s": 14
+   },
+   {
+    "inceput": "2026-11-05T10:36:15",
+    "durata_s": 14
+   },
+   {
+    "inceput": "2026-11-05T18:03:18",
+    "durata_s": 19
+   }
+  ]
+ },
+ "reconectari": {
+  "cresteri_contor": 15,
+  "episoade": 10,
+  "refacute_singure": 10,
+  "lista": [
+   {
+    "de_la": "2026-11-01T18:41:00",
+    "pana_la": "2026-11-01T18:41:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-02T02:05:00",
+    "pana_la": "2026-11-02T02:05:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-02T11:23:00",
+    "pana_la": "2026-11-02T11:23:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-02T15:04:00",
+    "pana_la": "2026-11-02T15:04:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-03T04:13:00",
+    "pana_la": "2026-11-03T04:14:00",
+    "cresteri": 5
+   },
+   {
+    "de_la": "2026-11-03T12:46:00",
+    "pana_la": "2026-11-03T12:46:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-03T15:29:00",
+    "pana_la": "2026-11-03T15:29:00",
+    "cresteri": 2
+   },
+   {
+    "de_la": "2026-11-04T11:07:00",
+    "pana_la": "2026-11-04T11:07:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-04T22:25:00",
+    "pana_la": "2026-11-04T22:25:00",
+    "cresteri": 1
+   },
+   {
+    "de_la": "2026-11-05T03:08:00",
+    "pana_la": "2026-11-05T03:08:00",
+    "cresteri": 1
+   }
+  ]
+ },
+ "opriri": {
+  "anuntate": 2,
+  "caderi_neprevazute": 0,
+  "durata_s": 4730,
+  "lista": [
+   {
+    "oprire": "2026-11-01T21:44:06",
+    "repornire": "2026-11-01T22:48:13",
+    "durata_s": 3847,
+    "anuntata": true,
+    "motivul_repornirii": "procesul lipsește"
+   },
+   {
+    "oprire": "2026-11-05T20:07:23",
+    "repornire": "2026-11-05T20:22:06",
+    "durata_s": 883,
+    "anuntata": true,
+    "motivul_repornirii": "procesul lipsește"
+   }
+  ]
+ },
+ "reporniri_paznic": {
+  "numar": 2,
+  "lista": [
+   {
+    "ora": "2026-11-01T22:47:57",
+    "incercarea": 1,
+    "motiv": "procesul lipsește"
+   },
+   {
+    "ora": "2026-11-05T20:21:54",
+    "incercarea": 1,
+    "motiv": "procesul lipsește"
+   }
+  ]
+ },
+ "lanturi": {
+  "lant": {
+   "ora": "00:15",
+   "asteptate": 4,
+   "incheiate": 4,
+   "pe_stari": {
+    "incheiat": 4
+   },
+   "zile": {
+    "2026-11-01": {
+     "rezultat": "gata",
+     "pasi": 26,
+     "coduri_nenule": 0,
+     "pornit": "2026-11-02T00:15:00",
+     "incheiat_la": "2026-11-02T02:10:06",
+     "stare": "incheiat"
+    },
+    "2026-11-02": {
+     "rezultat": "gata",
+     "pasi": 26,
+     "coduri_nenule": 0,
+     "pornit": "2026-11-03T00:15:00",
+     "incheiat_la": "2026-11-03T02:50:47",
+     "stare": "incheiat"
+    },
+    "2026-11-03": {
+     "rezultat": "gata",
+     "pasi": 26,
+     "coduri_nenule": 0,
+     "pornit": "2026-11-04T00:15:00",
+     "incheiat_la": "2026-11-04T03:20:31",
+     "stare": "incheiat"
+    },
+    "2026-11-04": {
+     "rezultat": "gata",
+     "pasi": 26,
+     "coduri_nenule": 0,
+     "pornit": "2026-11-05T00:15:00",
+     "incheiat_la": "2026-11-05T01:41:03",
+     "stare": "incheiat"
+    }
+   }
+  },
+  "lant_cor": {
+   "ora": "03:30",
+   "asteptate": 2,
+   "incheiate": 2,
+   "pe_stari": {
+    "incheiat": 2
+   },
+   "zile": {
+    "2026-11-03": {
+     "rezultat": "gata",
+     "pasi": 7,
+     "coduri_nenule": 0,
+     "pornit": "2026-11-04T03:30:00",
+     "incheiat_la": "2026-11-04T04:51:33",
+     "stare": "incheiat"
+    },
+    "2026-11-04": {
+     "rezultat": "gata",
+     "pasi": 7,
+     "coduri_nenule": 0,
+     "pornit": "2026-11-05T03:30:01",
+     "incheiat_la": "2026-11-05T04:16:20",
+     "stare": "incheiat"
+    }
+   }
+  },
+  "total": {
+   "asteptate": 6,
+   "incheiate": 6
+  }
+ },
+ "vehicule": {
+  "pe_zile": {
+   "2026-11-01": {
+    "fisier": "numaratori_2026-11-01.csv",
+    "intervale": 56,
+    "de_la": "2026-11-01T09:04:46",
+    "pana_la": "2026-11-02T00:00:00",
+    "vehicule": 37147,
+    "pe_clase": {
+     "passenger": 35481,
+     "bus": 916,
+     "truck": 678,
+     "motorcycle": 48,
+     "bicycle": 24
+    },
+    "pietoni": 8425
+   },
+   "2026-11-02": {
+    "fisier": "numaratori_2026-11-02.csv",
+    "intervale": 96,
+    "de_la": "2026-11-02T00:00:00",
+    "pana_la": "2026-11-03T00:00:00",
+    "vehicule": 56433,
+    "pe_clase": {
+     "passenger": 52825,
+     "bus": 1806,
+     "truck": 1754,
+     "motorcycle": 26,
+     "bicycle": 22
+    },
+    "pietoni": 22210
+   },
+   "2026-11-03": {
+    "fisier": "numaratori_2026-11-03.csv",
+    "intervale": 96,
+    "de_la": "2026-11-03T00:00:00",
+    "pana_la": "2026-11-04T00:00:00",
+    "vehicule": 58906,
+    "pe_clase": {
+     "passenger": 54859,
+     "truck": 2028,
+     "bus": 1907,
+     "motorcycle": 69,
+     "bicycle": 43
+    },
+    "pietoni": 26962
+   },
+   "2026-11-04": {
+    "fisier": "numaratori_2026-11-04.csv",
+    "intervale": 96,
+    "de_la": "2026-11-04T00:00:00",
+    "pana_la": "2026-11-05T00:00:00",
+    "vehicule": 64703,
+    "pe_clase": {
+     "passenger": 59883,
+     "truck": 2605,
+     "bus": 2016,
+     "motorcycle": 124,
+     "bicycle": 75
+    },
+    "pietoni": 30498
+   },
+   "2026-11-05": {
+    "fisier": "numaratori_2026-11-05.csv",
+    "intervale": 96,
+    "de_la": "2026-11-05T00:00:00",
+    "pana_la": "2026-11-06T00:00:00",
+    "vehicule": 66963,
+    "pe_clase": {
+     "passenger": 61986,
+     "truck": 2667,
+     "bus": 2024,
+     "motorcycle": 166,
+     "bicycle": 120
+    },
+    "pietoni": 31981
+   },
+   "2026-11-06": {
+    "fisier": "numaratori_2026-11-06.csv",
+    "intervale": 0,
+    "de_la": null,
+    "pana_la": null,
+    "vehicule": 0,
+    "pe_clase": {},
+    "pietoni": 0
+   }
+  },
+  "total": 284152,
+  "pe_clase": {
+   "passenger": 265034,
+   "truck": 9732,
+   "bus": 8669,
+   "motorcycle": 433,
+   "bicycle": 284
+  },
+  "pietoni_total": 120076
+ },
+ "definitii": {
+  "inceput": "ultima pornire a colectării dinaintea tăieturii (data creării unui viziune_*.log) care nu e o repornire peste un gol din reporniri_*.csv",
+  "randuri_veghe": "rândurile al căror minut a început după început și s-a încheiat până la tăietură",
+  "oprire": "un gol din reporniri_*.csv (ultima dovadă de viață → prima traiectorie nouă), tăiat la fereastră; anunțat dacă paznicul a notat „oprire anunțată” între 10 min înaintea opririi și repornire",
+  "pauza": "un gol de cel puțin 10 s între două cadre prelucrate, din coloana `evenimente` a vegherii, în afara opririlor",
+  "minut_cu_cadre": "minut întreg din fereastră care nu stă în întregime într-o oprire sau într-o pauză",
+  "cadre_pe_secunda": "mediana coloanei `fps` pe rândurile din fereastră cu vârsta stării sub 2,5 s",
+  "reconectari": "creșterile contorului colectării (pierderi ale fluxului și încercări eșuate de redeschidere), pe toate rulările; episod = creșteri la cel mult 2 min una de alta",
+  "lanturi": "o rulare pe zi, de la prima zi cu stare.json până la ultima noapte programată înaintea tăieturii; încheiată = rezultat gata / gata_fara_simulari, toți pașii cu codul 0, încheiată înaintea tăieturii",
+  "vehicule": "rândurile `intrare` din intervalele încheiate în fereastră, detectate, fără factori de corecție; pietonii doar ca total pe zi"
+ },
+ "fisiere_citite": [
+  "outputs/logs/paznic_2026-11-01.log",
+  "outputs/logs/paznic_2026-11-02.log",
+  "outputs/logs/paznic_2026-11-03.log",
+  "outputs/logs/paznic_2026-11-04.log",
+  "outputs/logs/paznic_2026-11-05.log",
+  "outputs/logs/paznic_2026-11-06.log",
+  "outputs/logs/reporniri_2026-11-01.csv",
+  "outputs/logs/reporniri_2026-11-05.csv",
+  "outputs/logs/veghe_2026-10-29.csv",
+  "outputs/logs/veghe_2026-10-29_v1.csv",
+  "outputs/logs/veghe_2026-11-01.csv",
+  "outputs/logs/viziune_2026-10-26.log",
+  "outputs/logs/viziune_2026-10-28.log",
+  "outputs/logs/viziune_2026-10-29.log",
+  "outputs/logs/viziune_2026-11-01.log",
+  "outputs/logs/viziune_2026-11-01_224800.log",
+  "outputs/logs/viziune_2026-11-05_202158.log",
+  "outputs/lant/<zi>/stare.json",
+  "outputs/lant_cor/<zi>/stare.json",
+  "data/counts/numaratori_<zi>.csv"
+ ]
+}
