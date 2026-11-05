@@ -36,26 +36,22 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (04.11.2026, ~18:45) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (05.11.2026, ~04:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
   `docs/rezultate/praguri_geaman.json`. Poarta trece pe 8 din 12 ore de antrenare; Dacia vest rămâne sub cameră în zilele lucrătoare.
   Măsurile nu se mai schimbă. Rezultatele pe `zi_*`, `capacitate_*` din 28.10 încoace, inclusiv −7%, nu mai sunt valabile.
-- **Lista candidaților e fixată (3.11, commitul „Borna M2: lista candidaților…”), nu se mai schimbă:** `config/candidati_v2.json` =
-  PLAN_60_40_3, PLAN_45_30_3, models/ppo_e15.zip; raportat ACTUATED (§ 9.11). Pe 4.11 (validare, seed-urile 11–15) un candidat trebuie să
-  bată PLAN_72_48_3 și REAL. Decizia validării (`outputs/validare/cor_decizie_2026-11-04.json`, pe 05.11 pe la 04:30) se copiază în
-  `docs/rezultate/` și se comite înaintea oricărei desigilări. Fiecare zi de test și de generalizare se desigilează noaptea, după buclă,
-  pe 3 procese, cu `bash outputs/unelte/desigileaza_zi.sh <zi> "<termen>"` pornit în fundal (verifică decizia comisă și completitudinea,
-  nu citește rezultate). Regula finală: `python -m romana.lant_cor --regula-finala`, abia după toate cele trei zile (pe 8.11, dimineața),
-  cu fișierele și ordinea din cod; până atunci nu se citesc rezultatele zilelor de test. Lanțul vechi nu se mai desigilează
-  (§ 9.11, precizările din 3.11). Rezultatele zilei de 3.11 se raportează, dar nu schimbă lista.
-- **Ziua de 3.11, prelucrată de ambele lanțuri pe 4.11 (lant_cor gata la 04:51) și comisă:** poarta trece pe 0 din 5 ore. La vârf,
-  dimineața și la prânz, Dacia vest are 410–510 veh/h în geamăn, față de 820–920 în cameră, și 2,4–5,4% vehicule neintrate; în ora
-  liniștită pică la teleportări; seara, la pierderea de detecție pe întuneric. Ziua e doar descriptivă. Raportul e în § 9.11, iar
-  fișierele, în `docs/rezultate/*2026-11-03*`. Ziua de validare, 4.11, poate ieși la fel; atunci niciun candidat nu trece, testul nu se
-  deschide (lant_cor o face singur), iar pagina 8 a prezentării spune asta. **Alarma pentru 4.11** (`alarma_lant.sh`, termen 05.11,
-  09:30) rulează. Când sună: copiez decizia în `docs/rezultate` și o comit; desigilarea o pornesc doar dacă a trecut un candidat.
+- **Lista candidaților e fixată (3.11):** `config/candidati_v2.json` = PLAN_60_40_3, PLAN_45_30_3, models/ppo_e15.zip; raportat
+  ACTUATED (§ 9.11). **Validarea din 4.11 s-a încheiat pe 5.11, la 04:16: poarta trece pe 0 din 4 ore, deci validarea e doar descriptivă
+  și niciun candidat nu trece.** Decizia, octet cu octet, e în `docs/rezultate/cor_decizie_2026-11-04.json` (commitul 460b947, 05.11,
+  04:23). Zilele 5–7.11 se prelucrează noaptea doar până la geamăn și poartă, fără strategii, și nu se desigilează (verificat în cod:
+  `pasi_dupa` dă doar „geaman”, chiar desigilat). `--regula-finala` răspunde deja „niciun candidat nu a trecut de validare: runda s-a
+  încheiat, rămâne planul observat”; pe 8.11, dimineața, se rulează totuși, cum s-a scris. Lanțul vechi nu se mai desigilează.
+- **Zilele de 3.11 și 4.11, prelucrate și comise:** poarta trece pe 0 din 5 ore pe 3.11 și pe 0 din 4 ore pe 4.11 (ora de dimineață
+  se suprapune cu vârful și iese). Pe 4.11, la vârf, la prânz și seara, Dacia vest are 396–516 veh/h în geamăn, față de 867–922 în
+  cameră, și 2,2–6,6% vehicule neintrate; în ora liniștită, 25 de teleportări pe rulare și Dacia est cu 18% sub cameră. Rapoartele, în
+  § 9.11, iar fișierele, în `docs/rezultate/*2026-11-0[34]*`. Rulările strategiilor din zilele descriptive nu se citează ca procente.
   Geamănul în timp real rămâne pe planul observat până după M2. **Diagnoza (4.11, doar citire, verificată în fișiere):** Dacia vest e
   frânată de cutia dintre linia de oprire și inel (keepClear pe nodurile legate prin muchii scurte și cedarea de la îmbinarea 5280746678);
   teleportările de noapte vin din REAL, care ia ciclul din mediana valurilor (358,8 s, față de 124,5 s în spectru). Raportul și dovezile,
@@ -88,12 +84,11 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 - **Prezentarea M2:** schița „demonstrația întâi” (03.11, 21:17), cu revizia din 3.11, 23:20, aplicată pe 4.11 dimineața: ≈3,5 minute
   de demonstrație pe laptop din ≈6 min, limbaj simplu, 8 pagini; pe pagina 8, lângă fiecare verdict, potrivirea cu camera („X din Y
   ore”). Totul în `outputs/prezentare/surse_m2` (sablon_m2.html, construieste_m2.py, exporta_m2.py, verifica_m2.py; scenariul
-  demonstrației, întrebările probabile și deciziile, în NOTE_M2.md; prima ciornă, în `ciorna_1/`). Locuri goale: pagina 5 (sâmbătă,
-  după 18:00) și pagina 8 (proba pe 5.11, decizia pe 8.11). Pe 8.11 se pornesc doar geamănul și serverul dispeceratului, direct cu
-  Python, după `scripts\_mediu.bat`, în două file de Windows Terminal (NOTE_M2.md, pasul de la 07:35), niciodată `PORNESTE_TOT.bat`,
-  care ar porni o a doua colectare. **Pe 5.11, după
-  validare:** din duratele reale ale lanțului estimez dacă 7.11 se termină pe 8.11 până la ≈06:30; altfel, desigilarea zilei de 7.11
-  pe mai multe procese, cu nota în § 9.11.
+  demonstrației, întrebările probabile și deciziile, în NOTE_M2.md; prima ciornă, în `ciorna_1/`). Loc gol: doar pagina 5 (sâmbătă,
+  după 18:00). Pagina 8 e completă din 5.11: „Proba: nu trece nimeni: simularea s-a potrivit cu camera pe 0 din 4 ore. Decizia: nu a
+  mai avut loc; rămâne programul de azi.” Pe 8.11 se pornesc doar geamănul și serverul dispeceratului, direct cu Python, după
+  `scripts\_mediu.bat`, în două file de Windows Terminal (NOTE_M2.md, pasul de la 07:35), niciodată `PORNESTE_TOT.bat`, care ar porni
+  o a doua colectare. Fără desigilări, ziua de 7.11 e gata pe 8.11 pe la 03:45 (doar geamănul), deci dimineața nu mai rulează simulări.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).

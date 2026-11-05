@@ -20,6 +20,10 @@
 > **Ziua de 3.11, prelucrată pe 4.11.** E prima zi lucrătoare judecată cu măsurile înghețate. Geamănul nu trece poarta pe nicio oră, mai
 > ales din cauza Daciei vest, deci ziua e doar descriptivă. Dacă și ziua de validare iese la fel, testul nu se deschide, iar în geamăn
 > rămâne planul observat (§ 9.11).
+>
+> **Ziua de validare, 4.11, prelucrată pe 5.11.** Geamănul nu trece poarta pe nicio oră, tot din cauza Daciei vest, deci validarea e
+> doar descriptivă: niciun candidat nu trece, zilele de test nu se deschid, iar în geamăn rămâne planul observat. Runda se încheie fără
+> un program nou; reparațiile geamănului țin de o rundă nouă, după M2 (§ 9.11).
 
 Cât timp ar câștiga participanții la trafic din Piața Romană, în București, dacă s-ar schimba **doar programul
 semafoarelor existente**, fără nicio lucrare pe stradă? Proiectul caută răspunsul în simulare.
