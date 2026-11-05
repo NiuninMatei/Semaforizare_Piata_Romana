@@ -36,7 +36,7 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 `src/romana/control` (SignalController sigur, mediu Gymnasium, PPO, Webster/actuated/Max-Pressure, evaluare) →
 `src/romana/dashboard` (Flask, http://localhost:8050). Config în `config/*.json`.
 
-## Stare curentă (05.11.2026, ~14:10) – pregătirea pentru M2 (08.11, 08:00, online)
+## Stare curentă (05.11.2026, ~19:35) – pregătirea pentru M2 (08.11, 08:00, online)
 
 - **Măsura nouă e înghețată la commitul cffd50e (03.11, 10:13), publică din 03.11, 14:10, înainte de a privi datele din 3.11** (§ 9.11,
   memoria geaman-coliziuni): cererea în `config/factori_v2.json` și `cerere_v2.py`, excluderile în `config/excluderi_cor.json`, pragurile în
@@ -92,6 +92,10 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   în `surse_m2/revizie_m2_0511.json`, iar rezumatul, la sfârșitul NOTE_M2.md. Pe 8.11 se pornesc doar geamănul și serverul dispeceratului, direct cu Python, după
   `scripts\_mediu.bat`, în două file de Windows Terminal (NOTE_M2.md, pasul de la 07:35), niciodată `PORNESTE_TOT.bat`, care ar porni
   o a doua colectare. Fără desigilări, ziua de 7.11 e gata pe 8.11 pe la 03:45 (doar geamănul), deci dimineața nu mai rulează simulări.
+  **Proba tehnică a demonstrației (5.11, 19:20–19:28, fără autor):** pornirea ca pe 8.11 și părțile 1 și 2 merg ca în note (faza
+  pe Dacia, aplicată în 16,5 s; alerta, la ≈11 s; revenirea singură, la ≈9 s; camera, 5,9–6,1 cadre/s); clicul pe „Oprește imaginea”
+  a fost refuzat de clasificatorul modului automat, deci rămâne, cu zoomul și ferestrele, pentru repetiția autorului. Detaliile, la
+  sfârșitul NOTE_M2.md.
 - **M1 prezentată pe 01.11.2026** (punctaj maxim, ≈15 min): `docs/prezentari/Prezentare_M1.pdf`; sursele, local, în
   `outputs/prezentare/surse_m1`. Prezentările următoare sunt mult mai scurte.
 - **Commit-urile lucrului pentru M2 încep cu „Borna M2: …”** (lista schimbărilor dintre borne, § 12.3).
