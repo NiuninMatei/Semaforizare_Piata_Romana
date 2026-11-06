@@ -39,7 +39,9 @@ d) Numărătorile și traiectoriile proprii: data/counts/**, data/counts_cor/**,
    în sine nu sunt protejate (Legea nr. 8/1996, art. 9 lit. f)).
 
 e) Documentația, rezultatele și textele: docs/** (documentația, PDF-ul, rezultatele, jurnalele de
-   antrenare, figurile proprii; fără traiectoriile de la litera d), README.md, NOTICE, legacy/google_ai_draft/README.md, .claude/CLAUDE.md
+   antrenare, figurile proprii; fără traiectoriile de la litera d și fără pagina sondării, docs/sondare/** și
+   docs/.nojekyll, care e cod, sub AGPL-3.0-or-later, cu fonturile .woff2 sub SIL OFL 1.1), README.md, NOTICE,
+   legacy/google_ai_draft/README.md, .claude/CLAUDE.md
    Licență: Creative Commons Attribution 4.0 International (CC-BY-4.0) – LICENSES/CC-BY-4.0.txt,
    https://creativecommons.org/licenses/by/4.0/legalcode; plus notificarea OpenStreetMap (§ 2).
 
