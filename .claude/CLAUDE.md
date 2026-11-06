@@ -38,6 +38,18 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
 
 ## Stare curentă (05.11.2026, ~23:30) – pregătirea pentru M2 (08.11, 08:00, online)
 
+- **Noaptea de 5→6.11 (stare la 05:45; consumul, 93% la 04:53, deci de aici doar strictul necesar până la 23:00):**
+  - Auditul de noapte (wf_a02c5e05-4d0) și două verificări adversariale (wf_9326e40e-ea5: 62 confirmate; wf_afad6117-573: 29
+    confirmate din 41) sunt aplicate în prezentare (sablon, constructor, NOTE_M2.md) și în documentație. Rezultatele lor, local:
+    `outputs/prezentare/surse_m2/audit_0511_noapte/` și `scratchpad\verif_v3_confirmate.json`, `scratchpad\verif_finala_confirmate.json`.
+  - Comise și împinse la 05:08: e62ed17 (documentația după audit), 7f0ea5e (ziua de 5.11 prin măsura înghețată: doar geamănul și
+    poarta, poarta trece pe 1 din 5 ore, ora liniștită; descriptivă) și 9e36f98 (verificarea finală, ziua de 5.11 în § 9.11, § 12.3,
+    Anexa A și README, eticheta fișei fără „continue”). Înainte: 86d1c8e (programul real pe 5.11, CP3) și dbc7f0e (fișa la 6.11, 00:00).
+  - La 05:42: ciorna exportată (`Prezentare_M2_ciorna.pdf`, pagini PNG privite una câte una), toate cele 8 pagini trec
+    `verifica_m2.py` (corpul 352–447 din 450 de caractere); în constructor, „§” nu se mai desparte de număr. PDF-ul documentației,
+    refăcut (100 de pagini) și comis. Urmează: la CP5 (15:00), `construieste_m2.py --final` și `exporta_m2.py --final --pdf
+    Prezentare_M2.pdf` (verificat că paginile trec și că pagina 7 spune „publicate”), apoi SendUserFile autorului, pentru CP6 (17:30).
+  - Testele: 764, 0 eșecuri, la dbc7f0e; după 9e36f98 au trecut din nou cele 20 ale fișei (modulul și-a schimbat doar textele).
 - **Direcția nouă, cerută de autor pe 05.11, ≈19:45 (memoriile m2-ce-e-mai-bun, absenta-6-8-11, iot-si-ioc, buget-tokeni):**
   M2 trebuie să arate ce e mai bun și nou, nu „nu trece nimeni”; o schimbare de fond, aleasă de mine, cu mână liberă la
   modificări fundamentale; proiectul e la IOT și IOC. Limita săptămânală, eșalonat până la ≈100% vineri, 23:00, fără blocaj.
