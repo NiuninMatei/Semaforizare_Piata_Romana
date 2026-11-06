@@ -2,16 +2,16 @@
 
 > **Corectură importantă, 2.11.2026.** Rezultatul prezentat mai jos, câștigul planului 12/14/12 (−7%), **nu mai este valabil**. El a fost
 > obținut pe un geamăn în care, din cauza unei alegeri greșite (`tau` = 0,8 s sub pasul de simulare de 1 s) și a avertismentelor oprite,
-> vehiculele se ciocneau și erau teleportate de ≈15 000 de ori pe oră. Planul 12/14/12 nici nu poate duce traficul: pe Magheru îi lasă cel
+> vehiculele se ciocneau și erau teleportate de ≈15 000 de ori pe oră. Planul 12/14/12 nici nu poate duce traficul: pe Magheru lasă să treacă cel
 > mult ≈1 300 de vehicule pe oră, față de ≈2 600 numărate la vârf. Tot din cameră a ieșit și programul real al semaforului: un ciclu de
 > ≈125–155 s, nu de ≈91 s, cât presupuneam. Geamănul s-a corectat, dar **nu e validat**: prima corectură a avut ea însăși un defect, găsit
 > înainte de publicare, iar pe unele măsuri geamănul încă nu se potrivește cu camera. Explicația e în [§ 6.5 din documentație](docs/DOCUMENTATIE.md#65-geamănul-corectat-coliziunile-ascunse-și-programul-real-2112026). Textul de mai jos rămâne ca
 > istoric: runda zilelor noi s-a încheiat pe 5.11 fără un program nou (mai jos).
 >
-> **Înghețul, 3.11.2026.** Măsurile geamănului corectat s-au fixat la un commit numit, înainte de a privi datele din 3.11. Pe zilele de
-> antrenare, geamănul trece poarta din § 9.11 (debitele de pe Magheru, Lascăr Catargiu și Dacia est, teleportările, ciocnirile și
-> vehiculele neintrate) pe 8 din 12 ore, dar tot nu e validat: pe Dacia vest, în zilele lucrătoare, duce mult mai puțin decât camera,
-> iar timpii virajelor nu se potrivesc (§ 6.5).
+> **Înghețul, 3.11.2026.** Măsurile geamănului corectat s-au fixat la un commit numit, înainte de a privi datele din 3.11. Poarta din
+> § 9.11 (debitele de pe Magheru, Lascăr Catargiu și Dacia est, teleportările, ciocnirile, vehiculele neintrate și pierderea de detecție
+> pe întuneric) trecea pe 8 din cele 12 ore comparate la îngheț, din 25 și 26.10 și din 1 și 2.11, dar geamănul tot nu e validat: pe
+> Dacia vest, în zilele lucrătoare, duce mult mai puțin decât camera, iar timpii virajelor nu se potrivesc (§ 6.5).
 >
 > **Candidații, 3.11.2026.** Din orele zilelor de antrenare care trec poarta s-au ales, pentru zilele noi, planurile fixe 60/40/3 și
 > 45/30/3 și agentul E15. În geamăn, nu pe stradă, ei trebuie să bată și planul observat, și semaforul rejucat: întâi pe ziua de validare,
@@ -24,6 +24,9 @@
 > **Ziua de validare, 4.11, prelucrată pe 5.11.** Geamănul nu trece poarta pe nicio oră, mai ales din cauza Daciei vest și a teleportărilor de noapte, deci validarea e
 > doar descriptivă: niciun candidat nu trece, zilele de test nu se deschid, iar în geamăn rămâne planul observat. Runda se încheie fără
 > un program nou; reparațiile geamănului țin de o rundă nouă, după M2 (§ 9.11).
+>
+> **Ziua de 5.11, prelucrată pe 6.11.** Prima zi de test s-a prelucrat doar până la geamăn și poartă, fără strategii: poarta trece pe 1 din
+> 5 ore, ora liniștită. Ziua e doar descriptivă (§ 9.11).
 >
 > **Programul real pe 2–5.11, măsurat pe 5 și 6.11.** Camera a măsurat din nou programul semaforului, pe patru zile lucrătoare,
 > după criterii publicate înaintea rulării care dă verdictele (`docs/rezultate/program_real_criterii.json`; verdictele, în
