@@ -13,8 +13,9 @@ integrale ale licențelor în LICENSE și în directorul LICENSES/. Motivarea: d
 1. LICENȚELE PROIECTULUI, PE CĂI
 --------------------------------
 
-a) Codul: src/**, scripts/**, tests/**, config/**, requirements.txt, .gitignore, .gitattributes,
-   .vscode/**; codul ciornei legacy/google_ai_draft/*.py
+a) Codul: src/** (fără fonturile .woff2 din src/romana/dashboard/static/fonturi, sub SIL OFL 1.1),
+   scripts/**, tests/**, config/**, requirements.txt, .gitignore, .gitattributes, .vscode/**; codul
+   ciornei legacy/google_ai_draft/*.py
    Licență: GNU Affero General Public License v3 sau ulterioară (AGPL-3.0-or-later) – LICENSE.
    AGPL-3.0 este obligatorie pentru modulul de viziune (src/romana/vision/), care folosește Ultralytics
    YOLO11 (AGPL-3.0). Celelalte module nu importă Ultralytics; autorul a ales totuși aceeași licență

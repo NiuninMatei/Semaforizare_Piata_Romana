@@ -329,7 +329,7 @@ class TestPiese(unittest.TestCase):
 
 
 def _jurnale_reale() -> bool:
-    """Jurnalele colectării continue de la 01.11, cu datele de creare păstrate (o copie a dosarului le-ar schimba)."""
+    """Jurnalele colectării de la 01.11, cu datele de creare păstrate (o copie a dosarului le-ar schimba)."""
     pornire = fs.LOG_DIR / "viziune_2026-11-01.log"
     if not all(f.exists() for f in (pornire, fs.LOG_DIR / "veghe_2026-11-01.csv", fs.LOG_DIR / "reporniri_2026-11-05.csv")):
         return False

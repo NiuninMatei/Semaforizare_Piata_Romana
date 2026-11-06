@@ -174,7 +174,7 @@ trimitere la locul unde sunt prezentate în detaliu.
 | E9 | `ppo_romana_lejer`: specialistul pentru trafic lejer, antrenat doar pe scenariile liniștite din 21–22.10. Conduce traficul lejer în programul marginii de sus. | § 9.2, § 9.5 |
 | E13 | `ppo_romana_cal`: agentul oficial antrenat încă 300 000 de pași pe scenariile calibrate din 21–22.10, cu participanți disciplinați și indisciplinați. Pe 26.10 a fost cel mai constant agent, așa că a intrat în testul final ca singurul agent candidat. Acolo a fost eligibil, dar al treilea după pierderea totală, și nu s-a deosebit semnificativ de planul 12/14/12 (p = 0,82); pe 29.10 a pierdut cu 3,4% mai mult decât planul. Toate aceste rezultate, din 26, 28 și 29.10, stau pe geamănul cu coliziuni, deci s-au retras pe 2.11 (§ 6.5). | § 9.5, § 9.9, § 9.10 |
 | E14 | E13 antrenat încă 300 000 de pași pe scenariile zilei de validare, luni 26.10, cu capacitatea calibrată. Pe validare a ieșit mai slab decât E13, deci nu a devenit candidat; și această comparație stă pe geamănul cu coliziuni, deci s-a retras pe 2.11 (§ 6.5). | § 9.5, § 9.9 |
-| E15 | `ppo_e15`: agentul antrenat în ziua de 3.11, pe geamănul înghețat, doar pe orele din 25 și 26.10 și 1.11 care trec poarta, fără date din 3.11. Imită întâi planul observat, apoi învață cu PPO, și alege doar între N–S și E–V. Pe zilele de antrenare pierde cu 1,7% mai mult decât planul observat, dar e pe lista candidaților din 3.11, cum s-a scris pe 1.11. La validarea din 4.11 nu a trecut, ca niciun alt candidat: geamănul nu s-a potrivit cu camera pe nicio oră, deci validarea a fost doar descriptivă. | § 9.5, § 9.11 |
+| E15 | `ppo_e15`: agentul antrenat în ziua de 3.11, pe geamănul înghețat, doar pe orele din 25 și 26.10 și 1.11 care trec poarta, fără date din 3.11. Imită întâi planul observat, apoi învață cu PPO, și alege doar între N–S și E–V. Pe zilele de antrenare pierde cu 1,7% mai mult decât planul observat, dar e pe lista candidaților din 3.11, cum s-a scris pe 1.11. La validarea din 4.11 nu a trecut, la fel ca ceilalți doi candidați: geamănul nu s-a potrivit cu camera pe nicio oră, deci validarea a fost doar descriptivă. | § 9.5, § 9.11 |
 | programul realist, `REALIST` | Programul ales pe validarea cu participanți indisciplinați: agentul oficial la trafic lejer și E3 la trafic moderat și greu. A fost varianta implicită a geamănului în timp real până pe 29.10 și strategia în vigoare față de care s-a judecat testul final; `REALIST` e numele lui în comenzi. | § 9.4, § 9.10 |
 | `TOD_DEBIT` | Program din planuri fixe, cu cazurile stabilite după debit: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens. Candidat în testul final: pe 28.10 a avut cea mai mică pierdere totală dintre candidați, dar diferența față de 12/14/12, de 0,3%, nu a fost semnificativă, așa că a câștigat planul mai simplu. Rezultatul s-a retras pe 2.11, odată cu tot testul final (§ 6.5). | § 9.9, § 9.10 |
 | `TOD_FIX` | Aceleași planuri, cu cazurile stabilite după numele scenariilor: 16/10/12 în scenariile liniștite și la prânz, 12/14/12 în rest. A fost ales chiar pe datele de validare, deci estimarea de acolo e optimistă; în teste a fost doar raportat, nu candidat. | § 9.9, § 9.10 |
@@ -709,9 +709,9 @@ două sunt după apus, care a fost la ≈17:05.
 | Dacia vest, intrări | 48 | 41 | 37 |
 | Magheru, intrări | 165 | 172,5 | 156,5 |
 
-*Zona nouă.* Pe traiectoriile din clipuri s-au încercat sistematic multe zone. Pe cea aleasă, numărarea automată prinde 76% din
-Catargiu și doar 9% din inel, iar pe cele 30 de bucăți de 30 s urmărește bine referința: corelația este 0,967. Prima variantă,
-cea din plan, prindea 53%, respectiv 29%, cu o corelație de 0,884. Tot atunci s-a îngustat și zona de pe Dacia vest. Zonele au fost
+*Zona nouă.* Pe traiectoriile din clipuri s-au încercat sistematic multe zone. Pe cea aleasă, numărarea automată prindea atunci 76% din
+Catargiu și doar 9% din inel, față de numărarea pe felii, iar pe cele 30 de bucăți de 30 s o urmărea bine: corelația era 0,967.
+Prima variantă, cea din plan, prindea 53%, respectiv 29%, cu o corelație de 0,884. Tot atunci s-a îngustat și zona de pe Dacia vest. Față de referința finală din tabel, pe aceleași clipuri, zona nouă prinde 79, 91 și 67 de vehicule: 72% în total și cam două treimi după apus. Zonele au fost
 fixate prin două commit-uri, `b6a0adc` și `573217f`, **înaintea** clipurilor de verificare, ca să nu poată fi potrivite după ele.
 Ele stau în `config/camera_v2.json`, iar `config/camera.json`, al măsurii vechi, a rămas neatins.
 
@@ -1285,9 +1285,9 @@ Pe fișierele întregi nu schimbă nimic: numărătorile din 29 și 30.10 ies id
 rând sau dacă nu mai dă semne de viață de 5 minute, iar camera răspunde. Dacă problema e la cameră sau la rețea, doar așteaptă,
 fiindcă `run_vision` se reconectează singur. Înainte să pornească din nou colectarea, paznicul verifică jurnalul zilei cu
 `romana.vision.repara`. Dacă găsește bucăți stricate, face lângă fișier o copie reparată și păstrează originalul, fără să
-șteargă nimic. Colectarea are întâietate: o verificare eșuată nu îi oprește pornirea. O a doua colectare nu pornește
-niciodată: dacă găsește mai multe colectări în același timp sau un proces despre care nu poate ști dacă e colectarea,
-paznicul lasă hotărârea omului. Înaintea oricărei opriri voite se pune fișierul `outputs/live/fara_repornire`,
+șteargă nimic. Colectarea are întâietate: o verificare eșuată nu îi oprește pornirea. Paznicul nu pornește niciodată
+o a doua colectare: dacă găsește mai multe colectări în același timp sau un proces despre care nu poate ști dacă e
+colectarea, lasă hotărârea omului. Înaintea oricărei opriri voite se pune fișierul `outputs/live/fara_repornire`,
 altfel paznicul pornește colectarea la loc. Paznicul se lansează direct, nu printr-un alt shell, iar după oprirea lui se
 verifică dacă a dispărut. Fiecare repornire se notează în `outputs/logs/reporniri_<zi>.csv`, iar prelucrarea de noapte scoate
 din ferestrele scenariilor sferturile de oră atinse. Din 1.11, paznicul a pornit colectarea la loc de două ori, după cele
@@ -1503,7 +1503,7 @@ scenariile, ce scenarii s-au construit, cât de fidele sunt și unde sunt folosi
 - **joi 29.10.2026, de la 00:00 la 24:00**: ziua de confirmare (§ 9.10). Colectarea s-a oprit 13 minute, 08:33–08:46,
   pentru repornirea calculatorului. De aceea, sferturile de oră care încep la 08:30 și la 08:45 nu intră în alegerea
   orelor pentru scenarii (§ 4.6);
-- **vineri 30.10.2026, de la 00:00 la 08:30**: noaptea și dimineața. Atunci colectarea s-a oprit, iar pe 1.11 a reluat. Datele
+- **vineri 30.10.2026, de la 00:00 la 08:30**: noaptea și dimineața. Atunci colectarea s-a oprit, iar pe 1.11 s-a reluat. Datele
   sunt publicate, dar nu au scenarii;
 - **din duminică 1.11.2026, de la 09:04**: colectarea merge pe laptop zi și noapte, fără nicio cădere neprevăzută; s-a oprit doar
   de două ori, anunțat, pe 1.11 și pe 5.11. Veghea și paznicul o urmăresc, opririle și repornirile se notează, iar sferturile de
@@ -1678,8 +1678,8 @@ alerta pe loc; fișa senzorului arată cât timp au lipsit cadrele (§ 4.6).
 mișcarea să pară fluentă în SUMO-GUI. Controlerul semaforului lucrează însă pe secunde întregi.
 
 **Geamănul corectat (2.11.2026).** Geamănul în timp real rulează acum pe rețeaua, tipurile de vehicule, rutele și pietonii din § 6.5, iar
-planul implicit este planul observat. Debitele rămân cele brute, de la colectarea în curs, cu zonele vechi, cel puțin până după prezentarea M2, pe 8.11: colectarea păstrează `config/camera.json` neschimbat, ca măsura veche să rămână comparabilă (§ 9.11). Lascăr Catargiu e deci de 2–3 ori sub
-traficul real, și ziua, nu doar seara, iar dispeceratul nu arată cererea măsurii noi. Din geamănul în timp real nu iese nicio cifră raportată. Opțiunea `--geaman-vechi` pornește varianta de dinainte, doar pentru comparație.
+planul implicit este planul observat. Debitele rămân cele brute, de la colectarea în curs, cu zonele vechi, cel puțin până după prezentarea M2, pe 8.11: colectarea păstrează `config/camera.json` neschimbat, ca măsura veche să rămână comparabilă (§ 9.11). Lascăr Catargiu e deci sub traficul real și ziua, nu doar seara, când aproape dispare: între 07:00 și 16:00, zona veche numără de 2–3 ori mai puțin decât
+zona nouă înmulțită cu factorul ei de zi, 1,16 (§ 4.3), pe 25–26.10 și pe 1.11, iar pe 2–4.11, de 4–7 ori mai puțin (intrările din `data/counts`, față de cele din `data/counts_cor`). Dispeceratul nu arată cererea măsurii noi. Din geamănul în timp real nu iese nicio cifră raportată. Opțiunea `--geaman-vechi` pornește varianta de dinainte, doar pentru comparație.
 
 **Modurile de control.** Din dispecerat se alege unul dintre aceste moduri:
 
@@ -2040,13 +2040,13 @@ Comparația s-a rescris. Nu mai are un scor total, ci rânduri pe grupuri, iar u
 
 *Figura 6.2 – Vârful din luni 26.10, 14:30–15:30: câte vehicule trec, pe ciclu, la fiecare 10 s de la începutul valului de pe Magheru, în cameră și în geamăn (media celor 5 seed-uri), cu semaforul rejucat. Ieșirea spre Dacia est e dată ca parte din total, fiindcă ieșirile nu intră în cerere. Pe Dacia est, geamănul pornește cu ≈10 s mai devreme decât camera.*
 
-* *Se apropie.* Pe 8 din cele 12 ore, debitele de pe Magheru, Lascăr Catargiu și Dacia est sunt la cel mult 6% de cameră, toate vehiculele intră, iar teleportările și ciocnirile văzute de SUMO lipsesc sau sunt excepții. Trec toate orele de duminică, inclusiv cele două ținute deoparte, și două ore de luni, 26.10: vârful și ora liniștită.
+* *Se apropie.* Pe 8 din cele 12 ore, debitele de pe Magheru, Lascăr Catargiu și Dacia est sunt la cel mult 6,3% de cameră, toate vehiculele intră, iar teleportările și ciocnirile văzute de SUMO lipsesc sau sunt excepții. Trec toate orele de duminică, inclusiv cele două ținute deoparte, și două ore de luni, 26.10: vârful și ora liniștită.
 * *Nu se potrivește.* Dacia vest în zilele lucrătoare: geamănul duce cel mult ≈590 de vehicule pe oră, fiindcă vehiculele trec prea încet chiar după linia de oprire, cum a arătat diagnoza din 4.11 (§ 9.11), iar camera, cu factorul de corecție, dă 766–1 063, deci rămân vehicule neintrate. De aceea pică poarta seara din 26.10 și vârful și prânzul din 2.11, ziua cu cel mai mult trafic pe Dacia vest; pe 2.11, la prânz, scade și Dacia est, cu 12%. Ora liniștită din 2.11 are 28 de teleportări pe rulare. Cauza s-a găsit pe 4.11 (§ 9.11): noaptea, valurile de pe Magheru sunt prea rare, iar programul rejucat ia drept ciclu o distanță mult prea lungă dintre ele, așa că vehiculele de pe Dacia stau 300 s la roșu și sunt teleportate. Refăcut pe ritmul intrărilor, programul nu mai dă teleportări într-o probă pe noaptea de 2.11; reparația ține de o rundă nouă, după M2. Ziua de 2.11 nu trece pe nicio oră, deci, după regula din § 9.11, ar fi doar descriptivă. Tot la vârful din 26.10, virajul Magheru → Dacia est trece piața mai repede decât în cameră: mediana e 2,6 s față de 3,1 s, iar un sfert dintre vehicule au nevoie de peste 3,6 s, față de 5,9 s. Nu se potrivesc nici debitul de vârf pe 20 s de pe Dacia est (0,60 față de 0,74 vehicule pe secundă), histograma pietonilor și formele ieșirilor, iar ieșirea spre Dacia est din secundele 24–60 ale etapei N–S, 4,9 față de 6,1 vehicule pe etapă, rămâne nedecisă.
 * *Gemenii greșiți dinadins.* Geamănul cu vehicule mai rapide se deosebește de cel de bază pe 15–33 de rânduri din fiecare oră, afară de ora liniștită din 2.11. Geamănul fără niciun pieton, în schimb, se deosebește pe cel mult 4 rânduri dintr-o oră, iar pe jumătate din ore pe niciunul. Comparația cu camera nu poate deci confirma pietonii din geamăn.
 
 **Ce spune geamănul despre planuri.** Planurile scurte nu duc traficul la orele încărcate: socoteala din cameră, de mai sus, dă pentru 12/14/12 cel mult ≈1 300 de vehicule pe oră pe Magheru, față de ≈2 600 numărate. Grila de după îngheț o confirmă, pe cele 8 ore ale zilelor de antrenare care trec poarta, cu variantele lor ×0,8 și ×1,2, adică pe 14 scenarii, și cu 3 seed-uri, pe toate cele 84 de perechi, cu orele liniștite cu tot: 12/14/12 pierde de ≈7,5 ori mai mult timp decât semaforul rejucat cu participanții disciplinați și de ≈5,7 ori mai mult cu cei indisciplinați, iar 36/28/12, cu ≈⅔ și, respectiv, cu ≈¼ mai mult. Planurile cu ciclul între ≈93 și ≈138 s se deosebesc între ele cu câteva procente, cât rezultatul retras, deci aici nu se dă niciun procent ca rezultat: grila a servit doar la alcătuirea listei de candidați a regulii din § 9.11. Rezultatele sunt în `docs/rezultate/grila_inghet_normal.csv` și `grila_inghet_indisciplinat.csv`, iar planurile 52/35/3 și 36/24/3 și agentul E15, încercați apoi doar pe orele care trec poarta, în `grila_inghet_ciclu.csv` și `grila_inghet_e15.csv`.
 
-**Ce rămâne nesigur.** Setările s-au ales pe orele de antrenare și pe rândurile de comparație, în mai multe runde. Pietonii din geamăn sunt o cerere efectivă, iar cei de pe celelalte brațe se văd slab: zebra de pe Magheru se poate număra pe clipuri, cele de pe Lascăr Catargiu și Dacia vest nu. Pe Dacia vest nu e sigură nici cererea: factorul ei variază de la 1,03 la 1,58 între clipuri, iar o cincime din numărătoarea automată cade în bucăți în care adnotatorii nu văd aproape niciun vehicul, deci la vârfurile zilelor lucrătoare debitul real poate fi de ordinul 750–1 250 de vehicule pe oră. Pe întuneric și pe ploaie, detectorul poate pierde mult mai multe vehicule decât acoperă factorul; rândul porții prinde asta doar la trafic mare, iar pragul lui stă pe o singură seară. Semafoarele vecine sunt programele generate de `netconvert`. Pe Dacia est, primele vehicule vin la ≈12 s după începutul etapei din program, iar în geamăn imediat, din cauze nelămurite. Nu există o măsurare a lungimii cozilor, deci potrivirea e verificată pe ce trece prin zone, nu direct pe timpii de așteptare. Geamănul în timp real din dispecerat are proporții declarate și debite brute, deci nu arată geamănul de mai sus; Lascăr Catargiu e acolo de 2–3 ori sub cel real.
+**Ce rămâne nesigur.** Setările s-au ales pe orele de antrenare și pe rândurile de comparație, în mai multe runde. Pietonii din geamăn sunt o cerere efectivă, iar cei de pe celelalte brațe se văd slab: zebra de pe Magheru se poate număra pe clipuri, cele de pe Lascăr Catargiu și Dacia vest nu. Pe Dacia vest nu e sigură nici cererea: factorul ei variază de la 1,03 la 1,58 între clipuri, iar o cincime din numărătoarea automată cade în bucăți în care adnotatorii nu văd aproape niciun vehicul, deci la vârfurile zilelor lucrătoare debitul real poate fi de ordinul 750–1 250 de vehicule pe oră. Pe întuneric și pe ploaie, detectorul poate pierde mult mai multe vehicule decât acoperă factorul; rândul porții prinde asta doar la trafic mare, iar pragul lui stă pe o singură seară. Semafoarele vecine sunt programele generate de `netconvert`. Pe Dacia est, primele vehicule vin la ≈12 s după începutul etapei din program, iar în geamăn imediat, din cauze nelămurite. Nu există o măsurare a lungimii cozilor, deci potrivirea e verificată pe ce trece prin zone, nu direct pe timpii de așteptare. Geamănul în timp real din dispecerat are proporții declarate și debite brute, deci nu arată geamănul de mai sus; Lascăr Catargiu e acolo ziua de 2–3 ori sub cel real pe 25–26.10 și pe 1.11 și de 4–7 ori pe 2–4.11, iar seara aproape dispare (§ 5.5).
 
 ## 7. Controlul inteligent al semafoarelor
 
@@ -2261,7 +2261,7 @@ marginea zonei mai ajunge doar traficul de fond (§ 5.2).
 interveni oricând. Sistemul schimbă singur fazele, iar omul supervizează; de aici principiul de proiectare, **automatizarea
 conduce, omul supervizează**. Comenzile ajung doar la semaforul din simulare, nu la semafoarele din piață, iar pagina spune
 asta tot timpul. Între bornele M1 și M2, pagina a fost evaluată și reparată cu evaluatori AI. Sondarea cu oameni a pornit pe 3.11, seara,
-și se închide sâmbătă, 7.11, la 18:00; rezultatele ei se trec aici după închidere, potrivit regulilor de numărare de mai jos. Geamănul din această pagină nu are cererea măsurii noi: numărările sunt brute, fără corecții, iar Lascăr Catargiu apare de 2–3 ori sub traficul real.
+și se închide sâmbătă, 7.11, la 18:00; rezultatele ei se trec aici după închidere, potrivit regulilor de numărare de mai jos. Geamănul din această pagină nu are cererea măsurii noi: numărările sunt brute, fără corecții, iar Lascăr Catargiu apare ziua de 2–3 ori sub traficul real pe 25–26.10 și pe 1.11 și de 4–7 ori pe 2–4.11; seara, aproape deloc (§ 5.5).
 
 Scriptul `scripts\7_dashboard.bat` deschide pagina la `http://localhost:8050`. Serverul folosește Flask, o bibliotecă Python
 pentru aplicații web, iar pagina este scrisă în HTML și JavaScript simplu, fără un cadru de dezvoltare pentru interfață.
@@ -2322,7 +2322,7 @@ pagina are acum mai mult de spus și fiindcă evaluatorii găsesc mereu ceva.
 **Proba pe sistemul adevărat.** Capturile folosesc date simulate, deci reparațiile s-au încercat și cu geamănul și serverul reale,
 pe 2.11, la prioritate scăzută. Trecerea la planul de referință a fost aplicată în 2,2 s, iar comanda manuală a fost primită în
 2,1 s. Verdele cerut vine după galben, roșu și verdele minim al fazei curente; în geamănul corectat, și după ce pietonii
-de pe Dacia își primesc verdele și termină traversarea, deci poate întârzia până la ≈50 s (§ 6.5, § 7.2). Între timp, pagina arată „urmează”. Colectarea a mers
+de pe Dacia își primesc verdele și termină traversarea, deci poate întârzia până la ≈50 s (§ 6.5, § 7.2). Între timp, pagina arată „urmează”, dar așteaptă doar 30 s: apoi scrie că simularea n-a aplicat încă comanda și o trece „neaplicată”, deși geamănul o aplică mai târziu. Colectarea a mers
 în acest timp cu 5,9 cadre/s. Cum a mers colectarea în total, cu pauzele, opririle și reconectările ei, arată fișa senzorului (§ 4.6).
 
 **Sondarea cu oameni (`romana.dashboard.sondare`).** O pagină publică, deschisă cu un link, fără instalare: în stânga un ghid care îi
@@ -2521,7 +2521,7 @@ rezultat, se alege cea mai simplă. Toate componentele se pot aplica pe automatu
 schimbă doar programul lui.
 
 Pe cererea calibrată și pe o zi nouă, cu capacitatea calibrată, agentul E13 folosit singur părea să bată constant planul
-de referință (§ 9.9), iar planul scurt 12/14/12 ieșea la egalitate cu el (§ 9.9–9.10). Ambele rezultate au fost
+de referință (§ 9.9), iar planul scurt 12/14/12 ieșea la egalitate cu E13 (§ 9.9–9.10). Ambele rezultate au fost
 retrase pe 2.11: geamănul „calibrat” părea să facă față traficului real doar din cauza coliziunilor și a teleportărilor
 în masă (§ 6.5). În ziua de validare, 4.11, geamănul corectat nu a trecut poarta pe nicio oră, deci validarea a fost
 doar descriptivă și niciun candidat nu a trecut. Rămâne planul observat, 72/48/3, dedus din cameră; asta nu arată că e
@@ -2819,7 +2819,7 @@ calibrat, ca și punctele 6 și 7, care rezumă testele din § 9.9–9.10, sunt 
    E13 obține −3,8%, iar oficialul −5,9% din pierderea totală cu participanți indisciplinați
    (`test_28_indisciplinat.csv`).
 5. **La vârf, pe geamănul cu capacitate implicită, coada de pe Dacia vest domina timpul pierdut** (§ 9.6). Cu
-   capacitatea calibrată, această coadă părea să dispară și rămânea o coadă de intrare la marginea vestică a rețelei,
+   capacitatea calibrată, această coadă părea să dispară, dar rămânea alta, o coadă de intrare la marginea vestică a rețelei,
    pe Calea Victoriei, cu ≈13–20% din pierderea totală la vârf. Pe 2.11 s-au lămurit amândouă (§ 6.5): acel geamăn
    trecea traficul prin coliziuni și teleportări, iar coada de pe Calea Victoriei venea din rutele simulării, care
    porneau de oriunde din rețea. Pe geamănul corectat, Dacia vest rămâne sub cameră în zilele lucrătoare, iar diagnoza
@@ -3630,7 +3630,7 @@ mână se trece aici, cu ora opririi, și se comite înainte de a citi simulări
 
 Prima zi nouă, 1.11, a început abia dimineața: are câteva minute din timpul prezentării bornei M1, apoi date continue de la
 09:05. Nu are deci toate ferestrele, dar rămâne bună pentru antrenare, cu ce are. Sferturile de oră atinse de oprire și de
-repornire, 08:00–09:15, sunt excluse din ferestre.
+repornire, 08:00–09:15, sunt excluse din ferestre. *(Completare din 6.11: seara, după ce s-a scris acest paragraf, colectarea s-a oprit, anunțat, 21:44–22:48, deci datele de la 09:05 nu sunt continue, iar din ferestre sunt excluse și sferturile 21:30–23:00, vezi § 4.6.)*
 
 **Ce se simulează noaptea.** Prelucrarea rulează singură, la 00:15, cu `romana.lant_zilnic`. Jurnalul fiecărui pas rămâne în
 `outputs/lant/<zi>/`, iar rezultatele simulărilor în `outputs/validare/`, sub numele `test_<zi>_*`, oricare ar fi rolul zilei.
@@ -3921,6 +3921,14 @@ strategii, chiar dacă s-ar desigila, iar `--regula-finala` răspunde că runda 
 strategiilor din 4.11 sunt publicate, ca toate celelalte, dar, ca pe 3.11, nu se citează ca procente. Runda se încheie fără un program
 nou; reparațiile țin de o rundă nouă, după M2, cum scrie mai sus.
 
+**Ziua de 5.11, prelucrată pe 6.11, dimineața.** Ziua de 5.11, o joi, e prima zi de test. Fiindcă niciun candidat nu a trecut
+de validare, lanțul a rulat doar renumărarea, scenariile zilei, geamănul și poarta, fără strategii, între 03:30 și 03:46, cu codul 0
+pe toți pașii. Scenariile lasă afară 20:00–20:30, când colectarea s-a oprit anunțat. Din cele 5 ore, poarta trece pe una, ora
+liniștită. La vârf și la prânz pică doar rândul vehiculelor care nu intră sau nu ajung la destinație până la final; dimineața și
+seara, același rând iese nedecis, iar dimineața ies nedecise și debitul de pe Dacia est și teleportările. Debitele pe Magheru și pe Catargiu
+sunt în prag pe toate cele 5 ore. Ziua e doar descriptivă și nu schimbă rezultatul rundei (`docs/rezultate/poarta_cor_2026-11-05.json`,
+`geaman_cor_2026-11-05.csv`, `stare_lant_cor_2026-11-05.json`).
+
 **Ce s-a măsurat direct, fără geamăn.** Programul real al semaforului, măsurat din cameră pe 2–5.11, e în § 6.5; cifrele colectării sunt în fișa senzorului (§ 4.6).
 
 **Agentul următor.** *(Scris pe 1.11; din 2.11, E15 imită planul observat, nu planul 12/14/12, vezi schimbările de mai sus.)* Un agent nou, numit E15, pornește prin imitarea planului 12/14/12 și continuă cu PPO. Agentul decide o dată
@@ -4054,7 +4062,7 @@ Următoarele limite țin de geamănul digital, replica pieței în simulatorul S
   deci rezultatele lor, printre care câștigul de −7% al planului 12/14/12 și comparația dintre agenții E14 și E13, s-au
   retras tot pe 2.11 (§ 6.5, § 9.11). Măsura nouă folosește geamănul corectat, cu intervalul `tau` = 1,0 s, valoarea
   implicită: pe 8 din cele 12 ore comparate la îngheț, din 25 și 26.10 și din 1 și 2.11, debitele de pe Magheru,
-  Lascăr Catargiu și Dacia est sunt la cel mult 6% de cameră, dar pe Dacia vest, în zilele lucrătoare, geamănul rămâne
+  Lascăr Catargiu și Dacia est sunt la cel mult 6,3% de cameră, dar pe Dacia vest, în zilele lucrătoare, geamănul rămâne
   mult sub cameră (§ 6.5). Agentul antrenat pe el este E15 (§ 9.11).
 
 Ultimele limite privesc folosirea sistemului pe un semafor real sau într-un alt produs:
@@ -4070,7 +4078,7 @@ Ultimele limite privesc folosirea sistemului pe un semafor real sau într-un alt
   pietoni de 12 s e suficientă pe trecerea de 12,8 m, întrebare care privește și planul de referință. Pe ziua de 28.10,
   chiar cu faza de pietoni lungită la 18 s în ambele planuri, cu ciclul scurt, participanții la trafic pierdeau în total
   cu 7,9% mai puțin timp (§ 9.10). Rezultatul s-a obținut însă pe geamănul cu coliziuni și teleportări și s-a retras pe
-  2.11 (§ 6.5, § 9.11): planul 12/14/12 îi dă Magheru cel mult ≈1 300 de vehicule pe oră, față de ≈2 600 numărate la
+  2.11 (§ 6.5, § 9.11): planul 12/14/12 lasă să treacă pe Magheru cel mult ≈1 300 de vehicule pe oră, față de ≈2 600 numărate la
   vârf, deci nu poate duce traficul. Agenții pot însă scurta faza de pietoni până la verdele minim de 10 s;
   mediana verzilor lor e de 11 s, adică jumătate dintre ele durează cel mult atât (§ 9.9). O aplicare reală ar cere
   verzi minime pe fază, calculate după lungimea trecerilor, mai ales pentru agenți. Verificarea trecerilor de mai sus
@@ -4232,7 +4240,7 @@ Validarea din 4.11 nu a schimbat strategia implicită: niciun candidat nu a trec
 (`docs/rezultate/cor_decizie_2026-11-04.json`, § 9.11). Geamănul în timp real rulează pe rețeaua, fazele și tipurile de
 vehicule ale geamănului corectat, dar fără cererea măsurii noi: debitele sunt cele brute ale camerei, numărate cu zonele
 măsurii vechi și fără factorii de corecție, iar unele proporții de viraj sunt declarate. De aceea nu arată geamănul din
-§ 6.5; în timp real, Lascăr Catargiu apare de 2–3 ori sub traficul real (§ 6.5, § 8). Cel vechi se poate porni cu
+§ 6.5; în timp real, Lascăr Catargiu apare ziua de 2–3 ori sub traficul real pe 25–26.10 și pe 1.11 și de 4–7 ori pe 2–4.11, iar seara aproape deloc (§ 5.5, § 8). Cel vechi se poate porni cu
 `--geaman-vechi`, doar pentru comparație.
 
 Celelalte variante se aleg din `VARIANTA_PROGRAM`, în `bridge/live_twin.py`. Una dintre ele este programul realist,
@@ -4288,7 +4296,7 @@ Tabelul adună problemele întâlnite cel mai des și soluția fiecăreia.
 | cererea măsurii noi | `python -m romana.bridge.cerere_v2`, din `config/demand.json` și `config/factori_v2.json` |
 | numărătorile măsurii noi | `python -m romana.vision.recount --zi <zi> --camera camera_v2.json --pe-persoane --out data/counts_cor` |
 | scenariile | `python -m romana.bridge.scenarii_zi --zi <zi> --masura cor`, care citește singur excluderile din `config/excluderi_cor.json`, apoi `python -m romana.bridge.indisciplinat --scenarii "sumo/scenarios/cor_zi_*.sumocfg" --vtypes vtypes_indisciplinat_v2.add.xml --vechi vtypes_v2.add.xml` |
-| programul real al semaforului, luni 26.10 (§ 6.5) | `python -m romana.vision.program_real --zi 2026-10-26 --interval 15:00-16:00 --interval 12:00-13:00 --interval 17:30-18:30 --interval 22:00-23:00 --pe-zi --out outputs/program_real_2026-10-26.csv`, cu intervalele din primele rânduri ale fișierului publicat `docs/rezultate/program_real_2026-10-26.csv`; profilele pliate se scriu în plus cu `--profile outputs/profile_2026-10-26.json` |
+| programul real al semaforului, luni 26.10 (§ 6.5) | `python -m romana.vision.program_real --zi 2026-10-26 --interval 15:00-16:00 --interval 12:00-13:00 --interval 17:30-18:30 --interval 22:00-23:00 --pe-zi --out outputs/program_real_2026-10-26.csv`, cu intervalele din primele rânduri ale fișierului publicat `docs/rezultate/program_real_2026-10-26.csv`; profilurile pliate se scriu în plus cu `--profile outputs/profile_2026-10-26.json` |
 | programul real pe 1–5.11; pe 2–5.11, după criteriile publicate înaintea rulării care dă verdictele, din `docs/rezultate/program_real_criterii.json` | `python -m romana.vision.program_real --zi <zi> --interval 09:30-10:30 --interval 12:00-14:00 --interval 17:30-18:30 --interval 19:00-21:00 --interval 23:00-23:59 --pe-zi --out outputs/program_real_<zi>.csv`, adică comanda din criterii, cu ieșirea în afara `docs/`. Pe 1.11 dă fișierul publicat octet cu octet, iar pe 2–5.11 e chiar comanda care a scris `docs/rezultate/program_real_<zi>.csv`. Verdictele, cu verificările C0, C1 și C2, sunt în `docs/rezultate/program_real_verdict_2026-11-02_04.json`, pentru 2–4.11, și în `program_real_verdict_2026-11-05.json`, pentru 5.11; proba C0, cu căutarea lărgită la 80–240 s, e descrisă în fiecare, în câmpul `proba_C0` |
 | geamănul lângă cameră, cu semaforul rejucat, la îngheț | `python -m romana.control.valideaza_geaman cor_zi_2026-10-26_varf cor_zi_2026-10-26_seara cor_zi_2026-10-26_linistit cor_zi_2026-10-25_varf cor_zi_2026-10-25_linistit cor_zi_2026-11-01_varf cor_zi_2026-11-01_pranz cor_zi_2026-11-01_seara cor_zi_2026-11-01_linistit cor_zi_2026-11-02_varf cor_zi_2026-11-02_pranz cor_zi_2026-11-02_linistit --seeds 1,2,3,4,5 --proba fara_pietoni --proba rapid --seeds-proba 1,2,3 --procese 8 --scrie-praguri docs/rezultate/praguri_geaman.json --poarta docs/rezultate/poarta_geaman.json --out docs/rezultate/validare_geaman.csv --figura docs/imagini/geaman_camera.png`; pe o zi nouă, cu `--praguri docs/rezultate/praguri_geaman.json` în loc de `--scrie-praguri` |
 | strategiile, cu teleportări și ciocniri | `python -m romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1-10 --fara-alegere --out outputs/validare/<fișier>.csv` |
@@ -4725,6 +4733,8 @@ se află în `docs/prezentari/`.
   teleportărilor de noapte, deci validarea e doar descriptivă: niciun candidat nu trece, zilele de test nu se deschid, iar în geamăn
   rămâne planul observat. Decizia s-a comis înainte de a privi datele zilelor de test; numărătorile, jurnalul vehiculelor,
   scenariile și rezultatele zilei sunt publice (§ 9.11).
+* **Ziua de 5.11, prima zi de test (6.11, dimineața):** doar geamănul și poarta, fără strategii: poarta trece pe 1 din 5 ore, ora
+  liniștită; ziua e doar descriptivă (§ 9.11).
 * **Date în siguranță:** paznicul colectării (§ 4.6); prelucrarea de noapte și regulile zilelor noi, comise înainte de a privi
   datele zilelor pe care le judecă (§ 9.11).
 * **Fișa senzorului (5–6.11):** modulul `romana.vision.fisa_senzor`, cu testele lui, reface din jurnalele locale ale colectării
@@ -4742,7 +4752,7 @@ se află în `docs/prezentari/`.
    capacitatea implicită, un singur agent nu bătea un plan fix bine reglat la vârf, dar, combinat cu planuri
    clasice, aducea un câștig semnificativ. Pe geamănul calibrat din 27.10, care părea să treacă debitul real, agentul
    reantrenat a bătut singur planul de referință, 36/28/12, în fiecare scenariu al unei zile noi, iar un plan fix cu
-   ciclu scurt, 12/14/12, a ajuns la nivelul lui (§ 9.9). Pe 2.11 s-a văzut că acel geamăn trecea traficul prin
+   ciclu scurt, 12/14/12, a ajuns la nivelul agentului (§ 9.9). Pe 2.11 s-a văzut că acel geamăn trecea traficul prin
    coliziuni și teleportări, deci aceste rezultate s-au retras (§ 6.5). Pe geamănul corectat, nicio oră din zilele de
    după îngheț, 3 și 4.11, nu a trecut poarta, deci geamănul nu a putut încă judeca între strategii (§ 9.11).
 4. **Rezultatele negative sunt tot rezultate.** Coridorul, agentul universal și specialiștii nereușiți au îngustat
@@ -5213,6 +5223,7 @@ corectură.
 | `grila_inghet_e15.csv` | Agentul E15 pe aceleași 14 scenarii, cu ambele comportamente și seed-urile 1–3, în același format ca grila (§ 9.5, § 9.11). | măsura nouă, `cor_` | `romana.control.validare models/ppo_e15.zip --scenarii <cele 28 de scenarii> --seeds 1,2,3 --fara-alegere --fara-fix` |
 | `poarta_cor_2026-11-03.json`, `geaman_cor_2026-11-03.csv`, `cor_test_2026-11-03_indisciplinat.csv`, `cor_test_2026-11-03_normal.csv`, `cor_decizie_2026-11-03.json`, `stare_lant_cor_2026-11-03.json` | Ziua de antrenare 3.11, prelucrată de lanțul măsurii noi pe 4.11 (§ 9.11): verdictul porții pe fiecare oră și comparația geamănului cu camera, pe 5 seed-uri; planul observat, semaforul rejucat, candidații și programul actuated pe cele 7 scenarii ale zilei, cu ambele comportamente și seed-urile 1–10; regula, aplicată doar descriptiv, fiindcă nicio oră nu trece poarta; pașii lanțului, cu comenzile, orele și codurile de ieșire, cu căile scrise față de depozit. | măsura nouă, `cor_` | `romana.lant_cor --zi 2026-11-03`; comenzile pașilor sunt în `stare_lant_cor_2026-11-03.json` |
 | `poarta_cor_2026-11-04.json`, `geaman_cor_2026-11-04.csv`, `cor_test_2026-11-04_indisciplinat.csv`, `cor_test_2026-11-04_normal.csv`, `cor_decizie_2026-11-04.json`, `stare_lant_cor_2026-11-04.json` | Ziua de validare 4.11, prelucrată de lanțul măsurii noi pe 5.11 (§ 9.11), în același format ca ziua de 3.11: verdictul porții pe fiecare dintre cele 4 ore și comparația geamănului cu camera, pe 5 seed-uri; planul observat, semaforul rejucat, candidații și programul actuated pe cele 6 scenarii ale zilei, cu ambele comportamente și seed-urile de validare 11–15; decizia validării, scrisă de lanț la 04:16 și comisă la 04:23, înainte de a privi datele zilelor de test; pașii lanțului, cu comenzile, orele și codurile de ieșire. Nicio oră nu trece poarta, deci validarea e doar descriptivă: niciun candidat nu trece, iar planul observat, 72/48/3, rămâne. | măsura nouă, `cor_` | `romana.lant_cor --zi 2026-11-04`; comenzile pașilor sunt în `stare_lant_cor_2026-11-04.json` |
+| `poarta_cor_2026-11-05.json`, `geaman_cor_2026-11-05.csv`, `stare_lant_cor_2026-11-05.json` | Ziua de 5.11, prima zi de test, prelucrată de lanțul măsurii noi pe 6.11 (§ 9.11): doar geamănul și poarta, fără strategii, fiindcă niciun candidat nu a trecut de validare; verdictul porții pe fiecare dintre cele 5 ore. |
 | `fisa_senzor_2026-11-06_0000.json`, `fisa_senzor_2026-11-06_0000.md` | Fișa senzorului (§ 4.6), la singura tăietură citată, de la 1.11, 09:04:46, până la 6.11, 00:00: timpul scurs și cel cu colectarea pornită, minutele cu cadre, cadrele analizate pe secundă, pauzele, reconectările, opririle anunțate și căderile neprevăzute, prelucrările de noapte și vehiculele intrate, pe zile și pe clase; pietonii, doar ca totaluri pe zi. JSON-ul e fișa întreagă, iar `.md`, tabelul scurt. | – (din jurnalele locale ale colectării, care nu intră în depozit) | `romana.vision.fisa_senzor --pana-la "2026-11-06 00:00" --out-json … --out-md …`, doar pe calculatorul care a colectat (§ 11.8) |
 | `referinta_v2/` | Numărătoarea de referință a măsurii noi pe 11 clipuri din 1.11 și 2.11 (pe ținte și bucăți de 30 s), factorii de corecție pe zi, pe întuneric și pe tot, cu intervalele de încredere, și momentele pietonilor pe valuri, fără imagini (§ 4.3). | – (din clipuri) | `romana.vision.referinta factori` |
 | `grila_calibrat.csv` | Grila de 23 de planuri fixe încercate pe geamănul calibrat (§ 9.9), pe luni 26.10, cu ambele comportamente și seed-urile 11–15, la care se adaugă planul fix de referință. | arborele curent | `romana.control.validare PLAN_a_b_12 …` |

@@ -1,5 +1,6 @@
 """Fișa senzorului (§ 4.6): cifrele colectării de la cameră, adică partea IoT a prezentării, refăcute din jurnalele locale
-până la o tăietură dată (--pana-la), ca să le poată verifica oricine, oricând, cu aceleași definiții.
+până la o tăietură dată (--pana-la), mereu cu aceleași definiții. Jurnalele rămân pe calculatorul care a rulat colectarea,
+deci fișa se poate calcula doar acolo.
 
 Citește doar fișierele de mai jos; nu atinge starea live (outputs/live), imaginile sau jurnalele de traiectorii și nu scrie
 decât fișierele cerute (--out-json, --out-md):
@@ -15,7 +16,7 @@ decât fișierele cerute (--out-json, --out-md):
   * data/counts/numaratori_<zi>.csv – intrările de vehicule pe clase; pietonii, doar ca total pe zi.
 
 Definițiile (aceleași în JSON, în tabel și pe ecran):
-  * începutul colectării continue – ultima pornire a colectării dinaintea tăieturii (data creării unui viziune_*.log) care
+  * începutul colectării – ultima pornire a colectării dinaintea tăieturii (data creării unui viziune_*.log) care
     nu e o repornire peste un gol trecut în reporniri_*.csv (sau numită de paznic în nota pornirii): de atunci, orice
     întrerupere e în reporniri, cu durata ei. Se poate da și de mână, cu --de-la.
   * fereastra – de la început până la tăietură. Un rând al vegherii intră doar dacă minutul lui s-a încheiat până la
@@ -599,7 +600,7 @@ def rezumat(f: dict) -> str:
                                f["lanturi"], f["vehicule"])
     randuri = [
         f"Fișa senzorului: colectarea de la cameră, până la {ora_text(f['taietura'])}",
-        f"  începutul colectării continue  {ora_text(f['inceput'])} ({f['sursa_inceputului']})",
+        f"  începutul colectării           {ora_text(f['inceput'])} ({f['sursa_inceputului']})",
         f"  timp scurs                     {nr(f['durata']['ore'], 2)} h ({durata_text(f['durata']['secunde'])})",
         f"  minute cu cadre prelucrate     {nr(m['cu_cadre'])} din {nr(m['intregi'])} ({pct(m['pondere_cu_cadre'], 2)}); "
         f"colectarea pornită {pct(t['pondere_colectare_pornita'], 2)} din timp",
@@ -631,7 +632,7 @@ def tabel_md(f: dict) -> str:
                                f["lanturi"], f["vehicule"])
     out = [f"# Fișa senzorului – până la {ora_text(f['taietura'])}", "",
            "| Mărimea | Valoarea |", "|---|---|",
-           f"| Începutul colectării continue | {ora_text(f['inceput'])} |",
+           f"| Începutul colectării | {ora_text(f['inceput'])} |",
            f"| Timp scurs | {nr(f['durata']['ore'], 2)} h |",
            f"| Minute cu cadre prelucrate | {pct(m['pondere_cu_cadre'])} ({nr(m['cu_cadre'])} din {nr(m['intregi'])}) |",
            f"| Timp cu colectarea pornită | {pct(t['pondere_colectare_pornita'], 2)} (oprită "
