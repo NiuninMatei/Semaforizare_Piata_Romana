@@ -324,17 +324,19 @@ class TestRaspuns(Primite):
             rows = list(csv.DictReader(f))
         self.assertEqual({r["grup"] for r in rows}, {"a"})      # grupul sub 3 persoane rămâne afară
 
-    def test_la_colegi_se_publica_si_duratele_mediane(self):
+    def test_timpii_si_apasarile_raman_locale(self):
         for k in range(3):
             self.pune(text(k=k, grup="c"))
         dest = self.dosar / "public.csv"
         s.publica(self.dosar, dest)
         with open(dest, encoding="utf-8") as f:
-            rows = list(csv.DictReader(f))
-        cu_durata = [r for r in rows if r["durata_mediana_s"]]
-        self.assertTrue(cu_durata)
-        self.assertEqual({r["grup"] for r in cu_durata}, {"c"})
+            cititor = csv.DictReader(f)
+            rows = list(cititor)
+        self.assertEqual(cititor.fieldnames, s.COLOANE_GRUP)     # la trei persoane, mediana ar fi chiar valoarea cuiva
+        self.assertEqual({r["grup"] for r in rows}, {"c"})
         self.assertNotIn("secret", dest.read_text(encoding="utf-8"))
+        local = [r for r in s.pe_grup(s.rezumat(self.dosar), local=True) if r.get("durata_mediana_s") not in (None, "")]
+        self.assertTrue(local)                                     # local, timpii rămân pentru runda următoare
 
     def test_raspunsurile_de_pe_telefon_se_numara_separat(self):
         for k in range(3):

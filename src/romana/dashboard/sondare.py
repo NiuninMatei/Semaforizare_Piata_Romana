@@ -10,8 +10,8 @@ La final, persoana vede tot ce s-a notat și, dacă vrea, apasă „Trimite”, 
 Formularul apare doar în linkurile date de autor (`?g=grup&o=ordine&f=formular&e=intrare`), deci adresa lui nu e în depozit;
 cine găsește singur pagina o poate încerca, dar nu are ce trimite. Grupurile: `a` persoanele apropiate autorului, `c` colegii.
 
-Sondarea e formativă: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general. Se raportează doar „x din N” pe grupuri
-și ce au spus, fără procente și fără valori p.
+Sondarea e formativă: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general. Se publică doar totaluri „x din N” pe grupuri,
+fără procente și fără valori p; textul liber, timpii și apăsările rămân locale.
 
 Rulare:     python -m romana.dashboard.sondare --pachet    → refac docs/sondare din sursele din static/
             python -m romana.dashboard.sondare --local     → pagina, pe acest calculator: http://127.0.0.1:8060/sondare/
@@ -23,7 +23,7 @@ Rezultate:  textele primite, în outputs/sondare/primite/R<n>.txt
 Integritatea (pagina v2, din 03.11.2026, seara): textul nu mai arată răspunsurile așteptate, iar la sfârșit are un cod de control.
 Un text schimbat după ce l-a scris pagina (codul nu se potrivește sau lipsește ori, la v1, o corectură ca „X (așteptat: X)”) nu se numără.
 O a doua trecere în aceeași filă („de la capăt”) se numără doar dacă autorul confirmă că e altă persoană, în
-outputs/sondare/confirmari.json: {"R5": "altă persoană"}.
+outputs/sondare/confirmari.json: {"R<n>": "altă persoană"}.
 """
 from __future__ import annotations
 
@@ -361,7 +361,6 @@ PROFIL = ("profil_calculator", "vazut_inainte", "ajutor")
 COLOANE = ["cod", "grup", "ecran", "terminat", "pagina", "integru", "incercarea", "modificat", "numarat",
            "versiune", "runda", "masura", "durata_s", "reusit", "clicuri", "comenzi", "nu_reuseste", "raspuns"]
 COLOANE_GRUP = ["grup", "masura", "versiune", "persoane", "reusite", "persoane_prima_runda", "reusite_prima_runda"]
-COLOANE_DURATA = ["durata_mediana_s", "clicuri_mediana"]
 # Sub această lățime, pagina pune ghidul deasupra dispeceratului: e alt ecran, deci răspunsurile se numără separat.
 LATIME_TELEFON = 900
 
@@ -495,7 +494,7 @@ def grup_raportat(r: dict) -> str:
 
 
 def confirmari(dosar: Path = DOSAR) -> dict[str, str]:
-    """Trecerile a doua dintr-o filă despre care autorul a confirmat că sunt ale altei persoane: {"R5": "altă persoană"}."""
+    """Trecerile a doua dintr-o filă despre care autorul a confirmat că sunt ale altei persoane: {"R<n>": "altă persoană"}."""
     cale = dosar / CONFIRMARI
     return json.loads(cale.read_text(encoding="utf-8")) if cale.exists() else {}
 
@@ -560,10 +559,10 @@ def scrie_rezumat(dosar: Path = DOSAR) -> tuple[Path, list[dict]]:
 
 
 def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
-    """Totaluri pe grup, versiune și măsură, doar pentru cei care au terminat: fără coduri, fără text liber, fără profil.
+    """Totaluri pe grup, versiune și măsură, doar pentru cei care au terminat: fără coduri și fără text liber; din profil, doar rândul ajutorului la sarcini.
 
-    Prima rundă se dă separat: e singura la prima vedere, deci singura fără efectul exercițiului. Duratele, doar `local` sau la colegi:
-    între persoane de vârste foarte diferite nu se pot compara, iar colegii au vârste apropiate. Răspunsurile de pe telefon
+    Prima rundă se dă separat: e singura la prima vedere, deci singura fără efectul exercițiului. Timpii și apăsările, doar `local`:
+    la trei persoane, mediana e chiar valoarea uneia dintre ele, iar ecranul de acord promite doar totaluri. Răspunsurile de pe telefon
     au grupul lor (`grup_raportat`), fiindcă acolo pagina arată altfel. Ce nu se numără (`se_numara`) rămâne afară."""
     terminati = [{**r, "grup": grup_raportat(r)} for r in randuri if r.get("terminat") and r.get("numarat", True)]
     grupe: dict[tuple, list[dict]] = {}
@@ -575,7 +574,7 @@ def pe_grup(randuri: list[dict], local: bool = False) -> list[dict]:
         prima = [r for r in lista if r.get("runda") == 1]
         rand = {"grup": grup, "masura": masura, "versiune": versiune, "persoane": len(lista), "reusite": sum(bool(r.get("reusit")) for r in lista),
                 "persoane_prima_runda": len(prima), "reusite_prima_runda": sum(bool(r.get("reusit")) for r in prima)}
-        if local or grup.split("_")[0] == "c":       # colegii, și cei de pe telefon
+        if local:                                    # timpii și apăsările nu se publică (§ 8)
             durate = [r["durata_s"] for r in lista if r.get("durata_s") is not None]
             clicuri = [r["clicuri"] for r in lista if r.get("clicuri") is not None]
             rand["durata_mediana_s"] = round(st.median(durate), 1) if durate else ""
@@ -620,9 +619,8 @@ def publica(dosar: Path = DOSAR, destinatie: Path = PUBLICAT, minim: int = 3, fo
             if 0 < pp < minim or 0 < r["persoane"] - pp < minim:
                 r["reusite_prima_runda"] = ""     # altfel prima rundă, sau restul, ar fi răspunsul a 1–2 persoane
         publice.append(r)
-    coloane = COLOANE_GRUP + (COLOANE_DURATA if any(c in r for r in publice for c in COLOANE_DURATA) else [])
     with open(destinatie, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, coloane)
+        w = csv.DictWriter(f, COLOANE_GRUP)
         w.writeheader()
         w.writerows(publice)
     return destinatie

@@ -36,6 +36,12 @@
 > `docs/rezultate/program_real_verdict_*.json`). Toate cele cinci zile au ieșit „măsurate”: mediana zilei e de ≈133–137 s; în nouă
 > măsurători de încredere din zece, ciclul are cel puțin 115 s; programul se schimbă de-a lungul zilei, iar un ciclu de ≈91 s nu
 > apare (§ 6.5).
+>
+> **Sondarea cu oameni, închisă pe 7.11.** Între 3.11, seara, și 7.11, la 18:00, persoanele invitate de autor au putut încerca
+> dispeceratul pe o pagină publică, cu ecranul de la M1 și cu cel reparat după M1. S-au publicat o singură dată doar rezultatele
+> colegilor, singurul grup în care s-au numărat răspunsurile a cel puțin trei persoane, în `docs/rezultate/sondare_m2.csv`. Aceste
+> rezultate arată unde se încurcă oamenii, nu care ecran e mai bun: pe ambele ecrane, la fiecare sarcină în care omul preia comanda
+> sau o dă înapoi calculatorului au reușit câte 2 din 3, față de 3 din 3 la fiecare sarcină în care doar citește ecranul (§ 8).
 
 Cât timp ar câștiga participanții la trafic din Piața Romană, în București, dacă s-ar schimba **doar programul
 semafoarelor existente**, fără nicio lucrare pe stradă? Proiectul caută răspunsul în simulare.
@@ -454,8 +460,8 @@ versiunile salvate de el în istoric, poartă linia `Co-Authored-By: Claude …`
 **Starea proiectului (6.11.2026).** Prima bornă, M1, comună disciplinelor *Interfețe om-calculator* și *Internet of
 Things*, s-a prezentat pe 1.11. De atunci (lista schimbărilor, § 12.3):
 
-- dispeceratul a fost evaluat de evaluatori AI declarați, reparat în trei ture și pregătit pentru o sondare cu oameni,
-  pe o pagină publică (§ 8);
+- dispeceratul a fost evaluat de evaluatori AI declarați și reparat în trei ture, iar din 3.11, seara, persoanele invitate de
+  autor l-au putut încerca într-o sondare, pe o pagină publică (§ 8);
 - programul real al semaforului a fost măsurat din cameră, iar geamănul a fost corectat; rezultatul de −7% s-a retras
   (§ 6.5);
 - măsura nouă s-a înghețat pe 3.11, iar pentru zilele noi s-au fixat candidații: planurile 60/40/3 și 45/30/3 și

@@ -840,7 +840,7 @@ Măsurile luate sunt următoarele.
   aceasta în loturi, prin interfața de programare, cu o cheie păstrată în afara depozitului (`romana.vision.referinta_lot`).
   Acordul din 27.10.2026 (§ 14.1) nu pomenește clipurile: salvarea lor temporară este decizia autorului, ca parte a
   analizei automate, și nu lărgește ce se publică.
-* **Sondarea cu oameni.** Persoanele invitate de autor folosesc dispeceratul pe propriul calculator, într-o pagină publică (§ 8).
+* **Sondarea cu oameni.** Pe 3–7.11, persoanele invitate de autor au putut folosi dispeceratul pe propriul calculator, într-o pagină publică (§ 8).
   Temeiul este consimțământul lor, conform art. 6 alin. (1) lit. a) GDPR, dat pe un ecran separat, și se pot opri oricând. Pagina nu
   cere nume, cont sau adresă de e-mail, nu folosește cookie-uri, iar o regulă de securitate a browserului oprește orice cerere pe care
   ar face-o singură. Răspunsurile, apăsările și timpii stau în fila persoanei. La final, persoana vede tot ce s-a notat și, dacă vrea,
@@ -848,10 +848,13 @@ Măsurile luate sunt următoarele.
   linkurile de invitație, nu în depozit. Cine găsește singur pagina o poate încerca, dar nu are ce trimite. GitHub, care găzduiește
   pagina, notează adresa IP a vizitatorilor, iar Google o vede la deschiderea formularului. Răspunsurile sunt pseudonimizate, nu
   anonime, fiindcă participanții sunt puțini și autorul poate bănui al cui e un răspuns. Ce citește asistentul Claude ajunge la Anthropic.
-  Nu se înregistrează imagine sau sunet. Răspunsurile primite stau în foaia de calcul a formularului și în `outputs/sondare`; se publică
-  doar totaluri pe grup, de la cel puțin trei persoane. Datele se șterg după evaluarea academică sau mai devreme, la cerere. Din 3.11,
-  seara, textul se încheie cu un cod de control, care arată dacă a ajuns neschimbat și care răspunsuri se potriveau cu ce arăta
-  aplicația, fără să le scrie pe ecran; dacă în aceeași filă a mai răspuns cineva, textul următor spune doar atât (§ 8).
+  Nu se înregistrează imagine sau sunet. Răspunsurile primite stau în foaia de calcul a formularului și, pe calculatorul autorului,
+  în `outputs/sondare`, în copiile de lucru și în jurnalele locale ale sesiunilor asistentului Claude, care le-a citit. S-au publicat
+  doar totaluri pe grup, de la cel puțin trei persoane; timpii și apăsările au rămas doar local (§ 8). Datele se șterg după
+  evaluarea academică sau mai devreme, la cerere, în afară de copiile ajunse la Anthropic, care se păstrează după regulile
+  furnizorului. Din 3.11, seara, textul se încheie cu un cod de control, care arată dacă a ajuns neschimbat și care răspunsuri se
+  potriveau cu ce arăta aplicația, fără să le scrie pe ecran; dacă în aceeași filă a mai răspuns cineva, textul următor spune doar
+  atât (§ 8).
 * **Imaginile publicate.** Singurele imagini publicate sunt figurile 4.1 și 4.2, făcute dintr-un singur cadru, din
   28.10.2026, ora 09:30. Același cadru apare și în prezentarea bornei M1 (`docs/prezentari/`). Pe acest cadru s-au estompat automat persoanele, bicicliștii și motocicliștii, banda
   plăcuțelor de înmatriculare la toate vehiculele și textul publicitar suprapus de cameră. Pe oameni i-a găsit
@@ -2261,8 +2264,12 @@ marginea zonei mai ajunge doar traficul de fond (§ 5.2).
 **Pe scurt.** Dispeceratul este consola operatorului: o pagină web din care un om urmărește semaforul din simulare și poate
 interveni oricând. Sistemul schimbă singur fazele, iar omul supervizează; de aici principiul de proiectare, **automatizarea
 conduce, omul supervizează**. Comenzile ajung doar la semaforul din simulare, nu la semafoarele din piață, iar pagina spune
-asta tot timpul. Între bornele M1 și M2, pagina a fost evaluată și reparată cu evaluatori AI. Sondarea cu oameni a pornit pe 3.11, seara,
-și se închide sâmbătă, 7.11, la 18:00; rezultatele ei se trec aici după închidere, potrivit regulilor de numărare de mai jos. Geamănul din această pagină nu are cererea măsurii noi: numărările sunt brute, fără corecții, iar Lascăr Catargiu apare ziua de 2–3 ori sub traficul real pe 25–26.10 și pe 1.11 și de 4–7 ori pe 2–4.11; seara, aproape deloc (§ 5.5).
+asta tot timpul. Între bornele M1 și M2, pagina a fost evaluată și reparată cu evaluatori AI. Sondarea cu oameni a avut loc între 3.11, seara,
+și sâmbătă, 7.11, la 18:00: persoanele invitate de autor au putut încerca două variante ale dispeceratului, cea de la M1 și cea
+reparată după M1. S-au publicat doar rezultatele colegilor, singurul grup în care s-au numărat răspunsurile a cel puțin trei
+persoane. Aceste rezultate arată unde se încurcă oamenii, nu care variantă e mai bună: pe amândouă, la fiecare sarcină în care omul
+preia comanda sau o dă înapoi calculatorului au reușit câte 2 din 3, față de 3 din 3 la fiecare sarcină în care doar citește
+ecranul („Rezultatele sondării”, mai jos). Geamănul din această pagină nu are cererea măsurii noi: numărările sunt brute, fără corecții, iar Lascăr Catargiu apare ziua de 2–3 ori sub traficul real pe 25–26.10 și pe 1.11 și de 4–7 ori pe 2–4.11; seara, aproape deloc (§ 5.5).
 
 Scriptul `scripts\7_dashboard.bat` deschide pagina la `http://localhost:8050`. Serverul folosește Flask, o bibliotecă Python
 pentru aplicații web, iar pagina este scrisă în HTML și JavaScript simplu, fără un cadru de dezvoltare pentru interfață.
@@ -2339,11 +2346,12 @@ camerei spune că e o fotografie fixă și nu mai arată indicatorii de flux, ca
 borna M1, păstrată neschimbată în `src/romana/dashboard/static/m1`, și cea curentă, în ordine schimbată de la o persoană la alta:
 fixată în link pentru persoanele apropiate, la întâmplare pentru colegi. La final, persoana vede tot ce s-a notat și decide
 dacă trimite (§ 4.5). Autorul a parcurs pagina în 10 minute, deci pagina anunță 10–20 de minute. Sondarea e formativă și nesupravegheată: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general,
-iar locul în care s-a blocat cineva se vede doar din timpi și apăsări; din apăsări, textul trimis păstrează cel mult 12 pe sarcină,
-primele 4 și ultimele 8, ca linkul spre formular să nu devină prea lung. Se dau doar totaluri pe grup, de forma „x din 4”, persoanele
+iar locul în care s-a blocat cineva se vede doar din timpi și apăsări. Textul trimis păstrează numărul apăsărilor la fiecare
+sarcină; la sarcinile 3 și 4 păstrează și pe ce s-a apăsat: toate apăsările, dacă sunt cel mult 12, altfel primele 4 și ultimele
+8, ca linkul spre formular să nu devină prea lung. Se dau doar totaluri pe grup, de forma „x din 4”, persoanele
 apropiate autorului separat de colegi, și, separat, prima rundă, fără procente și fără valori p: și patru din patru ar da p = 0,125.
 Răspunsurile date pe un ecran mai îngust de 900 px, de obicei de pe telefon, unde ghidul stă deasupra dispeceratului, se numără într-un
-grup al lor, cu același prag de cel puțin 3 persoane.
+grup al lor, cu același prag de cel puțin 3 persoane ca celelalte grupuri.
 Pagina nu se deosebește de restul codului: `--pachet` o construiește în `docs/sondare` din sursele din `src/romana/dashboard/static/`, iar GitHub Pages o servește.
 
 **Integritatea răspunsurilor (din 3.11.2026, seara).** În seara invitațiilor s-a văzut o slăbiciune a primei versiuni a paginii:
@@ -2382,7 +2390,70 @@ ca persoana să-și poată șterge din formular ce a scris liber, fără să-și
 rândul versiunii până la cod, cu aceleași reguli pentru spații și rânduri goale ca amprenta. Confirmările stau local, în
 `outputs/sondare/confirmari.json`, iar `--rezumat` arată, la „de știut”, ce nu se numără și de ce.
 
-Tabelul arată cum respectă dispeceratul cele 10 euristici ale lui Nielsen, regulile practice pentru interfețe ușor de folosit.
+**Rezultatele sondării (7.11.2026).** Sondarea s-a închis sâmbătă, 7.11, la 18:00. Toate textele sosite până atunci sunt complete;
+unul nu s-a numărat, după regulile de numărare publicate pe 3.11, de mai sus. Niciun text nu a fost scris într-o fereastră mai
+îngustă de 900 px, cum e cea a unui telefon, deci nu există un grup „telefon”. Un text care ar mai sosi după închidere nu se
+numără, iar totalurile nu se publică a doua oară. Persoanele apropiate autorului au mai puțin de trei texte numărate, așa că,
+după regula din 3.11, despre răspunsurile lor nu se publică nimic. Rămân colegii, cu 3 texte numărate, adică 3 persoane, după
+regulile publicate; toate rezultatele de mai jos sunt ale lor. Cele două variante de mai sus se numesc aici „ecranul de la M1”,
+dispeceratul prezentat la borna M1, păstrat neschimbat, și „ecranul de acum”, dispeceratul bornei M2, cu reparațiile de după M1,
+înghețat pe 3.11, seara (figura 8.1); în fișierul public, ele sunt `m1` și `m2`.
+
+| Sarcina sau întrebarea | Ce se numără | Ecranul de la M1 | Ecranul de acum |
+|---|---|---|---|
+| Sarcina 1: cine schimbă acum culorile semaforului | răspunsul corect | 3 din 3 | 3 din 3 |
+| Sarcina 2: pe care stradă așteaptă cele mai multe mașini | răspunsul corect | 3 din 3 | 3 din 3 |
+| Sarcina 3: verde pe Bulevardul Dacia | verdele pe Dacia, cerut până la „Am terminat” | 2 din 3 | 2 din 3 |
+| Sarcina 4: înapoi la calculator | la apăsarea pe „Am terminat”, conduce din nou un calculator | 2 din 3 | 2 din 3 |
+| După sarcina 3: ce culoare avea semaforul pe Magheru la apăsarea pe „Am terminat” | răspunsul corect | 0 din 3 | 1 din 3 |
+| După sarcina 3: „Ați putut vedea în aplicație dacă s-a schimbat ce ați vrut?” | „Da, clar” | 1 din 3 | 2 din 3 |
+| După sarcina 4: „Ați putut vedea în aplicație cine schimbă acum culorile?” | „Da, clar” | 1 din 3 | 3 din 3 |
+| După fiecare ecran: „Cât de ușor v-a fost să folosiți această variantă?” | „Ușor” sau „Foarte ușor” | 0 din 3 | 1 din 3 |
+
+La sarcini, o apăsare pe „Nu reușesc” nu se numără ca reușită. Întrebările la care au ajuns, pe un ecran, mai puțin de trei
+persoane nu apar nici în tabel, nici în fișier, după regula din 3.11.
+
+La primele două sarcini, în care persoana doar citește ecranul, au reușit 3 din 3 pe ambele ecrane; răspunsul corect diferă de la
+primul ecran văzut la al doilea, deci nu vine din memorie. La sarcina 3, „verde pe Bulevardul Dacia”, și la sarcina 4, „înapoi la
+calculator”, au reușit câte 2 din 3, la fiecare dintre ele și pe fiecare ecran. Sunt singurele sarcini în care omul trebuie să schimbe ceva în aplicație. Pe
+ambele ecrane, verdele cerut de om se dă în doi pași: întâi modul manual, apoi direcția, ale cărei butoane apar abia în acest mod.
+Aici e primul loc de cercetat într-o rundă nouă de reparații. Întrebarea de după sarcina 3, despre culoarea de pe Magheru, are
+doar 0 din 3 răspunsuri corecte pe ecranul de la M1 și 1 din 3 pe cel de acum. Răspunsul corect e însă culoarea din
+clipa în care persoana apasă „Am terminat”, iar schimbarea cerută vine abia după 5–16 s, deci întrebarea măsoară și momentul
+apăsării, nu doar citirea schemei.
+
+Pe ecranul de acum, „Da, clar” apare mai des la cele două întrebări despre ce arată aplicația. La „cine schimbă acum culorile”, au
+răspuns așa 3 din 3, față de 1 din 3 pe ecranul de la M1; la „dacă s-a schimbat ce ați vrut”, 2 din 3, față de 1 din 3. Cele două
+întrebări privesc chiar locurile reparate după M1: modurile împărțite după cine decide și comenzile urmărite până la aplicare. La
+fel, pe ecranul de acum au răspuns „Ușor” sau „Foarte ușor” 1 din 3, față de 0 din 3 pe cel de la M1. Diferențele nu sunt însă o
+dovadă. Ordinea a fost 2 la 1: doi dintre cei 3 au văzut întâi ecranul de la M1, deci pe cel de acum l-au văzut al doilea, după
+ce exersaseră aceleași sarcini. La întrebarea de la sfârșit, „Care variantă v-a fost mai ușoară?”, 2 din 3 au ales ecranul de
+acum, 1 din 3 pe cel de la M1, iar 0 din 3 au răspuns „La fel”. Nici preferința nu e un argument pentru ecranul de acum: cu 3
+persoane, ea nu se poate despărți de ordinea în care au fost văzute ecranele. La „V-a ajutat cineva la sarcini?”, 0 din 3 au
+răspuns „Da, la înțelegerea sarcinilor”.
+
+Limitele sunt cele anunțate. Forma „x din 4” din descrierea sondării presupunea un grup de patru persoane; la colegi s-au numărat
+3 texte, deci reușitele se dau ca „x din 3”, tot fără procente și fără valori p. Cu trei persoane, un rând „0 din 3” sau „3 din 3”
+spune ce a făcut fiecare dintre ele la acel pas, fără să spună cine sunt; nimic nu se atribuie unei persoane, iar răspunsurile
+rămân pseudonimizate, nu anonime (§ 4.5). Prima rundă, adică primul ecran văzut, e singura fără efectul exercițiului. Ea apare
+doar ca număr de persoane: 2 au început cu ecranul de la M1 și 1 cu cel de acum. Reușitele ei sunt lăsate goale, fiindcă ar arăta
+răspunsurile uneia sau a două persoane, iar regula din 3.11 nu publică un rând cu mai puțin de trei persoane. Sondarea rămâne
+formativă: arată unde se încurcă oamenii, nu cât de bun e un ecran în general.
+
+**Pentru specialiști.** Comanda `python -m romana.dashboard.sondare --publica` a scris fișierul public,
+`docs/rezultate/sondare_m2.csv`, o singură dată, după închidere (Anexa A). Textele salvate local sunt identice, octet cu octet, cu
+o a doua copie, luată direct din foaia formularului. O altă instanță a asistentului Claude le-a renumărat cu un program scris de
+ea și a obținut aceleași totaluri. Fișierul are terminațiile de rând CRLF pe care le scrie modulul; în depozit, deci și pe
+GitHub, Git îl păstrează cu LF, ca pe celelalte fișiere CSV (§ 11.8). Fișierul are doar rândurile colegilor. Pe lângă rândurile
+„x din 3”, fișierul are rândurile preferinței și rândul ajutorului, în care coloana `persoane` spune câte dintre cele 3
+persoane au ales acel răspuns. Coloana `persoane_prima_runda` spune câte persoane au început cu fiecare ecran, iar `reusite_prima_runda` e goală.
+Fișierul nu are coduri, ore, mărimi de ecran, timpi, apăsări sau text liber. Codul scris pe 3.11, dimineața, ar fi pus în
+fișierul public, la colegi, și mediana timpului și a apăsărilor pe fiecare sarcină. Pe 7.11, după închidere și înaintea singurei
+publicări, codul s-a schimbat, iar medianele au rămas doar local: la trei persoane, mediana e chiar valoarea uneia dintre ele, iar ecranul de acord le spunea participanților că „în proiect apar doar
+totaluri, nu ce a răspuns fiecare”. Textele primite nu intră în depozit: stau în foaia formularului și pe calculatorul
+autorului, iar, fiindcă le-a citit asistentul Claude, au ajuns și la Anthropic (§ 4.5).
+
+Tabelul următor arată cum respectă dispeceratul cele 10 euristici ale lui Nielsen, regulile practice pentru interfețe ușor de folosit.
 
 | Euristica lui Nielsen[^nielsen] | Cum o aplică dispeceratul |
 |---|---|
@@ -4711,7 +4782,7 @@ se află în `docs/prezentari/`.
 
 * **Dispeceratul:** evaluare cu 7 evaluatori AI, pe 15 stări, înainte și după reparații; moduri împărțite după cine decide, comenzi
   urmărite până la aplicare, date vechi marcate, alerte, legendă, ajutor, taste (§ 8). Pagina de sondare cu oameni, publică și fără
-  laptop, cu versiunea M1 și cea nouă, în ordine alternată (§ 8, § 4.5).
+  laptop, cu versiunea M1 și cea nouă, în ordine schimbată de la o persoană la alta (§ 8, § 4.5).
 * **Numărătoarea:** referință nouă pe clipuri de seară, felii timp-spațiu, separarea celor trei fluxuri de pe Lascăr Catargiu, zonă nouă,
   pietoni numărați pe persoane, factori după lumină (§ 4.3). Loturi de adnotare prin interfața de programare, cu o gardă pentru credit.
 * **Programul real:** ciclul și etapele semaforului, măsurate din jurnalul public al vehiculelor. Pe 2–5.11, după criterii
@@ -4754,6 +4825,10 @@ se află în `docs/prezentari/`.
   cifrele senzorului: orele de funcționare, cadrele pe secundă, pauzele, opririle, reconectările, prelucrările de noapte și
   vehiculele intrate, pe clase; pietonii, doar ca totaluri pe zi. Fișa de la sfârșitul zilei de 5.11 e publicată în
   `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul scurt în fișierul `.md` cu același nume (§ 4.6).
+* **Sondarea cu oameni (3–7.11):** închisă pe 7.11, la 18:00. S-au publicat o singură dată doar rezultatele colegilor, singurul
+  grup cu cel puțin trei texte numărate, în `docs/rezultate/sondare_m2.csv`. La fiecare dintre primele două sarcini, care cer
+  doar citirea ecranului, au reușit 3 din 3 pe ambele variante, iar la fiecare dintre cele două în care omul preia comanda sau
+  o dă înapoi, 2 din 3 (§ 8).
 
 ### 12.4 Ce am învățat
 
@@ -4835,6 +4910,8 @@ asistenți:
   independență;
 * evaluarea dispeceratului, făcută tot de instanțe separate, cu roluri diferite, și verificată de altele (§ 8); ele sunt
   declarate peste tot ca evaluatori AI, nu ca oameni, iar testul cu oameni rămâne separat;
+* numărarea răspunsurilor sondării cu oameni, din textele primite, și renumărarea lor de o altă instanță, cu un program
+  scris de ea (§ 8, § 4.5);
 * antrenarea și evaluarea modelelor;
 * diagnosticarea erorilor;
 * redactarea acestei documentații și a prezentărilor bornelor cursului, din `docs/prezentari/`;
@@ -5257,3 +5334,4 @@ corectură.
 | `candidati_*.csv`, `alegere_agent*.json` | Candidații și alegerea agenților din primele experimente. Fișierul `alegere_agent.json` corespunde lui `validare_finala.csv`, iar `alegere_agent_zone_noi.json`, lui `validare_e2_e3.csv`. | `candidati_*`: `1619a30`; `alegere_agent.json`: `8176be5`, cu codul de atunci; `alegere_agent_zone_noi.json`: `7a79502` | scripturi de lucru, cu rezultatele în același format ca `romana.control.validare` |
 | `referinta/` | Numărătoarea de referință din 26.10 (§ 4.3): numărătorile adnotatorilor pe bucăți de 30 s, în `referinta_clip1.csv` și `referinta_clip2.csv`, cu coloanele `tinta, bucata, adnotator, numar`; traiectoriile vehiculelor din cele două clipuri, obținute cu detectorul la 1600 px, în `clip1/` și `clip2/`, și la 2560 px, în `clip1_2560/` și `clip2_2560/`, fără pietoni și fără imagini, sub licența ODbL 1.0 (§ 14.1); factorii de corecție, în `factori.json`; calibrarea camerei, în `corespondente_camera.json`, `model_camera.json` și `erori_camera.csv`. | – | `romana.vision.referinta factori` și `romana.vision.calibrare_camera potrivire` (§ 11.8) |
 | `evaluare_m1/probleme.csv`, `evaluare_m2/probleme_runda1.csv`, `evaluare_m2/probleme_runda2.csv` | Evaluarea dispeceratului cu evaluatori AI (§ 8), pe versiunea M1 și pe cele două versiuni reparate: câte un rând pe fiecare problemă rămasă după reunire, cu titlul, severitatea pe scara lui Nielsen, verdictul celor doi verificatori, evaluatorii care au găsit-o, euristicile încălcate, capturile, descrierea, dovada, recomandarea și motivele verificatorilor. | – (din capturile paginii și din codul ei) | `romana.dashboard.evaluare` (`trimite`, `reuneste`, `verifica`, `rezultat`), prin loturi la interfața de programare Claude; evaluatorii sunt modele de limbaj, deci o rulare nouă poate găsi alte probleme |
+| `sondare_m2.csv` | Rezultatele sondării cu oameni (§ 8), publicate o singură dată, după închiderea din 7.11, 18:00. Fișierul are doar rândurile colegilor, grupul `c`, singurul cu cel puțin trei texte numărate. Rândurile „x din 3” privesc sarcinile și întrebările din tabelul din § 8, pe fiecare dintre cele două variante ale dispeceratului: `m1`, cea de la borna M1, și `m2`, cea a bornei M2, înghețată pe 3.11. Numele din coloana `masura` sunt prescurtări: `culoarea pe Magheru` și `a văzut schimbarea` sunt întrebările de după sarcina 3, `a văzut cine conduce` e întrebarea de după sarcina 4, „Ați putut vedea în aplicație cine schimbă acum culorile?”, iar `ușor sau foarte ușor`, întrebarea „Cât de ușor v-a fost să folosiți această variantă?”. În ele, `persoane` spune câte persoane au trecut prin pas, iar `reusite`, câte au reușit sau au dat răspunsul numărat în § 8; `persoane_prima_runda` spune câte persoane au început cu acea variantă, iar `reusite_prima_runda` rămâne goală. În rândurile `varianta preferată`, `persoane` spune câte persoane au ales varianta din coloana `versiune`: `m1`, `m2` sau `la fel`. În rândul `a avut nevoie de ajutor la sarcini`, `persoane` spune câte au răspuns „Da, la înțelegerea sarcinilor”; celelalte răspunsuri nu se numără. Fișierul nu are coduri, ore, mărimi de ecran, timpi, apăsări sau text liber. Coloanele: `grup, masura, versiune, persoane, reusite, persoane_prima_runda, reusite_prima_runda`. | – (din textele trimise prin formular) | `romana.dashboard.sondare --publica`, o singură dată; fără textele primite, care nu sunt publice, fișierul nu se poate reface din depozit |
