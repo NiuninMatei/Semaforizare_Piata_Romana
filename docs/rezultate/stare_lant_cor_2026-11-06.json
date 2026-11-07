@@ -1,0 +1,78 @@
+{
+ "zi": "2026-11-06",
+ "pornit": "2026-11-07T03:30:00",
+ "pasi": {
+  "recount": {
+   "cod": 0,
+   "inceput": "2026-11-07T03:30:00",
+   "sfarsit": "2026-11-07T03:34:04",
+   "comanda": [
+    "C:\\Users\\Matei\\Documents\\GitHub\\Semaforizare_Piata_Romana\\.venv\\Scripts\\python.exe",
+    "-m",
+    "romana.vision.recount",
+    "--zi",
+    "2026-11-06",
+    "--camera",
+    "camera_v2.json",
+    "--pe-persoane",
+    "--out",
+    "data/counts_cor"
+   ]
+  },
+  "scenarii": {
+   "cod": 0,
+   "inceput": "2026-11-07T03:34:04",
+   "sfarsit": "2026-11-07T03:35:08",
+   "comanda": [
+    "C:\\Users\\Matei\\Documents\\GitHub\\Semaforizare_Piata_Romana\\.venv\\Scripts\\python.exe",
+    "-m",
+    "romana.bridge.scenarii_zi",
+    "--zi",
+    "2026-11-06",
+    "--masura",
+    "cor"
+   ]
+  },
+  "indisciplinat": {
+   "cod": 0,
+   "inceput": "2026-11-07T03:35:08",
+   "sfarsit": "2026-11-07T03:35:09",
+   "comanda": [
+    "C:\\Users\\Matei\\Documents\\GitHub\\Semaforizare_Piata_Romana\\.venv\\Scripts\\python.exe",
+    "-m",
+    "romana.bridge.indisciplinat",
+    "--scenarii",
+    "C:\\Users\\Matei\\Documents\\GitHub\\Semaforizare_Piata_Romana\\sumo\\scenarios\\cor_zi_2026-11-06_*.sumocfg",
+    "--vtypes",
+    "vtypes_indisciplinat_v2.add.xml",
+    "--vechi",
+    "vtypes_v2.add.xml"
+   ]
+  },
+  "geaman": {
+   "cod": 0,
+   "inceput": "2026-11-07T03:35:09",
+   "sfarsit": "2026-11-07T03:44:15",
+   "comanda": [
+    "C:\\Users\\Matei\\Documents\\GitHub\\Semaforizare_Piata_Romana\\.venv\\Scripts\\python.exe",
+    "-m",
+    "romana.control.valideaza_geaman",
+    "cor_zi_2026-11-06_varf",
+    "cor_zi_2026-11-06_linistit",
+    "cor_zi_2026-11-06_pranz",
+    "cor_zi_2026-11-06_seara",
+    "--seeds",
+    "1,2,3,4,5",
+    "--procese",
+    "3",
+    "--praguri",
+    "C:\\Users\\Matei\\Documents\\GitHub\\Semaforizare_Piata_Romana\\docs\\rezultate\\praguri_geaman.json",
+    "--poarta",
+    "outputs/validare/poarta_cor_2026-11-06.json",
+    "--out",
+    "outputs/validare/geaman_cor_2026-11-06.csv"
+   ]
+  }
+ },
+ "rezultat": "gata_fara_simulari"
+}

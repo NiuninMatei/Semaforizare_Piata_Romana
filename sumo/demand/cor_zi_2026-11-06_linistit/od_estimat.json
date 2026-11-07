@@ -1,0 +1,342 @@
+{
+  "intervale": [
+    {
+      "origini": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest"
+      ],
+      "destinatii": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest",
+        "mendeleev",
+        "caderea_bastiliei"
+      ],
+      "od_veh_h": [
+        [
+          0.7,
+          263.9,
+          35.0,
+          4.8,
+          24.7,
+          15.5
+        ],
+        [
+          194.2,
+          0.5,
+          29.3,
+          10.2,
+          19.5,
+          2.1
+        ],
+        [
+          4.0,
+          12.7,
+          0.5,
+          9.7,
+          2.7,
+          2.2
+        ],
+        [
+          68.5,
+          8.1,
+          116.9,
+          1.2,
+          2.0,
+          4.8
+        ]
+      ],
+      "intrari_veh_h": {
+        "magheru": 344.7,
+        "catargiu": 255.8,
+        "dacia_est": 31.7,
+        "dacia_vest": 201.6
+      },
+      "iesiri_veh_h": {
+        "magheru": 213.2,
+        "catargiu": 338.0,
+        "dacia_est": 98.8,
+        "dacia_vest": 270.4,
+        "mendeleev": 46.8,
+        "caderea_bastiliei": 15.6
+      },
+      "pondere_clase": {
+        "bus": 0.033,
+        "passenger": 0.96,
+        "truck": 0.007
+      },
+      "viraje_complete": 69,
+      "pietoni_h": 13.1,
+      "intrari_masurate_veh_h": 833.8,
+      "iesiri_masurate_veh_h": 982.8,
+      "intrari_numarate": 151,
+      "inceput": "2026-11-06 03:15:00",
+      "sfarsit": "2026-11-06 03:30:00",
+      "durata_s": 900
+    },
+    {
+      "origini": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest"
+      ],
+      "destinatii": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest",
+        "mendeleev",
+        "caderea_bastiliei"
+      ],
+      "od_veh_h": [
+        [
+          0.7,
+          372.9,
+          55.0,
+          15.9,
+          0.5,
+          38.8
+        ],
+        [
+          220.6,
+          0.7,
+          25.5,
+          10.5,
+          2.2,
+          2.7
+        ],
+        [
+          5.9,
+          19.0,
+          0.7,
+          14.5,
+          4.0,
+          3.3
+        ],
+        [
+          10.6,
+          3.0,
+          28.7,
+          0.5,
+          0.8,
+          1.8
+        ]
+      ],
+      "intrari_veh_h": {
+        "magheru": 483.7,
+        "catargiu": 262.1,
+        "dacia_est": 47.5,
+        "dacia_vest": 45.4
+      },
+      "iesiri_veh_h": {
+        "magheru": 223.6,
+        "catargiu": 442.0,
+        "dacia_est": 104.0,
+        "dacia_vest": 280.8,
+        "mendeleev": 0.0,
+        "caderea_bastiliei": 41.6
+      },
+      "pondere_clase": {
+        "bus": 0.027,
+        "motorcycle": 0.007,
+        "passenger": 0.913,
+        "truck": 0.053
+      },
+      "viraje_complete": 79,
+      "pietoni_h": 0.0,
+      "intrari_masurate_veh_h": 838.7,
+      "iesiri_masurate_veh_h": 1092.0,
+      "intrari_numarate": 150,
+      "inceput": "2026-11-06 03:30:00",
+      "sfarsit": "2026-11-06 03:45:00",
+      "durata_s": 900
+    },
+    {
+      "origini": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest"
+      ],
+      "destinatii": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest",
+        "mendeleev",
+        "caderea_bastiliei"
+      ],
+      "od_veh_h": [
+        [
+          0.6,
+          294.5,
+          45.0,
+          4.1,
+          10.6,
+          23.3
+        ],
+        [
+          119.8,
+          0.5,
+          2.3,
+          5.2,
+          1.5,
+          1.8
+        ],
+        [
+          2.5,
+          7.9,
+          0.3,
+          6.0,
+          1.7,
+          1.4
+        ],
+        [
+          4.3,
+          4.3,
+          72.8,
+          0.6,
+          1.1,
+          2.6
+        ]
+      ],
+      "intrari_veh_h": {
+        "magheru": 378.1,
+        "catargiu": 131.0,
+        "dacia_est": 19.8,
+        "dacia_vest": 85.7
+      },
+      "iesiri_veh_h": {
+        "magheru": 140.4,
+        "catargiu": 468.0,
+        "dacia_est": 109.2,
+        "dacia_vest": 286.0,
+        "mendeleev": 15.6,
+        "caderea_bastiliei": 15.6
+      },
+      "pondere_clase": {
+        "bus": 0.027,
+        "passenger": 0.928,
+        "truck": 0.045
+      },
+      "viraje_complete": 64,
+      "pietoni_h": 32.7,
+      "intrari_masurate_veh_h": 614.6,
+      "iesiri_masurate_veh_h": 1034.8,
+      "intrari_numarate": 111,
+      "inceput": "2026-11-06 03:45:00",
+      "sfarsit": "2026-11-06 04:00:00",
+      "durata_s": 900
+    },
+    {
+      "origini": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest"
+      ],
+      "destinatii": [
+        "magheru",
+        "catargiu",
+        "dacia_est",
+        "dacia_vest",
+        "mendeleev",
+        "caderea_bastiliei"
+      ],
+      "od_veh_h": [
+        [
+          0.9,
+          360.5,
+          60.0,
+          6.1,
+          0.6,
+          0.0
+        ],
+        [
+          188.1,
+          0.4,
+          16.7,
+          9.0,
+          8.7,
+          1.7
+        ],
+        [
+          2.5,
+          7.9,
+          0.3,
+          6.0,
+          1.7,
+          1.4
+        ],
+        [
+          1.6,
+          1.6,
+          15.3,
+          0.2,
+          0.4,
+          1.0
+        ]
+      ],
+      "intrari_veh_h": {
+        "magheru": 428.1,
+        "catargiu": 224.6,
+        "dacia_est": 19.8,
+        "dacia_vest": 20.2
+      },
+      "iesiri_veh_h": {
+        "magheru": 192.4,
+        "catargiu": 374.4,
+        "dacia_est": 114.4,
+        "dacia_vest": 301.6,
+        "mendeleev": 5.2,
+        "caderea_bastiliei": 0.0
+      },
+      "pondere_clase": {
+        "bus": 0.033,
+        "passenger": 0.943,
+        "truck": 0.025
+      },
+      "viraje_complete": 68,
+      "pietoni_h": 9.8,
+      "intrari_masurate_veh_h": 692.7,
+      "iesiri_masurate_veh_h": 988.0,
+      "intrari_numarate": 122,
+      "inceput": "2026-11-06 04:00:00",
+      "sfarsit": "2026-11-06 04:15:00",
+      "durata_s": 900
+    }
+  ],
+  "rezumat": {
+    "vehicule_total": 745,
+    "durata_s": 3600,
+    "od_vehicule": {
+      "catargiu>caderea_bastiliei": 2,
+      "catargiu>catargiu": 1,
+      "catargiu>dacia_est": 18,
+      "catargiu>dacia_vest": 9,
+      "catargiu>magheru": 181,
+      "catargiu>mendeleev": 8,
+      "dacia_est>caderea_bastiliei": 2,
+      "dacia_est>catargiu": 12,
+      "dacia_est>dacia_vest": 9,
+      "dacia_est>magheru": 4,
+      "dacia_est>mendeleev": 3,
+      "dacia_vest>caderea_bastiliei": 3,
+      "dacia_vest>catargiu": 4,
+      "dacia_vest>dacia_est": 58,
+      "dacia_vest>dacia_vest": 1,
+      "dacia_vest>magheru": 21,
+      "dacia_vest>mendeleev": 1,
+      "magheru>caderea_bastiliei": 19,
+      "magheru>catargiu": 323,
+      "magheru>dacia_est": 49,
+      "magheru>dacia_vest": 8,
+      "magheru>magheru": 1,
+      "magheru>mendeleev": 9
+    }
+  }
+}
