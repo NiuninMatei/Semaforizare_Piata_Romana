@@ -1,0 +1,194 @@
+{
+ "ce_este": "Verdictul programului real al semaforului, măsurat din cameră cu romana.vision.program_real pe ziua de 6.11.2026, după aceleași criterii ca zilele 2–5.11 (docs/rezultate/program_real_verdict_2026-11-02_04.json și program_real_verdict_2026-11-05.json), publicate pe 5.11, la 20:55, înaintea zilei de 6.11. Ziua s-a judecat separat, după ce prelucrarea ei de noapte s-a încheiat, cu aceeași condiție ca ziua de 5.11 (nota_zile).",
+ "criterii": {
+  "fisier": "docs/rezultate/program_real_criterii.json",
+  "commit": "c7d62d3 (05.11.2026, 20:55:21); 1d5da5b (20:55:37) a corectat doar ora din câmpul scris_la",
+  "sha256_fisier": "316848f41b45d35fd46bebae35462a04ea858c6bb99864bf60f9f92f7de1053a",
+  "aplicare": "Criteriile, comanda și pragurile s-au aplicat exact cum sunt scrise; fișierul criteriilor nu s-a atins. Ziua de 6.11 nu e în lista „zile” a criteriilor (2–5.11): criteriile, publicate pe 5.11, la 20:55, înainte de începutul zilei de 6.11, i se aplică neschimbate, cu aceeași condiție ca ziua de 5.11 (nota_zile)."
+ },
+ "modul": {
+  "fisier": "src/romana/vision/program_real.py",
+  "ultima_schimbare": "c5cecab (02.11.2026)",
+  "sha256_fisier": "20bc221a9c769180114752a83e5c1a0f93129ad29186508f98b6f90f4b9035e0",
+  "aceeasi_amprenta_ca_in_verdictul_din_2026_11_05": true,
+  "cautarea_ciclului": "PERIOADE = numpy.arange(100.0, 200.0, 0.25), neschimbată"
+ },
+ "comanda": "PYTHONPATH=src .venv/Scripts/python -m romana.vision.program_real --zi <zi> --interval 09:30-10:30 --interval 12:00-14:00 --interval 17:30-18:30 --interval 19:00-21:00 --interval 23:00-23:59 --pe-zi --out docs/rezultate/program_real_<zi>.csv",
+ "cum_s_a_rulat": "Comanda din criterii, din rădăcina depozitului, cu PYTHONPATH=src; modulul a rulat ca __main__ prin runpy, dintr-un mic script care doar coboară prioritatea procesului (sub normal). Rulările s-au făcut una după alta.",
+ "camera_in_timpul_rularilor": {
+  "de_la": "2026-11-07 04:50:43",
+  "pana_la": "2026-11-07 04:55:58",
+  "minute": 6,
+  "fps_min": 5.94,
+  "fps_mediana": 6.0,
+  "fps_max": 6.04,
+  "minute_sub_5_fps": 0,
+  "cel_mai_lung_sir_sub_5_fps_minute": 0,
+  "sursa": "outputs/logs/veghe_2026-11-01.csv, coloana fps (doar citire)"
+ },
+ "reproducere_2026_11_01": {
+  "identic": true,
+  "randuri_de_date": 49,
+  "coloane": 24,
+  "celule_comparate_cu_antetul": 1200,
+  "diferente": 0,
+  "octeti_identici": true,
+  "sha256": "502a408c38b028064daa3f021eac0a5e74f0a2caf262946945dafce80e2564ff",
+  "durata_rularii_s": 60.4,
+  "explicatie": "Ziua de 1.11, rulată din nou cu aceleași opțiuni (doar fișierul de ieșire, în afara depozitului), iese identic, octet cu octet, cu docs/rezultate/program_real_2026-11-01.csv; zilele noi s-au putut rula."
+ },
+ "rand_de_incredere": "ferestre = 2, tarie >= 0.42, 101 <= ciclu_s <= 198 (rândurile de 20 de minute ale opțiunii --pe-zi)",
+ "zi_masurata": "cel puțin 30 de rânduri de încredere, pragul din criterii. Textul criteriilor spune „din 45 de rânduri de zi”, câte avea 26.10; ziua de 6.11 are mai multe rânduri de zi (72), fiindcă are și rânduri de noapte. Pragul e îndeplinit și ca proporție: peste 30 din 45 (două treimi) din rândurile de zi.",
+ "unitati": "ciclurile (mediana, p10, p90, min, max, mediane_pe_ore, C1, C2, C0) sunt în secunde",
+ "metoda_percentilei": "numpy.percentile, cu interpolare liniară (metoda implicită)",
+ "ora_unui_rand": "ora de început a rândului (de_la); medianele pe ore se iau doar pe orele cu cel puțin 2 rânduri de încredere",
+ "proba_C0": {
+  "cum": "Un script separat, în afara depozitului, importă modulul și înlocuiește doar în memorie PERIOADE cu numpy.arange(80.0, 240.0, 0.25), apoi rulează funcția main a modulului cu aceleași opțiuni ca în comandă (--interval ... --pe-zi). Fișierul modulului, verificat prin amprentă înainte și după, nu s-a schimbat.",
+  "cod_esential": "pr.PERIOADE = np.arange(80.0, 240.0, 0.25); pr.main(['--zi', zi, '--interval', '09:30-10:30', ..., '--pe-zi', '--out', 'pr_c0_<zi>.csv'])",
+  "rand_de_incredere_80_240": "ferestre = 2, tarie >= 0.42, 81 <= ciclu_s <= 238",
+  "prag": "cel mult 5% dintre rândurile de încredere ale căutării lărgite au ciclul între 85 și 97 s, inclusiv",
+  "sha256_modul_inainte_si_dupa": "20bc221a9c769180114752a83e5c1a0f93129ad29186508f98b6f90f4b9035e0"
+ },
+ "zile": [
+  {
+   "zi": "2026-11-06",
+   "fisier": "docs/rezultate/program_real_2026-11-06.csv",
+   "sha256_fisier": "805324fe7cf2290476411460d855d115f06484a262f6a4c35b1e2ca999a27fa4",
+   "durata_rularii_s": 120.0,
+   "randuri_de_zi": 72,
+   "primul_rand": "00:00",
+   "ultimul_rand": "23:40",
+   "randuri_de_incredere": 70,
+   "proportie_de_incredere": 0.972,
+   "nu_sunt_de_incredere": {
+    "o_singura_fereastra": 0,
+    "tarie_sub_0_42": 2,
+    "ciclu_in_afara_101_198": 0
+   },
+   "masurata": true,
+   "mediana": 132.9,
+   "p10": 126.05,
+   "p90": 148.26,
+   "min": 123.0,
+   "max": 154.5,
+   "mediane_pe_ore": {
+    "00": 128.0,
+    "01": 126.1,
+    "02": 127.6,
+    "03": 132.0,
+    "04": 125.6,
+    "05": 130.9,
+    "06": 140.8,
+    "07": 134.8,
+    "08": 138.5,
+    "09": 140.5,
+    "10": 141.2,
+    "11": 149.7,
+    "12": 142.6,
+    "13": 148.8,
+    "14": 141.4,
+    "15": 141.6,
+    "16": 136.9,
+    "17": 142.8,
+    "18": 142.8,
+    "19": 130.1,
+    "20": 132.5,
+    "21": 128.0,
+    "22": 133.5,
+    "23": 129.4
+   },
+   "randuri_de_incredere_pe_ore": {
+    "00": 3,
+    "01": 3,
+    "02": 3,
+    "03": 3,
+    "04": 3,
+    "05": 3,
+    "06": 3,
+    "07": 3,
+    "08": 3,
+    "09": 3,
+    "10": 2,
+    "11": 2,
+    "12": 3,
+    "13": 3,
+    "14": 3,
+    "15": 3,
+    "16": 3,
+    "17": 3,
+    "18": 3,
+    "19": 3,
+    "20": 3,
+    "21": 3,
+    "22": 3,
+    "23": 3
+   },
+   "C1": {
+    "p10": 126.05,
+    "prag": ">= 115 s",
+    "trece": true
+   },
+   "C2": {
+    "ore_judecate": 24,
+    "mediana_minima": 125.6,
+    "ora_minima": "04",
+    "mediana_maxima": 149.7,
+    "ora_maxima": "11",
+    "diferenta": 24.1,
+    "prag": ">= 10 s",
+    "trece": true
+   },
+   "C0": {
+    "randuri_de_zi_80_240": 72,
+    "randuri_de_incredere_80_240": 70,
+    "intre_85_si_97_s": 0,
+    "procent": 0.0,
+    "prag": "<= 5%",
+    "trece": true,
+    "randuri_de_zi_80_240_intre_85_si_97_s_chiar_fara_incredere": 0,
+    "mediana_80_240": 132.9,
+    "p10_80_240": 126.05,
+    "p90_80_240": 148.26,
+    "min_80_240": 123.0,
+    "max_80_240": 154.5,
+    "randuri_cu_alt_ciclu_decat_cautarea_100_200": [],
+    "sha256_fisier_c0": "805324fe7cf2290476411460d855d115f06484a262f6a4c35b1e2ca999a27fa4",
+    "durata_rularii_s": 119.0
+   },
+   "intra_in_figura": true,
+   "verdict": "Ziua e măsurată: 70 de rânduri de încredere din 72 de rânduri de zi. C1 trece: a zecea percentilă a ciclului e 126 s (pragul: 115 s). C2 trece: medianele pe ore merg de la 125,6 s (ora 04) la 149,7 s (ora 11), deci diferă cu 24,1 s (pragul: 10 s). C0 trece: căutarea lărgită la 80–240 s găsește 0 din 70 de rânduri de încredere între 85 și 97 s (0%; pragul: 5%).",
+   "ce_se_poate_spune": [
+    "Pe ziua respectivă, camera măsoară un ciclu de cel puțin 115 s în nouă rânduri din zece, iar un ciclu de ≈91 s nu apare.",
+    "Programul semaforului se schimbă de-a lungul zilei."
+   ]
+  }
+ ],
+ "conditia_zilei": {
+  "ce": "Aceeași condiție ca pentru ziua de 5.11 (nota_zile din criterii, mai jos): ziua de 6.11 intră doar dacă prelucrarea ei de noapte s-a încheiat cu codul 0 pe toți pașii și jurnalul ei public există.",
+  "nota_zile": "Ziua de 5.11 intră doar dacă prelucrarea ei de noapte s-a încheiat cu codul 0 și jurnalul ei public există. Zilele de 26.10 și 1.11 sunt deja publicate și nu se judecă din nou.",
+  "prelucrarea_de_noapte": {
+   "fisier": "outputs/lant/2026-11-06/stare.json (local)",
+   "pornit": "2026-11-07T00:15:00",
+   "actualizat": "2026-11-07T00:23:46",
+   "rezultat": "gata_fara_simulari",
+   "coduri_pe_pasi": {
+    "repara": 0,
+    "calitate": 0,
+    "recount": 0,
+    "publica": 0,
+    "scenarii": 0,
+    "indisciplinat": 0
+   }
+  },
+  "jurnalul_public": {
+   "fisier": "data/trajectories/traiectorii_2026-11-06.jsonl.gz",
+   "octeti": 69172478,
+   "sha256": "ed9c3e8ac2e6df6af36adafc99e249a66f1d33028b5eeaae1a450ef5b4d7b735"
+  },
+  "indeplinita": true
+ },
+ "referinta": {
+  "ce": "Doar ca reper, nu ca verdict: aceeași citire pe fișierele publicate ale zilelor de 26.10 și 1.11, care nu se judecă din nou (criteriile). Cheia zilei e „zi_de_referinta”, ca aceste rânduri să nu fie luate drept verdicte.",
+  "zile": "aceleași ca în docs/rezultate/program_real_verdict_2026-11-02_04.json (26.10 și 1.11); nu se repetă aici"
+ }
+}
