@@ -45,10 +45,27 @@ autorului și starea de predare a lucrului (actualizați secțiunea „Stare cur
   - Comise și împinse la 05:08: e62ed17 (documentația după audit), 7f0ea5e (ziua de 5.11 prin măsura înghețată: doar geamănul și
     poarta, poarta trece pe 1 din 5 ore, ora liniștită; descriptivă) și 9e36f98 (verificarea finală, ziua de 5.11 în § 9.11, § 12.3,
     Anexa A și README, eticheta fișei fără „continue”). Înainte: 86d1c8e (programul real pe 5.11, CP3) și dbc7f0e (fișa la 6.11, 00:00).
-  - La 05:42: ciorna exportată (`Prezentare_M2_ciorna.pdf`, pagini PNG privite una câte una), toate cele 8 pagini trec
-    `verifica_m2.py` (corpul 352–447 din 450 de caractere); în constructor, „§” nu se mai desparte de număr. PDF-ul documentației,
-    refăcut (100 de pagini) și comis. Urmează: la CP5 (15:00), `construieste_m2.py --final` și `exporta_m2.py --final --pdf
-    Prezentare_M2.pdf` (verificat că paginile trec și că pagina 7 spune „publicate”), apoi SendUserFile autorului, pentru CP6 (17:30).
+  - La 05:42: ciorna, apoi varianta finală (`construieste_m2.py --final`, `exporta_m2.py --pdf Prezentare_M2.pdf`, la HEAD
+    1aa3db6, împins): 8 pagini, toate trec, 0 marcaje de ciornă, 0 locuri goale; pagina 7 spune 65 de schimbări „publicate”.
+    PDF-ul și NOTE_M2.md i-au fost trimise autorului (SendUserFile) la 05:44, pentru CP6 (17:30). PDF-ul documentației, comis în
+    1aa3db6. Dacă autorul cere schimbări: sablon/constructor/note, apoi din nou `--final` și exportul (nu între 07:30 și 08:30).
+  - **Cererea autorului, 6.11, ≈16:30: un singur fișier de prezentat, cel mult 5 minute, fără notele separate.** Făcut la 16:40:
+    pagina 3 are pașii exacți ai demonstrației (Tasta 5, „Da, preiau comanda”, la „e verde de 35 s” cealaltă direcție, „Reveniți
+    la «Planul observat»”, „Da”); pagina 4 nu mai e pe viu (capturile M1/acum, „Când simularea se oprește:”), deci fără Windows
+    Terminal în timpul prezentării. Pagina 9 („Doar pentru mine”) s-a scos la 16:50, la cererea autorului: PDF-ul ajunge la profesor
+    și devine public pe GitHub de duminică, deci are doar cele 8 pagini; pașii de dimineață i-am dat autorului în chat. Duminică, la 07:35, pornesc EU, în fundal: `python -m romana.dashboard.server` și `python -m
+    romana.bridge.live_twin` FĂRĂ `--gui` (probat pe 6.11, 16:33: cod 0, `plan_observat`, „camera live”), apoi deschid Chrome la
+    http://localhost:8050 într-o fereastră nouă. Autorul: F11, Ctrl și minus, „Oprește imaginea”, PDF-ul, partajarea.
+  - **Sâmbătă, 7.11, 04:50:** lanțurile de noapte pentru 6.11, încheiate cu codul 0 (lant: gata_fara_simulari; lant_cor:
+    gata_fara_simulari). Ziua de 6.11: 912ea84, 2d27289 și a94705c (un subagent, 05:03–05:06, împinse), verificate de
+    wf_b8b00d9a-9fd: 11 constatări confirmate din 12, aplicate la 05:35 doar în documentație și README (§ 5.4, § 10, § 11.8 cu nota
+    CRLF/LF a amprentelor, § 12.1, § 12.4, Anexa A), fără verdictele JSON (banda paginii 5 le citează commiturile) și fără
+    prezentare; lista, în scratchpad\verif_0611_confirmate.json. Prezentarea NU se reface până nu o vede din nou autorul; dacă se reface, construieste_m2.py
+    citește toate verdictele din docs/rezultate, deci pagina 5 ar trece la 2–6.11: se spune autorului înainte. Bugetul săptămânii
+    noi: 0% la 04:45, eșalonat până la M3. Trezire la 18:05 pentru sondare (task-ul de așteptare din fundal).
+  - Sâmbătă (bugetul nou, după resetarea de vineri, 23:00): după lanțurile din noaptea de 6→7.11, programul real pe 6.11 (aceleași
+    criterii) și ziua de 6.11 prin măsura înghețată, comise ca pentru 5.11 (prezentarea rămâne pe 2–5.11, cum scrie); la 18:00,
+    închiderea sondării (`--rezumat`, `--publica`). Duminică: 06:45 `--regula-finala`, 07:15 PDF-ul final, 07:35 pornirea demonstrației.
   - Testele: 764, 0 eșecuri, la dbc7f0e; după 9e36f98 au trecut din nou cele 20 ale fișei (modulul și-a schimbat doar textele).
 - **Direcția nouă, cerută de autor pe 05.11, ≈19:45 (memoriile m2-ce-e-mai-bun, absenta-6-8-11, iot-si-ioc, buget-tokeni):**
   M2 trebuie să arate ce e mai bun și nou, nu „nu trece nimeni”; o schimbare de fond, aleasă de mine, cu mână liberă la
