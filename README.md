@@ -31,9 +31,9 @@
 > **Ziua de 6.11, prelucrată pe 7.11.** A doua zi de test s-a prelucrat la fel, doar până la geamăn și poartă, fără strategii: poarta
 > trece pe 1 din 4 ore, seara. Ziua e doar descriptivă (§ 9.11).
 >
-> **Programul real pe 2–5.11, măsurat pe 5 și 6.11.** Camera a măsurat din nou programul semaforului, pe patru zile lucrătoare,
+> **Programul real pe 2–6.11, măsurat pe 5, 6 și 7.11.** Camera a măsurat din nou programul semaforului, pe cinci zile lucrătoare,
 > după criterii publicate înaintea rulării care dă verdictele (`docs/rezultate/program_real_criterii.json`; verdictele, în
-> `docs/rezultate/program_real_verdict_*.json`). Toate cele patru zile au ieșit „măsurate”: mediana zilei e de ≈135–137 s; în nouă
+> `docs/rezultate/program_real_verdict_*.json`). Toate cele cinci zile au ieșit „măsurate”: mediana zilei e de ≈133–137 s; în nouă
 > măsurători de încredere din zece, ciclul are cel puțin 115 s; programul se schimbă de-a lungul zilei, iar un ciclu de ≈91 s nu
 > apare (§ 6.5).
 
@@ -305,7 +305,7 @@ Alte rezultate, pe scurt:
   Rezultatul s-a retras pe 2.11: acea capacitate venea, în mare parte, din ciocniri și teleportări (§ 6.5). Coada de
   intrare rămasă atunci pe Calea Victoriei ținea de rutele de atunci, care porneau de oriunde din rețea: ≈72% din
   traficul de pe Magheru pornea de pe Calea Victoriei. În geamănul corectat, rutele pornesc de pe bulevardul fiecărui
-  braț, iar punctul slab e din nou Dacia vest: în zilele lucrătoare, geamănul duce acolo cel mult ≈590 de vehicule pe
+  braț, iar punctul slab e din nou Dacia vest: în zilele lucrătoare de antrenare, geamănul duce acolo cel mult ≈590 de vehicule pe
   oră, față de 766–1 063 în cameră, cu factorul de corecție (§ 6.5, § 9.11).
 
 Datele brute sunt în `docs/rezultate/` (Anexa A).
