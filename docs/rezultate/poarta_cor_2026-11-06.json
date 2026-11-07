@@ -1,0 +1,61 @@
+{
+ "commit": "1aa3db6efc7ac44f2ea5f9057648838d067af2e4",
+ "data_rularii": "2026-11-07T03:44:04+02:00",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "scenarii": {
+  "cor_zi_2026-11-06_varf": {
+   "trece": false,
+   "randuri": {
+    "debit, veh/h: magheru": "nedecis",
+    "debit, veh/h: catargiu": "nedecis",
+    "debit, veh/h: dacia_est": "peste prag",
+    "teleportări": "nedecis",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "peste prag",
+    "pierdere de detecție pe întuneric": "fără obiect"
+   }
+  },
+  "cor_zi_2026-11-06_linistit": {
+   "trece": false,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "peste prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "nejudecabil"
+   }
+  },
+  "cor_zi_2026-11-06_pranz": {
+   "trece": false,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "peste prag",
+    "pierdere de detecție pe întuneric": "fără obiect"
+   }
+  },
+  "cor_zi_2026-11-06_seara": {
+   "trece": true,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "în prag"
+   }
+  }
+ }
+}
