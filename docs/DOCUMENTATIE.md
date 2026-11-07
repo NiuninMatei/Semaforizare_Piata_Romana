@@ -179,7 +179,7 @@ trimitere la locul unde sunt prezentate în detaliu.
 | `TOD_DEBIT` | Program din planuri fixe, cu cazurile stabilite după debit: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens. Candidat în testul final: pe 28.10 a avut cea mai mică pierdere totală dintre candidați, dar diferența față de 12/14/12, de 0,3%, nu a fost semnificativă, așa că a câștigat planul mai simplu. Rezultatul s-a retras pe 2.11, odată cu tot testul final (§ 6.5). | § 9.9, § 9.10 |
 | `TOD_FIX` | Aceleași planuri, cu cazurile stabilite după numele scenariilor: 16/10/12 în scenariile liniștite și la prânz, 12/14/12 în rest. A fost ales chiar pe datele de validare, deci estimarea de acolo e optimistă; în teste a fost doar raportat, nu candidat. | § 9.9, § 9.10 |
 | `PLAN_12_14_12`, `PLAN_a_b_c` | Numele de cod ale planurilor fixe: `PLAN_a_b_c` are a, b și c secunde de verde pentru N–S, E–V și pietoni. La planul observat, 72/48/3, c e golirea centrului, fără pietoni. `PLAN_12_14_12` a câștigat testul din 28.10, rezultat retras pe 2.11 (§ 6.5); între 29.10 și 2.11 a fost varianta implicită a geamănului în timp real, `plan_scurt`. | § 9.10, § 11.8 |
-| `FIX`, `ACTUATED` | Numele de cod ale planului de referință 36/28/12 și ale semaforizării actuated, în comenzi și în fișierele de rezultate. | § 11.8 |
+| `FIX`, `ACTUATED`, `REAL` | Numele de cod ale planului de referință 36/28/12, ale semaforizării actuated și ale semaforului rejucat, în comenzi și în fișierele de rezultate, de exemplu în `docs/rezultate/cor_decizie_2026-11-04.json`. `REAL` e o reconstrucție în simulare, nu semaforul de pe stradă, și nu se confundă cu programul realist, `REALIST`. | § 6.5, § 11.8 |
 | grila de planuri fixe | Încercarea sistematică a mai multor planuri fixe, cu alte durate de verde, ca să se găsească cel mai bun: 10 planuri pe calibrările anterioare, 23 pe geamănul calibrat, pe validarea din 26.10, și 8 pe geamănul înghețat, pe 3.11, pe zilele de antrenare 25 și 26.10 și 1.11, înainte de a privi datele din 3.11. A doua grilă arăta că ciclurile scurte câștigă, dar geamănul ei avea coliziuni și teleportări în masă (§ 6.5). Pe geamănul înghețat, planurile foarte scurte nu duc traficul, iar pierderea cea mai mică iese la un ciclu de ≈93 s. | § 6.5, § 9.5, § 9.9, § 9.11 |
 | candidat, strategia în vigoare, strategie raportată | Candidații testului final, fixați dinainte, au fost planul 12/14/12, `TOD_DEBIT` și E13. Strategia în vigoare, cu care au fost comparați, era programul realist. Strategiile raportate, de exemplu planul 16/10/12 singur, agentul oficial sau `TOD_FIX`, au fost rulate și prezentate, dar nu puteau câștiga. Pe zilele noi din § 9.11, candidații au fost planurile 60/40/3 și 45/30/3 și E15, comparați cu planul observat și cu semaforul rejucat; actuated a fost doar raportat. Niciunul nu a trecut de validarea din 4.11, care a ieșit doar descriptivă, deci rămâne planul observat, 72/48/3. | § 9.9, § 9.10, § 9.11 |
 | regula „cel mai bun câștigă” | Regula de decizie fixată de autor pe 28.10, înaintea testului final: câștigă candidatul cu cea mai mică pierdere totală, dacă e semnificativ mai bun decât strategia în vigoare și nu e semnificativ mai slab în niciunul dintre cele două comportamente. Dacă primii doi candidați nu se deosebesc semnificativ, câștigă cel mai simplu. | § 9.9 |
@@ -1315,6 +1315,9 @@ după fiecare, paznicul a pornit colectarea la loc. Toate cele 6 prelucrări de 
 vechi și 2 ale măsurii noi. În același timp, modulul de viziune a numărat 284 152 de vehicule intrate în piață, fără factorii
 de corecție: 265 034 de autoturisme, 8 669 de autobuze și troleibuze, 9 732 de camioane, 433 de motociclete și 284 de
 biciclete. Pietonii apar doar ca totaluri pe zi, 120 076 de numărări în total. Numărătorile fiecărei zile vin din renumărarea ei de noapte.
+Fișierul zilei de 1.11 din `data/counts/` mai are intervalul 08:15–08:27, din timpul prezentării bornei M1, dinaintea colectării
+continue: cu el, pe 1–5.11 sunt 284 247 de intrări de vehicule și 120 095 de numărări de pietoni, cifrele din banda paginii 6 a
+prezentării bornei M2.
 
 ## 5. Puntea cameră → simulare: cererea de trafic calibrată
 
@@ -1967,7 +1970,11 @@ corecție. Rezultate: `docs/rezultate/program_real_2026-10-26.csv`.*
 Pe 2, 3, 4, 5 și 6.11, cinci zile lucrătoare, programul s-a măsurat din nou, după criterii scrise pe 5.11, la 20:55, când zilele 2–4.11
 trecuseră deja, dar publicate înaintea rulărilor care dau verdictele, în `docs/rezultate/program_real_criterii.json`. Toate cele cinci
 zile au destule date: fiecare are 61–70 de măsurători de încredere, de câte 20 de minute, iar criteriile cer cel puțin 30. Mediana
-ciclului e ≈133–137 s, iar pe fiecare zi, în nouă măsurători de încredere din zece, ciclul are cel puțin 115 s. Căutarea obișnuită
+ciclului e ≈133–137 s, iar pe fiecare zi, în nouă măsurători de încredere din zece, ciclul are cel puțin 115 s. Mai strâns, pe
+fiecare dintre zilele 2–5.11, cel puțin opt măsurători de încredere din zece au ciclul între 123 și 150 s: percentila 10 a zilei e
+de 123,6–125,5 s, iar percentila 90, de 147,0–149,4 s. Acesta e intervalul din prezentarea bornei M2; pe 6.11, cele două percentile
+sunt de 126,05 și 148,26 s. Intervalul de ≈125–155 s din celelalte capitole vine din măsurarea de pe 2.11, pe zilele de 26.10 și
+1.11, din tabelul de mai sus. Căutarea obișnuită
 acoperă doar 100–200 s, așa că o probă separată a lărgit-o la 80–240 s: nicio măsurătoare de încredere nu cade între 85 și 97 s, deci
 un ciclu de ≈91 s nu apare. Medianele pe ore variază în cursul zilei, de la ≈122 la ≈154 s pe cele cinci zile: între cea mai mică și cea mai mare sunt 23–29 s, după zi.
 Înaintea fiecărei rulări, ziua de 1.11 s-a măsurat din nou, ca probă, și a dat exact rezultatele publicate. Zilele de 5 și 6.11 s-au
@@ -2288,7 +2295,7 @@ butoanelor, iar modurile sunt împărțite după cine decide:
 |---|---|---|
 | Planul observat | un calculator, singur | un plan fix dedus din cameră, la vârful zilei de luni 26.10: 72/48/3, cu ciclul de ≈138 s, aproape de mediana zilei, ≈135–137 s, măsurată de cameră pe 2–5.11 (§ 6.5) |
 | Agent IA | un calculator, singur | agentul oficial, antrenat în simulare pe traficul din 21.10, alege faza după cozi (§ 7); nu a fost candidat în runda din § 9.11, în care niciun candidat n-a trecut de validare |
-| Plan de referință | un calculator, singur | planul fix 36/28/12, ipoteza de la începutul proiectului, cu un ciclu de ≈91 s pe care camera l-a infirmat; păstrat doar pentru comparație (§ 7.4) |
+| Plan de referință | un calculator, singur | planul fix 36/28/12, ipoteza de la începutul proiectului, cu un ciclu de ≈91 s pe care camera l-a infirmat; păstrat doar pentru comparație (§ 7.4). Pe geamănul corectat, verdele minim lungește etapa de pietoni: cele 12 s devin ≈16 s, cu timpul în care pietonii termină traversarea, de aceea ecranul scrie „≈16 s pietoni” (`bridge/live_twin.py`) |
 | Presiune maximă | un calculator, singur | la câteva secunde dă verde direcției cu cele mai lungi cozi (§ 7.4) |
 | Comandă manuală | un om, de la acest ecran | omul alege direcția, iar galbenul și roșul de siguranță se aplică singure |
 
@@ -2331,7 +2338,12 @@ pagina are acum mai mult de spus și fiindcă evaluatorii găsesc mereu ceva.
 pe 2.11, la prioritate scăzută. Trecerea la planul de referință a fost aplicată în 2,2 s, iar comanda manuală a fost primită în
 2,1 s. Verdele cerut vine după galben, roșu și verdele minim al fazei curente; în geamănul corectat, și după ce pietonii
 de pe Dacia își primesc verdele și termină traversarea, deci poate întârzia până la ≈50 s (§ 6.5, § 7.2). Între timp, pagina arată „urmează”, dar așteaptă doar 30 s: apoi scrie că simularea n-a aplicat încă comanda și o trece „neaplicată”, deși geamănul o aplică mai târziu. Colectarea a mers
-în acest timp cu 5,9 cadre/s. Cum a mers colectarea în total, cu pauzele, opririle și reconectările ei, arată fișa senzorului (§ 4.6).
+în acest timp cu 5,9 cadre/s. Pe 5.11, între 19:20 și 19:28, proba s-a repetat pe dispeceratul înghețat pe 3.11 (`20c3932`), cu
+geamănul pornit de mână, în SUMO-GUI. Preluarea comenzii manuale s-a aplicat în 3 s, verdele cerut pe Dacia, după galben și roșu, în
+16,5 s, iar revenirea la „Planul observat”, în 2 s. Cu simularea oprită, alerta a apărut după ≈11 s, iar după repornire pagina și-a
+revenit singură, fără reîncărcare, după ≈9 s; acești doi timpi sunt estimați, fără cronometru. Acestea sunt cifrele din benzile
+paginilor 3 și 4 ale prezentării bornei M2. Cum a mers colectarea în total, cu pauzele, opririle și reconectările ei, arată fișa
+senzorului (§ 4.6).
 
 **Sondarea cu oameni (`romana.dashboard.sondare`).** O pagină publică, deschisă cu un link, fără instalare: în stânga un ghid care îi
 spune persoanei, pas cu pas, ce să facă, de la deschiderea ecranului până la închiderea lui, iar în dreapta dispeceratul. Laptopul care
@@ -2344,7 +2356,9 @@ Imaginea camerei e fotografia publicată, cu persoanele și plăcuțele estompat
 contrazice schema simulată, așa că persoana poate vedea piața în direct separat, pe site-ul Webcam România. În ambele variante, panoul
 camerei spune că e o fotografie fixă și nu mai arată indicatorii de flux, cadre pe secundă sau vehicule urmărite, care ar fi falși. Variantele sunt cea de la
 borna M1, păstrată neschimbată în `src/romana/dashboard/static/m1`, și cea curentă, în ordine schimbată de la o persoană la alta:
-fixată în link pentru persoanele apropiate, la întâmplare pentru colegi. La final, persoana vede tot ce s-a notat și decide
+fixată în link pentru persoanele apropiate, la întâmplare pentru colegi. Varianta M1 păstrează și numele de atunci: planul simulat
+pe ambele variante, 72/48/3, apare pe ea ca „Program pe cazuri de trafic (acum: plan fix scurt 12/14/12 s)”. La final, persoana vede
+tot ce s-a notat și decide
 dacă trimite (§ 4.5). Autorul a parcurs pagina în 10 minute, deci pagina anunță 10–20 de minute. Sondarea e formativă și nesupravegheată: arată ce nu se înțelege pe ecran, nu cât de bun e ecranul în general,
 iar locul în care s-a blocat cineva se vede doar din timpi și apăsări. Textul trimis păstrează numărul apăsărilor la fiecare
 sarcină; la sarcinile 3 și 4 păstrează și pe ce s-a apăsat: toate apăsările, dacă sunt cel mult 12, altfel primele 4 și ultimele
@@ -3984,7 +3998,8 @@ poarta pe niciuna, deci și validarea e doar descriptivă:
 
 Tiparul e cel din 3.11, pe care îl explică diagnoza de mai sus; pe 4.11, cauzele nu le-am mai verificat separat. Decizia validării,
 scrisă de lanț pe 5.11, la 04:16, s-a copiat octet cu octet în `docs/rezultate/cor_decizie_2026-11-04.json` și s-a comis la 04:23,
-înaintea oricărei zile de test. Ea păstrează planul observat, 72/48/3, iar în geamăn varianta `plan_observat`. În fișier, planurile
+înaintea oricărei zile de test. Ea păstrează planul observat, 72/48/3, iar în geamăn varianta `plan_observat`; câmpul
+`"castigator"` numește aici strategia care rămâne când nu trece niciun candidat, nu una care a câștigat. În fișier, planurile
 60/40/3 și 45/30/3 apar totuși cu `"eligibil": true`. Fiindcă nicio oră nu a trecut poarta, regula s-a calculat, doar ca descriere,
 pe toate scenariile zilei, iar câmpul `"descriptiv": true` al porții face ca niciunul să nu treacă de validare. Pe ore care nu trec
 poarta, eligibilitatea nu spune nimic despre stradă. Fiindcă validarea e
@@ -4298,13 +4313,15 @@ același număr, iar sondarea, `7_sondare.bat`, apare ca pasul 7b.
 | 7 | `7_dashboard.bat` | deschide dispeceratul, interfața web a operatorului, la http://localhost:8050 | continuu |
 | 7b | `7_sondare.bat` | sondarea dispeceratului cu oameni (§ 8), pe acest calculator, pentru probe; pagina adevărată e pe GitHub Pages, cu `--linkuri`, `--rezumat`, `--publica` pentru invitații și rezultate | 10–20 min de persoană |
 | – | `PORNESTE_TOT.bat` | pornește pașii 2, 6 și 7 în trei ferestre: sistemul complet, în timp real | continuu |
+| – | `M2_demonstratie.bat` | lansatorul demonstrației de la borna M2, scris pentru laptopul autorului, pe care colectarea merge deja: pornește doar dispeceratul și geamănul, fără SUMO-GUI și fără o a doua colectare, apoi deschide în Chrome prezentarea și dispeceratul; prezentarea o ia de pe laptop, din `outputs/`, care nu intră în depozit | cât ține demonstrația |
 | 10 | `10_documentatie_pdf.bat` | transformă documentația în PDF, cu pagini numerotate (`docs\DOCUMENTATIE.pdf`) | ~1 min |
 
 ### 11.5 Demonstrația live (~20 de minute)
 
 Demonstrația prezintă sistemul întreg, în timp real. Se pornește cu `scripts\PORNESTE_TOT.bat`. Scriptul pornește
 colectarea fără să verifice dacă una rulează deja, pornită de mână sau de paznic (pasul 2e din § 11.4). Ca să nu
-pornească o a doua, în acest caz se pornesc, în locul lui, doar pașii 6 și 7 din § 11.4. Dacă a pornit-o paznicul,
+pornească o a doua, în acest caz se pornesc, în locul lui, doar pașii 6 și 7 din § 11.4; pentru borna M2, `scripts\M2_demonstratie.bat`
+pornește doar dispeceratul și geamănul, fără SUMO-GUI, apoi deschide în Chrome prezentarea și dispeceratul. Dacă a pornit-o paznicul,
 colectarea rulează fără fereastră, așa că fereastra de la pasul 1 din tabelul de mai jos lipsește, iar imaginea camerei se
 vede în dispecerat. După pornire, ferestrele se aduc pe rând pe ecran, în ordinea în care circulă datele:
 
@@ -4787,7 +4804,8 @@ se află în `docs/prezentari/`.
   pietoni numărați pe persoane, factori după lumină (§ 4.3). Loturi de adnotare prin interfața de programare, cu o gardă pentru credit.
 * **Programul real:** ciclul și etapele semaforului, măsurate din jurnalul public al vehiculelor. Pe 2–5.11, după criterii
   publicate înaintea rulărilor care dau verdictele, toate cele patru zile sunt măsurate: ciclul se schimbă de-a lungul zilei,
-  cu mediana zilei de ≈135–137 s, iar un ciclu de ≈91 s nu apare (§ 6.5).
+  cu mediana zilei de ≈135–137 s, iar un ciclu de ≈91 s nu apare; acestea sunt zilele citate de prezentarea bornei M2. Ziua de
+  6.11, judecată pe 7.11 după aceleași criterii, e și ea măsurată, cu mediana de ≈133 s (§ 6.5).
 * **Geamănul:** s-a găsit defectul coliziunilor, s-a construit geamănul corectat; o revizie separată, făcută de alți agenți Claude, a găsit că prima corectură făcea vehiculele să treacă prin pietoni; s-au găsit mai multe cauze, iar geamănul se compară acum cu camera pe același ceas, fără să fie validat; rezultatul de −7% s-a retras
   (§ 6.5, § 9.11).
 * **Înghețul (3.11):** cererea finală, cu ieșirile greu de urmărit numărate direct pe felii; o verificare adversarială a cererii, a
