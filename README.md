@@ -28,6 +28,9 @@
 > **Ziua de 5.11, prelucrată pe 6.11.** Prima zi de test s-a prelucrat doar până la geamăn și poartă, fără strategii: poarta trece pe 1 din
 > 5 ore, ora liniștită. Ziua e doar descriptivă (§ 9.11).
 >
+> **Ziua de 6.11, prelucrată pe 7.11.** A doua zi de test s-a prelucrat la fel, doar până la geamăn și poartă, fără strategii: poarta
+> trece pe 1 din 4 ore, seara. Ziua e doar descriptivă (§ 9.11).
+>
 > **Programul real pe 2–5.11, măsurat pe 5 și 6.11.** Camera a măsurat din nou programul semaforului, pe patru zile lucrătoare,
 > după criterii publicate înaintea rulării care dă verdictele (`docs/rezultate/program_real_criterii.json`; verdictele, în
 > `docs/rezultate/program_real_verdict_*.json`). Toate cele patru zile au ieșit „măsurate”: mediana zilei e de ≈135–137 s; în nouă
