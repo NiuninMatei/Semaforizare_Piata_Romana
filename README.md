@@ -82,8 +82,8 @@ teleportări, nu că planul ar fi mai bun pe stradă: pe geamănul corectat, 12/
 
 > Totul se petrece în simulare: proiectul nu comandă niciun semafor real. Proiectul nu este afiliat cu Webcam România
 > sau cu operatorul camerei. Din imaginile camerei, depozitul conține doar două imagini făcute dintr-un singur cadru
-> estompat, publicate cu acordul scris al Webcam România (`docs/imagini/`). Același cadru apare și în prezentarea din
-> `docs/prezentari/`.
+> estompat, publicate cu acordul scris al Webcam România (`docs/imagini/`). Același cadru apare și în prezentarea bornei M1,
+> din `docs/prezentari/`.
 
 Proiect pentru disciplinele *Interfețe om-calculator* și *Internet of Things* · Universitatea Transilvania din Brașov,
 Facultatea de Matematică și Informatică, Informatică ID, anul III, grupa 10LD541 · 2026–2027 · Autor: **Niunin Matei-Gabriel**.
@@ -385,7 +385,8 @@ abrevierile. Ce merită citit, după interes:
 - drepturi și date personale: § 4.5, § 12.5, § 14.1.
 
 Prezentările bornelor proiectului, comune celor două discipline, *Interfețe om-calculator* și *Internet of Things*:
-[M1, 01.11.2026](docs/prezentari/Prezentare_M1.pdf), cu rezultatul de −7%, retras între timp.
+[M1, 01.11.2026](docs/prezentari/Prezentare_M1.pdf), cu rezultatul de −7%, retras între timp;
+[M2, 08.11.2026](docs/prezentari/Prezentare_M2.pdf), cu camera publică, ca senzor IoT, și omul care supraveghează prin dispecerat.
 
 ## Limite principale
 
@@ -422,7 +423,7 @@ fluxului în scop academic și necomercial, cu sursa indicată („Webcam Român
 publicarea a 1–2 capturi cu persoanele estompate (§ 14.1). Pe baza acestui acord, `docs/imagini/` conține două imagini
 ale camerei, `camera_piata_romana.jpg` și `camera_zone.jpg`, dintr-un singur cadru din 28.10.2026. Pe ele sunt estompate
 persoanele, plăcuțele tuturor vehiculelor și textul publicitar al camerei (figurile 4.1 și 4.2). Același cadru apare și
-în prezentarea din `docs/prezentari/`. Aceste două imagini nu intră sub nicio licență a proiectului
+în prezentarea bornei M1, din `docs/prezentari/`. Aceste două imagini nu intră sub nicio licență a proiectului
 (`LicenseRef-Toate-drepturile-rezervate`); celelalte figuri din `docs/imagini/` sunt ale proiectului.
 
 ## Confidențialitate
