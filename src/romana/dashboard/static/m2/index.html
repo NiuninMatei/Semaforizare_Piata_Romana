@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispecerat Piața Romană</title>
+<link href="/static/fonturi/fonturi.css" rel="stylesheet">
+<style>
+:root{
+  --beton:#e7e9e4; --hartie:#f6f7f4; --cerneala:#1f2a33; --gri:#5d6873; --linie:#c9cec7;
+  --albastru:#1d5fa8; --rosu:#b3261e; --galben:#e2a013; --verde:#12713f; --coada:#27465f;
+  --r-mare:10px; --r-mic:4px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--beton);color:var(--cerneala);font:15px/1.45 Barlow,system-ui,sans-serif}
+header{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;padding:10px 22px;background:var(--cerneala);color:var(--hartie)}
+header h1{margin:0;font:700 26px/1 "Barlow Semi Condensed",sans-serif;letter-spacing:.2px}
+header .loc{color:#aeb8c1}
+.ceas{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#proaspat{color:#c9d2da;font-size:14px}
+#proaspat.intarziat{color:#ffd166;font-weight:600}
+#ceas{font:600 20px "Barlow Semi Condensed";font-variant-numeric:tabular-nums}
+header button{padding:4px 12px;background:transparent;color:var(--hartie);border-color:#aeb8c1}
+header button:focus-visible{outline-color:#ffd166}
+.nota-sim{margin:0;padding:6px 22px;background:#dfe8f1;color:#17324d;font-size:14px}
+.alerta{padding:10px 22px;background:#fde8e6;border-left:6px solid var(--rosu)}
+.alerta.atent{background:#fff4d6;border-left-color:var(--galben)}
+.alerta p{margin:0}
+.alerta details{margin-top:4px;font-size:14px;color:var(--gri)}
+#ajutor{padding:12px 22px;background:var(--hartie);border-bottom:1px solid var(--linie)}
+#ajutor h2{margin-bottom:4px}
+#ajutor ul{margin:4px 0;padding-left:20px}
+main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;padding:14px 22px;max-width:1700px;margin:auto}
+section{background:var(--hartie);border:1px solid var(--linie);border-radius:var(--r-mare);padding:14px 16px;min-width:0}
+h2{margin:0 0 8px;font:600 19px "Barlow Semi Condensed",sans-serif}
+h3{margin:12px 0 6px;font:600 15px "Barlow Semi Condensed",sans-serif;color:var(--gri)}
+.vechi,.nesigur{border:2px dashed var(--gri);padding:13px 15px}
+.vechi>h2::after,.nesigur>h2::after{content:"date vechi";display:inline-block;margin-left:8px;padding:0 6px;border:1px solid var(--galben);border-radius:var(--r-mic);background:#fff4d6;color:var(--cerneala);font:600 13px/18px Barlow;white-space:nowrap}
+.nesigur>h2::after{content:"valori nesigure"}
+.vechi .faza{font-size:18px;color:var(--gri)}
+.ascuns{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.cam{position:relative}
+.cam img{width:100%;display:block;border-radius:var(--r-mic);background:#2b333a;aspect-ratio:16/9;object-fit:cover}
+.cam .gol{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:#e7e9e4;padding:20px;background:#2b333a;border-radius:var(--r-mic)}
+.cam .gol p{margin:0}
+.stare{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:8px;color:var(--gri);font-size:14px}
+.stare button{padding:2px 10px;font-size:14px;margin-left:auto}
+.punct{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--gri)}
+.ok{background:var(--verde)} .atent-p{background:var(--galben)} .err{background:var(--rosu)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td,th{padding:5px 4px;border-bottom:1px solid var(--linie);text-align:left}
+th{font-weight:500;color:var(--gri)}
+th.n{text-align:right}
+td.n{text-align:right;font:500 15px "Barlow Semi Condensed"}
+td.n .doar{font:400 13px Barlow;color:var(--gri)}
+.schema svg{width:100%;height:auto;display:block;max-height:300px}
+.faza{font:700 24px/1.12 "Barlow Semi Condensed";margin:2px 0 3px;min-height:2.24em}
+.sub{color:var(--gri)}
+#max-coada{margin:4px 0 0;font-weight:500}
+.legenda{list-style:none;margin:6px 0;padding:0;font-size:13.5px;color:var(--gri)}
+.legenda li{margin:2px 0}
+.legenda i{display:inline-block;font:700 11px/16px Barlow;text-align:center;width:16px;height:16px;border-radius:50%;margin-right:2px;color:#fff;font-style:normal;vertical-align:-3px}
+.legenda .v{background:var(--verde)} .legenda .g{background:var(--galben);color:var(--cerneala)} .legenda .r{background:var(--rosu)} .legenda .n{background:#5d6873}
+.legenda .p{background:#fff;color:var(--verde);border:1.5px dashed var(--verde);line-height:13px}
+.legenda .bara-l{width:22px;height:7px;border-radius:4px;background:var(--coada);vertical-align:1px;margin-right:4px}
+#cine-acum{margin:0 0 4px;font-size:15.5px}
+.moduri{display:grid;gap:6px}
+button{font:600 16px "Barlow Semi Condensed";padding:7px 10px;border-radius:var(--r-mic);border:1.5px solid var(--cerneala);background:var(--hartie);color:var(--cerneala);cursor:pointer}
+.moduri button,.faze button{display:block;width:100%;text-align:left}
+.moduri b,.faze b{font-weight:600}
+.moduri span{display:block;font:400 13.5px/1.3 Barlow;color:var(--gri)}
+.moduri span.motiv{color:var(--cerneala);font-weight:500}
+button[aria-pressed=true]{background:#e4f2ea;border:2.5px solid var(--verde)}
+button[aria-pressed=true] b::after{content:"  ● acum";color:var(--verde);white-space:nowrap}
+button.urmeaza b::after{content:"  ○ urmează";color:var(--gri);white-space:nowrap}
+.moduri kbd{float:right;font:500 12px Barlow;color:var(--gri);border:1px solid var(--linie);border-radius:3px;padding:0 5px;background:#fff}
+button:disabled{color:var(--gri);border-color:var(--gri);border-style:dashed;cursor:not-allowed}
+button:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
+#blocat{margin:8px 0 0;color:var(--rosu);font-weight:500}
+.manual{display:none;margin-top:10px}
+.manual.vizibil{display:block}
+.manual p{margin:0 0 6px}
+.manual .faze{display:grid;gap:6px}
+.manual details{margin-top:6px;font-size:14px}
+.manual details p{margin:4px 0 6px;color:var(--rosu)}
+.confirm{display:none;margin-top:10px;padding:10px 12px;border-radius:var(--r-mic);background:#fff4d6;border:1px solid var(--galben)}
+.confirm.vizibil{display:block}
+.confirm:focus{outline:3px solid var(--albastru);outline-offset:2px}
+.confirm h3{margin:0 0 4px;color:var(--cerneala)}
+.confirm .rand{display:flex;gap:8px;margin-top:8px}
+.confirm .da{background:var(--cerneala);color:var(--hartie)}
+.confirm.risc{background:#fde8e6;border-color:var(--rosu)}
+#rezultat{margin:8px 0 0;min-height:1.45em;font-weight:500}
+#rezultat.bun{color:var(--verde)} #rezultat.rau{color:var(--rosu)}
+#istoric{margin-top:6px;font-size:13.5px;color:var(--gri)}
+#istoric ol{margin:2px 0;padding:0;list-style:none}
+#revino{margin-top:6px;font-size:14px;padding:4px 10px}
+canvas{width:100%;height:150px;display:block}
+#grafic-rez{margin:4px 0 0;color:var(--gri);font-size:14px}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1700px;margin:auto}
+footer a{color:inherit;text-decoration:underline}
+@media (min-width:1200px){.col.comanda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;position:sticky;top:8px;align-self:start}}
+@media (min-width:761px) and (max-width:1199.98px){main{grid-template-columns:minmax(0,1fr)}.col.comanda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+#faza-det{min-height:2.9em}
+@media (max-width:900px){main{grid-template-columns:minmax(0,1fr);padding:12px 16px}header,.nota-sim,.alerta,#ajutor{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Dispecerat Piața Romană</h1>
+  <span class="loc">Simularea intersecției, alături de camera care măsoară traficul</span>
+  <span class="ceas"><span id="proaspat" aria-live="off"></span><span id="ceas">--:--:--</span><button id="b-ajutor" aria-expanded="false" aria-controls="ajutor">Ajutor</button></span>
+</header>
+<p class="nota-sim">Comenzile de aici schimbă doar semaforul din simulare. Semafoarele reale din piață nu se schimbă.</p>
+<div id="alerte" role="alert"></div>
+<div class="ascuns" id="anunt" role="status"></div>
+<div id="ajutor" hidden>
+  <h2>Ce vedeți pe ecran</h2>
+  <ul>
+    <li><b>Schema</b> arată semaforul din simulare: în cerc, culoarea (V verde, G galben, R roșu, ? nu se știe), iar lângă stradă, câte vehicule stau oprite la semafor. În mijloc: pietonii care așteaptă și semaforul lor.</li>
+    <li>O <b>fază</b> e o combinație de semafoare verzi în același timp, de exemplu verde pe Magheru și Lascăr Catargiu.</li>
+    <li><b>Cine conduce:</b> planul observat și planul de referință schimbă fazele după un orar fix; presiunea maximă și agentul IA aleg după cozile de la semafoare; la comanda manuală, alegeți de la acest ecran. Trecerea la alt mod cere confirmare, la fel fazele cu risc de blocare; fazele obișnuite se schimbă dintr-un clic. Sub butoane scrie dacă s-a aplicat.</li>
+    <li><b>Camera</b> măsoară traficul din piață, iar simularea îl folosește. Dacă datele sunt vechi, apare un mesaj sus, roșu când lipsește legătura sau simularea, galben când camera lipsește de peste 3 minute și roșu de peste 10 minute; lângă valorile vechi scrie de când sunt, iar panoul lor are chenar punctat și eticheta „date vechi”.</li>
+    <li><b>Taste:</b> 1 planul observat, 2 agent IA, 3 plan de referință, 4 presiune maximă, 5 comandă manuală; Esc renunță; ? deschide acest ajutor.</li>
+    <li><label><input type="checkbox" id="taste" checked> Folosesc tastele de mai sus</label></li>
+  </ul>
+</div>
+<main>
+  <div class="col comanda">
+    <section class="schema" aria-labelledby="t-sem">
+      <h2 id="t-sem">Semaforul din simulare și vehiculele oprite, pe străzi</h2>
+      <div class="faza" id="faza">—</div>
+      <div class="sub" id="faza-det"></div>
+      <p id="max-coada"></p>
+      <svg id="svg-schema" viewBox="-20 0 340 270" role="img" aria-label="Schema pieței: nu sunt încă date de la simulare">
+        <g id="schema"></g>
+      </svg>
+      <ul class="legenda">
+        <li><i class="v">V</i><i class="g">G</i><i class="r">R</i><i class="n">?</i> culoarea semaforului: verde, galben, roșu; ? înseamnă că nu se știe</li>
+        <li id="leg-plus" hidden><i class="p">V</i> cerc gol: intrare deschisă în plus față de direcția care are verde</li>
+        <li><i class="bara-l"></i>cifra și bara: vehicule oprite la semafor; bara plină: 25 sau mai multe</li>
+        <li>În mijloc: pietonii care așteaptă și semaforul lor. Străzile desenate subțire sunt doar ieșiri din piață.</li>
+      </ul>
+      <div class="sub" id="sursa"></div>
+    </section>
+    <section aria-labelledby="t-ctrl">
+      <h2 id="t-ctrl">Cine conduce semaforul din simulare</h2>
+      <p id="cine-acum"></p>
+      <h3 id="t-auto">Decide un calculator, singur</h3>
+      <div class="moduri" role="group" aria-labelledby="t-auto">
+        <button data-mod="program"><kbd>1</kbd><b>Planul observat</b><span id="d-program">Plan fix dedus din cameră, la vârful zilei de luni 26.10.</span></button>
+        <button data-mod="ai"><kbd>2</kbd><b>Agent IA</b><span id="d-ai">Un program antrenat în simulare alege faza, după cozi.</span></button>
+        <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni.</span></button>
+        <button data-mod="max_pressure"><kbd>4</kbd><b>Presiune maximă</b><span>La câteva secunde, dă verde direcției cu cele mai lungi cozi.</span></button>
+      </div>
+      <h3 id="t-man">Decide un om, de la acest ecran</h3>
+      <div class="moduri" role="group" aria-labelledby="t-man">
+        <button data-mod="manual"><kbd>5</kbd><b>Comandă manuală</b><span>Alegeți ce direcție primește verde.</span></button>
+      </div>
+      <p id="blocat" hidden tabindex="-1"></p>
+      <div class="manual" id="manual">
+        <p class="sub">Alegeți direcția. Schimbarea se face singură: galben 3 s, apoi roșu 2 s pe toate direcțiile, cât se eliberează intersecția. Verdele ales ține cel mult ≈100 s: apoi faza următoare primește verde ≈20 s, iar semaforul revine la alegerea dumneavoastră.</p>
+        <div class="faze" id="faze"></div>
+        <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
+      </div>
+      <div class="confirm" id="confirm" role="alertdialog" aria-labelledby="confirm-t" aria-describedby="confirm-text" tabindex="-1">
+        <h3 id="confirm-t">Confirmați comanda</h3>
+        <div id="confirm-text"></div>
+        <div class="rand"><button class="da" id="da">Confirm</button><button id="nu">Renunț</button></div>
+      </div>
+      <p id="rezultat" role="status" tabindex="-1"></p>
+      <div id="istoric"><div id="istoric-parte" hidden><b>Ultimele comenzi</b><ol id="istoric-lista"></ol></div><button id="revino" hidden></button></div>
+    </section>
+  </div>
+  <div class="col">
+    <section class="cam" aria-labelledby="t-cam">
+      <h2 id="t-cam">Camera Webcam România, analizată în timp real</h2>
+      <div style="position:relative">
+        <img id="cadru" alt="Cadrul curent al camerei din Piața Romană, cu zonele de numărare și vehiculele detectate">
+        <div class="gol" id="cadru-gol"></div>
+      </div>
+      <div class="stare">
+        <span><i class="punct" id="p-cam"></i><span id="s-cam">camera: necunoscut</span></span>
+        <span id="s-fps"></span>
+        <span id="s-urm"></span>
+        <button id="b-imagine">Oprește imaginea</button>
+      </div>
+    </section>
+    <section aria-labelledby="t-ist" id="p-ist">
+      <h2 id="t-ist">Totalul vehiculelor oprite la semafoarele din simulare, ultimele 10 minute</h2>
+      <canvas id="grafic" role="img" aria-label="Evoluția cozii totale în ultimele 10 minute: nu sunt încă date"></canvas>
+      <p id="grafic-rez"></p>
+    </section>
+    <section aria-labelledby="t-deb" id="p-deb">
+      <h2 id="t-deb">Trafic măsurat de cameră</h2>
+      <p class="sub" style="margin:0 0 6px">Câte vehicule trec printr-o stradă într-o oră, nu câte așteaptă la semafor. Numărări brute, fără corecții: Lascăr Catargiu apare de 2–3 ori sub traficul real.</p>
+      <table><thead><tr><th>Intrare / ieșire</th><th class="n">intră în piață (vehicule/oră)</th><th class="n">ies din piață (vehicule/oră)</th></tr></thead><tbody id="debite"><tr><td colspan="3" class="sub">Așteptăm primele măsurători.</td></tr></tbody></table>
+      <table id="t-pietoni" hidden style="margin-top:8px"><thead><tr><th>Pietoni care traversează</th><th class="n">persoane/oră</th></tr></thead><tbody id="pietoni"></tbody></table>
+      <p class="sub" id="deb-nota" style="margin:6px 0 0"></p>
+    </section>
+  </div>
+</main>
+<footer>Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, persoanele estompate, afișată doar local. Hartă și rețea: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0 OR GPL-2.0-or-later). <a href="https://github.com/NiuninMatei/Semaforizare_Piata_Romana">Cod sursă</a> (GNU AGPL v3).</footer>
+<script>
+const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
+const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"un plan fix dedus din cameră, la vârful zilei de luni 26.10"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program antrenat în simulare, care alege faza după cozi"},
+  fix:{nume:"Plan de referință",cine:"un calculator, singur",text:"pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni"},max_pressure:{nume:"Presiune maximă",cine:"un calculator, singur",text:"verde pentru direcția cu cele mai lungi cozi"},
+  manual:{nume:"Comandă manuală",cine:"un om, de la acest ecran",text:"alegeți dumneavoastră direcția care primește verde"}};
+const ORDINE=["program","ai","fix","max_pressure","manual"];
+const SUBPROGRAM={plan_observat:"verde 72 s Magheru–Catargiu, apoi 48 s Dacia",plan_scurt:"verde 12 s Magheru–Catargiu, 14 s Dacia, 12 s pietoni",plan_mediu:"verde 16 s Magheru–Catargiu, 10 s Dacia, 12 s pietoni",plan_lung:"verde 46 s Magheru–Catargiu, 48 s Dacia, 12 s pietoni",
+  plan_60_40:"verde 60 s Magheru–Catargiu, apoi 40 s Dacia",plan_45_30:"verde 45 s Magheru–Catargiu, apoi 30 s Dacia",
+  ai_e15:"agentul IA E15, antrenat pe geamănul corectat",ai:"agentul IA",ai_pranz:"agentul IA pentru trafic mediu și intens",ai_lejer:"agentul IA pentru trafic lejer",ai_e13:"agentul IA reantrenat",fix:"planul de referință"};
+const FAZE_CLARE=["Verde pe Magheru și Lascăr Catargiu","Verde pe Bd. Dacia, est și vest","Verde pentru pietoni, pe toate trecerile","Verde pe Magheru–Catargiu, prin centru; rămân deschise și intrările Dacia","Verde pe Dacia, în jurul insulei; rămân deschise și intrările Magheru și Catargiu"];
+const FAZE_RISC=[3,4];
+const RISC_EXPLICAT={3:"Verdele principal e pe Magheru și Catargiu; vehiculele de pe Dacia intră și ele în piață și așteaptă pe inelul din jurul insulei, deci piața se poate bloca.",4:"Verdele principal e pe Dacia; vehiculele de pe Magheru și Catargiu intră și ele în piață și așteaptă în fața centrului, deci piața se poate bloca."};
+const LUMINI={verde:["#12713f","V","#fff"],galben:["#e2a013","G","#1f2a33"],"roșu de degajare":["#b3261e","R","#fff"],"roșu":["#b3261e","R","#fff"],necunoscut:["#5d6873","?","#fff"]};
+// geometrie aproximativă: unghiuri reale ale brațelor (nord sus); eticheta: x, y, ancora
+const BRATE={catargiu:[-130,"in",70,50,"middle"],caderea_bastiliei:[-80,"out",172,30,"middle"],dacia_est:[0,"in",276,121,"end"],magheru:[100,"in",131,246,"middle"],mendeleev:[140,"out",62,212,"middle"],dacia_vest:[180,"in",14,121,"start"]};
+const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],[],["magheru","catargiu","dacia_est","dacia_vest"],["magheru","catargiu","dacia_est","dacia_vest"]];
+const BRATE_IN_PLUS=[[],[],[],["dacia_est","dacia_vest"],["magheru","catargiu"]];
+const FLUX="/api/video";
+const ASTEPTARE_COMANDA_MS=10000, ASTEPTARE_FAZA_MS=30000, TIMP_MAXIM_CERERE_MS=4000;   // până la o fază nouă: verdele minim, citirea comenzii la 5 s, galbenul și roșul, deci ≈25 s
+const CAMERA_ALERTA_S=180, CAMERA_ROSU_S=600, DESCHIS_LA=Date.now();
+let sim=null, simUltim=null, simUltimLa=0, cam=null, camUltimLa=0, areTrafic=false, legatura=true, cazutLa=null, ultimaStare=0, subVazut=null, stareCam="", codEroare=null;
+let modCerut=null, fazaCeruta=null, deschisDe=null, cerere=null, modVazut=null, modAnterior=null, imagineOprita=false, fluxPornit=false, reluare=false, cheieAlerte="", modLaConfirmare=null, imagineCazuta=false, nrCereri=0;
+const istoric=[], schimbari=[];
+const $=id=>document.getElementById(id);
+const ora=ms=>new Date(ms).toLocaleTimeString("ro-RO");
+const nr=v=>Number(v).toLocaleString("ro-RO",{maximumFractionDigits:1});
+const UNUL={vehicule:"vehicul","vehicule oprite":"vehicul oprit",pietoni:"pieton"};
+const cate=(n,cuv)=>n==1?`1 ${UNUL[cuv]||cuv}`:`${n}${n%100>=20||(n>=100&&n%100==0)?" de":""} ${cuv}`;   // în română: 20 de vehicule, dar 19 vehicule
+function anunta(text){ $("anunt").textContent=text }
+function durata(s){ s=Math.max(0,Math.round(s)); if(s<90) return `${s} s`; if(s<3600) return `${Math.floor(s/60)} min${s%60?` ${s%60} s`:""}`; return `${Math.floor(s/3600)} h ${Math.round(s%3600/60)} min` }
+const varstaCam=()=>(Date.now()-(camUltimLa||DESCHIS_LA))/1000;   // vechimea ultimei măsurători; dacă n-a venit niciuna, de când e deschisă pagina
+function camDegradata(){ return !legatura||!cam||cam._varsta_s>=15?"":!cam.conectat?"camera se reconectează":imagineCazuta&&!imagineOprita?"imaginea nu se încarcă":"" }
+function pune(el,html){ if(el.dataset.ultim!==html){ el.dataset.ultim=html; el.innerHTML=html } }   // rescrie doar când se schimbă, ca să nu mute cititorul de ecran
+setInterval(()=>{ $("ceas").textContent=new Date().toLocaleTimeString("ro-RO");
+  const v=ultimaStare?(Date.now()-ultimaStare)/1000:null;
+  const vechi=[...(legatura&&!sim?["simularea"]:[]),...(legatura&&(!cam||cam._varsta_s>=15)?["camera"]:[])];
+  const parti=[vechi.length?`nu trimite date: ${vechi.join(", ")}`:"",camDegradata()].filter(Boolean);
+  $("proaspat").textContent=v===null?"":!legatura?`fără legătură de ${durata(v)}`:parti.join("; ")||"date la zi"; $("proaspat").className=legatura&&!parti.length?"":"intarziat";
+},1000);
+
+function starea(s,b,etapa,verzi){ if(!s) return "necunoscut"; if(!verzi.includes(b)) return "roșu"; return etapa=="yellow"?"galben":etapa=="red"?"roșu de degajare":"verde" }
+function schema(s,viu){
+  const cx=150, cy=135, verzi=s?FAZA_BRATE[s.faza]||[]:[], etapa=s?s.etapa:"", inPlus=etapa=="green"?BRATE_IN_PLUS[s.faza]||[]:[], vechi=!!s&&!viu, pietoniVerde=!!s&&(s.pietoni_verde??s.faza==2)&&etapa=="green";
+  let brate="", lumini="", texte="", descriere=[];
+  for(const [b,[ang,tip,xl,yl,anc]] of Object.entries(BRATE)){
+    const a=ang*Math.PI/180, x1=cx+37*Math.cos(a), y1=cy+37*Math.sin(a), x2=cx+102*Math.cos(a), y2=cy+90*Math.sin(a);
+    brate+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#7f897f" stroke-width="${tip=="in"?14:7}" stroke-linecap="round"/>`;
+    if(tip=="in"){
+      const q=s&&s.coada_brate?(s.coada_brate[b]||0):null, L=Math.min(1,(q||0)/25), xq=x1+(x2-x1)*L, yq=y1+(y2-y1)*L;
+      if(q) brate+=`<line x1="${x1}" y1="${y1}" x2="${xq}" y2="${yq}" stroke="#27465f" stroke-width="10" stroke-linecap="round"/>`;
+      const st=starea(s,b,etapa,verzi), plus=inPlus.includes(b), gol=plus&&!vechi, [col,lit,cl]=LUMINI[vechi?"necunoscut":st];   // date vechi: culoarea de acum nu se știe; intrare deschisă în plus: cerc gol
+      lumini+=`<g><title>${NUME[b]}: ${vechi?`necunoscut; ultima culoare primită: ${st}`:st}${plus?", deschisă în plus":""}</title><circle cx="${x1}" cy="${y1}" r="9.5" fill="${gol?"#fff":col}" stroke="${gol?col:"#1f2a33"}" stroke-width="${gol?2:1.5}"${gol?' stroke-dasharray="3 2"':""}/><text x="${x1}" y="${y1+4}" text-anchor="middle" font-family="Barlow" font-weight="700" font-size="11.5" fill="${gol?col:cl}">${lit}</text></g>`;
+      texte+=`<text x="${xl}" y="${yl}" text-anchor="${anc}" font-family="Barlow" font-size="14" fill="#1f2a33">${NUME[b]}: <tspan font-weight="600">${q===null?"—":q}</tspan></text>`;
+      descriere.push(`${NUME[b]} ${st}${plus?", deschisă în plus":""}, ${q===null?"coadă necunoscută":`${q} vehicule oprite`}`);
+    } else {
+      texte+=`<text x="${xl}" y="${yl}" text-anchor="${anc}" font-family="Barlow" font-size="13.5" fill="#3f4a54">${NUME[b]} (ieșire)</text>`;
+    }
+  }
+  const pw=s&&s.coada_brate?(s.coada_brate.pietoni??0):null;
+  const stP=!s?"necunoscut":pietoniVerde?"verde":"roșu", [colP,litP,clP]=LUMINI[vechi?"necunoscut":stP];
+  const centru=`<circle cx="${cx}" cy="${cy}" r="26" fill="#dfe3dc" stroke="#1f2a33" stroke-width="1.5"/>`+
+    `<g><title>Pietonii: ${vechi?`necunoscut; ultima culoare primită: ${stP}`:stP}, ${pw===null?"nu se știe câți așteaptă":`${pw} așteaptă la treceri`}</title><circle cx="${cx}" cy="${cy-14}" r="7.5" fill="${colP}"/><text x="${cx}" y="${cy-10.5}" text-anchor="middle" font-family="Barlow" font-weight="700" font-size="10" fill="${clP}">${litP}</text>`+
+    `<text x="${cx}" y="${cy+4}" text-anchor="middle" font-family="Barlow" font-size="13.5" fill="#1f2a33">pietoni</text><text x="${cx}" y="${cy+18.5}" text-anchor="middle" font-family="Barlow" font-weight="700" font-size="14" fill="#1f2a33">${pw===null?"—":pw}</text></g>`;
+  pune($("schema"),brate+centru+lumini+texte);
+  $("svg-schema").setAttribute("aria-label",s?`${viu?"Schema pieței":`Ultimele valori primite, vechi de ${durata((Date.now()-simUltimLa)/1000)}: schema pieței`}. ${descriere.join("; ")}. Pietoni care așteaptă: ${pw??0}, cu ${pietoniVerde?"verde":"roșu"}.`:"Schema pieței: nu sunt date de la simulare");
+  $("leg-plus").hidden=!inPlus.length||vechi;
+  const coz=s&&s.coada_brate?Object.keys(BRATE).filter(b=>BRATE[b][1]=="in").map(b=>[NUME[b],s.coada_brate[b]||0]):[], mx=Math.max(0,...coz.map(c=>c[1]));
+  const fraza=mx?`Cele mai multe vehicule oprite: ${coz.filter(c=>c[1]==mx).map(c=>c[0]).join(", ")} (${mx}).`:"Niciun vehicul oprit la semafor.";
+  $("max-coada").textContent=!coz.length?"":viu?fraza:"La ultima valoare primită, "+fraza[0].toLowerCase()+fraza.slice(1);
+}
+function grafic(ist,viu){
+  const c=$("grafic"), r=window.devicePixelRatio||1, w=c.clientWidth, hh=150; c.width=w*r; c.height=hh*r;
+  const x=c.getContext("2d"); x.scale(r,r); x.clearRect(0,0,w,hh);
+  if(!ist||ist.length<2){
+    $("grafic-rez").textContent=viu?"Graficul apare după primul minut de simulare.":"Simularea nu trimite date, deci nu sunt cozi de arătat.";
+    $("grafic").setAttribute("aria-label","Evoluția cozii totale: nu sunt date"); return }
+  const acum=ist[ist.length-1][0], vedere=ist.filter(p=>acum-p[0]<=600), v=vedere.map(p=>p[1]);
+  const m=Math.max(10,Math.ceil(Math.max(...v)/10)*10), X=t=>38+(w-44)*(1-(acum-t)/600), Y=q=>hh-22-(hh-34)*q/m;
+  x.font="12px Barlow"; x.textBaseline="middle";
+  for(let k=0;k<=2;k++){ const y=Y(m*k/2); x.strokeStyle="#c9cec7"; x.beginPath();x.moveTo(38,y);x.lineTo(w,y);x.stroke(); x.fillStyle="#5d6873"; x.fillText(Math.round(m*k/2),8,y) }
+  x.textBaseline="alphabetic";
+  [[600,"−10 min","left"],[300,"−5 min","center"],[0,viu?"acum":"ultima valoare","right"]].forEach(([d,t,al])=>{ x.textAlign=al; x.fillStyle="#5d6873"; x.fillText(t,X(acum-d),hh-5) }); x.textAlign="left";
+  schimbari.filter(z=>acum-z.t<=600).forEach(z=>{ const px=X(z.t); x.strokeStyle="#5d6873"; x.setLineDash([3,3]); x.beginPath();x.moveTo(px,10);x.lineTo(px,hh-22);x.stroke(); x.setLineDash([]); x.fillStyle="#1f2a33"; x.textAlign=px>w-110?"right":"left"; x.fillText(MODURI[z.mod]?.nume||z.mod,px+(px>w-110?-4:4),10); x.textAlign="left" });
+  x.strokeStyle="#1d5fa8"; x.lineWidth=2; x.setLineDash(viu?[]:[7,5]); x.beginPath();   // linie întreruptă: date vechi
+  vedere.forEach((p,i)=>{ const px=X(p[0]), py=Y(p[1]); i?x.lineTo(px,py):x.moveTo(px,py) }); x.stroke(); x.lineWidth=1; x.setLineDash([]);
+  const rez=`${viu?"Acum":"Ultima valoare primită"}: ${cate(v[v.length-1],"vehicule oprite")} în total, pe toate străzile; cel mai mult: ${Math.max(...v)}, cel mai puțin: ${Math.min(...v)}, în ultimele ${durata(Math.min(600,acum-vedere[0][0]))}. Pentru fiecare stradă, vedeți schema.`;
+  const sch=schimbari.filter(z=>acum-z.t<=600).map(z=>MODURI[z.mod]?.nume||z.mod);
+  $("grafic-rez").textContent=rez; $("grafic").setAttribute("aria-label","Evoluția cozii totale. "+rez+(sch.length?` Schimbări de mod: ${sch.join(", ")}.`:""));
+}
+function faze(s){
+  if(!s||!s.faze||$("faze").children.length) return;
+  const btn=(i)=>`<button data-faza="${i}"><b>${FAZE_CLARE[i]||s.faze[i]}</b></button>`, toate=s.faze.map((_,i)=>i).filter(i=>i<FAZE_CLARE.length);
+  $("faze").innerHTML=toate.filter(i=>!FAZE_RISC.includes(i)).map(btn).join(""); $("faze-risc").innerHTML=toate.filter(i=>FAZE_RISC.includes(i)).map(btn).join("");
+  document.querySelectorAll("[data-faza]").forEach(b=>b.onclick=()=>alegeFaza(+b.dataset.faza,b));
+}
+function butoane(s){
+  const mod=s?s.mod:null, trimitem=!!cerere&&cerere.etapa=="se trimite", blocat=!legatura?"Comenzile sunt blocate: nu e legătură cu calculatorul dispeceratului.":!s?"Comenzile sunt blocate: simularea nu trimite date.":"";
+  document.querySelectorAll("[data-mod]").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.mod==mod); b.disabled=!!blocat||trimitem||(b.dataset.mod=="ai"&&!!s&&!s.model_ai) });
+  $("revino").disabled=!!blocat||trimitem;
+  $("d-ai").textContent=s&&!s.model_ai?"Indisponibil: pe acest calculator nu există un agent antrenat.":"Un program antrenat în simulare alege faza, după cozi."; $("d-ai").classList.toggle("motiv",!!s&&!s.model_ai);
+  $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`${s.mod_program=="plan_observat"?"Dedus din cameră":["plan_60_40","plan_45_30","ai_e15"].includes(s.mod_program)?"Ales după regula zilelor noi":"Rulează"}: ${SUBPROGRAM[s.mod_program]}.`:"Plan fix dedus din cameră, la vârful zilei de luni 26.10.";
+  $("blocat").hidden=!blocat; $("blocat").textContent=blocat;
+  $("manual").classList.toggle("vizibil",mod=="manual");
+  faze(s);
+  document.querySelectorAll("[data-faza]").forEach(b=>{ const f=+b.dataset.faza, activa=!!s&&mod=="manual"&&s.etapa=="green"&&f==s.faza; b.setAttribute("aria-pressed",activa); b.classList.toggle("urmeaza",!!s&&mod=="manual"&&!activa&&(s.etapa!="green"?f==s.faza_tinta:!!cerere&&cerere.faza==f)); b.disabled=!!blocat||trimitem });
+  if(blocat&&$("confirm").classList.contains("vizibil")){ inchide(); rezultat("Confirmarea s-a închis, fiindcă lipsesc datele. Nu s-a trimis nimic.","rau") }
+  else if(s&&$("confirm").classList.contains("vizibil")&&modLaConfirmare&&s.mod!=modLaConfirmare){ inchide(); rezultat(`Între timp a preluat „${MODURI[s.mod]?.nume||s.mod}”. Comanda nu s-a trimis; alegeți din nou, dacă mai e nevoie.`,"rau") }
+  if(blocat&&document.activeElement&&document.activeElement.disabled) $("blocat").focus();
+  const ultim=simUltim&&MODURI[simUltim.mod]?MODURI[simUltim.mod].nume:null;
+  pune($("cine-acum"),s?`Culorile le schimbă acum: <b>${MODURI[mod]?.cine||"necunoscut"}</b>${mod=="manual"?"":`, cu „${MODURI[mod]?.nume||mod}”`}.`:`Nu se știe cine conduce acum, ${legatura?"fiindcă simularea nu trimite date":"fiindcă nu e legătură cu calculatorul dispeceratului"}.${ultim?` Ultimul mod cunoscut: „${ultim}”.`:""}`);
+}
+function deschide(text,de,buton,risc){
+  $("confirm-text").textContent=text; $("da").textContent=buton; $("confirm").classList.toggle("risc",!!risc); $("confirm").classList.add("vizibil"); deschisDe=de||document.activeElement; $("confirm").focus();   // focusul nu cade pe „Confirm”, ca să nu se confirme din reflex
+}
+function inchide(){ const era=$("confirm").classList.contains("vizibil"); $("confirm").classList.remove("vizibil"); if(era){ if(deschisDe&&document.contains(deschisDe)&&!deschisDe.disabled) deschisDe.focus(); else $("rezultat").focus() } deschisDe=null }
+function cere(mod,faza,de){
+  modCerut=mod; fazaCeruta=faza; modLaConfirmare=sim?sim.mod:null;
+  const m=MODURI[mod], actual=sim?MODURI[sim.mod]?.nume||sim.mod:null;
+  if(mod=="manual"&&faza===undefined) return deschide(`Preluați comanda manuală${actual?` de la „${actual}”`:""}? Rămâne faza de acum, până alegeți alta.`,de,"Da, preiau comanda");
+  if(mod=="manual") return deschide(`Dați „${FAZE_CLARE[faza]||faza}”? ${RISC_EXPLICAT[faza]}`,de,"Da, cu risc de blocare",true);
+  deschide(`Predați conducerea${actual?` de la „${actual}”`:""} către „${m.nume}”: ${m.text}?`,de,`Da, trec la „${m.nume}”`);
+}
+function alegeFaza(f,b){
+  if(FAZE_RISC.includes(f)) return cere("manual",f,b);
+  if(sim&&sim.mod=="manual"&&sim.etapa=="green"&&sim.faza==f) return rezultat(`„${FAZE_CLARE[f]}” e deja activă.`);
+  trimite("manual",f);
+}
+function rezultat(text,cls){ $("rezultat").textContent=text; $("rezultat").className=cls||"" }
+function notaIstoric(stare){
+  const c=istoric.find(i=>i.id==cerere?.id); if(c&&stare) c.stare=stare;
+  pune($("istoric-lista"),istoric.slice(-5).reverse().map(i=>`<li>${ora(i.la)} · ${i.nume}: ${i.stare}</li>`).join(""));
+  $("istoric-parte").hidden=!istoric.length;
+}
+// la preluare rămâne faza de acum; în tranziție, cea spre care se merge; etapa scurtă nu se poate cere, deci de acolo se merge pe Magheru–Catargiu
+function fazaDePreluat(s){ const f=s.etapa=="green"||s.faza_tinta===undefined?s.faza:s.faza_tinta; return f<FAZE_CLARE.length?f:0 }
+function numeComanda(mod,faza){ return mod=="manual"&&faza!==undefined?(FAZE_CLARE[faza]||`faza ${faza}`):(MODURI[mod]?.nume||mod) }
+async function trimite(mod,faza){
+  const la=Date.now(), id=++nrCereri, nume=numeComanda(mod,faza), aceasta={id,mod,faza,la,etapa:"se trimite"};
+  if(cerere) notaIstoric("înlocuită");
+  cerere=aceasta; istoric.push({id,la,nume,stare:"se trimite"}); notaIstoric();
+  inchide(); rezultat(`Se trimite: ${nume}…`);
+  const inapoi=document.activeElement; butoane(sim);   // cât se trimite, butoanele stau dezactivate, ca două comenzi să nu se încurce
+  const corp={mod}; if(mod=="manual") corp.faza=faza??(sim?fazaDePreluat(sim):0);
+  const ramas=()=>sim?` Conduce în continuare „${MODURI[sim.mod]?.nume||sim.mod}”.`:"";
+  let stare="se aplică", text=`Cerere primită: ${nume}. Așteptăm simularea…`, cls;
+  try{
+    const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),TIMP_MAXIM_CERERE_MS);
+    const r=await fetch("/api/command",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(corp),signal:ctl.signal}); clearTimeout(t);
+    let raspuns={}; try{ raspuns=await r.json() }catch(e){}
+    if(r.ok) aceasta.etapa="primita";
+    else {   // a ajuns, dar a fost refuzată: aceeași comandă, trimisă din nou, nu schimbă nimic
+      stare="refuzată"; cls="rau"; text=`Calculatorul dispeceratului a refuzat comanda „${nume}”: ${raspuns.eroare||`răspuns ${r.status}`}.${ramas()} Alegeți altă comandă sau, dacă se repetă, anunțați autorul proiectului.`;
+    }
+  }catch(e){
+    if(e.name=="AbortError"){   // poate a ajuns, doar răspunsul a întârziat: urmărim în continuare
+      aceasta.etapa="primita"; stare="fără răspuns"; text=`Nu știm încă dacă „${nume}” a ajuns: calculatorul dispeceratului nu a răspuns la timp. Urmărim ce face simularea.`;
+    } else { stare="eșuată"; cls="rau"; text=`Comanda „${nume}” nu a ajuns la calculatorul dispeceratului.${ramas()} Încercați din nou.` }
+  }
+  if(cerere===aceasta){ notaIstoric(stare); rezultat(text,cls); if(aceasta.etapa!="primita") cerere=null }   // răspunsul se leagă de comanda lui: una înlocuită între timp nu mai schimbă ecranul
+  butoane(sim); if(document.activeElement===document.body&&inapoi&&!inapoi.disabled) inapoi.focus();
+}
+function urmaresteCererea(){
+  if(!cerere||cerere.etapa!="primita") return;
+  const {mod,faza,la}=cerere, nume=numeComanda(mod,faza);
+  if(!sim){ if(Date.now()-la>ASTEPTARE_COMANDA_MS){ rezultat(`Nu știm dacă „${nume}” s-a aplicat: simularea nu trimite date.`,"rau"); notaIstoric("neconfirmată"); cerere=null } return }
+  const aplicat=sim.mod==mod&&(mod!="manual"||faza===undefined||(sim.faza==faza&&sim.etapa=="green"));
+  if(aplicat){ rezultat(`Aplicat la ${ora(Date.now())}: ${nume}.`,"bun"); notaIstoric("aplicată"); cerere=null; return }
+  if(sim.mod==mod&&mod=="manual"&&Date.now()-la<=ASTEPTARE_FAZA_MS){ rezultat(`Se schimbă spre: ${nume}. ${sim.etapa=="green"?"Verdele de acum ține cel puțin 10 s, apoi urmează galbenul.":sim.etapa=="yellow"?"Acum: galben.":"Acum: roșu pentru toți."}`); return }
+  if(Date.now()-la>ASTEPTARE_COMANDA_MS){ rezultat(`Simularea n-a aplicat încă „${nume}”; conduce „${MODURI[sim.mod]?.nume||sim.mod}”. Încercați din nou.`,"rau"); notaIstoric("neaplicată"); cerere=null }
+}
+function alerte(){
+  const lista=[], v=varstaCam(), lung=v>=CAMERA_ROSU_S, tehnicCam="Dacă modulul de viziune s-a oprit, porniți scripts\\2_viziune_live.bat. Verificați întâi că nu rulează deja.";
+  if(!legatura) lista.push(["server","",`Nu mai e legătură cu calculatorul dispeceratului, de la ${ora(cazutLa)}.`,"Ce vedeți mai jos e din acel moment, iar comenzile sunt blocate. Încercăm din nou la fiecare secundă.",`${codEroare?`Serverul paginii răspunde cu eroarea ${codEroare}. `:""}Pe calculatorul dispeceratului, porniți ${codEroare?"din nou ":""}scripts\\7_dashboard.bat.`]);
+  else{
+    if(!sim) lista.push(["sim","",simUltim?"Simularea nu mai trimite date.":"Simularea nu rulează.",simUltim?"Schema și graficul arată ultimele valori, iar comenzile sunt blocate până revine.":"Nu sunt date despre semafor, iar comenzile sunt blocate.","Dacă s-a oprit, pe calculatorul dispeceratului porniți scripts\\6_geaman_digital.bat."]);
+    // aceeași perioadă de grație, fie că starea lipsește, fie că e veche (§ 4.6); o oprire lungă nu mai promite că trece singură
+    if(lung) lista.push(["cam","",`Camera ${camUltimLa?"nu mai trimite":"nu trimite"} date de peste 10 minute.`,`Imaginea și traficul măsurat ${camUltimLa?"sunt vechi":"lipsesc"}, iar o oprire atât de lungă nu trece, de obicei, singură.`,tehnicCam]);
+    else if(!camUltimLa) lista.push(["cam","atent","Camera nu trimite date.","Imaginea și traficul măsurat lipsesc: programul care analizează imaginea pare oprit.",tehnicCam]);
+    else if(v>=CAMERA_ALERTA_S) lista.push(["cam","atent","Camera nu mai trimite date.","Imaginea și traficul măsurat sunt vechi. De obicei, revin singure.",tehnicCam]);
+  }
+  const u=lista[lista.length-1];   // ce aveți de făcut se spune o singură dată pe ecran, la ultima alertă
+  if(u) u[3]+=u[0]=="cam"&&lung?" Anunțați autorul proiectului.":` Dacă nu ${u[0]=="cam"?"revin":"revine"} în 2 minute, anunțați autorul proiectului.`;
+  const cheie=lista.map(a=>a.join("|")).join("||");
+  if(cheie!==cheieAlerte){ cheieAlerte=cheie; $("alerte").innerHTML=lista.map(([,cl,tit,txt,teh])=>`<div class="alerta ${cl}"><p><b>${tit}</b> ${txt}</p><details><summary>Pentru autorul proiectului</summary>${teh}</details></div>`).join("") }
+}
+function pornesteFlux(){ if(imagineOprita||fluxPornit) return; $("cadru").src=reluare?FLUX+(FLUX.includes("?")?"&":"?")+"t="+Date.now():FLUX; fluxPornit=true; reluare=true }
+$("cadru").onerror=()=>{ fluxPornit=false; imagineCazuta=true };
+$("b-imagine").onclick=()=>{ imagineOprita=!imagineOprita; imagineCazuta=false; $("b-imagine").textContent=imagineOprita?"Pornește imaginea":"Oprește imaginea"; if(imagineOprita){ $("cadru").removeAttribute("src"); fluxPornit=false } else pornesteFlux(); afiseazaCamera(cam) };
+$("b-ajutor").onclick=()=>comutaAjutor();
+function comutaAjutor(){ const a=$("ajutor"); a.hidden=!a.hidden; $("b-ajutor").setAttribute("aria-expanded",!a.hidden) }
+document.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>apasaMod(b.dataset.mod,b));
+function apasaMod(mod,b){
+  if(b.disabled) return;
+  if(sim&&sim.mod==mod) return rezultat(`„${MODURI[mod].nume}” conduce deja.`);
+  cere(mod,undefined,b);
+}
+$("nu").onclick=()=>{ inchide(); rezultat("Ați renunțat. Nu s-a schimbat nimic.") };
+$("da").onclick=()=>trimite(modCerut,fazaCeruta);
+$("revino").onclick=()=>{ if(modAnterior) cere(modAnterior,undefined,$("revino")) };
+document.addEventListener("keydown",e=>{
+  if(e.key=="Escape"&&$("confirm").classList.contains("vizibil")){ inchide(); rezultat("Ați renunțat. Nu s-a schimbat nimic."); return }
+  if(e.ctrlKey||e.altKey||e.metaKey||$("confirm").classList.contains("vizibil")) return;
+  if(!$("taste").checked&&e.key!="Escape") return;
+  if(e.target.tagName=="INPUT"||e.target.tagName=="SUMMARY") return;
+  if(e.key=="?") return comutaAjutor();
+  const k=ORDINE[+e.key-1]; if(k){ const b=document.querySelector(`[data-mod=${k}]`); if(b.disabled) rezultat($("blocat").hidden?`„${MODURI[k].nume}” nu e disponibil acum.`:$("blocat").textContent); else apasaMod(k,b) }
+});
+
+function afiseazaCamera(c){
+  if($("cadru").naturalWidth) imagineCazuta=false;
+  const proaspat=legatura&&!!c&&c._varsta_s<15, v=varstaCam(), scurt=!!camUltimLa&&v<CAMERA_ALERTA_S;
+  if(proaspat){
+    const faraImagine=imagineCazuta&&!imagineOprita, mesaj=imagineOprita?`Ați oprit imaginea. ${c.conectat?"Măsurarea traficului continuă.":"Camera se reconectează."}`:!c.conectat?"Camera se reconectează. De obicei, imaginea revine singură.":faraImagine?"Imaginea nu se încarcă; încercăm din nou. Măsurarea traficului continuă.":"";
+    $("p-cam").className="punct "+(c.conectat&&!faraImagine?"ok":"atent-p");
+    $("s-cam").textContent=!c.conectat?"camera: se reconectează":imagineOprita?"camera: măsoară, iar imaginea e oprită aici":faraImagine?"camera: măsoară, dar imaginea nu se încarcă":"camera: în timp real";
+    $("s-fps").textContent=`${nr(c.fps)} cadre/s analizate`; $("s-urm").textContent=`${c.vehicule_urmarite} vehicule urmărite`;
+    pornesteFlux();   // flux MJPEG continuu, nu o imagine reîncărcată la fiecare secundă; repornit după o întrerupere
+    if(mesaj){ pune($("cadru-gol"),`<p>${mesaj}</p>`); $("cadru-gol").style.display="grid"; $("cadru").setAttribute("aria-hidden","true") }
+    else { $("cadru-gol").style.display="none"; $("cadru").removeAttribute("aria-hidden") }
+  } else {
+    // starea veche de cel mult 3 minute = o microînghețare sau o întrerupere scurtă a fluxului (§ 4.6): modulul rulează, de obicei
+    $("p-cam").className="punct "+(legatura&&v<CAMERA_ROSU_S?"atent-p":"err");
+    $("s-cam").textContent=!legatura?"camera: stare necunoscută, nu e legătură cu calculatorul dispeceratului":camUltimLa?`camera: nicio măsurătoare nouă de ${durata(v)}`:"camera: nu trimite date";
+    $("s-fps").textContent=""; $("s-urm").textContent=""; fluxPornit=false;
+    pune($("cadru-gol"),`<p>${!legatura?"Nu e legătură cu calculatorul dispeceratului, deci nici imagine.":!camUltimLa?"Nu e nicio imagine: camera nu trimite date.":`Imaginea s-a oprit de ${durata(v)}.${scurt?" De obicei revine singură.":""}`}</p>`);
+    $("cadru-gol").style.display="grid"; $("cadru").setAttribute("aria-hidden","true");
+  }
+  const stareNoua=!legatura?"":proaspat?(c.conectat?"ok":"reconectare"):"oprita";
+  if(stareNoua&&stareNoua!=stareCam){ if(stareCam) anunta(stareNoua=="ok"?"Camera a revenit.":stareNoua=="reconectare"?"Camera se reconectează.":"Camera nu mai trimite date noi."); stareCam=stareNoua }
+  $("b-imagine").disabled=!proaspat&&!imagineOprita;
+  if(c&&c.intrari_veh_h){
+    areTrafic=true;
+    const ins=c.intrari_veh_h||{}, outs=c.iesiri_veh_h||{}, ped=c.pietoni_h||{}, doarIesiri=b=>b=="mendeleev"||b=="caderea_bastiliei";
+    pune($("debite"),Object.keys(NUME).map(b=>`<tr><td>${NUME[b]}</td><td class="n">${doarIesiri(b)?'<span class="doar">doar ieșire</span>':ins[b]??0}</td><td class="n">${outs[b]??0}</td></tr>`).join(""));
+    $("t-pietoni").hidden=!Object.keys(ped).length;
+    pune($("pietoni"),Object.keys(ped).map(b=>`<tr><td>${NUME[b]||b}</td><td class="n">${ped[b]}</td></tr>`).join(""));
+    $("p-deb").classList.toggle("vechi",!proaspat||!legatura); $("p-deb").classList.toggle("nesigur",proaspat&&!c.conectat);
+    const min=Math.round((c.secunde_interval||0)/60);
+    $("deb-nota").textContent=proaspat?(!c.conectat?"Valori nesigure: camera se reconectează.":min<5?`Valori încă nesigure: au trecut doar ${min} min din acest sfert de oră.`:`Măsurat în ultimele ${min} min.`):`Ultimele valori, vechi de ${durata(v)}.`;
+  } else if(areTrafic){ $("p-deb").classList.add("vechi"); $("p-deb").classList.remove("nesigur"); $("deb-nota").textContent=`Ultimele valori, vechi de ${durata(v)}.` }
+  else { $("deb-nota").textContent=""; $("p-deb").classList.remove("vechi","nesigur") }
+}
+function afiseazaSimularea(){
+  const s=sim||simUltim, viu=!!sim&&legatura, vechime=durata((Date.now()-simUltimLa)/1000);
+  document.querySelector(".schema").classList.toggle("vechi",!viu&&!!s); $("p-ist").classList.toggle("vechi",!viu&&!!s);
+  if(s){
+    const f=FAZE_CLARE[s.faza]||s.faza_nume.split("(")[0].trim(), tinta=s.faza_tinta!==undefined?FAZE_CLARE[s.faza_tinta]:null;
+    $("faza").textContent=viu?(s.etapa=="green"?f:tinta?`Se schimbă spre: ${tinta}`:`Se încheie: ${f}`):`Ultima fază cunoscută (acum ${vechime}): ${s.etapa=="green"?f:tinta?`se schimba spre ${tinta}`:`se încheia ${f}`}`;
+    const et=s.etapa=="green"?`e verde de ${s.verde_s} s`:s.etapa=="yellow"?"galben, câteva secunde":"roșu pentru toți, cât se eliberează intersecția";
+    const conduce=s.mod=="manual"?"în comandă manuală":`condus de „${MODURI[s.mod]?.nume||s.mod}”`;
+    const aproape=s.mod=="manual"&&s.etapa=="green"&&s.verde_s>=60?` · mai sunt ${Math.max(0,90-s.verde_s)} s până la schimbarea automată`:"";
+    const risc=FAZE_RISC.includes(s.faza)?" · fază cu risc de blocare":"";
+    $("faza-det").textContent=viu?`${et} · ${conduce}${aproape}${risc} · în simulare: ${cate(s.vehicule_in_retea,"vehicule")} și ${cate(s.pietoni_in_retea??0,"pietoni")}`:`Ultimele valori, vechi de ${vechime}.`;
+    const de_la=s.sursa&&s.sursa.startsWith("camera")?(s.varsta_debite_s>120?`ultimele măsurători bune ale camerei, vechi de ${durata(s.varsta_debite_s)}`:"măsurătorile camerei"):"un profil de referință, fiindcă nu sunt măsurători bune de la cameră";
+    $("sursa").textContent=viu?`Simularea folosește ${de_la}${s.debit_echilibrat_veh_h?`: aprox. ${nr(s.debit_echilibrat_veh_h)} vehicule/oră prin piață`:""}.`:"";
+  } else { $("faza").textContent="—"; $("faza-det").textContent=""; $("sursa").textContent="" }
+  grafic(s?s.istoric_coada:null,viu); schema(s,viu); butoane(viu?sim:null);
+}
+function deseneaza(){ alerte(); afiseazaCamera(cam); afiseazaSimularea(); urmaresteCererea() }
+
+async function actualizeaza(){
+  let d;
+  try{
+    const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),TIMP_MAXIM_CERERE_MS);
+    const r=await fetch("/api/state",{cache:"no-store",signal:ctl.signal}); clearTimeout(t); if(!r.ok) throw {cod:r.status}; d=await r.json();
+  }catch(e){ codEroare=e.cod||null; if(legatura){ legatura=false; cazutLa=Date.now(); sim=null } deseneaza(); return }
+  legatura=true; cazutLa=null; codEroare=null; ultimaStare=Date.now(); cam=d.camera; if(cam) camUltimLa=Date.now()-(cam._varsta_s||0)*1000;
+  const s=d.simulare; sim=s&&s._varsta_s<10?s:null;
+  if(s){ simUltim=s; simUltimLa=Date.now()-s._varsta_s*1000 }
+  if(sim&&sim.mod!==modVazut){
+    if(modVazut){ modAnterior=modVazut; schimbari.push({t:sim.timp_sim,mod:sim.mod}); if(!cerere) rezultat(`Conducerea a trecut la „${MODURI[sim.mod]?.nume||sim.mod}”.`) }
+    modVazut=sim.mod;
+  }
+  if(sim&&sim.mod=="program"&&sim.mod_program!==subVazut){ if(subVazut&&SUBPROGRAM[sim.mod_program]) anunta(`Planul observat a trecut la: ${SUBPROGRAM[sim.mod_program]}.`); subVazut=sim.mod_program }
+  if(modAnterior&&sim&&modAnterior!=sim.mod&&MODURI[modAnterior]){ $("revino").hidden=false; $("revino").textContent=`Reveniți la „${MODURI[modAnterior].nume}”` } else $("revino").hidden=true;
+  deseneaza();
+}
+actualizeaza(); setInterval(actualizeaza,1000);
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 """Capturile dispeceratului, în stări fixate, fără server și fără colectare: pentru evaluarea din § 8 și pentru figuri.
 
-Pagina reală (versiunea `m1`, neschimbată, sau cea curentă) se încarcă în Chrome fără fereastră, cu cererile către server simulate, ca stările să se poată
+Pagina reală (versiunile `m1` și `m2`, păstrate neschimbate, sau cea curentă) se încarcă în Chrome fără fereastră, cu cererile către server simulate, ca stările să se poată
 repeta: flux normal, cameră veche, server căzut, confirmare și așa mai departe. Imaginea camerei e fotografia publicată, cu persoanele estompate.
 
 Rulare:  python -m romana.dashboard.capturi --versiune m1 --out outputs/evaluare/m1
@@ -19,7 +19,7 @@ from romana.common import CONFIG_DIR, OUTPUT_DIR
 
 RADACINA = Path(__file__).resolve().parents[3]
 STATIC = Path(__file__).resolve().parent / "static"
-VERSIUNI = {"m1": STATIC / "m1" / "index.html", "m2": STATIC / "index.html"}
+VERSIUNI = {"m1": STATIC / "m1" / "index.html", "m2": STATIC / "m2" / "index.html", "curent": STATIC / "index.html"}
 FOTOGRAFIE = RADACINA / "docs" / "imagini" / "camera_piata_romana.jpg"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 RE_FONTURI = re.compile(r'<link rel="preconnect"[^>]*>\s*<link href="https://fonts\.googleapis\.com[^>]*>|<link href="/static/fonturi/fonturi\.css"[^>]*>')

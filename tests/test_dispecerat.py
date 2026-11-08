@@ -114,7 +114,7 @@ class TestPagina(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.d = Path(tempfile.mkdtemp())
-        pagina = C.pagina(C.VERSIUNI["m2"].read_text(encoding="utf-8"), SCENARII)
+        pagina = C.pagina(C.VERSIUNI["curent"].read_text(encoding="utf-8"), SCENARII)
         f = cls.d / "pagina.html"
         f.write_text(pagina, encoding="utf-8")
         cmd = [C.CHROME, "--headless=new", "--disable-gpu", f"--user-data-dir={cls.d / 'profil'}", "--no-first-run", "--no-default-browser-check", "--allow-file-access-from-files",

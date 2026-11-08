@@ -26,7 +26,7 @@ from romana.vision.referinta_lot import LOTURI, cerere, trimite
 
 RADACINA = Path(__file__).resolve().parents[3]
 STATIC = Path(__file__).resolve().parent / "static"
-PAGINI = {"m1": STATIC / "m1" / "index.html", "m2": STATIC / "index.html"}
+PAGINI = {"m1": STATIC / "m1" / "index.html", "m2": STATIC / "m2" / "index.html", "curent": STATIC / "index.html"}
 MODEL = "claude-opus-5-5"
 EFORT = "xhigh"
 
