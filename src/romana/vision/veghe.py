@@ -271,7 +271,9 @@ def _contoare() -> dict:
            "'\\GPU Engine(*)\\Utilization Percentage' -ErrorAction SilentlyContinue; "
            "$c.CounterSamples | Where-Object { $_.Path -like '*processor*' -or $_.CookedValue -gt 0.5 } | "
            "ForEach-Object { $_.Path + '=' + [math]::Round($_.CookedValue,1) }")
-    r = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, text=True, timeout=40)
+    # fără fereastră: altfel, pornit dintr-un proces fără consolă, PowerShell deschide una pe ecranul omului (M10)
+    r = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, text=True, timeout=40,
+                       creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     out, gpu = {}, defaultdict(float)
     for line in r.stdout.splitlines():
         if "=" not in line:

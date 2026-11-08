@@ -5,12 +5,14 @@ Rulare:  set PYTHONPATH=src && python -m unittest discover -s tests
 """
 import gzip
 import json
+import subprocess
 import tempfile
 import unittest
 from datetime import datetime
 from pathlib import Path
+from unittest import mock
 
-from romana.vision.veghe import Fereastra, StareLive, _eveniment, membri_noi, semne_jurnal, urme_pauza
+from romana.vision.veghe import Fereastra, StareLive, _contoare, _eveniment, membri_noi, semne_jurnal, urme_pauza
 
 T0 = datetime(2026, 10, 29, 3, 0).timestamp()
 
@@ -162,6 +164,20 @@ class TestUrmePauza(unittest.TestCase):
         self.assertIn("100% în pauză", text)
         self.assertIn("prea puține", urme_pauza(urme()[-20:], T0 + 395, T0 + 399))
         self.assertIn("necitit; rețea:", _eveniment((T0 + 200, 12), None, text))
+
+
+class TestContoare(unittest.TestCase):
+    def test_powershell_fara_fereastra(self):
+        # M10: contoarele se citesc printr-un PowerShell care nu deschide nicio fereastră pe ecranul omului
+        iesire = ("\\\\laptop\\processor information(_total)\\% processor performance=101,5\n"
+                  "\\\\laptop\\gpu engine(pid_12324_luid_0x0_0x1_phys_0_eng_0_engtype_compute)\\utilization percentage=12,3\n")
+        gata = subprocess.CompletedProcess([], 0, stdout=iesire, stderr="")
+        with mock.patch("romana.vision.veghe.subprocess.run", return_value=gata) as run:
+            c = _contoare()
+        if hasattr(subprocess, "CREATE_NO_WINDOW"):
+            self.assertTrue(run.call_args.kwargs.get("creationflags", 0) & subprocess.CREATE_NO_WINDOW)
+        self.assertEqual(c["performanta_cpu_pct"], 101.5)
+        self.assertEqual(c["gpu"], {"12324:compute": 12.3})
 
 
 if __name__ == "__main__":
