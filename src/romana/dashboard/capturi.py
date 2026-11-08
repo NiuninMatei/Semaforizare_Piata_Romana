@@ -26,11 +26,13 @@ RE_FONTURI = re.compile(r'<link rel="preconnect"[^>]*>\s*<link href="https://fon
 
 SIMULARI = r"""
 <script>
-window.__netOK=true; window.__stare=null; window.__posts=[];
+window.__netOK=true; window.__stare=null; window.__posts=[]; window.__ultimTs=0;
 window.fetch=async(url,opt)=>{
   if(!window.__netOK) throw new TypeError("Failed to fetch");
   if(String(url).includes("/api/state")) return {ok:true,status:200,json:async()=>JSON.parse(JSON.stringify(window.__stare))};
-  if(String(url).includes("/api/command")){ window.__posts.push(JSON.parse(opt.body)); return {ok:true,status:200,json:async()=>({ok:true})}; }
+  if(String(url).includes("/api/command")){   // ca serverul: comanda, cu `timestamp`-ul ei (crescător), după care pagina o recunoaște în starea simulării
+    const corp=JSON.parse(opt.body); window.__posts.push(corp); window.__ultimTs=Math.max(Date.now()/1000,window.__ultimTs+0.001);
+    return {ok:true,status:200,json:async()=>({ok:true,...corp,timestamp:window.__ultimTs})}; }
   throw new TypeError("necunoscut");
 };
 const __FAZE=%FAZE%;
@@ -41,7 +43,7 @@ const __CAM={_varsta_s:0.9,fps:5.94,conectat:true,reconectari:0,vehicule_urmarit
 const __SIM={_varsta_s:0.5,timp_sim:500,mod:"program",mod_program:"plan_observat",sursa:"camera live",faza:0,faza_nume:__FAZE[0],etapa:"green",verde_s:9,faze:__FAZE,model_ai:true,
   coada_brate:{magheru:3,catargiu:12,dacia_est:5,dacia_vest:21,pietoni:4},coada_total:41,vehicule_in_retea:123,pietoni_in_retea:8,
   istoric_coada:Array.from({length:40},(_,i)=>[i*5,10+Math.round(8*Math.sin(i/4))])};
-function __st(cam,sim){ window.__stare={camera:cam,simulare:sim,comanda:null,ora_server:0}; }
+function __st(cam,sim,extra){ window.__stare=Object.assign({camera:cam,simulare:sim,comanda:null,ora_server:0},extra||{}); }   // extra: comanda, comenzi, ora_server
 __st(__CAM,__SIM);
 </script>
 """
@@ -95,8 +97,10 @@ def randeaza(sursa: str, cod_stare: str, cale: Path, latime: int = 1366, inaltim
     temp = cale.with_suffix(".html")
     rama = f"<!doctype html><meta charset='utf-8'><style>body{{margin:0}}iframe{{border:0;display:block}}</style><iframe width='{latime}' height='{inaltime}' srcdoc=\"{html.escape(pagina(sursa, cod_stare), quote=True)}\"></iframe>"
     temp.write_text(rama, encoding="utf-8")
+    # fără cererile de fundal ale lui Chrome (actualizări de componente și altele): captura nu iese în rețea și nu se lungește din cauza lor
     cmd = [CHROME, "--headless=new", "--disable-gpu", f"--user-data-dir={profil or cale.parent / 'profil'}", "--hide-scrollbars", "--no-first-run",
-           "--no-default-browser-check", "--allow-file-access-from-files", "--virtual-time-budget=6000", f"--window-size={max(latime, 500)},{inaltime}", f"--screenshot={cale}", temp.as_uri()]
+           "--no-default-browser-check", "--disable-background-networking", "--disable-component-update", "--allow-file-access-from-files",
+           "--virtual-time-budget=6000", f"--window-size={max(latime, 500)},{inaltime}", f"--screenshot={cale}", temp.as_uri()]
     subprocess.run(cmd, capture_output=True, timeout=120, creationflags=getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0))
     temp.unlink(missing_ok=True)
     return cale.exists()

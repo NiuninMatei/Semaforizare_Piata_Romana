@@ -12,6 +12,10 @@ dispecerat: implicit „Planul observat” (planul fix 72/48/3, dedus din camer�
 O stare a camerei mai veche de 60 s nu se folosește. Până la 20 de minute de la ultima citire bună se
 păstrează ultimele debite ale camerei; abia apoi se trece pe profilul de referință, iar dispeceratul o spune.
 
+Starea publicată arată și pașii unei schimbări de fază (src/romana/control/pasi.py): verdele, degajarea pietonilor, galbenul
+și roșul, cu secundele rămase, ținta și, pentru fiecare fază, în câte secunde simulate ar ajunge verdele ei. Cu ele și cu
+`comanda_citita_ts`, dispeceratul urmărește o comandă pas cu pas, până la verdele cerut.
+
 Rulare:  python -m romana.bridge.live_twin [--gui] [--model models/ppo_romana.zip]
 """
 from __future__ import annotations
@@ -26,6 +30,7 @@ from pathlib import Path
 
 from romana.common import DEMAND_DIR, MODELS_DIR, NET_DIR, OUTPUT_DIR, load_json
 from romana.control.faze import controler, faze_romana
+from romana.control.pasi import CADENTA_S, pasi_semafor
 from romana.control.signals import SignalController
 
 LIVE = OUTPUT_DIR / "live"
@@ -93,9 +98,42 @@ def read_json(path: Path, max_age: float | None = None):
     try:
         if max_age is not None and time.time() - path.stat().st_mtime > max_age:
             return None
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        # din octeți, json recunoaște singur UTF-8, UTF-8 cu BOM, UTF-16 și UTF-32 (un fișier salvat de mână, din Notepad)
+        return json.loads(path.read_bytes())
+    except (OSError, ValueError):      # ValueError cuprinde și JSONDecodeError, și UnicodeDecodeError
         return None
+
+
+MODURI_COMENZII = ("ai", "fix", "max_pressure", "manual", "program")   # modurile din dispecerat (server.MODES)
+FAZE_MANUALE = 5       # ca server.FAZE_MANUALE: etapa scurtă, a șasea afișată, nu se cere
+
+
+def comanda_valida(cmd) -> bool:
+    """O comandă pe care geamănul o poate aplica: un mod cunoscut, iar la cel manual o fază din listă, dacă e dată
+    (fără fază, comanda manuală ține faza de acum)."""
+    if not isinstance(cmd, dict) or cmd.get("mod") not in MODURI_COMENZII:
+        return False
+    if cmd["mod"] == "manual" and "faza" in cmd:
+        f = cmd["faza"]
+        return isinstance(f, int) and not isinstance(f, bool) and 0 <= f < FAZE_MANUALE
+    return True
+
+
+def citeste_comanda(cale: Path, anterioara: dict | None = None) -> dict:
+    """Comanda din dispecerat; fără fișier, programul. Un fișier care există, dar nu se poate citi chiar acum (serverul îl
+    rescrie în acel moment) sau nu conține o comandă pe care geamănul o poate aplica (un mod necunoscut, o fază manuală din
+    afara listei, un fișier scris greșit de mână), lasă comanda de dinainte, iar la prima citire, programul: altfel geamănul
+    ar trece o secundă pe program, iar planul fix ar putea porni singur o schimbare de fază, pe care n-a cerut-o nimeni."""
+    cmd = read_json(cale)
+    if not comanda_valida(cmd):
+        return anterioara if anterioara is not None and cale.exists() else {"mod": "program"}
+    return cmd
+
+
+def stare_pasi(ctrl, timp_sim: int, cmd: dict) -> dict:
+    """Câmpurile pentru dispecerat: pașii schimbării de fază (pasi.py, cu `faza_tinta` corectă și în degajarea pietonilor) și
+    ecoul comenzii citite, după care pagina își recunoaște comanda (`timestamp`-ul scris de server)."""
+    return {**pasi_semafor(ctrl, timp_sim, CADENTA_S), "comanda_citita_ts": cmd.get("timestamp")}
 
 
 def turning_ratios(cfg: dict, observed: dict[str, int]) -> dict[str, dict[str, float]]:
@@ -226,6 +264,7 @@ def main(argv=None) -> None:
     info = json.loads((NET_DIR / ("network_info.json" if args.geaman_vechi else "network_info_v2.json")).read_text(encoding="utf-8"))
     route_ids: dict[tuple, list[str]] = {}
     n_veh, n_ped, t, last_src = 0, 0, 0, ""
+    cmd = None
     good_cam, good_t = None, 0.0
     hist = []
     LIVE.mkdir(parents=True, exist_ok=True)
@@ -235,7 +274,7 @@ def main(argv=None) -> None:
             t0 = time.time()
             cam = read_json(LIVE / "state.json", max_age=60)
             # fără o comandă din dispecerat, geamănul rulează programul pe cazuri de trafic (varianta aleasă, § 9.9)
-            cmd = read_json(LIVE / "command.json") or {"mod": "program"}
+            cmd = citeste_comanda(LIVE / "command.json", cmd)
             if cam and cam.get("intrari_veh_h") and cam.get("secunde_interval", 0) >= 60:
                 good_cam, good_t = cam, time.time()
             elif good_cam and time.time() - good_t < 1200:
@@ -343,7 +382,7 @@ def main(argv=None) -> None:
                     inchide = hasattr(ctrl, "treceri") and not ctrl.scurta and any(ctrl.afisata[i] in "Gg" and ctrl._inceput(urm, spre)[i] not in "Gg" for i in ctrl.treceri)
                     if ctrl.green_time >= durate[k] - (ctrl.degajare if inchide else 0):
                         ctrl.request(urm, scurta=True) if spre else ctrl.request(urm)
-            elif t % 5 == 0:
+            elif t % CADENTA_S == 0:
                 if efectiv == "ai" and rl is not None:
                     rl.act(traci, t)
                 elif efectiv == "ai_pranz":
@@ -385,7 +424,7 @@ def main(argv=None) -> None:
                 hist = hist[-600:]
                 state = {"timestamp": time.time(), "timp_sim": t, "mod": mode, "mod_program": sub, "sursa": src,
                          "faza": ctrl.faza_afisata() if hasattr(ctrl, "faza_afisata") else ctrl.current, "faza_nume": ctrl.nume_scurta if getattr(ctrl, "scurta", False) else ctrl.names[ctrl.current], "etapa": ctrl.stage,
-                         "faza_tinta": (len(ctrl.greens) if getattr(ctrl, "spre_scurta", False) else ctrl.target) if ctrl.stage != "green" else ctrl.current,
+                         **stare_pasi(ctrl, t, cmd),       # pas, faza_tinta, pana_la_faza_s și celelalte (pasi.py), plus comanda_citita_ts
                          "varsta_debite_s": round(time.time() - good_t) if good_cam else None,
                          "verde_s": ctrl.green_time, "faze": [*ctrl.names, *([ctrl.nume_scurta] if hasattr(ctrl, "nume_scurta") else [])], "model_ai": bool(rl), "pietoni_verde": ctrl.pietoni_verde() if hasattr(ctrl, "pietoni_verde") else ctrl.current == 2,
                          "coada_brate": dict(arms_q), "coada_total": q_tot,

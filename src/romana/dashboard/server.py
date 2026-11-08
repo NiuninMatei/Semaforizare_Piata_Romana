@@ -23,12 +23,15 @@ MODES = {"ai", "fix", "max_pressure", "manual", "program"}
 
 
 def _read(name: str):
+    """Un obiect JSON din outputs/live, cu vârsta fișierului; None dacă lipsește, nu se poate citi sau nu e un obiect."""
     p = LIVE / name
     try:
-        d = json.loads(p.read_text(encoding="utf-8"))
+        d = json.loads(p.read_bytes())       # din octeți, json recunoaște singur UTF-8, UTF-8 cu BOM, UTF-16 și UTF-32
+        if not isinstance(d, dict):          # o listă sau null în command.json ar fi dat HTTP 500
+            return None
         d["_varsta_s"] = round(time.time() - p.stat().st_mtime, 1)
         return d
-    except (OSError, json.JSONDecodeError):
+    except (OSError, ValueError):            # ValueError cuprinde și JSONDecodeError, și UnicodeDecodeError
         return None
 
 

@@ -160,7 +160,7 @@ footer a{color:inherit;text-decoration:underline}
       </div>
       <p id="blocat" hidden tabindex="-1"></p>
       <div class="manual" id="manual">
-        <p class="sub">Alegeți direcția. Schimbarea se face singură: galben 3 s, apoi roșu 2 s pe toate direcțiile, cât se eliberează intersecția. Verdele ales ține cel mult ≈100 s: apoi faza următoare primește verde ≈20 s, iar semaforul revine la alegerea dumneavoastră.</p>
+        <p class="sub">Alegeți direcția. Schimbarea se face singură, pe pași, iar sub butoane scrie unde a ajuns: pietonii își termină traversarea, 6 s, dacă li se închide trecerea; galben 3 s; roșu 2 s pentru cine trebuie să oprească, cât se eliberează intersecția. Semaforul hotărăște la fiecare 5 s. Un verde ține cel puțin 10 s, iar cel pe Magheru și Lascăr Catargiu, cel puțin 35 s, ca să apuce și pietonii verdele lor. Verdele ales ține cel mult ≈100 s. Apoi semaforul trece singur, o vreme, pe altă fază: ≈20 s pe Dacia, dacă ați ales Magheru și Lascăr Catargiu, altfel ≈40–45 s pe Magheru și Lascăr Catargiu, după care revine singur la alegerea dumneavoastră.</p>
         <div class="faze" id="faze"></div>
         <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
       </div>
@@ -220,16 +220,23 @@ const BRATE={catargiu:[-130,"in",70,50,"middle"],caderea_bastiliei:[-80,"out",17
 const FAZA_BRATE=[["magheru","catargiu"],["dacia_est","dacia_vest"],[],["magheru","catargiu","dacia_est","dacia_vest"],["magheru","catargiu","dacia_est","dacia_vest"]];
 const BRATE_IN_PLUS=[[],[],[],["dacia_est","dacia_vest"],["magheru","catargiu"]];
 const FLUX="/api/video";
-const ASTEPTARE_COMANDA_MS=10000, ASTEPTARE_FAZA_MS=30000, TIMP_MAXIM_CERERE_MS=4000;   // până la o fază nouă: verdele minim, citirea comenzii la 5 s, galbenul și roșul, deci ≈25 s
+// Simularea citește comanda în fiecare secundă: fără ea după 10 s, ceva nu merge. Pentru o fază cerută, termenul vine din pașii publicați
+// de simulare (pana_la_faza_s, în secunde simulate), plus MARJA_S; cazul cel mai lung are 60 s simulate (src/romana/control/pasi.py).
+// Un geamăn mai vechi, fără câmpurile pașilor, primește termenul fix ASTEPTARE_FAZA_MS, pe ceasul paginii: acele 60 s, plus 5 s pentru citirea comenzii și rezervă.
+// După o reîncărcare a paginii, ultima comandă, dacă nu e mai veche de REFACERE_S și nu s-a aplicat încă, se urmărește mai departe.
+const ASTEPTARE_COMANDA_MS=10000, ASTEPTARE_FAZA_MS=65000, TIMP_MAXIM_CERERE_MS=4000, MARJA_S=3, REFACERE_S=70;
 const CAMERA_ALERTA_S=180, CAMERA_ROSU_S=600, DESCHIS_LA=Date.now();
 let sim=null, simUltim=null, simUltimLa=0, cam=null, camUltimLa=0, areTrafic=false, legatura=true, cazutLa=null, ultimaStare=0, subVazut=null, stareCam="", codEroare=null;
-let modCerut=null, fazaCeruta=null, deschisDe=null, cerere=null, modVazut=null, modAnterior=null, imagineOprita=false, fluxPornit=false, reluare=false, cheieAlerte="", modLaConfirmare=null, imagineCazuta=false, nrCereri=0;
+let modCerut=null, fazaCeruta=null, deschisDe=null, cerere=null, modVazut=null, modAnterior=null, imagineOprita=false, fluxPornit=false, reluare=false, cheieAlerte="", modLaConfirmare=null, imagineCazuta=false, nrCereri=0, fazaLaPreluare=null;
 const istoric=[], schimbari=[];
 const $=id=>document.getElementById(id);
 const ora=ms=>new Date(ms).toLocaleTimeString("ro-RO");
 const nr=v=>Number(v).toLocaleString("ro-RO",{maximumFractionDigits:1});
 const UNUL={vehicule:"vehicul","vehicule oprite":"vehicul oprit",pietoni:"pieton"};
 const cate=(n,cuv)=>n==1?`1 ${UNUL[cuv]||cuv}`:`${n}${n%100>=20||(n>=100&&n%100==0)?" de":""} ${cuv}`;   // în română: 20 de vehicule, dar 19 vehicule
+const arePasi=s=>!!s&&Array.isArray(s.pana_la_faza_s);   // simularea publică pașii schimbării de fază (src/romana/control/pasi.py)
+const peVerde=s=>!!s&&(s.pas!==undefined?s.pas=="verde":s.etapa=="green");   // verde, fără nicio schimbare în curs; fără câmpul `pas`, degajarea pietonilor pare tot verde
+const numeFaza=(s,i)=>FAZE_CLARE[i]||((s&&s.faze&&s.faze[i])||"").split("(")[0].trim()||null;
 function anunta(text){ $("anunt").textContent=text }
 function durata(s){ s=Math.max(0,Math.round(s)); if(s<90) return `${s} s`; if(s<3600) return `${Math.floor(s/60)} min${s%60?` ${s%60} s`:""}`; return `${Math.floor(s/3600)} h ${Math.round(s%3600/60)} min` }
 const varstaCam=()=>(Date.now()-(camUltimLa||DESCHIS_LA))/1000;   // vechimea ultimei măsurători; dacă n-a venit niciuna, de când e deschisă pagina
@@ -242,7 +249,12 @@ setInterval(()=>{ $("ceas").textContent=new Date().toLocaleTimeString("ro-RO");
   $("proaspat").textContent=v===null?"":!legatura?`fără legătură de ${durata(v)}`:parti.join("; ")||"date la zi"; $("proaspat").className=legatura&&!parti.length?"":"intarziat";
 },1000);
 
-function starea(s,b,etapa,verzi){ if(!s) return "necunoscut"; if(!verzi.includes(b)) return "roșu"; return etapa=="yellow"?"galben":etapa=="red"?"roșu de degajare":"verde" }
+// o intrare verde și în faza de acum, și în cea spre care se merge (spre fazele cu risc și între ele) rămâne pe verde cât ceilalți au galben și roșu
+function starea(s,b,etapa,verzi){ if(!s) return "necunoscut"; if(!verzi.includes(b)) return "roșu"; if(etapa!="green"&&(FAZA_BRATE[s.faza_tinta]||[]).includes(b)) return "verde"; return etapa=="yellow"?"galben":etapa=="red"?"roșu de degajare":"verde" }
+function cineRamane(s){   // „Magheru și Lascăr Catargiu rămân pe verde”; gol dacă nicio intrare nu rămâne pe verde
+  const r=(FAZA_BRATE[s.faza]||[]).filter(b=>(FAZA_BRATE[s.faza_tinta]||[]).includes(b)), n=r.map(b=>NUME[b]);
+  return !r.length?"":`${r.length==Object.values(BRATE).filter(x=>x[1]=="in").length?"toate intrările":n.length>1?`${n.slice(0,-1).join(", ")} și ${n[n.length-1]}`:n[0]} ${r.length>1?"rămân":"rămâne"} pe verde`;
+}
 function schema(s,viu){
   const cx=150, cy=135, verzi=s?FAZA_BRATE[s.faza]||[]:[], etapa=s?s.etapa:"", inPlus=etapa=="green"?BRATE_IN_PLUS[s.faza]||[]:[], vechi=!!s&&!viu, pietoniVerde=!!s&&(s.pietoni_verde??s.faza==2)&&etapa=="green";
   let brate="", lumini="", texte="", descriere=[];
@@ -306,9 +318,11 @@ function butoane(s){
   $("blocat").hidden=!blocat; $("blocat").textContent=blocat;
   $("manual").classList.toggle("vizibil",mod=="manual");
   faze(s);
-  document.querySelectorAll("[data-faza]").forEach(b=>{ const f=+b.dataset.faza, activa=!!s&&mod=="manual"&&s.etapa=="green"&&f==s.faza; b.setAttribute("aria-pressed",activa); b.classList.toggle("urmeaza",!!s&&mod=="manual"&&!activa&&(s.etapa!="green"?f==s.faza_tinta:!!cerere&&cerere.faza==f)); b.disabled=!!blocat||trimitem });
+  const k=comandaInVigoare, ceruta=k&&k.mod=="manual"?k.faza:undefined;   // pe verde, „urmează” e faza cerută de aici sau, fără o cerere, cea a comenzii în vigoare: după verdele maxim, semaforul dă o vreme verde altei faze, apoi revine la ea
+  document.querySelectorAll("[data-faza]").forEach(b=>{ const f=+b.dataset.faza, verde=peVerde(s), activa=!!s&&mod=="manual"&&verde&&f==s.faza; b.setAttribute("aria-pressed",activa); b.classList.toggle("urmeaza",!!s&&mod=="manual"&&!activa&&(!verde?f==s.faza_tinta:cerere?cerere.faza==f:ceruta==f)); b.disabled=!!blocat||trimitem });
   if(blocat&&$("confirm").classList.contains("vizibil")){ inchide(); rezultat("Confirmarea s-a închis, fiindcă lipsesc datele. Nu s-a trimis nimic.","rau") }
   else if(s&&$("confirm").classList.contains("vizibil")&&modLaConfirmare&&s.mod!=modLaConfirmare){ inchide(); rezultat(`Între timp a preluat „${MODURI[s.mod]?.nume||s.mod}”. Comanda nu s-a trimis; alegeți din nou, dacă mai e nevoie.`,"rau") }
+  else if(s&&$("confirm").classList.contains("vizibil")&&modCerut=="manual"&&fazaCeruta===undefined&&fazaLaPreluare!=null&&fazaDePreluat(s)!=fazaLaPreluare){ inchide(); rezultat(`Între timp semaforul a pornit schimbarea spre „${FAZE_CLARE[fazaDePreluat(s)]}”. Comanda nu s-a trimis; dacă vreți să preluați, apăsați din nou „Comandă manuală”.`,"rau") }   // preluarea trimite faza arătată, deci nu rămâne deschisă pe alta
   if(blocat&&document.activeElement&&document.activeElement.disabled) $("blocat").focus();
   const ultim=simUltim&&MODURI[simUltim.mod]?MODURI[simUltim.mod].nume:null;
   pune($("cine-acum"),s?`Culorile le schimbă acum: <b>${MODURI[mod]?.cine||"necunoscut"}</b>${mod=="manual"?"":`, cu „${MODURI[mod]?.nume||mod}”`}.`:`Nu se știe cine conduce acum, ${legatura?"fiindcă simularea nu trimite date":"fiindcă nu e legătură cu calculatorul dispeceratului"}.${ultim?` Ultimul mod cunoscut: „${ultim}”.`:""}`);
@@ -318,15 +332,22 @@ function deschide(text,de,buton,risc){
 }
 function inchide(){ const era=$("confirm").classList.contains("vizibil"); $("confirm").classList.remove("vizibil"); if(era){ if(deschisDe&&document.contains(deschisDe)&&!deschisDe.disabled) deschisDe.focus(); else $("rezultat").focus() } deschisDe=null }
 function cere(mod,faza,de){
-  modCerut=mod; fazaCeruta=faza; modLaConfirmare=sim?sim.mod:null;
+  modCerut=mod; fazaCeruta=faza; modLaConfirmare=sim?sim.mod:null; fazaLaPreluare=null;
   const m=MODURI[mod], actual=sim?MODURI[sim.mod]?.nume||sim.mod:null;
-  if(mod=="manual"&&faza===undefined) return deschide(`Preluați comanda manuală${actual?` de la „${actual}”`:""}? Rămâne faza de acum, până alegeți alta.`,de,"Da, preiau comanda");
+  if(mod=="manual"&&faza===undefined){
+    const f=sim?fazaDePreluat(sim):0, acum=!sim||(peVerde(sim)&&sim.faza==f);   // în tranziție se preia faza spre care merge semaforul
+    fazaLaPreluare=f;   // „Da” trimite chiar faza arătată aici
+    return deschide(`Preluați comanda manuală${actual?` de la „${actual}”`:""}? ${acum?"Rămâne faza de acum":`Rămâne „${FAZE_CLARE[f]}”, spre care se schimbă acum semaforul`}, până alegeți alta.`,de,"Da, preiau comanda");
+  }
   if(mod=="manual") return deschide(`Dați „${FAZE_CLARE[faza]||faza}”? ${RISC_EXPLICAT[faza]}`,de,"Da, cu risc de blocare",true);
   deschide(`Predați conducerea${actual?` de la „${actual}”`:""} către „${m.nume}”: ${m.text}?`,de,`Da, trec la „${m.nume}”`);
 }
 function alegeFaza(f,b){
   if(FAZE_RISC.includes(f)) return cere("manual",f,b);
-  if(sim&&sim.mod=="manual"&&sim.etapa=="green"&&sim.faza==f) return rezultat(`„${FAZE_CLARE[f]}” e deja activă.`);
+  // clicul pe faza de acum anulează o altă fază cerută de aici, încă neaplicată, sau pe cea a comenzii în vigoare: după verdele maxim, semaforul
+  // are o vreme verde pe altă fază, apoi revine la cea comandată. „Deja activă” doar dacă și comanda în vigoare (când se poate citi) cere faza aceasta.
+  const k=comandaInVigoare, altaCeruta=(!!cerere&&cerere.mod=="manual"&&cerere.faza!==undefined&&cerere.faza!=f)||(!!k&&(k.mod!="manual"||(k.faza!==undefined&&k.faza!=f)));
+  if(sim&&sim.mod=="manual"&&peVerde(sim)&&sim.faza==f&&!altaCeruta) return rezultat(`„${FAZE_CLARE[f]}” e deja activă.`);
   trimite("manual",f);
 }
 function rezultat(text,cls){ $("rezultat").textContent=text; $("rezultat").className=cls||"" }
@@ -335,23 +356,26 @@ function notaIstoric(stare){
   pune($("istoric-lista"),istoric.slice(-5).reverse().map(i=>`<li>${ora(i.la)} · ${i.nume}: ${i.stare}</li>`).join(""));
   $("istoric-parte").hidden=!istoric.length;
 }
-// la preluare rămâne faza de acum; în tranziție, cea spre care se merge; etapa scurtă nu se poate cere, deci de acolo se merge pe Magheru–Catargiu
-function fazaDePreluat(s){ const f=s.etapa=="green"||s.faza_tinta===undefined?s.faza:s.faza_tinta; return f<FAZE_CLARE.length?f:0 }
+// la preluare rămâne faza de acum; în tranziție, și în cele 6 s ale pietonilor, cea spre care se merge (cu pașii, `faza_tinta` e mereu corectă);
+// etapa scurtă nu se poate cere, deci din ea și spre ea se merge pe Magheru–Catargiu
+function fazaDePreluat(s){ const f=arePasi(s)?(s.faza_tinta??s.faza):s.etapa=="green"||s.faza_tinta===undefined?s.faza:s.faza_tinta; return f<FAZE_CLARE.length?f:0 }
 function numeComanda(mod,faza){ return mod=="manual"&&faza!==undefined?(FAZE_CLARE[faza]||`faza ${faza}`):(MODURI[mod]?.nume||mod) }
 async function trimite(mod,faza){
-  const la=Date.now(), id=++nrCereri, nume=numeComanda(mod,faza), aceasta={id,mod,faza,la,etapa:"se trimite"};
+  // `inainte`: cel mai nou timestamp știut acum (ecoul simulării, comanda de până acum, de aici); fără răspunsul serverului, doar un ecou mai nou e al acestei comenzi
+  const inainte=Math.max(...[sim&&sim.comanda_citita_ts,cerere&&cerere.ts,cerere&&cerere.ts_citit].filter(x=>typeof x=="number"),-Infinity);
+  const la=Date.now(), id=++nrCereri, nume=numeComanda(mod,faza), aceasta={id,mod,faza,la,etapa:"se trimite",inainte};
   if(cerere) notaIstoric("înlocuită");
   cerere=aceasta; istoric.push({id,la,nume,stare:"se trimite"}); notaIstoric();
   inchide(); rezultat(`Se trimite: ${nume}…`);
   const inapoi=document.activeElement; butoane(sim);   // cât se trimite, butoanele stau dezactivate, ca două comenzi să nu se încurce
-  const corp={mod}; if(mod=="manual") corp.faza=faza??(sim?fazaDePreluat(sim):0);
+  const corp={mod}; if(mod=="manual") corp.faza=faza??fazaLaPreluare??(sim?fazaDePreluat(sim):0); fazaLaPreluare=null;   // la preluare, faza arătată în confirmare
   const ramas=()=>sim?` Conduce în continuare „${MODURI[sim.mod]?.nume||sim.mod}”.`:"";
   let stare="se aplică", text=`Cerere primită: ${nume}. Așteptăm simularea…`, cls;
   try{
     const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),TIMP_MAXIM_CERERE_MS);
     const r=await fetch("/api/command",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(corp),signal:ctl.signal}); clearTimeout(t);
     let raspuns={}; try{ raspuns=await r.json() }catch(e){}
-    if(r.ok) aceasta.etapa="primita";
+    if(r.ok){ aceasta.etapa="primita"; if(typeof raspuns.timestamp=="number") aceasta.ts=raspuns.timestamp }   // după `timestamp` își recunoaște comanda în starea simulării
     else {   // a ajuns, dar a fost refuzată: aceeași comandă, trimisă din nou, nu schimbă nimic
       stare="refuzată"; cls="rau"; text=`Calculatorul dispeceratului a refuzat comanda „${nume}”: ${raspuns.eroare||`răspuns ${r.status}`}.${ramas()} Alegeți altă comandă sau, dacă se repetă, anunțați autorul proiectului.`;
     }
@@ -363,14 +387,68 @@ async function trimite(mod,faza){
   if(cerere===aceasta){ notaIstoric(stare); rezultat(text,cls); if(aceasta.etapa!="primita") cerere=null }   // răspunsul se leagă de comanda lui: una înlocuită între timp nu mai schimbă ecranul
   butoane(sim); if(document.activeElement===document.body&&inapoi&&!inapoi.disabled) inapoi.focus();
 }
+function pasiSpre(s,faza){
+  // unde a ajuns schimbarea și în cât timp vine verdele cerut, din câmpurile simulării (secunde simulate)
+  const d=s.durate_s||{}, r=s.pas_ramas_s, intai=s.pas!="verde"&&s.faza_tinta!=faza?`Întâi se încheie schimbarea spre „${numeFaza(s,s.faza_tinta)||"faza următoare"}”, care nu se mai poate opri. `:"";
+  const raman=cineRamane(s);   // „pentru toți” doar dacă nicio intrare nu rămâne pe verde
+  let acum;
+  if(s.pas=="verde"){ const min=Math.max(0,(s.verde_min_s||0)-s.verde_s);
+    acum=min?`Verdele de acum mai ține cel puțin ${min} s, cât cere verdele minim.`:s.citire_peste_s?`Semaforul hotărăște la fiecare ${s.cadenta_s} s: următoarea dată, peste ${s.citire_peste_s} s.`:"Schimbarea pornește acum." }
+  else if(s.pas=="degajare") acum=`Acum: pietonii își termină traversarea, încă ${r} s, iar vehiculele mai au verde; apoi galben ${d.galben} s și roșu ${d.rosu} s.`;
+  else if(s.pas=="galben") acum=raman?`Acum: galben, încă ${r} s, apoi roșu ${d.rosu} s pentru cine trebuie să oprească; ${raman}.`:`Acum: galben, încă ${r} s; apoi roșu ${d.rosu} s pentru toți.`;
+  else acum=raman?`Acum: roșu pentru cine trebuie să oprească, încă ${r} s; ${raman}.`:`Acum: roșu pentru toți, încă ${r} s.`;
+  return `${intai}${acum} Verdele cerut vine în ≈${durata(s.pana_la_faza_s[faza]??0)}.`;
+}
 function urmaresteCererea(){
   if(!cerere||cerere.etapa!="primita") return;
-  const {mod,faza,la}=cerere, nume=numeComanda(mod,faza);
-  if(!sim){ if(Date.now()-la>ASTEPTARE_COMANDA_MS){ rezultat(`Nu știm dacă „${nume}” s-a aplicat: simularea nu trimite date.`,"rau"); notaIstoric("neconfirmată"); cerere=null } return }
-  const aplicat=sim.mod==mod&&(mod!="manual"||faza===undefined||(sim.faza==faza&&sim.etapa=="green"));
-  if(aplicat){ rezultat(`Aplicat la ${ora(Date.now())}: ${nume}.`,"bun"); notaIstoric("aplicată"); cerere=null; return }
-  if(sim.mod==mod&&mod=="manual"&&Date.now()-la<=ASTEPTARE_FAZA_MS){ rezultat(`Se schimbă spre: ${nume}. ${sim.etapa=="green"?"Verdele de acum ține cel puțin 10 s, apoi urmează galbenul.":sim.etapa=="yellow"?"Acum: galben.":"Acum: roșu pentru toți."}`); return }
-  if(Date.now()-la>ASTEPTARE_COMANDA_MS){ rezultat(`Simularea n-a aplicat încă „${nume}”; conduce „${MODURI[sim.mod]?.nume||sim.mod}”. Încercați din nou.`,"rau"); notaIstoric("neaplicată"); cerere=null }
+  const c=cerere, {mod,faza,la}=c, nume=numeComanda(mod,faza), cuFaza=mod=="manual"&&faza!==undefined;
+  const incheie=(text,stare,cls)=>{ rezultat(text,cls); notaIstoric(stare); cerere=null };
+  // fără stare proaspătă: se încheie doar după 10 s fără date de la simulare, nu la 10 s de la comandă (o singură citire ratată nu oprește urmărirea)
+  if(!sim){ if(Date.now()-Math.max(la,simUltimLa||DESCHIS_LA)>ASTEPTARE_COMANDA_MS) incheie(`Nu știm dacă „${nume}” s-a aplicat: simularea nu trimite date.`,"neconfirmată","rau"); return }
+  const conduce=`conduce „${MODURI[sim.mod]?.nume||sim.mod}”`, aplicat=sim.mod==mod&&(!cuFaza||(sim.faza==faza&&peVerde(sim)));
+  if(arePasi(sim)&&"comanda_citita_ts" in sim){
+    // simularea spune ce comandă a citit și în câte secunde simulate ajunge fiecare fază: termenul e pe timp_sim, nu pe ceasul paginii
+    const citita=sim.comanda_citita_ts;
+    if(!c.citita){
+      const aCitit=c.ts!==undefined?citita===c.ts:typeof citita=="number"&&citita>c.inainte;   // fără răspunsul serverului: primul ecou mai nou decât tot ce se știa la trimitere
+      if(!aCitit){
+        if(c.ts!==undefined&&typeof citita=="number"&&citita>c.ts) return incheie(`Comanda „${nume}” a fost înlocuită de o comandă mai nouă, dată din altă parte.`,"înlocuită");
+        if(Date.now()-la>ASTEPTARE_COMANDA_MS) incheie(`Simularea n-a citit comanda „${nume}” în ${ASTEPTARE_COMANDA_MS/1000} s; ${conduce}. Încercați din nou.`,"neaplicată","rau");
+        return;
+      }
+      Object.assign(c,{citita:true,ts_citit:citita,citita_la:sim.timp_sim,termen:cuFaza?sim.timp_sim+(sim.pana_la_faza_s[faza]??0)+MARJA_S:null});
+    } else if(citita!==c.ts_citit) return incheie(`Comanda „${nume}” a fost înlocuită de o comandă mai nouă, dată din altă parte.`,"înlocuită");
+    else if(sim.timp_sim<c.citita_la) return incheie(`Nu știm dacă „${nume}” s-a aplicat: simularea a pornit din nou.`,"neconfirmată","rau");
+    if(aplicat) return incheie(`Aplicat la ${ora(Date.now())}: ${nume}.`,"aplicată","bun");
+    if(!cuFaza||sim.mod!=mod) return incheie(`Simularea a citit „${nume}”, dar ${conduce}. Încercați din nou.`,"neaplicată","rau");
+    if(sim.timp_sim>c.termen) return incheie(`Simularea n-a aplicat „${nume}” în timpul calculat, ${c.termen-c.citita_la} s cu tot cu marja. Încercați din nou; dacă se repetă, anunțați autorul proiectului.`,"neaplicată","rau");
+    return rezultat(`Se schimbă spre: ${nume}. ${pasiSpre(sim,faza)}`);
+  }
+  // un geamăn fără câmpurile pașilor: termen fix, pe ceasul paginii
+  if(aplicat) return incheie(`Aplicat la ${ora(Date.now())}: ${nume}.`,"aplicată","bun");
+  const rr=cineRamane(sim);   // ca în schemă: spre o fază cu risc, unele intrări rămân pe verde; fără faza_tinta, gol
+  if(sim.mod==mod&&cuFaza&&Date.now()-la<=ASTEPTARE_FAZA_MS) return rezultat(`Se schimbă spre: ${nume}. ${peVerde(sim)?"Verdele de acum ține cel puțin 10 s, sau 35 s pe Magheru și Lascăr Catargiu, apoi urmează schimbarea.":sim.etapa=="yellow"?(rr?`Acum: galben; ${rr}.`:"Acum: galben."):(rr?`Acum: roșu pentru cine trebuie să oprească; ${rr}.`:"Acum: roșu pentru toți.")}`);
+  if(Date.now()-la>ASTEPTARE_COMANDA_MS) incheie(`Simularea n-a aplicat încă „${nume}”; ${conduce}. Încercați din nou.`,"neaplicată","rau");
+}
+let refacut=false, comandaInVigoare=null;   // comanda scrisă acum pe server (de aici sau din altă parte), din ultima stare primită; null dacă nu se poate citi
+function refaDupaReincarcare(d){
+  // după o reîncărcare a paginii: „Ultimele comenzi”, din jurnalul serverului, și urmărirea ultimei comenzi, dacă e încă în curs
+  if(refacut) return; refacut=true;
+  if(istoric.length||cerere) return;
+  const dif=typeof d.ora_server=="number"&&d.ora_server>0?Date.now()-d.ora_server*1000:0;   // ceasul paginii față de al serverului (de obicei, același calculator)
+  const bune=(Array.isArray(d.comenzi)?d.comenzi:[]).filter(k=>k&&MODURI[k.mod]&&typeof k.timestamp=="number");
+  for(const k of bune) istoric.push({id:++nrCereri,la:k.timestamp*1000+dif,nume:numeComanda(k.mod,k.mod=="manual"?k.faza:undefined),stare:"trimisă",ts:k.timestamp});
+  const s=d.simulare&&d.simulare._varsta_s<10?d.simulare:null, k=d.comanda;
+  const alt=s?[...bune].reverse().find(x=>x.mod!=s.mod):null; if(alt&&!modAnterior) modAnterior=alt.mod;   // „Reveniți la…”, ca înainte de reîncărcare
+  if(k&&MODURI[k.mod]&&typeof k.timestamp=="number"&&typeof k._varsta_s=="number"&&k._varsta_s<REFACERE_S){
+    const faza=k.mod=="manual"?k.faza:undefined, nume=numeComanda(k.mod,faza);
+    if(!(s&&s.mod==k.mod&&(faza===undefined||(s.faza==faza&&peVerde(s))))){   // încă neaplicată: o urmărim mai departe
+      let i=istoric.find(x=>x.ts===k.timestamp); if(!i){ i={id:++nrCereri,la:k.timestamp*1000+dif,nume,stare:"trimisă",ts:k.timestamp}; istoric.push(i) }
+      i.stare="se aplică"; cerere={id:i.id,mod:k.mod,faza,la:Date.now()-k._varsta_s*1000,ts:k.timestamp,etapa:"primita"};
+      rezultat(`Comanda „${nume}”, dată înainte de reîncărcarea paginii, se urmărește mai departe.`);
+    }
+  }
+  if(istoric.length) notaIstoric();
 }
 function alerte(){
   const lista=[], v=varstaCam(), lung=v>=CAMERA_ROSU_S, tehnicCam="Dacă modulul de viziune s-a oprit, porniți scripts\\2_viziune_live.bat. Verificați întâi că nu rulează deja.";
@@ -448,11 +526,17 @@ function afiseazaSimularea(){
   const s=sim||simUltim, viu=!!sim&&legatura, vechime=durata((Date.now()-simUltimLa)/1000);
   document.querySelector(".schema").classList.toggle("vechi",!viu&&!!s); $("p-ist").classList.toggle("vechi",!viu&&!!s);
   if(s){
-    const f=FAZE_CLARE[s.faza]||s.faza_nume.split("(")[0].trim(), tinta=s.faza_tinta!==undefined?FAZE_CLARE[s.faza_tinta]:null;
-    $("faza").textContent=viu?(s.etapa=="green"?f:tinta?`Se schimbă spre: ${tinta}`:`Se încheie: ${f}`):`Ultima fază cunoscută (acum ${vechime}): ${s.etapa=="green"?f:tinta?`se schimba spre ${tinta}`:`se încheia ${f}`}`;
-    const et=s.etapa=="green"?`e verde de ${s.verde_s} s`:s.etapa=="yellow"?"galben, câteva secunde":"roșu pentru toți, cât se eliberează intersecția";
+    const f=FAZE_CLARE[s.faza]||s.faza_nume.split("(")[0].trim(), tinta=s.faza_tinta!==undefined?numeFaza(s,s.faza_tinta):null, verde=peVerde(s);
+    $("faza").textContent=viu?(verde?f:tinta?`Se schimbă spre: ${tinta}`:`Se încheie: ${f}`):`Ultima fază cunoscută (acum ${vechime}): ${verde?f:tinta?`se schimba spre ${tinta}`:`se încheia ${f}`}`;
+    const inca=typeof s.pas_ramas_s=="number"?`, încă ${s.pas_ramas_s} s`:"";   // secundele rămase din pasul de acum, dacă simularea le publică
+    const pasul=s.pas||(s.etapa=="green"?"verde":s.etapa=="yellow"?"galben":"rosu");   // fără câmpul `pas`, din etapa controlerului
+    const raman=pasul=="galben"||pasul=="rosu"?cineRamane(s):"", cuRaman=raman?`; ${raman}`:"";   // spre o fază cu risc, unele intrări rămân pe verde
+    const et=pasul=="degajare"?`pietonii își termină traversarea${inca}, iar vehiculele mai au verde`:pasul=="verde"?`e verde de ${s.verde_s} s`:pasul=="galben"?(inca?`galben${inca}`:"galben, câteva secunde")+cuRaman:`roșu pentru ${raman?"cine trebuie să oprească":"toți"}${inca}, cât se eliberează intersecția${cuRaman}`;
     const conduce=s.mod=="manual"?"în comandă manuală":`condus de „${MODURI[s.mod]?.nume||s.mod}”`;
-    const aproape=s.mod=="manual"&&s.etapa=="green"&&s.verde_s>=60?` · mai sunt ${Math.max(0,90-s.verde_s)} s până la schimbarea automată`:"";
+    // schimbarea automată pornește la prima decizie de după verdele maxim (fără câmpurile pașilor: 90 s, fără decizii la 5 s)
+    const vmax=s.verde_max_s??90, pana=Math.max(0,vmax-s.verde_s), panaLaMax=s.cadenta_s?Math.ceil((s.timp_sim+pana)/s.cadenta_s)*s.cadenta_s-s.timp_sim:pana;
+    const altaCeruta=!!cerere&&cerere.mod=="manual"&&cerere.faza!==undefined&&cerere.faza!=s.faza;   // cât e cerută de aici altă fază, numărătoarea n-ar mai fi adevărată
+    const aproape=s.mod=="manual"&&verde&&s.verde_s>=vmax-30&&!altaCeruta?` · mai sunt ${panaLaMax} s până la schimbarea automată`:"";
     const risc=FAZE_RISC.includes(s.faza)?" · fază cu risc de blocare":"";
     $("faza-det").textContent=viu?`${et} · ${conduce}${aproape}${risc} · în simulare: ${cate(s.vehicule_in_retea,"vehicule")} și ${cate(s.pietoni_in_retea??0,"pietoni")}`:`Ultimele valori, vechi de ${vechime}.`;
     const de_la=s.sursa&&s.sursa.startsWith("camera")?(s.varsta_debite_s>120?`ultimele măsurători bune ale camerei, vechi de ${durata(s.varsta_debite_s)}`:"măsurătorile camerei"):"un profil de referință, fiindcă nu sunt măsurători bune de la cameră";
@@ -462,15 +546,18 @@ function afiseazaSimularea(){
 }
 function deseneaza(){ alerte(); afiseazaCamera(cam); afiseazaSimularea(); urmaresteCererea() }
 
+let nrSondari=0, ultimaSondare=0;   // un răspuns sosit după unul mai nou (o citire lentă, depășită de următoarea) se ignoră, și când e o eroare
 async function actualizeaza(){
-  let d;
+  const eu=++nrSondari; let d;
   try{
     const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),TIMP_MAXIM_CERERE_MS);
     const r=await fetch("/api/state",{cache:"no-store",signal:ctl.signal}); clearTimeout(t); if(!r.ok) throw {cod:r.status}; d=await r.json();
-  }catch(e){ codEroare=e.cod||null; if(legatura){ legatura=false; cazutLa=Date.now(); sim=null } deseneaza(); return }
+  }catch(e){ if(eu<ultimaSondare) return; ultimaSondare=eu; codEroare=e.cod||null; if(legatura){ legatura=false; cazutLa=Date.now(); sim=null } deseneaza(); return }
+  if(eu<ultimaSondare) return; ultimaSondare=eu;
   legatura=true; cazutLa=null; codEroare=null; ultimaStare=Date.now(); cam=d.camera; if(cam) camUltimLa=Date.now()-(cam._varsta_s||0)*1000;
-  const s=d.simulare; sim=s&&s._varsta_s<10?s:null;
+  const s=d.simulare; sim=s&&s._varsta_s<10?s:null; comandaInVigoare=d.comanda||null;
   if(s){ simUltim=s; simUltimLa=Date.now()-s._varsta_s*1000 }
+  refaDupaReincarcare(d);
   if(sim&&sim.mod!==modVazut){
     if(modVazut){ modAnterior=modVazut; schimbari.push({t:sim.timp_sim,mod:sim.mod}); if(!cerere) rezultat(`Conducerea a trecut la „${MODURI[sim.mod]?.nume||sim.mod}”.`) }
     modVazut=sim.mod;
