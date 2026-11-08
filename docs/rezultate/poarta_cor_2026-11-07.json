@@ -1,0 +1,73 @@
+{
+ "commit": "cc9be913723b82a1e2f032b7bde0640d566b8d40",
+ "data_rularii": "2026-11-08T03:42:54+02:00",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "scenarii": {
+  "cor_zi_2026-11-07_varf": {
+   "trece": true,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "fără obiect"
+   }
+  },
+  "cor_zi_2026-11-07_linistit": {
+   "trece": true,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "nejudecabil"
+   }
+  },
+  "cor_zi_2026-11-07_dimineata": {
+   "trece": true,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "fără obiect"
+   }
+  },
+  "cor_zi_2026-11-07_pranz": {
+   "trece": true,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "fără obiect"
+   }
+  },
+  "cor_zi_2026-11-07_seara": {
+   "trece": true,
+   "randuri": {
+    "debit, veh/h: magheru": "în prag",
+    "debit, veh/h: catargiu": "în prag",
+    "debit, veh/h: dacia_est": "în prag",
+    "teleportări": "în prag",
+    "ciocniri între vehicule văzute de SUMO": "în prag",
+    "vehicule neintrate sau nesosite la final, parte din vehicule": "în prag",
+    "pierdere de detecție pe întuneric": "în prag"
+   }
+  }
+ }
+}

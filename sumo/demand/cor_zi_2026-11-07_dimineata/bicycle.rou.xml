@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Conține informații din OpenStreetMap, © OpenStreetMap contributors (https://www.openstreetmap.org/copyright), disponibile sub Open Database License 1.0: https://opendatacommons.org/licenses/odbl/1-0/ -->
+
+<!-- generated on 2026-11-08 03:33:31.740056 by Eclipse SUMO routeSampler.py v1_28_0+0000-daf91b55789
+<configuration>
+    <route-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\candidate_bicycle.rou.xml"/>
+    <turn-files value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\cor_zi_2026-11-07_dimineata\viraje_bicycle.xml"/>
+    <output-file value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\cor_zi_2026-11-07_dimineata\bicycle.rou.xml"/>
+    <mismatch-output value="C:\Users\Matei\Documents\GitHub\Semaforizare_Piata_Romana\sumo\demand\cor_zi_2026-11-07_dimineata\mismatch_bicycle.xml"/>
+    <prefix value="bicycle_"/>
+    <attributes value="type=&quot;bicycle&quot; departLane=&quot;best&quot;"/>
+    <turn-max-gap value="25"/>
+    <optimize value="full"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+<!-- begin="1800.0" end="2700.0" -->
+    <vehicle id="bicycle_1800_0" depart="2299.68" type="bicycle" departLane="best">
+        <route edges="-125420125#2 -125420125#1 -417612252#4 23770777#1 23770777#2 23770777#3 23770777#4 23770777#5 23770777#6 669726792 23770795#0 448266581#1 448266581#2 668307642#1 130848152#1 130848152#2 778823271 23781801 241212606 668307633#0 668307633#1 668307633#2 182932595#0 -1059582465"/>
+    </vehicle>
+</routes>
