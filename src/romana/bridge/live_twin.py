@@ -6,10 +6,11 @@ injectează în SUMO vehicule pe brațele Pieței Romane, cu aceleași debite ș
 proporții de viraj (proces Poisson, rute realiste din setul candidat; bicicliștii pe rute
 permise bicicletelor), plus pietoni pe traseele care trec prin piață (debitul de pe trecerile
 vizibile × factor_extrapolare_pietoni). Semaforul pieței este condus de strategia aleasă din
-dashboard: agentul RL, planul fix de referință (N–S / E–V / pietoni), Max-Pressure sau manual.
+dispecerat: implicit „Planul observat” (planul fix 72/48/3, dedus din cameră la vârful zilei de luni 26.10,
+§ 6.5), apoi agentul RL, planul fix de referință (N–S / E–V / pietoni), Max-Pressure sau comanda manuală.
 
-Dacă fluxul camerei nu este disponibil (stare mai veche de 60 s), se folosește
-profilul de referință și acest lucru este semnalat explicit în dashboard.
+O stare a camerei mai veche de 60 s nu se folosește. Până la 20 de minute de la ultima citire bună se
+păstrează ultimele debite ale camerei; abia apoi se trece pe profilul de referință, iar dispeceratul o spune.
 
 Rulare:  python -m romana.bridge.live_twin [--gui] [--model models/ppo_romana.zip]
 """
@@ -42,7 +43,7 @@ PRAG_LEJER, PRAG_GREU = 2400, 4100
 #   "e13"          – agentul E13 singur (oficialul reantrenat pe cererea calibrată, § 9.5);
 #   "tod_debit"    – planuri fixe pe cazuri: 16/10/12 la trafic lejer și mediu, 12/14/12 la trafic intens;
 #   "marginea_sus" – participanți disciplinați: E9 / E3 / planul 46/48/12 (§ 9.2, istoric)
-#   "plan_observat" – planul observat, 72/48/3, măsurat din cameră pe orele încărcate (§ 6.5), în geamănul corectat
+#   "plan_observat" – planul observat, 72/48/3, dedus din cameră la vârful zilei de luni 26.10 (§ 6.5), în geamănul corectat
 #   "plan_60_40", "plan_45_30" – planurile 60/40/3 și 45/30/3, candidați pe zilele noi (§ 9.11), în geamănul corectat
 #   "e15"          – agentul E15, antrenat pe geamănul înghețat (§ 9.5, § 9.11)
 # Un nume din afara listei oprește geamănul la pornire, ca să nu ruleze pe tăcute alt program. Butonul din dispecerat se
@@ -117,6 +118,22 @@ def turning_ratios(cfg: dict, observed: dict[str, int]) -> dict[str, dict[str, f
     return out
 
 
+def ia_lacatul(dosar: Path = LIVE):
+    """Un singur geamăn la un moment dat: doi, porniți din două lansări, ar scrie amândoi în `outputs/live/sim_state.json`.
+    Blocarea dispare odată cu procesul, oricum s-ar încheia acesta (ca `paznic.ia_lacatul`). Întoarce fișierul blocat (de ținut
+    deschis) sau None dacă îl ține deja alt geamăn."""
+    import msvcrt
+    dosar.mkdir(parents=True, exist_ok=True)
+    fh = open(dosar / "geaman.lock", "a+b")
+    try:
+        fh.seek(0)
+        msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+    except OSError:
+        fh.close()
+        return None
+    return fh
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--gui", action="store_true", help="deschide sumo-gui")
@@ -131,6 +148,10 @@ def main(argv=None) -> None:
         raise SystemExit(f"Varianta {VARIANTA_PROGRAM} există doar pe geamănul corectat, nu cu --geaman-vechi.")
     if VARIANTA_PROGRAM == "e15" and not Path(MODEL_E15).exists():
         raise SystemExit(f"Varianta e15 cere {MODEL_E15}, care lipsește.")
+    lacat = ia_lacatul()     # ținut deschis până la ieșire
+    if lacat is None:
+        print(f"[geamăn digital] alt geamăn rulează deja (blocat: {LIVE / 'geaman.lock'}); ies, ca să nu scrie doi în aceeași stare.", flush=True)
+        raise SystemExit(3)
 
     from romana.common import sumo_binary, sumo_home
 
