@@ -12,6 +12,7 @@
   --r-mare:10px; --r-mic:4px;
 }
 *{box-sizing:border-box}
+html{scroll-padding-top:calc(var(--banda-h,64px) + 8px)}   /* un element primit în focus nu ajunge sub banda lipită sus */
 body{margin:0;background:var(--beton);color:var(--cerneala);font:15px/1.45 Barlow,system-ui,sans-serif}
 header{display:flex;align-items:center;gap:6px 18px;flex-wrap:wrap;padding:10px 22px;background:var(--cerneala);color:var(--hartie)}
 header h1{margin:0;font:700 26px/1 "Barlow Semi Condensed",sans-serif;letter-spacing:.2px}
@@ -35,7 +36,7 @@ section{background:var(--hartie);border:1px solid var(--linie);border-radius:var
 h2{margin:0 0 8px;font:600 19px "Barlow Semi Condensed",sans-serif}
 h3{margin:12px 0 6px;font:600 15px "Barlow Semi Condensed",sans-serif;color:var(--gri)}
 .vechi,.nesigur{border:2px dashed var(--gri);padding:13px 15px}
-.vechi>h2::after,.nesigur>h2::after{content:"date vechi";display:inline-block;margin-left:8px;padding:0 6px;border:1px solid var(--galben);border-radius:var(--r-mic);background:#fff4d6;color:var(--cerneala);font:600 13px/18px Barlow;white-space:nowrap}
+.vechi>h2::after,.vechi>h3::after,.nesigur>h2::after{content:"date vechi";display:inline-block;margin-left:8px;padding:0 6px;border:1px solid var(--galben);border-radius:var(--r-mic);background:#fff4d6;color:var(--cerneala);font:600 13px/18px Barlow;white-space:nowrap}
 .nesigur>h2::after{content:"valori nesigure"}
 .vechi .faza{font-size:18px;color:var(--gri)}
 .ascuns{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -43,6 +44,20 @@ h3{margin:12px 0 6px;font:600 15px "Barlow Semi Condensed",sans-serif;color:var(
 .cam img{width:100%;display:block;border-radius:var(--r-mic);background:#2b333a;aspect-ratio:16/9;object-fit:cover}
 .cam .gol{position:absolute;inset:0;display:none;place-items:center;text-align:center;color:#e7e9e4;padding:20px;background:#2b333a;border-radius:var(--r-mic)}
 .cam .gol p{margin:0}
+/* în locul imaginii; crește cât îi trebuie, dar strâns: pe un laptop (1366×641), tot panoul încape sub bandă */
+.senzor{aspect-ratio:16/9;padding:8px 12px;border:1px solid var(--linie);border-radius:var(--r-mic);background:#fff;font-size:14px;line-height:1.38}
+.senzor.vechi{border:2px dashed var(--gri);padding:7px 11px}
+.senzor.vechi .punct{background:var(--gri)}   /* date vechi: culoarea de acum nu se știe, rămâne cuvântul de la ultima citire */
+.senzor h3{display:inline;margin:0 8px 0 0;color:var(--cerneala)}
+#senzor-antet{display:inline}   /* pe același rând cu titlul */
+.senzor p{margin:0 0 3px}
+#senzor-rezumat{font-weight:500}
+.senzor ul{list-style:none;margin:3px 0 4px;padding:0}
+.senzor li{padding:2px 0;border-top:1px solid var(--linie)}
+.senzor .cuv{font-weight:600}
+.senzor .prag,#senzor-fisa{font-size:12.5px;line-height:1.32}   /* pragurile și fișa, mai mici și în gri: de citit la nevoie */
+.senzor .prag{display:block;color:var(--gri)}
+.senzor:focus-visible,#t-cam:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
 .stare{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin-top:8px;color:var(--gri);font-size:14px}
 .stare button{padding:2px 10px;font-size:14px;margin-left:auto}
 .punct{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--gri)}
@@ -63,7 +78,8 @@ td.n .doar{font:400 13px Barlow;color:var(--gri)}
 .legenda .v{background:var(--verde)} .legenda .g{background:var(--galben);color:var(--cerneala)} .legenda .r{background:var(--rosu)} .legenda .n{background:#5d6873}
 .legenda .p{background:#fff;color:var(--verde);border:1.5px dashed var(--verde);line-height:13px}
 .legenda .bara-l{width:22px;height:7px;border-radius:4px;background:var(--coada);vertical-align:1px;margin-right:4px}
-#cine-acum{margin:0 0 4px;font-size:15.5px}
+.banda{position:sticky;top:0;z-index:10;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px 18px;padding:7px 22px;background:var(--beton);border-bottom:1px solid var(--linie)}
+#cine-acum{margin:0;font-size:15.5px;max-width:40em}
 .moduri{display:grid;gap:6px}
 button{font:600 16px "Barlow Semi Condensed";padding:7px 10px;border-radius:var(--r-mic);border:1.5px solid var(--cerneala);background:var(--hartie);color:var(--cerneala);cursor:pointer}
 .moduri button,.faze button{display:block;width:100%;text-align:left}
@@ -90,20 +106,27 @@ button:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
 .confirm .rand{display:flex;gap:8px;margin-top:8px}
 .confirm .da{background:var(--cerneala);color:var(--hartie)}
 .confirm.risc{background:#fde8e6;border-color:var(--rosu)}
-#rezultat{margin:8px 0 0;min-height:1.45em;font-weight:500}
+#rezultat{margin:0;min-height:1.45em;font-weight:500}
+.banda.urmarire #rezultat{min-height:2.9em;display:flex;align-items:center}   /* de la prima comandă urmărită, loc pentru două rânduri: banda crește o dată, la clic, și nu mai sare între pași; un text de un rând stă la mijloc, în dreptul celorlalte */
 #rezultat.bun{color:var(--verde)} #rezultat.rau{color:var(--rosu)}
 #istoric{margin-top:6px;font-size:13.5px;color:var(--gri)}
 #istoric ol{margin:2px 0;padding:0;list-style:none}
-#revino{margin-top:6px;font-size:14px;padding:4px 10px}
+#revino{font-size:14px;padding:4px 10px;margin:-3px 0}   /* cât un rând de text, cu tot cu chenar: când apare sau dispare, banda nu-și schimbă înălțimea */
 canvas{width:100%;height:150px;display:block}
 #grafic-rez{margin:4px 0 0;color:var(--gri);font-size:14px}
 .col{display:flex;flex-direction:column;gap:14px;min-width:0}
 footer{padding:6px 22px 22px;color:var(--gri);font-size:13px;max-width:1700px;margin:auto}
 footer a{color:inherit;text-decoration:underline}
-@media (min-width:1200px){.col.comanda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;position:sticky;top:8px;align-self:start}}
+@media (min-width:1200px){.col.comanda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;position:sticky;top:calc(var(--banda-h,64px) + 8px);align-self:start}   /* sub bandă: înălțimea ei o ține la zi pagina */
+  .col.comanda.lunga{position:static}}   /* mai înaltă decât locul de sub bandă: se derulează cu pagina, ca butoanele fazelor să ajungă pe ecran */
+@media (max-width:1100px){.banda{grid-template-columns:minmax(0,1fr) auto}#rezultat{grid-column:1/-1;grid-row:2}#rezultat:empty{min-height:0}}   /* rezultatul, pe rândul lui, doar după o comandă */
 @media (min-width:761px) and (max-width:1199.98px){main{grid-template-columns:minmax(0,1fr)}.col.comanda{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
 #faza-det{min-height:2.9em}
-@media (max-width:900px){main{grid-template-columns:minmax(0,1fr);padding:12px 16px}header,.nota-sim,.alerta,#ajutor{padding-left:16px;padding-right:16px}}
+@media (max-width:900px){main{grid-template-columns:minmax(0,1fr);padding:12px 16px}header,.nota-sim,.alerta,#ajutor,.banda{padding-left:16px;padding-right:16px}}
+/* pe telefon, banda rămâne sus, dar strânsă: cine conduce se vede pe butonul apăsat („● acum”) și sub fază; fără rezultat și fără „Reveniți la …”, nu ocupă loc */
+@media (max-width:760px){.banda{grid-template-columns:minmax(0,1fr);padding-top:5px;padding-bottom:5px}#cine-acum{display:none}
+  #rezultat{grid-row:1}#revino{grid-row:2;justify-self:start;margin:0}
+  .banda:has(#rezultat:empty):has(#revino[hidden]){padding-top:0;padding-bottom:0;border-bottom:0}}
 </style>
 </head>
 <body>
@@ -120,11 +143,17 @@ footer a{color:inherit;text-decoration:underline}
   <ul>
     <li><b>Schema</b> arată semaforul din simulare: în cerc, culoarea (V verde, G galben, R roșu, ? nu se știe), iar lângă stradă, câte vehicule stau oprite la semafor. În mijloc: pietonii care așteaptă și semaforul lor.</li>
     <li>O <b>fază</b> e o combinație de semafoare verzi în același timp, de exemplu verde pe Magheru și Lascăr Catargiu.</li>
-    <li><b>Cine conduce:</b> planul observat și planul de referință schimbă fazele după un orar fix; presiunea maximă și agentul IA aleg după cozile de la semafoare; la comanda manuală, alegeți de la acest ecran. Trecerea la alt mod cere confirmare, la fel fazele cu risc de blocare; fazele obișnuite se schimbă dintr-un clic. Sub butoane scrie dacă s-a aplicat.</li>
+    <li><b>Cine conduce:</b> planul observat și planul de referință schimbă fazele după un orar fix; presiunea maximă și agentul IA aleg după cozile de la semafoare; la comanda manuală, alegeți de la acest ecran. Trecerea la alt mod cere confirmare, la fel fazele cu risc de blocare; fazele obișnuite se schimbă dintr-un clic. După o comandă, în banda de sus, care rămâne pe ecran și când derulați pagina, scrie dacă s-a aplicat.</li>
     <li><b>Camera</b> măsoară traficul din piață, iar simularea îl folosește. Dacă datele sunt vechi, apare un mesaj sus, roșu când lipsește legătura sau simularea, galben când camera lipsește de peste 3 minute și roșu de peste 10 minute; lângă valorile vechi scrie de când sunt, iar panoul lor are chenar punctat și eticheta „date vechi”.</li>
+    <li><b>Starea senzorului:</b> cu „Ascunde imaginea”, în locul imaginii apar camera, numărătorile, veghea, paznicul și prelucrarea de noapte, fiecare cu starea ei în cuvinte și cu ora ultimului semn de viață, citite din nou la fiecare 10&nbsp;s. Veghea urmărește în fiecare secundă starea prelucrării și se oprește cu o alertă la primul semn de problemă; paznicul verifică o dată pe minut dacă analiza camerei rulează și o repornește singur dacă s-a oprit.</li>
     <li><b>Taste:</b> 1 planul observat, 2 agent IA, 3 plan de referință, 4 presiune maximă, 5 comandă manuală; Esc renunță; ? deschide acest ajutor.</li>
     <li><label><input type="checkbox" id="taste" checked> Folosesc tastele de mai sus</label></li>
   </ul>
+</div>
+<div class="banda" id="banda" role="region" aria-label="Cine conduce acum și ultima comandă">
+  <p id="cine-acum"></p>
+  <p id="rezultat" role="status" tabindex="-1"></p>
+  <button id="revino" hidden></button>
 </div>
 <main>
   <div class="col comanda">
@@ -146,11 +175,10 @@ footer a{color:inherit;text-decoration:underline}
     </section>
     <section aria-labelledby="t-ctrl">
       <h2 id="t-ctrl">Cine conduce semaforul din simulare</h2>
-      <p id="cine-acum"></p>
       <h3 id="t-auto">Decide un calculator, singur</h3>
       <div class="moduri" role="group" aria-labelledby="t-auto">
         <button data-mod="program"><kbd>1</kbd><b>Planul observat</b><span id="d-program">Plan fix dedus din cameră, la vârful zilei de luni 26.10.</span></button>
-        <button data-mod="ai"><kbd>2</kbd><b>Agent IA</b><span id="d-ai">Un program antrenat în simulare alege faza, după cozi.</span></button>
+        <button data-mod="ai"><kbd>2</kbd><b>Agent IA</b><span id="d-ai">Un program alege faza după cozi: antrenat pe simularea veche, neverificat pe cea corectată.</span></button>
         <button data-mod="fix"><kbd>3</kbd><b>Plan de referință</b><span>Pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni.</span></button>
         <button data-mod="max_pressure"><kbd>4</kbd><b>Presiune maximă</b><span>La câteva secunde, dă verde direcției cu cele mai lungi cozi.</span></button>
       </div>
@@ -160,7 +188,7 @@ footer a{color:inherit;text-decoration:underline}
       </div>
       <p id="blocat" hidden tabindex="-1"></p>
       <div class="manual" id="manual">
-        <p class="sub">Alegeți direcția. Schimbarea se face singură, pe pași, iar sub butoane scrie unde a ajuns: pietonii își termină traversarea, 6 s, dacă li se închide trecerea; galben 3 s; roșu 2 s pentru cine trebuie să oprească, cât se eliberează intersecția. Semaforul hotărăște la fiecare 5 s. Un verde ține cel puțin 10 s, iar cel pe Magheru și Lascăr Catargiu, cel puțin 35 s, ca să apuce și pietonii verdele lor. Verdele ales ține cel mult ≈100 s. Apoi semaforul trece singur, o vreme, pe altă fază: ≈20 s pe Dacia, dacă ați ales Magheru și Lascăr Catargiu, altfel ≈40–45 s pe Magheru și Lascăr Catargiu, după care revine singur la alegerea dumneavoastră.</p>
+        <p class="sub">Alegeți direcția. Schimbarea se face singură, pe pași, iar banda de sus spune unde a ajuns: pietonii își termină traversarea, 6&nbsp;s, dacă li se închide trecerea; galben 3&nbsp;s; roșu 2&nbsp;s pentru cine trebuie să oprească, cât se eliberează intersecția. Semaforul hotărăște la fiecare 5&nbsp;s. Un verde ține cel puțin 10&nbsp;s, iar cel pe Magheru și Lascăr Catargiu, cel puțin 35&nbsp;s, ca să apuce și pietonii verdele lor. Verdele ales ține cel mult ≈100&nbsp;s. Apoi semaforul trece singur, o vreme, pe altă fază: ≈20&nbsp;s pe Dacia, dacă ați ales Magheru și Lascăr Catargiu, altfel ≈40–45&nbsp;s pe Magheru și Lascăr Catargiu, după care revine singur la alegerea dumneavoastră.</p>
         <div class="faze" id="faze"></div>
         <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
       </div>
@@ -169,26 +197,32 @@ footer a{color:inherit;text-decoration:underline}
         <div id="confirm-text"></div>
         <div class="rand"><button class="da" id="da">Confirm</button><button id="nu">Renunț</button></div>
       </div>
-      <p id="rezultat" role="status" tabindex="-1"></p>
-      <div id="istoric"><div id="istoric-parte" hidden><b>Ultimele comenzi</b><ol id="istoric-lista"></ol></div><button id="revino" hidden></button></div>
+      <div id="istoric"><div id="istoric-parte" hidden><b>Ultimele comenzi</b><ol id="istoric-lista"></ol></div></div>
     </section>
   </div>
   <div class="col">
     <section class="cam" aria-labelledby="t-cam">
-      <h2 id="t-cam">Camera Webcam România, analizată în timp real</h2>
+      <h2 id="t-cam" tabindex="-1">Camera Webcam România, analizată în timp real</h2>
       <div style="position:relative">
         <img id="cadru" alt="Cadrul curent al camerei din Piața Romană, cu zonele de numărare și vehiculele detectate">
         <div class="gol" id="cadru-gol"></div>
+        <div class="senzor" id="senzor" role="region" aria-labelledby="t-senzor" aria-describedby="senzor-antet senzor-rezumat" aria-live="off" tabindex="-1" hidden>
+          <h3 id="t-senzor">Starea senzorului</h3>
+          <p class="sub" id="senzor-antet"></p>
+          <p id="senzor-rezumat"></p>
+          <ul id="senzor-verigi"></ul>
+          <p class="sub" id="senzor-fisa"></p>
+        </div>
       </div>
       <div class="stare">
         <span><i class="punct" id="p-cam"></i><span id="s-cam">camera: necunoscut</span></span>
         <span id="s-fps"></span>
         <span id="s-urm"></span>
-        <button id="b-imagine">Oprește imaginea</button>
+        <button id="b-imagine">Ascunde imaginea</button>
       </div>
     </section>
     <section aria-labelledby="t-ist" id="p-ist">
-      <h2 id="t-ist">Totalul vehiculelor oprite la semafoarele din simulare, ultimele 10 minute</h2>
+      <h2 id="t-ist">Totalul vehiculelor oprite la semafoarele din simulare, ultimele 10&nbsp;minute</h2>
       <canvas id="grafic" role="img" aria-label="Evoluția cozii totale în ultimele 10 minute: nu sunt încă date"></canvas>
       <p id="grafic-rez"></p>
     </section>
@@ -196,7 +230,7 @@ footer a{color:inherit;text-decoration:underline}
       <h2 id="t-deb">Trafic măsurat de cameră</h2>
       <p class="sub" style="margin:0 0 6px">Câte vehicule trec printr-o stradă într-o oră, nu câte așteaptă la semafor. Numărări brute, fără corecții: Lascăr Catargiu apare de 2–3 ori sub traficul real.</p>
       <table><thead><tr><th>Intrare / ieșire</th><th class="n">intră în piață (vehicule/oră)</th><th class="n">ies din piață (vehicule/oră)</th></tr></thead><tbody id="debite"><tr><td colspan="3" class="sub">Așteptăm primele măsurători.</td></tr></tbody></table>
-      <table id="t-pietoni" hidden style="margin-top:8px"><thead><tr><th>Pietoni care traversează</th><th class="n">persoane/oră</th></tr></thead><tbody id="pietoni"></tbody></table>
+      <table id="t-pietoni" hidden style="margin-top:8px"><thead><tr><th>Pietoni care traversează</th><th class="n">numărări/oră</th></tr></thead><tbody id="pietoni"></tbody></table>
       <p class="sub" id="deb-nota" style="margin:6px 0 0"></p>
     </section>
   </div>
@@ -204,7 +238,7 @@ footer a{color:inherit;text-decoration:underline}
 <footer>Imaginea camerei: sursa Webcam România; drepturile aparțin operatorului camerei – analizată în memorie, persoanele estompate, afișată doar local. Hartă și rețea: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, ODbL 1.0. Simulare: Eclipse SUMO (EPL-2.0 OR GPL-2.0-or-later). <a href="https://github.com/NiuninMatei/Semaforizare_Piata_Romana">Cod sursă</a> (GNU AGPL v3).</footer>
 <script>
 const NUME={magheru:"Magheru",catargiu:"Lascăr Catargiu",dacia_est:"Dacia est",dacia_vest:"Dacia vest",mendeleev:"Mendeleev",caderea_bastiliei:"Căderea Bastiliei"};
-const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"un plan fix dedus din cameră, la vârful zilei de luni 26.10"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program antrenat în simulare, care alege faza după cozi"},
+const MODURI={program:{nume:"Planul observat",cine:"un calculator, singur",text:"un plan fix dedus din cameră, la vârful zilei de luni 26.10"},ai:{nume:"Agent IA",cine:"un calculator, singur",text:"un program care alege faza după cozi, antrenat pe simularea veche, neverificat pe cea corectată"},
   fix:{nume:"Plan de referință",cine:"un calculator, singur",text:"pentru comparație, mereu la fel: verde 36 s Magheru–Catargiu, 28 s Dacia, ≈16 s pietoni"},max_pressure:{nume:"Presiune maximă",cine:"un calculator, singur",text:"verde pentru direcția cu cele mai lungi cozi"},
   manual:{nume:"Comandă manuală",cine:"un om, de la acest ecran",text:"alegeți dumneavoastră direcția care primește verde"}};
 const ORDINE=["program","ai","fix","max_pressure","manual"];
@@ -224,7 +258,8 @@ const FLUX="/api/video";
 // de simulare (pana_la_faza_s, în secunde simulate), plus MARJA_S; cazul cel mai lung are 60 s simulate (src/romana/control/pasi.py).
 // Un geamăn mai vechi, fără câmpurile pașilor, primește termenul fix ASTEPTARE_FAZA_MS, pe ceasul paginii: acele 60 s, plus 5 s pentru citirea comenzii și rezervă.
 // După o reîncărcare a paginii, ultima comandă, dacă nu e mai veche de REFACERE_S și nu s-a aplicat încă, se urmărește mai departe.
-const ASTEPTARE_COMANDA_MS=10000, ASTEPTARE_FAZA_MS=65000, TIMP_MAXIM_CERERE_MS=4000, MARJA_S=3, REFACERE_S=70;
+// „Reveniți la …” după o reîncărcare: doar comenzile date de când rulează simularea de acum, cu MARJA_PORNIRE_S, sau, fără timp_sim, din ultimele REVINO_S.
+const ASTEPTARE_COMANDA_MS=10000, ASTEPTARE_FAZA_MS=65000, TIMP_MAXIM_CERERE_MS=4000, MARJA_S=3, REFACERE_S=70, MARJA_PORNIRE_S=30, REVINO_S=1800;
 const CAMERA_ALERTA_S=180, CAMERA_ROSU_S=600, DESCHIS_LA=Date.now();
 let sim=null, simUltim=null, simUltimLa=0, cam=null, camUltimLa=0, areTrafic=false, legatura=true, cazutLa=null, ultimaStare=0, subVazut=null, stareCam="", codEroare=null;
 let modCerut=null, fazaCeruta=null, deschisDe=null, cerere=null, modVazut=null, modAnterior=null, imagineOprita=false, fluxPornit=false, reluare=false, cheieAlerte="", modLaConfirmare=null, imagineCazuta=false, nrCereri=0, fazaLaPreluare=null;
@@ -237,8 +272,11 @@ const cate=(n,cuv)=>n==1?`1 ${UNUL[cuv]||cuv}`:`${n}${n%100>=20||(n>=100&&n%100=
 const arePasi=s=>!!s&&Array.isArray(s.pana_la_faza_s);   // simularea publică pașii schimbării de fază (src/romana/control/pasi.py)
 const peVerde=s=>!!s&&(s.pas!==undefined?s.pas=="verde":s.etapa=="green");   // verde, fără nicio schimbare în curs; fără câmpul `pas`, degajarea pietonilor pare tot verde
 const numeFaza=(s,i)=>FAZE_CLARE[i]||((s&&s.faze&&s.faze[i])||"").split("(")[0].trim()||null;
+const numeScurt=n=>typeof n=="string"?n.split("; ")[0]:n;   // în bandă, fără „; rămân deschise …”: banda spune deja cine rămâne pe verde
 function anunta(text){ $("anunt").textContent=text }
-function durata(s){ s=Math.max(0,Math.round(s)); if(s<90) return `${s} s`; if(s<3600) return `${Math.floor(s/60)} min${s%60?` ${s%60} s`:""}`; return `${Math.floor(s/3600)} h ${Math.round(s%3600/60)} min` }
+function durata(s){   // între număr și unitate, un spațiu care nu se rupe pe rânduri; rotunjită în jos, ca un ceas: 3630 s e „1 h”, iar 7199 s, „1 h 59 min”, niciodată „1 h 60 min” sau „1 h 0 min”
+  s=Math.max(0,Math.floor(s)); if(!isFinite(s)) return "—"; if(s<90) return `${s}\u00a0s`; if(s<3600) return `${Math.floor(s/60)}\u00a0min${s%60?` ${s%60}\u00a0s`:""}`;
+  const m=Math.floor(s/60), h=Math.floor(m/60); return m%60?`${h}\u00a0h ${m%60}\u00a0min`:`${h}\u00a0h` }
 const varstaCam=()=>(Date.now()-(camUltimLa||DESCHIS_LA))/1000;   // vechimea ultimei măsurători; dacă n-a venit niciuna, de când e deschisă pagina
 function camDegradata(){ return !legatura||!cam||cam._varsta_s>=15?"":!cam.conectat?"camera se reconectează":imagineCazuta&&!imagineOprita?"imaginea nu se încarcă":"" }
 function pune(el,html){ if(el.dataset.ultim!==html){ el.dataset.ultim=html; el.innerHTML=html } }   // rescrie doar când se schimbă, ca să nu mute cititorul de ecran
@@ -313,7 +351,7 @@ function butoane(s){
   const mod=s?s.mod:null, trimitem=!!cerere&&cerere.etapa=="se trimite", blocat=!legatura?"Comenzile sunt blocate: nu e legătură cu calculatorul dispeceratului.":!s?"Comenzile sunt blocate: simularea nu trimite date.":"";
   document.querySelectorAll("[data-mod]").forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.mod==mod); b.disabled=!!blocat||trimitem||(b.dataset.mod=="ai"&&!!s&&!s.model_ai) });
   $("revino").disabled=!!blocat||trimitem;
-  $("d-ai").textContent=s&&!s.model_ai?"Indisponibil: pe acest calculator nu există un agent antrenat.":"Un program antrenat în simulare alege faza, după cozi."; $("d-ai").classList.toggle("motiv",!!s&&!s.model_ai);
+  $("d-ai").textContent=s&&!s.model_ai?"Indisponibil: pe acest calculator nu există un agent antrenat.":"Un program alege faza după cozi: antrenat pe simularea veche, neverificat pe cea corectată."; $("d-ai").classList.toggle("motiv",!!s&&!s.model_ai);
   $("d-program").textContent=s&&s.mod_program&&SUBPROGRAM[s.mod_program]?`${s.mod_program=="plan_observat"?"Dedus din cameră":["plan_60_40","plan_45_30","ai_e15"].includes(s.mod_program)?"Ales după regula zilelor noi":"Rulează"}: ${SUBPROGRAM[s.mod_program]}.`:"Plan fix dedus din cameră, la vârful zilei de luni 26.10.";
   $("blocat").hidden=!blocat; $("blocat").textContent=blocat;
   $("manual").classList.toggle("vizibil",mod=="manual");
@@ -328,7 +366,8 @@ function butoane(s){
   pune($("cine-acum"),s?`Culorile le schimbă acum: <b>${MODURI[mod]?.cine||"necunoscut"}</b>${mod=="manual"?"":`, cu „${MODURI[mod]?.nume||mod}”`}.`:`Nu se știe cine conduce acum, ${legatura?"fiindcă simularea nu trimite date":"fiindcă nu e legătură cu calculatorul dispeceratului"}.${ultim?` Ultimul mod cunoscut: „${ultim}”.`:""}`);
 }
 function deschide(text,de,buton,risc){
-  $("confirm-text").textContent=text; $("da").textContent=buton; $("confirm").classList.toggle("risc",!!risc); $("confirm").classList.add("vizibil"); deschisDe=de||document.activeElement; $("confirm").focus();   // focusul nu cade pe „Confirm”, ca să nu se confirme din reflex
+  $("confirm-text").textContent=text; $("da").textContent=buton; $("confirm").classList.toggle("risc",!!risc); $("confirm").classList.add("vizibil"); deschisDe=de||document.activeElement;
+  bandaH(); $("confirm").focus();   // focusul nu cade pe „Confirm”, ca să nu se confirme din reflex; întâi coloana află dacă, mai înaltă cu confirmarea, mai încape sub bandă
 }
 function inchide(){ const era=$("confirm").classList.contains("vizibil"); $("confirm").classList.remove("vizibil"); if(era){ if(deschisDe&&document.contains(deschisDe)&&!deschisDe.disabled) deschisDe.focus(); else $("rezultat").focus() } deschisDe=null }
 function cere(mod,faza,de){
@@ -366,6 +405,7 @@ async function trimite(mod,faza){
   const la=Date.now(), id=++nrCereri, nume=numeComanda(mod,faza), aceasta={id,mod,faza,la,etapa:"se trimite",inainte};
   if(cerere) notaIstoric("înlocuită");
   cerere=aceasta; istoric.push({id,la,nume,stare:"se trimite"}); notaIstoric();
+  $("banda").classList.add("urmarire");   // de acum, banda ține loc pentru două rânduri: nu sare între pașii comenzii
   inchide(); rezultat(`Se trimite: ${nume}…`);
   const inapoi=document.activeElement; butoane(sim);   // cât se trimite, butoanele stau dezactivate, ca două comenzi să nu se încurce
   const corp={mod}; if(mod=="manual") corp.faza=faza??fazaLaPreluare??(sim?fazaDePreluat(sim):0); fazaLaPreluare=null;   // la preluare, faza arătată în confirmare
@@ -389,15 +429,17 @@ async function trimite(mod,faza){
 }
 function pasiSpre(s,faza){
   // unde a ajuns schimbarea și în cât timp vine verdele cerut, din câmpurile simulării (secunde simulate)
-  const d=s.durate_s||{}, r=s.pas_ramas_s, intai=s.pas!="verde"&&s.faza_tinta!=faza?`Întâi se încheie schimbarea spre „${numeFaza(s,s.faza_tinta)||"faza următoare"}”, care nu se mai poate opri. `:"";
-  const raman=cineRamane(s);   // „pentru toți” doar dacă nicio intrare nu rămâne pe verde
+  const d=s.durate_s||{}, r=s.pas_ramas_s, raman=cineRamane(s);   // „pentru toți” doar dacă nicio intrare nu rămâne pe verde
   let acum;
-  if(s.pas=="verde"){ const min=Math.max(0,(s.verde_min_s||0)-s.verde_s);
-    acum=min?`Verdele de acum mai ține cel puțin ${min} s, cât cere verdele minim.`:s.citire_peste_s?`Semaforul hotărăște la fiecare ${s.cadenta_s} s: următoarea dată, peste ${s.citire_peste_s} s.`:"Schimbarea pornește acum." }
-  else if(s.pas=="degajare") acum=`Acum: pietonii își termină traversarea, încă ${r} s, iar vehiculele mai au verde; apoi galben ${d.galben} s și roșu ${d.rosu} s.`;
-  else if(s.pas=="galben") acum=raman?`Acum: galben, încă ${r} s, apoi roșu ${d.rosu} s pentru cine trebuie să oprească; ${raman}.`:`Acum: galben, încă ${r} s; apoi roșu ${d.rosu} s pentru toți.`;
-  else acum=raman?`Acum: roșu pentru cine trebuie să oprească, încă ${r} s; ${raman}.`:`Acum: roșu pentru toți, încă ${r} s.`;
-  return `${intai}${acum} Verdele cerut vine în ≈${durata(s.pana_la_faza_s[faza]??0)}.`;
+  // rar: întâi se încheie o schimbare spre altă fază, care nu se mai poate opri. Spus scurt, cu secundele până la verdele ei, ca banda să rămână pe
+  // două rânduri și la 1280 px; pasul ei de acum se vede sub fază și în schemă, iar numele întreg al unei faze cu risc, tot acolo
+  if(s.pas!="verde"&&s.faza_tinta!=faza) acum=`Întâi se încheie schimbarea spre „${numeScurt(numeFaza(s,s.faza_tinta)||"faza următoare")}”${typeof s.pana_la_tinta_s=="number"&&s.pana_la_tinta_s>0?`, în ${durata(s.pana_la_tinta_s)}`:""}.`;
+  else if(s.pas=="verde"){ const min=Math.max(0,(s.verde_min_s||0)-s.verde_s);
+    acum=min?`Verdele de acum mai ține cel puțin ${min}\u00a0s, cât cere verdele minim.`:s.citire_peste_s?`Semaforul hotărăște la fiecare ${s.cadenta_s}\u00a0s: următoarea dată, peste ${s.citire_peste_s}\u00a0s.`:"Schimbarea pornește acum." }
+  else if(s.pas=="degajare") acum=`Acum: pietonii își termină traversarea, încă ${r}\u00a0s, iar vehiculele mai au verde; apoi galben ${d.galben}\u00a0s și roșu ${d.rosu}\u00a0s.`;   // în bandă, numărul nu se desparte de unitate
+  else if(s.pas=="galben") acum=raman?`Acum: galben, încă ${r}\u00a0s, apoi roșu ${d.rosu}\u00a0s pentru cine trebuie să oprească; ${raman}.`:`Acum: galben, încă ${r}\u00a0s; apoi roșu ${d.rosu}\u00a0s pentru toți.`;
+  else acum=raman?`Acum: roșu pentru cine trebuie să oprească, încă ${r}\u00a0s; ${raman}.`:`Acum: roșu pentru toți, încă ${r}\u00a0s.`;
+  return `${acum} Verdele cerut vine în ≈${durata(s.pana_la_faza_s[faza]??0)}.`;
 }
 function urmaresteCererea(){
   if(!cerere||cerere.etapa!="primita") return;
@@ -413,7 +455,7 @@ function urmaresteCererea(){
       const aCitit=c.ts!==undefined?citita===c.ts:typeof citita=="number"&&citita>c.inainte;   // fără răspunsul serverului: primul ecou mai nou decât tot ce se știa la trimitere
       if(!aCitit){
         if(c.ts!==undefined&&typeof citita=="number"&&citita>c.ts) return incheie(`Comanda „${nume}” a fost înlocuită de o comandă mai nouă, dată din altă parte.`,"înlocuită");
-        if(Date.now()-la>ASTEPTARE_COMANDA_MS) incheie(`Simularea n-a citit comanda „${nume}” în ${ASTEPTARE_COMANDA_MS/1000} s; ${conduce}. Încercați din nou.`,"neaplicată","rau");
+        if(Date.now()-la>ASTEPTARE_COMANDA_MS) incheie(`Simularea n-a citit comanda „${nume}” în ${ASTEPTARE_COMANDA_MS/1000}\u00a0s; ${conduce}. Încercați din nou.`,"neaplicată","rau");
         return;
       }
       Object.assign(c,{citita:true,ts_citit:citita,citita_la:sim.timp_sim,termen:cuFaza?sim.timp_sim+(sim.pana_la_faza_s[faza]??0)+MARJA_S:null});
@@ -421,13 +463,13 @@ function urmaresteCererea(){
     else if(sim.timp_sim<c.citita_la) return incheie(`Nu știm dacă „${nume}” s-a aplicat: simularea a pornit din nou.`,"neconfirmată","rau");
     if(aplicat) return incheie(`Aplicat la ${ora(Date.now())}: ${nume}.`,"aplicată","bun");
     if(!cuFaza||sim.mod!=mod) return incheie(`Simularea a citit „${nume}”, dar ${conduce}. Încercați din nou.`,"neaplicată","rau");
-    if(sim.timp_sim>c.termen) return incheie(`Simularea n-a aplicat „${nume}” în timpul calculat, ${c.termen-c.citita_la} s cu tot cu marja. Încercați din nou; dacă se repetă, anunțați autorul proiectului.`,"neaplicată","rau");
-    return rezultat(`Se schimbă spre: ${nume}. ${pasiSpre(sim,faza)}`);
+    if(sim.timp_sim>c.termen) return incheie(`Simularea n-a aplicat „${nume}” în timpul calculat, ${c.termen-c.citita_la}\u00a0s cu tot cu marja. Încercați din nou; dacă se repetă, anunțați autorul proiectului.`,"neaplicată","rau");
+    return rezultat(`Se schimbă spre: ${numeScurt(nume)}. ${pasiSpre(sim,faza)}`);
   }
   // un geamăn fără câmpurile pașilor: termen fix, pe ceasul paginii
   if(aplicat) return incheie(`Aplicat la ${ora(Date.now())}: ${nume}.`,"aplicată","bun");
   const rr=cineRamane(sim);   // ca în schemă: spre o fază cu risc, unele intrări rămân pe verde; fără faza_tinta, gol
-  if(sim.mod==mod&&cuFaza&&Date.now()-la<=ASTEPTARE_FAZA_MS) return rezultat(`Se schimbă spre: ${nume}. ${peVerde(sim)?"Verdele de acum ține cel puțin 10 s, sau 35 s pe Magheru și Lascăr Catargiu, apoi urmează schimbarea.":sim.etapa=="yellow"?(rr?`Acum: galben; ${rr}.`:"Acum: galben."):(rr?`Acum: roșu pentru cine trebuie să oprească; ${rr}.`:"Acum: roșu pentru toți.")}`);
+  if(sim.mod==mod&&cuFaza&&Date.now()-la<=ASTEPTARE_FAZA_MS) return rezultat(`Se schimbă spre: ${numeScurt(nume)}. ${peVerde(sim)?"Verdele de acum ține cel puțin 10\u00a0s, sau 35\u00a0s pe Magheru și Lascăr Catargiu, apoi urmează schimbarea.":sim.etapa=="yellow"?(rr?`Acum: galben; ${rr}.`:"Acum: galben."):(rr?`Acum: roșu pentru cine trebuie să oprească; ${rr}.`:"Acum: roșu pentru toți.")}`);
   if(Date.now()-la>ASTEPTARE_COMANDA_MS) incheie(`Simularea n-a aplicat încă „${nume}”; ${conduce}. Încercați din nou.`,"neaplicată","rau");
 }
 let refacut=false, comandaInVigoare=null;   // comanda scrisă acum pe server (de aici sau din altă parte), din ultima stare primită; null dacă nu se poate citi
@@ -439,12 +481,16 @@ function refaDupaReincarcare(d){
   const bune=(Array.isArray(d.comenzi)?d.comenzi:[]).filter(k=>k&&MODURI[k.mod]&&typeof k.timestamp=="number");
   for(const k of bune) istoric.push({id:++nrCereri,la:k.timestamp*1000+dif,nume:numeComanda(k.mod,k.mod=="manual"?k.faza:undefined),stare:"trimisă",ts:k.timestamp});
   const s=d.simulare&&d.simulare._varsta_s<10?d.simulare:null, k=d.comanda;
-  const alt=s?[...bune].reverse().find(x=>x.mod!=s.mod):null; if(alt&&!modAnterior) modAnterior=alt.mod;   // „Reveniți la…”, ca înainte de reîncărcare
+  // „Reveniți la…”, ca înainte de reîncărcare, dar doar pentru o comandă dată de când rulează simularea de acum (ora serverului minus timp_sim,
+  // cu MARJA_PORNIRE_S) sau, dacă pornirea ei nu se poate ști, din ultimele REVINO_S: o comandă de ieri, de la o repetiție, nu mai e „modul de dinainte”
+  const srv=typeof d.ora_server=="number"&&d.ora_server>0?d.ora_server:Date.now()/1000, pornita=s&&typeof s.timp_sim=="number"?srv-(s._varsta_s||0)-s.timp_sim-MARJA_PORNIRE_S:null;
+  const alt=s?[...bune].reverse().find(x=>x.mod!=s.mod&&(pornita!==null?x.timestamp>=pornita:srv-x.timestamp<REVINO_S)):null; if(alt&&!modAnterior) modAnterior=alt.mod;
   if(k&&MODURI[k.mod]&&typeof k.timestamp=="number"&&typeof k._varsta_s=="number"&&k._varsta_s<REFACERE_S){
     const faza=k.mod=="manual"?k.faza:undefined, nume=numeComanda(k.mod,faza);
     if(!(s&&s.mod==k.mod&&(faza===undefined||(s.faza==faza&&peVerde(s))))){   // încă neaplicată: o urmărim mai departe
       let i=istoric.find(x=>x.ts===k.timestamp); if(!i){ i={id:++nrCereri,la:k.timestamp*1000+dif,nume,stare:"trimisă",ts:k.timestamp}; istoric.push(i) }
       i.stare="se aplică"; cerere={id:i.id,mod:k.mod,faza,la:Date.now()-k._varsta_s*1000,ts:k.timestamp,etapa:"primita"};
+      $("banda").classList.add("urmarire");   // ca la o comandă dată de aici: banda nu sare între pași
       rezultat(`Comanda „${nume}”, dată înainte de reîncărcarea paginii, se urmărește mai departe.`);
     }
   }
@@ -467,7 +513,156 @@ function alerte(){
 }
 function pornesteFlux(){ if(imagineOprita||fluxPornit) return; $("cadru").src=reluare?FLUX+(FLUX.includes("?")?"&":"?")+"t="+Date.now():FLUX; fluxPornit=true; reluare=true }
 $("cadru").onerror=()=>{ fluxPornit=false; imagineCazuta=true };
-$("b-imagine").onclick=()=>{ imagineOprita=!imagineOprita; imagineCazuta=false; $("b-imagine").textContent=imagineOprita?"Pornește imaginea":"Oprește imaginea"; if(imagineOprita){ $("cadru").removeAttribute("src"); fluxPornit=false } else pornesteFlux(); afiseazaCamera(cam) };
+// Imaginea ascunsă: în locul ei, starea senzorului, iar fluxul camerei nu se cere deloc. La pornire hotărăște ?imagine=0 sau ?imagine=1 din adresă (modul de prezentare),
+// fără să se țină minte; altfel, ultima alegere făcută cu butonul, ținută minte în acest browser.
+const CHEIE_IMAGINE="dispecerat.imagine";
+function imagineLaPornire(cautare,depozit){   // true: pagina pornește cu imaginea ascunsă
+  const p=new URLSearchParams(cautare||"").get("imagine"); if(p=="0"||p=="1") return p=="0";
+  try{ return !!depozit&&depozit.getItem(CHEIE_IMAGINE)=="0" }catch(e){ return false }   // un browser care nu lasă pagina să țină date
+}
+function aplicaImaginea(laPornire){
+  $("b-imagine").textContent=imagineOprita?"Arată imaginea":"Ascunde imaginea";
+  if(imagineOprita){ $("cadru").removeAttribute("src"); fluxPornit=false; $("cadru").style.display="none"; $("cadru-gol").style.display="none" }
+  if($("senzor").hidden==imagineOprita){ $("senzor").hidden=!imagineOprita; senzorVizibil(imagineOprita) }
+  if(!laPornire) afiseazaCamera(cam);   // la pornire, camera o așază prima stare primită, fără un anunț fals despre ea
+}
+$("b-imagine").onclick=()=>{ imagineOprita=!imagineOprita; imagineCazuta=false; try{ localStorage.setItem(CHEIE_IMAGINE,imagineOprita?"0":"1") }catch(e){}
+  aplicaImaginea(); (imagineOprita?$("senzor"):$("t-cam")).focus() };   // focusul pleacă de pe buton: Spațiul sau Enter nu-l mai apasă o dată, din greșeală
+
+// Starea senzorului, din GET /api/senzor (doar citire; serverul o ține minte 5 s, iar pagina o cere la 10 s, deci fiecare citire e calculată din nou): cele cinci verigi
+// ale colectării, fiecare cu starea în cuvinte, nu doar în culori. Se cere doar cât panoul se vede: la deschidere, apoi la fiecare SENZOR_MS. Un răspuns sosit după unul mai nou
+// sau după ascunderea panoului se ignoră.
+const SENZOR_MS=10000, SENZOR_VECHI_MS=25000;   // după 25 s fără o citire reușită, valorile se arată ca vechi
+const PAUZA_S=2.5, ASTEPTARE_FLUX_MIN=30;   // ca veghe.PAUZA (o pauză între cadre ține peste 2,5 s) și lant_zilnic.ASTEPTARE_FLUX_S (1800 s); un test le ține la fel
+const tabel=o=>Object.assign(Object.create(null),o);   // tabel fără prototip: o cheie din răspuns ca „constructor” sau „toString” nu găsește nimic în el
+const VERIGI=tabel({camera:"Camera",colectarea:"Numărătorile",veghea:"Veghea",paznicul:"Paznicul",noaptea:"Prelucrarea de noapte"});   // „colectarea” citește doar numărătorile pe sferturi de oră
+const LANT=tabel({lant:["măsura veche","Măsura veche, pentru ziua de "],lant_cor:["măsura nouă","Măsura nouă, pentru ziua de "]});   // prelucrările de noapte de la 00:15 și de la 03:30 (§ 4.6, § 9.11)
+const CUV=tabel({ok:["ok","în regulă"],atent:["atent-p","de urmărit"],problema:["err","problemă"],necunoscut:["","nu se știe"]});   // clasa punctului și cuvântul stării
+let senzor=null, senzorLa=0, senzorCazut=null, nrSenzor=0, ultimSenzor=0, ceasSenzor=null, stariSenzor={};
+const sir=x=>typeof x=="string"?x:typeof x=="number"&&isFinite(x)?String(x):"—";   // doar texte și numere: un obiect, o listă sau null din răspuns nu ajung pe ecran ca „[object …]” sau „null”
+const esc=t=>sir(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const scrie=(el,t)=>{ if(el.textContent!==t) el.textContent=t };
+const msDin=x=>{ const ms=typeof x=="number"?x*1000:typeof x=="string"?new Date(/^\d{4}-\d\d-\d\d$/.test(x)?x+"T00:00":x).getTime():NaN; return isNaN(new Date(ms))?NaN:ms };   // secunde de la 1970 sau ora locală, scrisă ISO, fără fus; o dată imposibilă dă NaN
+const ziua=ms=>isFinite(ms)?new Date(ms).toLocaleDateString("ro-RO",{day:"numeric",month:"2-digit"}):"—", hm=ms=>isFinite(ms)?new Date(ms).toLocaleTimeString("ro-RO",{hour:"2-digit",minute:"2-digit"}):"—";
+const eAzi=ms=>new Date(ms).toDateString()==new Date().toDateString();
+const laOra=(x,sec)=>{ const ms=msDin(x); return isFinite(ms)?`${eAzi(ms)?"":`${ziua(ms)}, `}${sec?ora(ms):hm(ms)}`:"—" };   // ziua apare doar dacă nu e azi
+const cand=ms=>{ const z=new Date(), d=new Date(ms); z.setHours(0,0,0,0); d.setHours(0,0,0,0); const n=Math.round((d-z)/864e5); return `${n==0?"azi":n==1?"mâine":ziua(ms)}, la ${hm(ms)}` };
+const numar=(n,multe,unul,nici=`0 ${multe}`)=>typeof n!="number"||!isFinite(n)?`— ${multe}`:n==0?nici:n==1?unul:`${nr(n)}${n%100>=20||(n>=100&&n%100==0)?" de":""} ${multe}`;   // ca `cate`: 20 de pauze, dar 19 pauze
+const pragT=s=>typeof s!="number"||!isFinite(s)?"—":s>=3600&&s%3600==0?`${s/3600}\u00a0h`:durata(s);
+const tacere=(v,egal,text)=>typeof v.varsta_s=="number"&&typeof v.prag_s=="number"&&(egal?v.varsta_s>=v.prag_s:v.varsta_s>v.prag_s)?`${text} de ${durata(v.varsta_s)}. `:"";   // vechimea trecută de prag, cu granița serverului: motivul stării, spus, nu lăsat de dedus din oră
+const cadre=(fps,prag,scurt)=>{ const x=fps<prag?Math.floor(fps*10+1e-9)/10:fps, n=nr(x), sub=fps<prag&&x>=1?`, sub ${scurt?"":"pragul de "}${nr(prag)}`:"";   // sub prag, rotunjit în jos: 3,47 nu apare „3,5 …, sub pragul de 3,5”
+  return fps<0.05?(scurt?"niciun cadru pe secundă":"niciun cadru"):x<1?"sub un cadru pe secundă":(n=="1"?"un cadru pe secundă":scurt?`${n}\u00a0cadre/s`:`${n}\u00a0cadre pe secundă`)+sub };
+const numeVeriga=k=>VERIGI[k]||(typeof k=="string"&&k?k:"—");
+const lipit=t=>t.replace(/(\d) (cadre\/s|min|s)(?![\wăâîșțĂÂÎȘȚ-])/g,"$1\u00a0$2");   // într-un text citat, numărul nu se desparte de unitate („are 45 s”); „s-a” nu e o unitate
+function alertaVeghii(a){   // alerta din ultimele 24 h, cu semnele ei citate, zecimalele cu virgulă: pe ea s-a oprit veghea, sau a trecut și veghea a pornit din nou
+  if(a.semne!=null&&!Array.isArray(a.semne)) throw new TypeError("semnele alertei nu sunt o listă");
+  const t=laOra(a.ora,true), s=(a.semne||[]).filter(x=>typeof x=="string"&&x.trim()).map(x=>lipit(esc(x).replace(/(\d)\.(\d)/g,"$1,$2"))).join("; ");   // și în citat, numărul nu se desparte de unitate
+  return a.dupa_ultimul_rand===true?`Veghea s-a oprit pe alerta de la ${t}${s?`, cu semnele: „${s}”`:"; semnele ei nu se pot citi încă"}.`   // fișierul alertei se scrie în doi pași
+    :a.dupa_ultimul_rand===false?`Ultima alertă, la ${t}, a trecut: veghea a pornit din nou după ea${s?`; semnele ei: „${s}”`:"; semnele ei nu se pot citi încă"}.`
+    :`Ultima alertă, la ${t}${s?`, cu semnele: „${s}”`:"; semnele ei nu se pot citi încă"}.`;   // un server mai vechi, fără câmpul care spune dacă veghea s-a oprit pe ea
+}
+function stareLant(l,v){   // v: veriga nopții, pentru pragul unei rulări prea lungi
+  const n=l.coduri_nenule, pasi=typeof n=="number"&&n>0?`${n==1?"a eșuat un pas":`au eșuat ${numar(n,"pași")}`}${typeof l.pasi=="number"?` din ${nr(l.pasi)}`:""}`:"", t=tabel({
+    incheiat:()=>`rularea s-a încheiat la ${laOra(l.incheiat_la)}${typeof l.atentie=="string"&&l.atentie?/atenționare/.test(l.atentie)?`; ${esc(l.atentie)}`:`, cu o atenționare: „${esc(l.atentie)}”`:l.atentie?", cu o atenționare":""}`,   // un pas acceptat cu o atenționare, de exemplu jurnalul cu membri stricați; textul general al serverului („un pas a avut o atenționare”) nu se mai citează
+    in_curs:()=>l.prea_lunga?`rulează din ${laOra(l.pornit)}, de peste ${typeof v.lunga_s=="number"?pragT(v.lunga_s):"cât ține de obicei"}`
+      :l.asteapta=="fluxul"?`rularea a pornit la ${laOra(l.pornit)} și așteaptă imaginea camerei, cel mult ${ASTEPTARE_FLUX_MIN}\u00a0min`:`rularea e în curs, de la ${laOra(l.pornit)}`,
+    esuat:()=>String(l.rezultat).startsWith("cu_esecuri")?`rularea s-a încheiat, dar ${pasi||"un pas a eșuat"}`:`rularea s-a oprit cu eroare${pasi?`; ${pasi}`:""}`,   // „cu_esecuri”: a mers până la capăt
+    necitibil:()=>"starea rulării nu se poate citi",
+    neinceput:()=>l.asteapta=="lant"?"rularea așteaptă să se încheie prelucrarea pentru măsura veche"
+      :l.asteapta=="pornire"?"rularea pornește în curând, fiindcă prelucrarea pentru măsura veche s-a terminat"   // lanțul vechi s-a încheiat după ora ei: îl vede la următoarea verificare
+      :`rularea n-a pornit încă, deși ora ei, ${esc(l.ora)}, a trecut`,   // „neînceput” e doar în primele 10 min după ora ei (sau după încheierea târzie a lanțului vechi)
+    lipsa:()=>`rularea lipsește, deși trebuia să pornească la ${esc(l.ora)}`})[l.stare];
+  return t?t():`starea „${esc(l.stare)}”`;
+}
+const ISO=/\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d)?/g;   // o oră scrisă ISO într-o notă a paznicului
+const FRAZE=tabel({   // o frază scurtă, din cifrele verigii; pietonii, doar ca total
+  camera:v=>v.lipsa?"Starea camerei lipsește: programul care analizează imaginea pare oprit.":v.stare=="necunoscut"?"Starea camerei există, dar nu se poate citi.":typeof v.varsta_s!="number"?"Nu se știe când s-a scris starea camerei."
+    :v.varsta_s>=v.prag_s?`Starea nu s-a mai scris de ${durata(v.varsta_s)}.`
+    :(()=>{ const rata=typeof v.fps=="number"&&(v.conectat===false||typeof v.prag_fps=="number"&&v.fps<v.prag_fps), a=rata?`${v.fps<0.05?"nu ":""}analizează ${cadre(v.fps,v.prag_fps)}`:"";   // rata, doar când explică starea: sub prag sau la reconectare (rata de acum e sub imagine)
+      return v.conectat===true||v.conectat===false?`${v.conectat?"Conectată":"Se reconectează"} la fluxul camerei${a?`, ${a}`:""}.`
+        :a?`${a[0].toUpperCase()}${a.slice(1)}.`:"Starea camerei e la zi." })(),   // fără câmpul legăturii, nu se spune nici „conectată”, nici „se reconectează”
+  colectarea:v=>{ const s=v.sfert, z=s?msDin(s.zi):NaN; if(!s) return "Nu s-a găsit niciun sfert de oră numărat azi sau ieri.";   // pietonii se numără pe zone, nu pe persoane (§ 4.4): numărări, nu oameni
+    const ve=s.vehicule_intrate, pi=s.pietoni, V=numar(ve,"vehicule intrate","un vehicul intrat"), P=numar(pi,"numărări de pietoni","o numărare de pietoni");
+    const are=ve===0&&pi===0?"nu are niciun vehicul intrat și nicio numărare de pietoni":ve===0?`nu are niciun vehicul intrat, dar are ${P}`:pi===0?`are ${V} și nu are nicio numărare de pietoni`:`are ${V} și ${P}`;   // „niciun” cere „nu” pe verb
+    return `${tacere(v,false,"Niciun sfert de oră nou")}Ultimul sfert de oră, ${esc(s.inceput)}–${esc(s.sfarsit)}${isFinite(z)&&!eAzi(z)?` din ${ziua(z)}`:""}, ${are}.` },
+  veghea:v=>{ const al=v.alerta?` ${alertaVeghii(v.alerta)}`:""; if(v.ultimul_rand==null&&typeof v.fps!="number") return `Nu s-a găsit niciun rând al vegherii.${al}`;
+    const peste=typeof v.fps=="number"&&typeof v.prag_fps=="number"&&v.fps>=v.prag_fps;   // la prag sau peste, rata nu se spune: cea de acum stă chiar deasupra panoului, iar două valori diferite ar încurca
+    const rand=[typeof v.fps!="number"?"cadre/s necunoscute":peste?"":cadre(v.fps,v.prag_fps,true),
+      typeof v.pauze_5min=="number"?`${numar(v.pauze_5min,"pauze","o pauză","nicio pauză")} de peste ${nr(PAUZA_S)}\u00a0s între cadre în 5\u00a0min`:"",   // un CSV mai vechi, fără coloana lui: lipsește doar fraza ei
+      typeof v.episoade_30min=="number"?`${numar(v.episoade_30min,"episoade de reconectare","un episod de reconectare","niciun episod de reconectare")} în 30\u00a0min`:""].filter(Boolean).join(", ")||`cel puțin ${nr(v.prag_fps)}\u00a0cadre/s`;   // un CSV vechi, fără pauze și reconectări
+    const ora1=[typeof v.randuri_ora=="number"?numar(v.randuri_ora,"rânduri","un rând","niciun rând"):"",typeof v.pauze_ora=="number"?`${numar(v.pauze_ora,"pauze","o pauză","nicio pauză")} de cel puțin 10\u00a0s`:""].filter(Boolean).join(" și ");
+    return `${tacere(v,true,"Niciun rând nou")}La ultimul rând: ${rand}.${ora1?` În ultima oră: ${ora1}.`:""}${al}` },
+  paznicul:v=>{ if(typeof v.text!="string"||!v.text) return "Nu s-a găsit nicio notă a paznicului.";
+    const vechi=tacere(v,false,"Nicio notă nouă"), ruleaza=vechi?"rula":"rulează";   // o notă veche spune ce era atunci
+    return vechi+(v.text.startsWith("în regulă")?`Ultima notă: totul ${vechi?"era ":""}în regulă, analiza camerei ${ruleaza}.`:v.text.startsWith("repornirea ține de")?`Ultima notă: repornirea a ținut, analiza camerei ${ruleaza}.`
+      :`Ultima notă nu e „în regulă”: „${lipit(esc(v.text.replace(ISO,m=>laOra(m,true))))}”.`) },   // altă notă, citată, cu orele ca în restul panoului și numărul lipit de unitate
+  noaptea:v=>{ if(v.fara_dosare===true) return "Pe acest calculator nu s-a găsit nicio prelucrare de noapte.";   // nu rulează aici: rulările nu „lipsesc”
+    const l=(v.lanturi||[]).map(l=>`${LANT[l.cheie]?LANT[l.cheie][1]:`${esc(l.cheie)}, pentru ziua de `}${ziua(msDin(l.zi_asteptata))}: ${stareLant(l,v)}`); return l.length?l.join(". ")+".":"Nu s-a găsit nicio prelucrare de noapte." }
+});
+const PRAGURI=tabel({   // pragurile vin din răspuns, ca pagina să spună aceleași cifre ca serverul
+  camera:v=>`Starea se scrie în fiecare secundă; veche de ${pragT(v.prag_s)}, e de urmărit, iar de ${pragT(v.rosu_s)}, o problemă.${typeof v.prag_fps=="number"?` Tot de urmărit: fără fluxul camerei sau sub ${nr(v.prag_fps)}\u00a0cadre/s.`:""}`,
+  colectarea:v=>`Un sfert de oră se încheie la fiecare ${pragT(v.interval_s)}; fără unul nou de ${pragT(v.prag_s)}, e de urmărit${typeof v.rosu_s=="number"?`, iar de ${pragT(v.rosu_s)}, o problemă`:""}.`,
+  veghea:v=>`Scrie un rând pe minut; tăcută de ${pragT(v.prag_s)}, e de urmărit, iar de ${pragT(v.rosu_s)}, o problemă.${[v.prag_fps,v.prag_pauze,v.max_episoade].every(x=>typeof x=="number")?
+    ` Tot de urmărit: sub ${nr(v.prag_fps)}\u00a0cadre/s, de la ${numar(v.prag_pauze,"pauze","o pauză")} de peste ${nr(PAUZA_S)}\u00a0s în 5\u00a0min sau de la ${numar(v.max_episoade,"episoade de reconectare","un episod de reconectare")} în 30\u00a0min.`:""}`+
+    ` După o alertă, veghea se oprește: e de urmărit, iar tăcută de ${pragT(v.prag_s)}, o problemă.`,
+  paznicul:v=>`Notează „în regulă” ${v.semn_de_viata_s==3600?"în fiecare oră":`la fiecare ${pragT(v.semn_de_viata_s)}`}; fără notă de ${pragT(v.prag_s)}, e de urmărit, iar de ${pragT(v.rosu_s)}, o problemă. `+
+    "Altă notă, în afară de „repornirea ține”, e de urmărit până la următorul „în regulă”.",
+  noaptea:v=>{ const l=v.lanturi||[], urm=Math.min(...l.map(x=>msDin(x.urmatoarea)).filter(isFinite)), cine=l.map((x,i)=>`${i?"cea pentru":v.fara_dosare===true?"Unde rulează, prelucrarea pentru":"Prelucrarea pentru"} ${LANT[x.cheie]?LANT[x.cheie][0]:esc(x.cheie)}${i?"":" pornește"} la ${esc(x.ora)}`).join(", ");
+    return cine?`${cine}${typeof v.lunga_s=="number"?`; o rulare mai lungă de ${pragT(v.lunga_s)} e de urmărit`:""}${isFinite(urm)&&v.fara_dosare!==true?`; următoarea rulare: ${cand(urm)}`:""}.`:"" }   // fără dosare, aici nu rulează nimic: pragul spune unde se aplică, fără o rulare următoare
+});
+function randVeriga(v){   // rândul unei verigi: cheia, starea, titlul (felul erorii, pentru autor) și conținutul
+  const st=CUV[v.stare]?v.stare:"necunoscut", [cls,cuv]=CUV[st], sigur=(f,altfel)=>{ try{ return f() }catch(e){ return altfel } }, eroare=v.stare=="necunoscut"&&!!v.eroare;   // o valoare de altă formă strică doar fraza ei
+  const fraza=sigur(()=>eroare?"Nu se poate citi acum: calculul a dat o eroare neprevăzută.":FRAZE[v.cheie]?FRAZE[v.cheie](v):"","Valorile primite nu au forma așteptată.");   // felul erorii, pentru autor, doar în titlul rândului
+  const prag=sigur(()=>PRAGURI[v.cheie]?PRAGURI[v.cheie](v):"","");
+  return {cheie:sir(v.cheie),stare:st,titlu:eroare?sir(v.eroare):"",html:`<i class="punct${cls?` ${cls}`:""}"></i><b>${esc(numeVeriga(v.cheie))}</b>: <span class="cuv">${cuv}</span>. ${fraza}`+
+    `<span class="prag">Ultimul semn de viață: ${typeof v.ultima_dovada=="number"?laOra(v.ultima_dovada,true):v.eroare?"nu se știe":"niciunul"}. ${prag}</span>`};
+}
+function puneRand(li,r){ li.dataset.cheie=r.cheie; li.dataset.stare=r.stare; if(r.titlu) li.title=r.titlu; else li.removeAttribute("title"); pune(li,r.html) }   // doar ce s-a schimbat
+function puneVerigile(ul,v){   // rând cu rând: lista se refață doar când se schimbă verigile, altfel se rescrie doar rândul schimbat (cititorul de ecran și o selecție rămân pe loc)
+  const r=v.map(randVeriga), chei=JSON.stringify(r.map(x=>x.cheie));
+  if(ul.dataset.chei!==chei||ul.children.length!==r.length){ ul.dataset.chei=chei; ul.replaceChildren(...r.map(()=>document.createElement("li"))) }
+  r.forEach((x,i)=>puneRand(ul.children[i],x));
+}
+function liniaFisei(f){
+  if(!f) return "Nu există încă o fișă a senzorului.";
+  const zo=x=>{ const ms=msDin(x); return isFinite(ms)?`${ziua(ms)}, ${hm(ms)}`:"—" }, n=x=>typeof x=="number"?nr(x):"—";
+  const n2=x=>typeof x=="number"?x.toLocaleString("ro-RO",{maximumFractionDigits:2}):"—";   // mediana, cu două zecimale, ca în fișă și în documentație (5,98)
+  return `Ultima fișă a senzorului acoperă ${n(f.ore)}\u00a0h, de la ${zo(f.inceput)}, până la ${zo(f.taietura)}; cadre în ${n(typeof f.pondere_minute_cu_cadre=="number"?f.pondere_minute_cu_cadre*100:null)}% din minute, o mediană de ${n2(f.fps_mediana)}\u00a0cadre analizate pe secundă, `+
+    `${numar(f.opriri_anuntate,"opriri anunțate","o oprire anunțată","nicio oprire anunțată")} și ${numar(f.caderi_neprevazute,"căderi neprevăzute","o cădere neprevăzută","nicio cădere neprevăzută")}; prelucrări de noapte încheiate: ${n(f.lanturi_incheiate)} din ${n(f.lanturi_asteptate)}. `+
+    (f.publica?"Fișa e publicată în documentație.":"Fișa e calculată doar pe acest calculator, nepublicată.");
+}
+function afiseazaSenzorul(){
+  const p=$("senzor"); if(p.hidden) return;
+  const d=senzor, vechi=!!d&&(!legatura||!!senzorCazut||Date.now()-senzorLa>SENZOR_VECHI_MS), citita=d?laOra(d.calculat_la,true):"", v=d?d.verigi:[];
+  p.classList.toggle("vechi",vechi);   // ca panourile cu date vechi: chenar punctat și eticheta „date vechi”
+  scrie($("senzor-antet"),!d?(!legatura?"Nu e legătură cu calculatorul dispeceratului, deci nici starea senzorului nu se poate citi.":senzorCazut?`Starea senzorului nu se poate citi: ${senzorCazut.motiv}. Încercăm din nou la ${SENZOR_MS/1000}\u00a0s.`:"Se citește starea senzorului…")
+    :!legatura?`Nu e legătură cu calculatorul dispeceratului de la ${ora(cazutLa)}; mai jos, starea citită la ${citita}.`   // ca alerta de sus
+    :senzorCazut?`Starea senzorului nu se mai poate citi de la ${ora(senzorCazut.la)}, fiindcă ${senzorCazut.motiv}. Mai jos, cea citită la ${citita}.`
+    :vechi?`Se citește din nou; mai jos, starea citită la ${citita}.`:`Citită la ${citita}; se reîmprospătează la ${SENZOR_MS/1000}\u00a0s.`);
+  const [pr,at,nu,ok]=["problema","atent","necunoscut","ok"].map(s=>v.filter(x=>(CUV[x.stare]?x.stare:"necunoscut")==s).map(x=>numeVeriga(x.cheie)));
+  scrie($("senzor-rezumat"),!v.length?"":ok.length==v.length?`Toate cele ${v.length==5?"cinci":v.length} verigi ${vechi?"erau":"sunt"} în regulă.`
+    :[pr.length?`${pr.length==1?"O problemă":`${pr.length} probleme`}: ${pr.join(", ")}.`:"",at.length?`De urmărit: ${at.join(", ")}.`:"",nu.length?`Nu se știe: ${nu.join(", ")}.`:"",ok.length?`În regulă: ${ok.join(", ")}.`:""].filter(Boolean).join(" "));
+  puneVerigile($("senzor-verigi"),v);
+  scrie($("senzor-fisa"),d?liniaFisei(d.fisa):"");
+}
+async function citesteSenzorul(){
+  const eu=++nrSenzor, ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),TIMP_MAXIM_CERERE_MS); let d=null, motiv=null;
+  try{ const r=await fetch("/api/senzor",{cache:"no-store",signal:ctl.signal}); if(!r.ok) throw {cod:r.status}; d=await r.json(); if(!d||!Array.isArray(d.verigi)||!d.verigi.every(x=>x&&typeof x=="object")) throw {forma:true} }
+  catch(e){ motiv=e&&e.cod?`serverul răspunde cu eroarea ${e.cod}`:e&&(e.forma||e.name=="SyntaxError")?"răspunsul serverului nu are forma așteptată":e&&e.name=="AbortError"?`serverul n-a răspuns în ${TIMP_MAXIM_CERERE_MS/1000}\u00a0s`:"cererea nu a ajuns la server" }
+  finally{ clearTimeout(t) }
+  if(eu<ultimSenzor) return; ultimSenzor=eu;
+  if(motiv) senzorCazut={la:senzorCazut?senzorCazut.la:Date.now(),motiv};   // valorile de până acum rămân, arătate ca vechi
+  else{
+    const noi=d.verigi.filter(x=>x.stare=="problema"&&Object.hasOwn(stariSenzor,x.cheie)&&stariSenzor[x.cheie]!="problema").map(x=>numeVeriga(x.cheie));
+    stariSenzor=Object.fromEntries(d.verigi.map(x=>[x.cheie,x.stare])); senzor=d; senzorLa=Date.now(); senzorCazut=null;
+    if(noi.length) anunta(`Starea senzorului, ${noi.length==1?"problemă nouă":"probleme noi"}: ${noi.join(", ")}.`);   // un singur anunț, doar când o verigă trece în „problemă”; reîmprospătarea nu se citește
+  }
+  afiseazaSenzorul();
+}
+function senzorVizibil(da){
+  clearInterval(ceasSenzor); ceasSenzor=null; ultimSenzor=++nrSenzor;   // o cerere încă pe drum nu mai schimbă panoul
+  if(da){ afiseazaSenzorul(); citesteSenzorul(); ceasSenzor=setInterval(citesteSenzorul,SENZOR_MS) }
+}
 $("b-ajutor").onclick=()=>comutaAjutor();
 function comutaAjutor(){ const a=$("ajutor"); a.hidden=!a.hidden; $("b-ajutor").setAttribute("aria-expanded",!a.hidden) }
 document.querySelectorAll("[data-mod]").forEach(b=>b.onclick=()=>apasaMod(b.dataset.mod,b));
@@ -491,13 +686,15 @@ document.addEventListener("keydown",e=>{
 function afiseazaCamera(c){
   if($("cadru").naturalWidth) imagineCazuta=false;
   const proaspat=legatura&&!!c&&c._varsta_s<15, v=varstaCam(), scurt=!!camUltimLa&&v<CAMERA_ALERTA_S;
+  $("cadru").style.display=imagineOprita?"none":"";   // imaginea ascunsă: în locul ei și al mesajului ei, starea senzorului
   if(proaspat){
-    const faraImagine=imagineCazuta&&!imagineOprita, mesaj=imagineOprita?`Ați oprit imaginea. ${c.conectat?"Măsurarea traficului continuă.":"Camera se reconectează."}`:!c.conectat?"Camera se reconectează. De obicei, imaginea revine singură.":faraImagine?"Imaginea nu se încarcă; încercăm din nou. Măsurarea traficului continuă.":"";
+    const faraImagine=imagineCazuta&&!imagineOprita, mesaj=!c.conectat?"Camera se reconectează. De obicei, imaginea revine singură.":faraImagine?"Imaginea nu se încarcă; încercăm din nou. Măsurarea traficului continuă.":"";
     $("p-cam").className="punct "+(c.conectat&&!faraImagine?"ok":"atent-p");
-    $("s-cam").textContent=!c.conectat?"camera: se reconectează":imagineOprita?"camera: măsoară, iar imaginea e oprită aici":faraImagine?"camera: măsoară, dar imaginea nu se încarcă":"camera: în timp real";
-    $("s-fps").textContent=`${nr(c.fps)} cadre/s analizate`; $("s-urm").textContent=`${c.vehicule_urmarite} vehicule urmărite`;
+    $("s-cam").textContent=!c.conectat?"camera: se reconectează":imagineOprita?"camera: măsoară, iar imaginea e ascunsă aici":faraImagine?"camera: măsoară, dar imaginea nu se încarcă":"camera: în timp real";
+    $("s-fps").textContent=`${nr(c.fps)}\u00a0cadre/s analizate`;
+    $("s-urm").textContent=typeof c.vehicule_urmarite=="number"?numar(c.vehicule_urmarite,"participanți urmăriți","un participant urmărit","niciun participant urmărit"):"";   // urmărirea ține și vehiculele, și pietonii
     pornesteFlux();   // flux MJPEG continuu, nu o imagine reîncărcată la fiecare secundă; repornit după o întrerupere
-    if(mesaj){ pune($("cadru-gol"),`<p>${mesaj}</p>`); $("cadru-gol").style.display="grid"; $("cadru").setAttribute("aria-hidden","true") }
+    if(mesaj&&!imagineOprita){ pune($("cadru-gol"),`<p>${mesaj}</p>`); $("cadru-gol").style.display="grid"; $("cadru").setAttribute("aria-hidden","true") }
     else { $("cadru-gol").style.display="none"; $("cadru").removeAttribute("aria-hidden") }
   } else {
     // starea veche de cel mult 3 minute = o microînghețare sau o întrerupere scurtă a fluxului (§ 4.6): modulul rulează, de obicei
@@ -505,11 +702,11 @@ function afiseazaCamera(c){
     $("s-cam").textContent=!legatura?"camera: stare necunoscută, nu e legătură cu calculatorul dispeceratului":camUltimLa?`camera: nicio măsurătoare nouă de ${durata(v)}`:"camera: nu trimite date";
     $("s-fps").textContent=""; $("s-urm").textContent=""; fluxPornit=false;
     pune($("cadru-gol"),`<p>${!legatura?"Nu e legătură cu calculatorul dispeceratului, deci nici imagine.":!camUltimLa?"Nu e nicio imagine: camera nu trimite date.":`Imaginea s-a oprit de ${durata(v)}.${scurt?" De obicei revine singură.":""}`}</p>`);
-    $("cadru-gol").style.display="grid"; $("cadru").setAttribute("aria-hidden","true");
+    $("cadru-gol").style.display=imagineOprita?"none":"grid"; $("cadru").setAttribute("aria-hidden","true");
   }
   const stareNoua=!legatura?"":proaspat?(c.conectat?"ok":"reconectare"):"oprita";
   if(stareNoua&&stareNoua!=stareCam){ if(stareCam) anunta(stareNoua=="ok"?"Camera a revenit.":stareNoua=="reconectare"?"Camera se reconectează.":"Camera nu mai trimite date noi."); stareCam=stareNoua }
-  $("b-imagine").disabled=!proaspat&&!imagineOprita;
+  // butonul rămâne folosibil și când camera nu trimite date: tocmai atunci, starea senzorului din locul imaginii spune unde s-a oprit lanțul
   if(c&&c.intrari_veh_h){
     areTrafic=true;
     const ins=c.intrari_veh_h||{}, outs=c.iesiri_veh_h||{}, ped=c.pietoni_h||{}, doarIesiri=b=>b=="mendeleev"||b=="caderea_bastiliei";
@@ -518,7 +715,7 @@ function afiseazaCamera(c){
     pune($("pietoni"),Object.keys(ped).map(b=>`<tr><td>${NUME[b]||b}</td><td class="n">${ped[b]}</td></tr>`).join(""));
     $("p-deb").classList.toggle("vechi",!proaspat||!legatura); $("p-deb").classList.toggle("nesigur",proaspat&&!c.conectat);
     const min=Math.round((c.secunde_interval||0)/60);
-    $("deb-nota").textContent=proaspat?(!c.conectat?"Valori nesigure: camera se reconectează.":min<5?`Valori încă nesigure: au trecut doar ${min} min din acest sfert de oră.`:`Măsurat în ultimele ${min} min.`):`Ultimele valori, vechi de ${durata(v)}.`;
+    $("deb-nota").textContent=proaspat?(!c.conectat?"Valori nesigure: camera se reconectează.":min<5?`Valori încă nesigure: au trecut doar ${min}\u00a0min din acest sfert de oră.`:`Măsurat în ultimele ${min}\u00a0min.`):`Ultimele valori, vechi de ${durata(v)}.`;
   } else if(areTrafic){ $("p-deb").classList.add("vechi"); $("p-deb").classList.remove("nesigur"); $("deb-nota").textContent=`Ultimele valori, vechi de ${durata(v)}.` }
   else { $("deb-nota").textContent=""; $("p-deb").classList.remove("vechi","nesigur") }
 }
@@ -528,15 +725,15 @@ function afiseazaSimularea(){
   if(s){
     const f=FAZE_CLARE[s.faza]||s.faza_nume.split("(")[0].trim(), tinta=s.faza_tinta!==undefined?numeFaza(s,s.faza_tinta):null, verde=peVerde(s);
     $("faza").textContent=viu?(verde?f:tinta?`Se schimbă spre: ${tinta}`:`Se încheie: ${f}`):`Ultima fază cunoscută (acum ${vechime}): ${verde?f:tinta?`se schimba spre ${tinta}`:`se încheia ${f}`}`;
-    const inca=typeof s.pas_ramas_s=="number"?`, încă ${s.pas_ramas_s} s`:"";   // secundele rămase din pasul de acum, dacă simularea le publică
+    const inca=typeof s.pas_ramas_s=="number"?`, încă ${s.pas_ramas_s}\u00a0s`:"";   // secundele rămase din pasul de acum, dacă simularea le publică
     const pasul=s.pas||(s.etapa=="green"?"verde":s.etapa=="yellow"?"galben":"rosu");   // fără câmpul `pas`, din etapa controlerului
     const raman=pasul=="galben"||pasul=="rosu"?cineRamane(s):"", cuRaman=raman?`; ${raman}`:"";   // spre o fază cu risc, unele intrări rămân pe verde
-    const et=pasul=="degajare"?`pietonii își termină traversarea${inca}, iar vehiculele mai au verde`:pasul=="verde"?`e verde de ${s.verde_s} s`:pasul=="galben"?(inca?`galben${inca}`:"galben, câteva secunde")+cuRaman:`roșu pentru ${raman?"cine trebuie să oprească":"toți"}${inca}, cât se eliberează intersecția${cuRaman}`;
+    const et=pasul=="degajare"?`pietonii își termină traversarea${inca}, iar vehiculele mai au verde`:pasul=="verde"?`e verde de ${s.verde_s}\u00a0s`:pasul=="galben"?(inca?`galben${inca}`:"galben, câteva secunde")+cuRaman:`roșu pentru ${raman?"cine trebuie să oprească":"toți"}${inca}, cât se eliberează intersecția${cuRaman}`;
     const conduce=s.mod=="manual"?"în comandă manuală":`condus de „${MODURI[s.mod]?.nume||s.mod}”`;
     // schimbarea automată pornește la prima decizie de după verdele maxim (fără câmpurile pașilor: 90 s, fără decizii la 5 s)
     const vmax=s.verde_max_s??90, pana=Math.max(0,vmax-s.verde_s), panaLaMax=s.cadenta_s?Math.ceil((s.timp_sim+pana)/s.cadenta_s)*s.cadenta_s-s.timp_sim:pana;
     const altaCeruta=!!cerere&&cerere.mod=="manual"&&cerere.faza!==undefined&&cerere.faza!=s.faza;   // cât e cerută de aici altă fază, numărătoarea n-ar mai fi adevărată
-    const aproape=s.mod=="manual"&&verde&&s.verde_s>=vmax-30&&!altaCeruta?` · mai sunt ${panaLaMax} s până la schimbarea automată`:"";
+    const aproape=s.mod=="manual"&&verde&&s.verde_s>=vmax-30&&!altaCeruta?` · mai sunt ${panaLaMax}\u00a0s până la schimbarea automată`:"";
     const risc=FAZE_RISC.includes(s.faza)?" · fază cu risc de blocare":"";
     $("faza-det").textContent=viu?`${et} · ${conduce}${aproape}${risc} · în simulare: ${cate(s.vehicule_in_retea,"vehicule")} și ${cate(s.pietoni_in_retea??0,"pietoni")}`:`Ultimele valori, vechi de ${vechime}.`;
     const de_la=s.sursa&&s.sursa.startsWith("camera")?(s.varsta_debite_s>120?`ultimele măsurători bune ale camerei, vechi de ${durata(s.varsta_debite_s)}`:"măsurătorile camerei"):"un profil de referință, fiindcă nu sunt măsurători bune de la cameră";
@@ -544,7 +741,25 @@ function afiseazaSimularea(){
   } else { $("faza").textContent="—"; $("faza-det").textContent=""; $("sursa").textContent="" }
   grafic(s?s.istoric_coada:null,viu); schema(s,viu); butoane(viu?sim:null);
 }
-function deseneaza(){ alerte(); afiseazaCamera(cam); afiseazaSimularea(); urmaresteCererea() }
+function deseneaza(){ alerte(); afiseazaCamera(cam); afiseazaSimularea(); urmaresteCererea(); afiseazaSenzorul(); bandaH() }
+// banda de sus rămâne pe ecran; coloana din stânga se lipește sub ea, la înălțimea ei de acum: la fiecare schimbare de mărime și, în plus, la fiecare desenare.
+// Coloana se lipește doar dacă încape sub bandă în toți pașii semaforului; mai înaltă (comanda manuală, cu butoanele fazelor), se derulează cu pagina, altfel
+// partea ei de jos n-ar ajunge pe ecran. Rândurile de sub fază se socotesc la cel mai lung text al lor, de patru rânduri (degajarea pietonilor), iar coloana
+// desprinsă se lipește din nou abia cu două rânduri de rezervă: altfel ar trece dintr-o așezare în alta la fiecare ciclu al semaforului. La o schimbare a
+// mărimii ferestrei, alegerea se face din nou, fără rezervă.
+let bandaUltim=null;
+function bandaH(dinNou){ const banda=$("banda"), b=banda.offsetHeight, col=document.querySelector(".col.comanda"), fd=$("faza-det");
+  const crestere=bandaUltim===null?0:b-bandaUltim; if(b!==bandaUltim){ bandaUltim=b; document.documentElement.style.setProperty("--banda-h",b+"px") }
+  const rand=parseFloat(getComputedStyle(fd).fontSize)*1.45||22, parte=fd.closest(".col.comanda > *"), loc=innerHeight-b-16;
+  const h=Math.max(col.offsetHeight,parte?parte.offsetHeight+Math.max(0,4*rand-fd.offsetHeight):0);
+  if(h>loc) col.classList.add("lunga"); else if(dinNou===true||h<loc-2*rand) col.classList.remove("lunga");
+  if(crestere>0) aduFocusul(banda,crestere) }
+// Banda care crește (rezultatul, pașii comenzii, „Reveniți la …”) se lungește peste ce e chiar sub ea: pagina își ține conținutul pe loc, deci butonul
+// tocmai apăsat rămâne unde era, iar banda îl acoperă (mai ales pe telefon, unde banda goală nu ocupă loc). Doar dacă banda l-a acoperit acum (înainte se
+// vedea), pagina se derulează cât să-l arate din nou, cu cel mai mic pas; un buton derulat de cititor sub bandă sau departe de ea nu trage pagina după el.
+function aduFocusul(banda,crestere){ const a=document.activeElement; if(!a||a===document.body||banda.contains(a)) return;
+  const r=a.getBoundingClientRect(), acoperit=banda.getBoundingClientRect().bottom-r.top;
+  if(r.height>0&&r.bottom>0&&acoperit>0&&acoperit<=crestere+1) a.scrollIntoView({block:"nearest"}) }
 
 let nrSondari=0, ultimaSondare=0;   // un răspuns sosit după unul mai nou (o citire lentă, depășită de următoarea) se ignoră, și când e o eroare
 async function actualizeaza(){
@@ -554,6 +769,7 @@ async function actualizeaza(){
     const r=await fetch("/api/state",{cache:"no-store",signal:ctl.signal}); clearTimeout(t); if(!r.ok) throw {cod:r.status}; d=await r.json();
   }catch(e){ if(eu<ultimaSondare) return; ultimaSondare=eu; codEroare=e.cod||null; if(legatura){ legatura=false; cazutLa=Date.now(); sim=null } deseneaza(); return }
   if(eu<ultimaSondare) return; ultimaSondare=eu;
+  const revine=!legatura;
   legatura=true; cazutLa=null; codEroare=null; ultimaStare=Date.now(); cam=d.camera; if(cam) camUltimLa=Date.now()-(cam._varsta_s||0)*1000;
   const s=d.simulare; sim=s&&s._varsta_s<10?s:null; comandaInVigoare=d.comanda||null;
   if(s){ simUltim=s; simUltimLa=Date.now()-s._varsta_s*1000 }
@@ -565,7 +781,11 @@ async function actualizeaza(){
   if(sim&&sim.mod=="program"&&sim.mod_program!==subVazut){ if(subVazut&&SUBPROGRAM[sim.mod_program]) anunta(`Planul observat a trecut la: ${SUBPROGRAM[sim.mod_program]}.`); subVazut=sim.mod_program }
   if(modAnterior&&sim&&modAnterior!=sim.mod&&MODURI[modAnterior]){ $("revino").hidden=false; $("revino").textContent=`Reveniți la „${MODURI[modAnterior].nume}”` } else $("revino").hidden=true;
   deseneaza();
+  if(revine&&!$("senzor").hidden) citesteSenzorul();   // legătura a revenit: starea senzorului se citește acum, nu abia la următoarea citire, peste cel mult 10 s
 }
+if(window.ResizeObserver){ const ro=new ResizeObserver(()=>bandaH()); ro.observe($("banda")); ro.observe(document.querySelector(".col.comanda")) }   // și coloana: deschisă, lista fazelor cu risc o poate face prea înaltă
+addEventListener("resize",()=>bandaH(true)); bandaH();
+imagineOprita=imagineLaPornire(location.search,(()=>{ try{ return window.localStorage }catch(e){ return null } })()); aplicaImaginea(true);
 actualizeaza(); setInterval(actualizeaza,1000);
 </script>
 </body>

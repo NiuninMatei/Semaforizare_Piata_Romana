@@ -26,10 +26,12 @@ RE_FONTURI = re.compile(r'<link rel="preconnect"[^>]*>\s*<link href="https://fon
 
 SIMULARI = r"""
 <script>
-window.__netOK=true; window.__stare=null; window.__posts=[]; window.__ultimTs=0;
+window.__netOK=true; window.__stare=null; window.__posts=[]; window.__ultimTs=0; window.__senzorOK=true; window.__cereriSenzor=0;
 window.fetch=async(url,opt)=>{
   if(!window.__netOK) throw new TypeError("Failed to fetch");
   if(String(url).includes("/api/state")) return {ok:true,status:200,json:async()=>JSON.parse(JSON.stringify(window.__stare))};
+  if(String(url).includes("/api/senzor")){ window.__cereriSenzor++;   // starea senzorului: o copie a lui window.__senzor; __senzorOK=false dă eroarea 500 a serverului
+    return window.__senzorOK?{ok:true,status:200,json:async()=>JSON.parse(JSON.stringify(window.__senzor))}:{ok:false,status:500,json:async()=>({})}; }
   if(String(url).includes("/api/command")){   // ca serverul: comanda, cu `timestamp`-ul ei (crescător), după care pagina o recunoaște în starea simulării
     const corp=JSON.parse(opt.body); window.__posts.push(corp); window.__ultimTs=Math.max(Date.now()/1000,window.__ultimTs+0.001);
     return {ok:true,status:200,json:async()=>({ok:true,...corp,timestamp:window.__ultimTs})}; }
@@ -45,6 +47,32 @@ const __SIM={_varsta_s:0.5,timp_sim:500,mod:"program",mod_program:"plan_observat
   istoric_coada:Array.from({length:40},(_,i)=>[i*5,10+Math.round(8*Math.sin(i/4))])};
 function __st(cam,sim,extra){ window.__stare=Object.assign({camera:cam,simulare:sim,comanda:null,ora_server:0},extra||{}); }   // extra: comanda, comenzi, ora_server
 __st(__CAM,__SIM);
+// răspunsul de exemplu al lui /api/senzor, cu orele mutate la „acum”: ultimul sfert de oră încheiat, rulările de noapte la 00:15 și 03:30, iar fișa publicată din 6.11
+const __SENZOR=(()=>{
+  const t=Date.now()/1000, calc=t-2.7, z=n=>String(n).padStart(2,"0"), iso=s=>{ const d=new Date(s*1000); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}` };
+  const m=new Date(); m.setHours(0,0,0,0); const azi=m.getTime()/1000, sfert=Math.floor((calc-120)/900)*900;
+  // fiecare rulare de noapte, din ora de acum: ultima încheiată (azi, după ce s-a încheiat, altfel ieri), pentru ziua dinaintea ei, și următoarea pornire, ca serverul
+  const noapte=(h,mi,durata,gata)=>{ const p=azi+h*3600+mi*60, baza=t>=azi+gata?azi:azi-86400, pornit=baza+h*3600+mi*60;
+    return {zi:iso(baza-86400).slice(0,10),pornit,gata:pornit+durata,urmatoarea:p>t?p:p+86400} };
+  const a=noapte(0,15,318,21*60), b=noapte(3,30,599,220*60), noaptea=Math.max(a.gata,b.gata);   // 00:15–00:20:18 și 03:30–03:39:59
+  return {calculat_la:calc,memorare_s:5,ora_server:t,verigi:[
+    {cheie:"camera",stare:"ok",ultima_dovada:calc-0.3,varsta_s:0.3,prag_s:15,alerta_s:180,rosu_s:600,conectat:true,fps:5.96,prag_fps:3.5,lipsa:false},
+    {cheie:"colectarea",stare:"ok",ultima_dovada:sfert,varsta_s:Math.round((calc-sfert)*10)/10,prag_s:1020,rosu_s:3600,interval_s:900,
+     sfert:{zi:iso(sfert-900).slice(0,10),inceput:iso(sfert-900).slice(11,16),sfarsit:iso(sfert).slice(11,16),vehicule_intrate:1234,pietoni:266},vehicule_urmarite:82},
+    {cheie:"veghea",stare:"ok",ultima_dovada:calc-3.4,varsta_s:3.4,prag_s:180,rosu_s:600,ultimul_rand:iso(calc-3.4).slice(0,16).replace("T"," "),fps:6.01,prag_fps:3.5,pauze_5min:0,prag_pauze:10,
+     episoade_30min:0,max_episoade:4,randuri_ora:60,pauze_ora:0,alerta:null},   // o alertă din ultimele 24 h: {ora, semne:[…], dupa_ultimul_rand}, adevărat dacă veghea s-a oprit pe ea
+    {cheie:"paznicul",stare:"ok",ultima_dovada:calc-3077.4,varsta_s:3077.4,prag_s:3720,semn_de_viata_s:3600,rosu_s:7200,in_regula:true,text:"în regulă: 2 procese, o colectare, starea are 0 s"},
+    {cheie:"noaptea",stare:"ok",ultima_dovada:noaptea,varsta_s:Math.round((calc-noaptea)*10)/10,prag_s:86400,lunga_s:7200,fara_dosare:false,lanturi:[   // atentie: textul unui pas acceptat cu o atenționare;
+     // asteapta: "fluxul" (lanțul vechi așteaptă imaginea camerei) sau "lant" (măsura nouă așteaptă prelucrarea pentru măsura veche); prea_lunga: în curs de peste lunga_s;
+     // fara_dosare: adevărat dacă pe acest calculator nu e niciun dosar al prelucrărilor de noapte (veriga rămâne „necunoscut”)
+     {cheie:"lant",ora:"00:15",zi:a.zi,zi_asteptata:a.zi,stare:"incheiat",rezultat:"gata_fara_simulari",pornit:iso(a.pornit),incheiat_la:iso(a.gata),pasi:6,coduri_nenule:0,urmatoarea:iso(a.urmatoarea),
+      atentie:null,asteapta:null,prea_lunga:false},
+     {cheie:"lant_cor",ora:"03:30",zi:b.zi,zi_asteptata:b.zi,stare:"incheiat",rezultat:"gata_fara_simulari",pornit:iso(b.pornit),incheiat_la:iso(b.gata),pasi:4,coduri_nenule:0,urmatoarea:iso(b.urmatoarea),
+      atentie:null,asteapta:null,prea_lunga:false}]}],
+   fisa:{taietura:"2026-11-06T00:00:00",inceput:"2026-11-01T09:04:46",ore:110.92,pondere_minute_cu_cadre:0.98843,fps_mediana:5.98,opriri_anuntate:2,caderi_neprevazute:0,
+     pauze:30,episoade_reconectare:10,lanturi_incheiate:6,lanturi_asteptate:6,vehicule:284152,publica:true}};
+})();
+window.__senzor=JSON.parse(JSON.stringify(__SENZOR));
 </script>
 """
 
@@ -62,6 +90,11 @@ STARI = {
     "geaman_oprit_50s": "__st(__CAM,Object.assign({},__SIM,{_varsta_s:50})); await actualizeaza();",
     "totul_oprit": "__st(null,null); await actualizeaza();",
     "server_cazut": "window.__netOK=false; await actualizeaza();",
+    # imaginea ascunsă, cu starea senzorului în locul ei; alegerea nu rămâne ținută minte pentru capturile următoare, din același profil
+    # (versiunile vechi n-au panoul: m2 doar oprește imaginea, iar m1, fără buton, rămâne ca „normal”)
+    "senzor": 'if(!(typeof imagineOprita!="undefined"&&imagineOprita)) document.getElementById("b-imagine")?.click(); '
+              'if(typeof citesteSenzorul=="function") await citesteSenzorul(); document.activeElement.blur(); '
+              'try{ localStorage.removeItem("dispecerat.imagine") }catch(e){}',
 }
 # numele stării → lățimea ferestrei, dacă nu e cea implicită
 ECRANE = {"telefon_normal": (375, "normal"), "telefon_confirmare": (375, "confirmare"), "tableta_normal": (768, "normal")}

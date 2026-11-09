@@ -9,14 +9,18 @@ Rulare:  python -m romana.dashboard.server     → http://localhost:8050
 from __future__ import annotations
 
 import json
+import threading
 import time
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, request, send_file
 
 from romana.common import OUTPUT_DIR
+from romana.dashboard import senzor
 
 LIVE = OUTPUT_DIR / "live"
+# ce citește /api/senzor, pe lângă LIVE; variabile ale modulului, ca testele să le poată înlocui
+LOGURI, NUMARATORI, LANTURI, FISE = senzor.LOGURI, senzor.NUMARATORI, senzor.LANTURI, senzor.FISE
 STATIC = Path(__file__).parent / "static"
 app = Flask(__name__, static_folder=str(STATIC), static_url_path="/static")
 MODES = {"ai", "fix", "max_pressure", "manual", "program"}
@@ -60,6 +64,25 @@ def _ultimele_comenzi(n: int = 5) -> list[dict]:
 def state():
     return jsonify({"camera": _read("state.json"), "simulare": _read("sim_state.json"),
                     "comanda": _read("command.json"), "comenzi": _ultimele_comenzi(), "ora_server": time.time()})
+
+
+_senzor_lacat = threading.Lock()       # Flask servește cererile în fire paralele: starea se calculează o singură dată
+_senzor_memorat: dict | None = None
+
+
+@app.get("/api/senzor")
+def starea_senzorului():
+    """Starea senzorului, pentru panoul din pagină: doar citire, refăcută cel mult o dată la senzor.MEMORARE_S s, oricâte
+    pagini o cer; între timp se dă aceeași, doar cu `ora_server` de acum. Mereu HTTP 200: o verigă care nu se poate citi
+    are starea „necunoscut”."""
+    global _senzor_memorat
+    with _senzor_lacat:
+        acum = time.time()
+        m = _senzor_memorat
+        if m is None or not 0 <= acum - m["calculat_la"] < senzor.MEMORARE_S:     # și după un ceas dat înapoi
+            m = _senzor_memorat = senzor.stare_senzor(acum, live=LIVE, loguri=LOGURI, numaratori=NUMARATORI,
+                                                      lanturi=LANTURI, fise=FISE)
+    return jsonify({**m, "ora_server": time.time()})
 
 
 @app.get("/api/frame.jpg")
