@@ -6,6 +6,9 @@ repeta: flux normal, cameră veche, server căzut, confirmare și așa mai depar
 Rulare:  python -m romana.dashboard.capturi --versiune m1 --out outputs/evaluare/m1
 Prezentarea M3, ecranul de acum (cu --versiune m2, cel de „înainte”), implicit în outputs/prezentare/surse_m3/capturi_<versiune>:
          python -m romana.dashboard.capturi --versiune curent --prezentare
+Cu --prezentare, ceasul paginii e fixat la clipa pornirii (ori la --ceas "AAAA-LL-ZZ HH:MM:SS"), panoul senzorului arată starea reală de la acea
+clipă, iar --scara 2 dă capturi de două ori mai mari. A doua versiune se rulează cu ceasul celei dintâi, scris în stari.json:
+         python -m romana.dashboard.capturi --versiune m2 --prezentare --ceas "2026-11-10 16:00:00"
 """
 from __future__ import annotations
 
@@ -15,6 +18,9 @@ import html
 import json
 import re
 import subprocess
+import sys
+import time
+from datetime import datetime
 from pathlib import Path
 
 from romana.common import CONFIG_DIR, OUTPUT_DIR
@@ -104,20 +110,18 @@ STARI = {
               'try{ localStorage.removeItem("dispecerat.imagine") }catch(e){}',
 }
 # Prezentarea M3 (--prezentare), separat de STARI, ca evaluarea din § 8 să rămână pe aceleași stări. Imaginea camerei e ascunsă, cu starea senzorului
-# în locul ei: ce face ?imagine=0, care nu ajunge la pagină într-o ramă srcdoc. Senzorul, ca pe 9.11, la ≈19:30, după prima cădere a sursei
-# (outputs/logs/paznic_2026-11-09.log, veghe_2026-11-01.csv): veghea a pornit din nou după alertă, iar ultima notă a paznicului nu e „în regulă”,
-# deci paznicul e de urmărit; %FISA% e cea mai nouă fișă, aleasă în main.
-SENZOR_M3 = ('{ const s=JSON.parse(JSON.stringify(__SENZOR)), c=s.calculat_la, v=k=>s.verigi.find(x=>x.cheie==k); '
-             'Object.assign(v("veghea"),{randuri_ora:44,pauze_ora:1,alerta:{ora:c-990,semne:["fără cadre: niciun cadru prelucrat de 181 s"],dupa_ultimul_rand:false}}); '
-             'Object.assign(v("paznicul"),{stare:"atent",in_regula:false,text:"starea s-a refăcut singură înaintea opririi",ultima_dovada:c-643,varsta_s:643}); '
-             's.fisa=%FISA%; window.__senzor=s; } ' + STARI["senzor"] + "; ")
+# în locul ei: ce face ?imagine=0, care nu ajunge la pagină într-o ramă srcdoc. %SENZOR% e starea reală a senzorului, cea pe care ar da-o serverul
+# la /api/senzor la ceasul rulării (stare_reala, pusă de cod_prezentare): nimic scris de mână, ca panoul să nu arate o întâmplare care n-a avut loc.
+SENZOR_M3 = "window.__senzor=%SENZOR%; " + STARI["senzor"] + "; "
 # Comanda urmărită pas cu pas, într-un caz lung (48 s de la citire până la verde; cel mai lung caz are 60 s: tests/test_pasi.py), cu pașii
 # controlerului real (faze.SemaforCuPietoni, în ordinea buclei din live_twin; aceleași valori ies la rejucarea pe controler): Bd. Dacia,
 # cerut la 1 s după ce Magheru–Catargiu a primit verde. Clicul vine după starea 502, simularea citește comanda la 503 și dă verde Daciei la 551.
 # Pe ceasul paginii, clicul se mută înapoi cu secundele trecute în simulare (__muta): pagina de acum ține termenul pe timp_sim, dar cea de la M2
-# (--versiune m2) oprește urmărirea după 30 s pe ceasul ei, deci aceleași stări dau și imaginea de „înainte”.
+# (--versiune m2) oprește urmărirea după 30 s pe ceasul ei, deci aceleași stări dau și imaginea de „înainte”. Ceasul paginii stă pe loc (CEAS_FIX),
+# deci comanda rămâne în istoric cu 49 s înaintea lui (502 → 551), în amândouă versiunile, iar „Aplicat la” poartă chiar ora ceasului. După
+# fiecare mutare, lista „Ultimele comenzi” se scrie din nou (notaIstoric, fără stare nouă): altfel ar arăta ora de dinaintea mutării.
 PASI_M3 = ('const __P=o=>__pasi(Object.assign({mod:"manual",mod_program:null},o)); let __t=502; '
-           'const __muta=t=>{ const d=(t-__t)*1000; __t=t; if(cerere) cerere.la-=d; const i=istoric[istoric.length-1]; if(i) i.la-=d }; '
+           'const __muta=t=>{ const d=(t-__t)*1000; __t=t; if(cerere) cerere.la-=d; const i=istoric[istoric.length-1]; if(i){ i.la-=d; notaIstoric() } }; '
            '__st(__CAM,__P({timp_sim:502,verde_s:1,citire_peste_s:3,pana_la_faza_s:[0,49,43,49,49]})); await actualizeaza(); '
            'document.querySelector(\'[data-faza="1"]\').click(); await new Promise(r=>setTimeout(r,20)); const __ts=__ultimTs; '
            '__muta(503); __st(__CAM,__P({timp_sim:503,verde_s:2,citire_peste_s:2,pana_la_faza_s:[0,48,42,48,48],comanda_citita_ts:__ts})); await actualizeaza(); ')
@@ -140,15 +144,64 @@ FIGURA = ('document.getElementById("cadru").style.visibility="hidden"; const r=d
           'r.insertAdjacentHTML("afterbegin",\'<span style="position:absolute;color:#4a5560">imaginea camerei: nu apare în figură</span>\');')
 
 
+# Ceasul paginii, fixat (doar cu --prezentare): Date.now() și new Date() fără argumente dau mereu clipa %CEAS% (ms de la 1970), aceeași pentru toate
+# stările unei rulări și pentru amândouă trecerile lui Chrome, ca imaginea și textul unei stări să poarte aceleași ore, iar cele două versiuni ale
+# paginii, același ceas. Datele făcute din ceva (new Date(ms), Date.parse) rămân cum sunt, iar setTimeout merge mai departe: prin stări, timpul
+# trece doar cu __muta. E o funcție, nu o clasă: o clasă chemată fără new, ca Date(), ar arunca TypeError și ar opri scriptul stării; așa, Date()
+# dă textul aceleiași clipe.
+CEAS_FIX = ("<script>{ const __T0=%CEAS%, __D=Date; "
+            "const F=function(...a){ if(!new.target) return new __D(__T0).toString(); return a.length?new __D(...a):new __D(__T0) }; "
+            "F.prototype=__D.prototype; F.now=()=>__T0; F.parse=__D.parse; F.UTC=__D.UTC; window.Date=F; }</script>")
+FORMAT_CEAS = "%Y-%m-%d %H:%M:%S"
+
+
 def fazele() -> list[str]:
     return [f["nume"] for f in json.loads((CONFIG_DIR / "network.json").read_text(encoding="utf-8"))["romana_faze"]]
 
 
-def pagina(sursa: str, cod_stare: str) -> str:
-    """Pagina reală, cu cererile simulate, fonturile locale, fotografia în locul fluxului și starea pregătită după încărcare."""
+def citeste_ceasul(text: str) -> float:
+    """Clipa dată cu --ceas, „AAAA-LL-ZZ HH:MM:SS”, ora locală, în secunde de la 1970."""
+    try:
+        return datetime.strptime(text.strip(), FORMAT_CEAS).timestamp()
+    except (ValueError, OverflowError, OSError):
+        raise SystemExit(f"--ceas se dă ca „AAAA-LL-ZZ HH:MM:SS” (ora locală), nu „{text}”.") from None
+
+
+def stare_reala(ceas: float, **dosare) -> dict:
+    """Starea reală a senzorului la clipa `ceas`, cum ar întoarce-o serverul la /api/senzor (senzor.stare_senzor și `ora_server`): doar citire,
+    cu textele din jurnale curățate acolo de căile locale. `dosare`: dosarele lui stare_senzor, altele decât cele reale (fișele, cu --fisa;
+    testele). Dacă nu se poate calcula ori nicio verigă nu se poate citi, unealta se oprește: un panou gol n-are ce căuta în prezentare."""
+    from romana.dashboard import senzor
+    try:
+        s = senzor.stare_senzor(ceas, **dosare)
+        dovezi = [v["ultima_dovada"] for v in s["verigi"]]
+        text = json.dumps(s, ensure_ascii=False, allow_nan=False)
+    except Exception as e:                         # stare_senzor nu ridică excepții; aici ajunge doar un răspuns cu altă formă
+        raise SystemExit(f"Starea reală a senzorului nu s-a putut calcula: {type(e).__name__}: {senzor.curata(e)}") from None
+    if len(dovezi) != 5:
+        raise SystemExit(f"Starea reală a senzorului are {len(dovezi)} verigi, nu cinci: panoul prezentării ar ieși altfel decât cel de pe server.")
+    if all(x is None for x in dovezi):
+        raise SystemExit("Starea reală a senzorului nu se poate citi pe acest calculator: nicio verigă nu are vreo dovadă (starea camerei, numărătorile, "
+                         "jurnalele vegherii și ale paznicului, prelucrările de noapte). Rulați --prezentare pe calculatorul colectării.")
+    return {**json.loads(text), "ora_server": ceas}
+
+
+def cod_prezentare(cod: str, stare: dict | None) -> str:
+    """Codul unei stări a prezentării, cu starea senzorului în locul lui %SENZOR%. Fără stare (pagina de la M2 n-are panoul și nu cere starea
+    senzorului), rămâne răspunsul de exemplu. „<” se scrie ca escape: un text din jurnale nu poate închide scriptul în care ajunge."""
+    if stare is None:
+        return cod.replace("%SENZOR%", "__SENZOR")
+    return cod.replace("%SENZOR%", json.dumps(stare, ensure_ascii=False).replace("<", chr(92) + "u003c"))
+
+
+def pagina(sursa: str, cod_stare: str, ceas: float | None = None) -> str:
+    """Pagina reală, cu cererile simulate, fonturile locale, fotografia în locul fluxului și starea pregătită după încărcare.
+    Cu `ceas` (secunde de la 1970), ceasul paginii e fixat la acea clipă (CEAS_FIX); fără el, pagina are ceasul lui Chrome, ca până acum."""
     fonturi = (STATIC / "fonturi" / "fonturi.css").as_uri()
     foto = "data:image/jpeg;base64," + base64.b64encode(FOTOGRAFIE.read_bytes()).decode("ascii")
     simulari = SIMULARI.replace("%FAZE%", json.dumps(fazele(), ensure_ascii=False))
+    if ceas is not None:
+        simulari = CEAS_FIX.replace("%CEAS%", str(round(ceas * 1000))) + simulari
     if "<script>\nconst NUME=" not in sursa:
         raise SystemExit("Pagina nu mai are punctul de injectare `const NUME=`: actualizați capturi.py.")
     p = sursa.replace("<script>\nconst NUME=", simulari + "<script>\nconst NUME=", 1)
@@ -165,28 +218,32 @@ TEXT_VIZIBIL = (' try{ const e=parent.document.createElement("pre"); e.id="__tex
 
 
 def randeaza(sursa: str, cod_stare: str, cale: Path, latime: int = 1366, inaltime: int = 1500, profil: Path | None = None,
-             text: Path | None = None) -> bool:
+             text: Path | None = None, ceas: float | None = None, scara: int = 1) -> bool:
     """O captură PNG cu Chrome fără fereastră, la prioritate scăzută, ca să nu încurce colectarea. Pagina stă într-o ramă de lățimea cerută:
     fereastra fără cadru are cel puțin 500 px, deci sub această lățime pagina s-ar așeza la 500 px, iar captura ar tăia-o.
-    Cu `text`, o a doua trecere scrie acolo textul vizibil al aceleiași stări: verificarea frazelor nu poate citi textul din imagini."""
+    Cu `text`, o a doua trecere scrie acolo textul vizibil al aceleiași stări: verificarea frazelor nu poate citi textul din imagini.
+    Cu `ceas`, pagina are ceasul fixat (vezi `pagina`), același în amândouă trecerile. `scara` 2 ori 3: captura iese de atâtea ori mai mare,
+    cu același așezat al paginii (Chrome desenează fiecare pixel al paginii pe 2×2 ori 3×3 pixeli ai imaginii)."""
     cale = cale.resolve()            # Chrome se blochează cu un dosar de profil dat relativ
     temp = cale.with_suffix(".html")
     if text is not None:
         cod_stare += TEXT_VIZIBIL
-    rama = f"<!doctype html><meta charset='utf-8'><style>body{{margin:0}}iframe{{border:0;display:block}}</style><iframe width='{latime}' height='{inaltime}' srcdoc=\"{html.escape(pagina(sursa, cod_stare), quote=True)}\"></iframe>"
+    rama = f"<!doctype html><meta charset='utf-8'><style>body{{margin:0}}iframe{{border:0;display:block}}</style><iframe width='{latime}' height='{inaltime}' srcdoc=\"{html.escape(pagina(sursa, cod_stare, ceas), quote=True)}\"></iframe>"
     temp.write_text(rama, encoding="utf-8")
     # fără cererile de fundal ale lui Chrome (actualizări de componente și altele): captura nu iese în rețea și nu se lungește din cauza lor
     cmd = [CHROME, "--headless=new", "--disable-gpu", f"--user-data-dir={profil or cale.parent / 'profil'}", "--hide-scrollbars", "--no-first-run",
            "--no-default-browser-check", "--disable-background-networking", "--disable-component-update", "--allow-file-access-from-files",
            "--virtual-time-budget=6000", f"--window-size={max(latime, 500)},{inaltime}"]
+    if scara != 1:
+        cmd.append(f"--force-device-scale-factor={scara}")
     incet = getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0)
     subprocess.run(cmd + [f"--screenshot={cale}", temp.as_uri()], capture_output=True, timeout=120, creationflags=incet)
     if text is not None:
         text.unlink(missing_ok=True)
         dom = subprocess.run(cmd + ["--dump-dom", temp.as_uri()], capture_output=True, timeout=120, creationflags=incet).stdout.decode("utf-8", "replace")
         gasit = re.search(r'<pre id="__text"[^>]*>(.*?)</pre>', dom, re.S)
-        if gasit:
-            text.write_text(html.unescape(gasit.group(1)), encoding="utf-8")
+        if gasit:                    # pe Windows, ieșirea lui Chrome are deja CR LF, iar write_text ar mai pune un CR la fiecare rând
+            text.write_text(html.unescape(gasit.group(1)).replace(chr(13) + chr(10), chr(10)), encoding="utf-8")
     temp.unlink(missing_ok=True)
     return cale.exists()
 
@@ -203,15 +260,27 @@ def main(argv=None) -> None:
     ap.add_argument("--figura", default=None, help="doar figura din documentație, în acest fișier JPEG, și nimic altceva")
     ap.add_argument("--prezentare", action="store_true", help="doar stările prezentării M3 (PREZENTARE), fără ecranele mici")
     ap.add_argument("--fisa", default=None, help="cu --prezentare: dosarul fișelor locale, în locul lui outputs/fisa_senzor; o fișă de aici e „nepublicată”")
+    ap.add_argument("--ceas", default=None, help="cu --prezentare: ceasul paginii, „AAAA-LL-ZZ HH:MM:SS”; implicit, clipa pornirii. A doua versiune "
+                                                 "se rulează cu ceasul celei dintâi (cheia „ceas” din stari.json)")
+    ap.add_argument("--scara", type=int, choices=(1, 2, 3), default=1, help="cu --prezentare: capturi de atâtea ori mai mari, cu același așezat al paginii")
     a = ap.parse_args(argv)
-    fisa = None
+    ceas = stare = None
+    if not a.prezentare and (a.ceas is not None or a.scara != 1):
+        raise SystemExit("--ceas și --scara merg doar cu --prezentare: stările evaluării rămân cum au fost.")
     if a.prezentare:
         if a.versiune == "m1":
             raise SystemExit("Pagina M1 nu urmărește comenzile: --prezentare merge cu --versiune curent sau m2.")
-        from romana.dashboard import senzor        # doar citire: cea mai nouă fișă, ca în panoul de pe server
-        fisa = senzor.ultima_fisa((senzor.FISE[0], Path(a.fisa)) if a.fisa else senzor.FISE)
-        if a.versiune == "curent" and (not fisa or fisa.get("caderi_sursa") is None):
-            raise SystemExit("Cea mai nouă fișă a senzorului nu numără căderile sursei camerei (o fișă de dinainte de 10.11): refaceți-o sau dați --fisa.")
+        acum = time.time()
+        ceas = citeste_ceasul(a.ceas) if a.ceas is not None else float(int(acum))     # o singură clipă pentru toată rularea, la secundă
+        print(f"ceasul paginii: {datetime.fromtimestamp(ceas).strftime(FORMAT_CEAS)}")
+        if a.versiune == "curent":                 # doar pagina de acum are panoul senzorului; cea de la M2 nu-i cere starea
+            from romana.dashboard import senzor    # doar citire: starea de acum și cea mai nouă fișă, ca în panoul de pe server
+            if abs(acum - ceas) > 5:
+                print("Atenție: ceasul dat nu e cel de acum, iar starea senzorului se citește din fișierele de acum, socotită la ceasul dat: "
+                      "în panou pot apărea semne de viață de după ora citirii. Pentru panoul senzorului, rulați fără --ceas.", file=sys.stderr)
+            stare = stare_reala(ceas, fise=(senzor.FISE[0], Path(a.fisa)) if a.fisa else senzor.FISE)
+            if not stare["fisa"] or stare["fisa"].get("caderi_sursa") is None:
+                raise SystemExit("Cea mai nouă fișă a senzorului nu numără căderile sursei camerei (o fișă de dinainte de 10.11): refaceți-o sau dați --fisa.")
     implicit = OUTPUT_DIR / "prezentare" / "surse_m3" / f"capturi_{a.versiune}" if a.prezentare else OUTPUT_DIR / "evaluare" / a.versiune
     dosar = Path(a.out) if a.out else implicit
     dosar.mkdir(parents=True, exist_ok=True)
@@ -228,19 +297,25 @@ def main(argv=None) -> None:
         print(f"figura: {a.figura}")
         return
     if a.prezentare:
-        lista = [(n, 1366, cod.replace("%FISA%", json.dumps(fisa, ensure_ascii=False)), a.inaltime) for n, cod in PREZENTARE.items()]
+        lista = [(n, 1366, cod_prezentare(cod, stare), a.inaltime) for n, cod in PREZENTARE.items()]
     else:
         lista = [(n, 1366, cod, a.inaltime) for n, cod in STARI.items()] + [(n, w, STARI[s], 2400 if w < 500 else 1800) for n, (w, s) in ECRANE.items()]
     for nume, latime, cod, inaltime in lista:
         png = dosar / f"{nume}.png"
         png.unlink(missing_ok=True)
-        ok = randeaza(sursa, cod, png, latime, inaltime, text=dosar / f"{nume}.txt" if a.prezentare else None)
+        if a.prezentare:
+            ok = randeaza(sursa, cod, png, latime, inaltime, text=dosar / f"{nume}.txt", ceas=ceas, scara=a.scara)
+        else:
+            ok = randeaza(sursa, cod, png, latime, inaltime)
         if ok:                                   # evaluatorii primesc JPEG, mai mic; PNG-ul nu mai trebuie
             cv2.imwrite(str(dosar / f"{nume}.jpg"), cv2.imread(str(png)), [cv2.IMWRITE_JPEG_QUALITY, 88])
             png.unlink()
         print(f"{nume}: {'gata' if ok else 'EȘEC'}")
     shutil.rmtree(dosar / "profil", ignore_errors=True)
-    (dosar / "stari.json").write_text(json.dumps({"versiune": a.versiune, "stari": html.escape(", ".join(n for n, *_ in lista))}, ensure_ascii=False), encoding="utf-8")
+    rezumat = {"versiune": a.versiune, "stari": html.escape(", ".join(n for n, *_ in lista))}
+    if a.prezentare:                             # ceasul, în forma lui --ceas, ca a doua versiune să fie rulată cu același
+        rezumat.update(ceas=datetime.fromtimestamp(ceas).strftime(FORMAT_CEAS), scara=a.scara)
+    (dosar / "stari.json").write_text(json.dumps(rezumat, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":
