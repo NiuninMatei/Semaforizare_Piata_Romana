@@ -400,7 +400,10 @@ def lanturi_noapte(lanturi: dict, t0: float, t1: float) -> dict:
 def numaratori(dosar: Path, t0: float, t1: float) -> dict:
     """Intrările de vehicule pe clase și pietonii, pe zile, din intervalele încheiate în fereastră."""
     zile = {}
-    z, z1 = date.fromtimestamp(t0), date.fromtimestamp(t1)
+    # fișierele sunt pe ziua în care începe intervalul, iar un interval din fereastră începe înaintea tăieturii: ultima zi e
+    # cea a clipei de dinaintea ei. La o tăietură fix la miezul nopții, ziua care abia începe n-are niciun interval încheiat
+    # până la ea, deci nici rând (fișa de la M2, cu tăietura 06.11, 00:00, avea „vin. 06.11” numai cu zerouri).
+    z, z1 = date.fromtimestamp(t0), (datetime.fromtimestamp(t1) - timedelta(microseconds=1)).date()
     while z <= z1:
         f = Path(dosar) / f"numaratori_{z.isoformat()}.csv"
         veh, pietoni, intervale = defaultdict(int), 0, set()

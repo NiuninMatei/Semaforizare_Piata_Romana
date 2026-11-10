@@ -268,6 +268,30 @@ class TestPiese(unittest.TestCase):
             goluri = fs.citeste_goluri(d)
         self.assertEqual([(g.oprire, g.repornire) for g in goluri], [(a, b)])
 
+    def test_taietura_la_miezul_noptii_fara_randul_zilei_care_incepe(self):
+        # ca fișa de sâmbătă, cu tăietura 14.11, 00:00: ziua care abia începe n-are niciun interval încheiat până la tăietură,
+        # deci nu apare cu un rând numai cu zerouri (fișa de la M2, cu tăietura 06.11, 00:00, avea „vin. 06.11”)
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            interval(d, Z(10, 23, 45), Z(11, 0), {("magheru", "passenger"): 7}, 2)    # în fișierul zilei de 10.06
+            interval(d, Z(11, 0), Z(11, 0, 15), {("magheru", "passenger"): 9}, 1)     # se încheie după tăietură
+            v = fs.numaratori(d, Z(10, 8), Z(11, 0))
+            self.assertEqual(list(v["pe_zile"]), ["2026-06-10"])
+            z10 = v["pe_zile"]["2026-06-10"]
+            self.assertEqual((z10["vehicule"], z10["pietoni"], z10["intervale"]), (7, 2, 1))
+            self.assertEqual((z10["pana_la"], fs.ore_zi(z10, "2026-06-10")), ("2026-06-11T00:00:00", "23:45–24:00"))
+            self.assertEqual((v["total"], v["pietoni_total"]), (7, 2))
+            # o secundă după miezul nopții, ziua nouă e în fereastră, fără niciun interval încheiat încă
+            v = fs.numaratori(d, Z(10, 8), Z(11, 0, 0, 1))
+            self.assertEqual(list(v["pe_zile"]), ["2026-06-10", "2026-06-11"])
+            self.assertEqual((v["pe_zile"]["2026-06-11"]["intervale"], v["total"]), (0, 7))
+            # la sfertul următor, intervalul de la miezul nopții intră în ziua lui
+            v = fs.numaratori(d, Z(10, 8), Z(11, 0, 15))
+            self.assertEqual((v["pe_zile"]["2026-06-11"]["vehicule"], v["pe_zile"]["2026-06-11"]["pietoni"]), (9, 1))
+            self.assertEqual((v["total"], v["pietoni_total"]), (16, 3))
+            # și o fereastră care începe fix la miezul nopții începe cu ziua aceea
+            self.assertEqual(list(fs.numaratori(d, Z(11, 0), Z(11, 0, 15))["pe_zile"]), ["2026-06-11"])
+
     def test_anuntul_poate_veni_dupa_oprire(self):
         # ca pe 05.11: fara_repornire pus înaintea opririi, dar văzut de paznic la verificarea de minut, după ea
         g, vechi = fs.Gol(Z(10, 20, 7, 23), Z(10, 20, 22, 6)), fs.Gol(Z(11, 20), Z(11, 20, 5))
