@@ -38,6 +38,7 @@ path = [
   "NOTICE",
   "legacy/google_ai_draft/README.md",
   ".claude/CLAUDE.md",
+  ".claude/stare_arhiva.md",
 ]
 precedence = "closest"
 SPDX-FileCopyrightText = "2026 Niunin Matei-Gabriel"

@@ -4514,7 +4514,7 @@ Tabelul este harta depozitului: ce conține fiecare director și fiecare fișier
 | `README.md` | prezentarea scurtă, afișată pe pagina GitHub a proiectului |
 | `LICENSE`, `LICENSES/` | textele licențelor: GNU AGPL v3 pentru cod și modele, ODbL 1.0 pentru date, CC BY 4.0 pentru documentație, CC0 1.0 pentru `build.bat`, `run.bat` și `output.add.xml` din ciornă, generate de osmWebWizard, SIL OFL 1.1 pentru fonturile Barlow ale dispeceratului și ale paginii de sondare, plus nota pentru imaginile camerei (`LicenseRef-Toate-drepturile-rezervate`) |
 | `NOTICE`, `REUSE.toml`, `*/LICENTA.txt` | atribuirile pentru resursele preluate de la alți autori, harta „cale → licență” și notele de licență din `data/`, `sumo/` și `models/` (§ 14.1) |
-| `.claude/CLAUDE.md` | instrucțiunile și starea lucrului pentru asistentul Claude Code; nu fac parte din documentație |
+| `.claude/CLAUDE.md`, `.claude/stare_arhiva.md` | instrucțiunile și starea lucrului pentru asistentul Claude Code, cu arhiva stărilor mai vechi; nu fac parte din documentație |
 
 ### 11.7 Probleme frecvente
 
