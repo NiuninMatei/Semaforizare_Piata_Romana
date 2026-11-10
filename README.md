@@ -462,9 +462,10 @@ au venit zonele desenate pe imaginea camerei, verificarea rețelei în Street Vi
 doar din intrări și testul cu participanți indisciplinați (§ 12.2).
 
 Asistența generativă (§ 13): până la 18.10.2026, modulul AI Google din Chrome, cu care s-a făcut ciorna din `legacy/`;
-din 20.10.2026, **Claude** (Anthropic), modelul Claude Opus 5.5, prin Claude Code, pe calculatorul autorului. Claude a
-scris aproape tot codul și documentația și a rulat colectarea datelor, antrenarea și evaluarea. Commiturile lui, adică
-versiunile salvate de el în istoric, poartă linia `Co-Authored-By: Claude …`.
+din 20.10.2026, **Claude** (Anthropic), prin Claude Code, pe calculatorul autorului: cu modelul Claude Opus 5.5 până pe
+10.11.2026 și cu modelul Claude Fable 5.2 de atunci. Claude a scris aproape tot codul și documentația și a rulat
+colectarea datelor, antrenarea și evaluarea. Commiturile lui, adică versiunile salvate de el în istoric, poartă linia
+`Co-Authored-By: Claude …`.
 
 **Starea proiectului (10.11.2026).** Primele două borne, M1 și M2, comune disciplinelor *Interfețe om-calculator* și
 *Internet of Things*, s-au prezentat pe 1.11 și pe 8.11. De la M1 (lista schimbărilor, § 12.3):

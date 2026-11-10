@@ -5104,8 +5104,10 @@ asistenți:
 * **până la 18.10.2026 inclusiv**, pentru ciorna păstrată în `legacy/google_ai_draft/`: modulul AI integrat de Google
   în browserul Chrome[^google-ai];
 * **începând cu 20.10.2026**, pentru Bornele 0–9, adică reperele de lucru ale proiectului, și pentru lucrul la bornele
-  cursului, M1, M2 și M3 (§ 12.3): Claude, asistentul AI dezvoltat de Anthropic, cu modelul Claude Opus 5.5. Claude a rulat
-  prin Claude Code, în aplicația Claude pentru desktop[^claude], direct pe calculatorul autorului.
+  cursului, M1, M2 și M3 (§ 12.3): Claude, asistentul AI dezvoltat de Anthropic. Până pe 10.11.2026, Claude a lucrat cu
+  modelul Claude Opus 5.5. Din 10.11.2026, în timpul pregătirii bornei M3, modelul de lucru este Claude Fable 5.2, ales
+  de autor; unele instanțe separate, puse să citească sau să verifice, rulează în continuare cu Claude Opus 5.5. Claude a
+  rulat prin Claude Code, în aplicația Claude pentru desktop[^claude], direct pe calculatorul autorului.
 
 **Contribuția declarată a asistentului.** Claude a făcut cea mai mare parte a muncii de execuție:
 
@@ -5330,7 +5332,7 @@ ai fiecărei resurse folosite efectiv în proiect.
 
 | Resursa folosită | Licența sau termenii de utilizare |
 |---|---|
-| Claude (Anthropic), modelul Claude Opus 5.5, prin Claude Code – asistentul AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic: drepturile Anthropic asupra rezultatelor, dacă există, sunt cedate utilizatorului; folosirea AI trebuie atribuită, adică menționată explicit (§ 13)[^claude] |
+| Claude (Anthropic), prin Claude Code, cu modelul Claude Opus 5.5 până pe 10.11.2026 și cu modelul Claude Fable 5.2 de atunci – asistentul AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic: drepturile Anthropic asupra rezultatelor, dacă există, sunt cedate utilizatorului; folosirea AI trebuie atribuită, adică menționată explicit (§ 13)[^claude] |
 | Modulul AI Google din Chrome – ciorna inițială (`legacy/`) | Termenii Google: Google nu revendică proprietatea asupra conținutului generat[^google-ai] |
 | Datele OpenStreetMap: extrasul, rețeaua rutieră, rutele | ODbL 1.0 – „© OpenStreetMap contributors”; bazele derivate rămân tot sub ODbL 1.0[^osm][^osmf-atribuire] |
 | Eclipse SUMO 1.28.0: simulatorul, `sumolib`, `traci`, `libsumo`, `routeSampler` | EPL-2.0 OR GPL-2.0-or-later; codul proiectului este un client TraCI, iar pentru un pachet combinat se folosește opțiunea GPL-2.0-or-later[^sumo] |
@@ -5403,7 +5405,7 @@ ai fiecărei resurse folosite efectiv în proiect.
 [^flask]: Pallets, *Flask*, https://flask.palletsprojects.com (BSD-3-Clause).
 [^barlow]: J. Tribby, *Barlow* și *Barlow Semi Condensed* (familii de fonturi), Google Fonts, https://fonts.google.com/specimen/Barlow (SIL OFL 1.1, https://openfontlicense.org). Subseturile latin și latin-ext sunt incluse în `src/romana/dashboard/static/fonturi` și în `docs/sondare/fonturi`; textul licenței, în `LICENSES/OFL-1.1.txt`.
 [^google-ai]: Google, modulul de asistență AI integrat în browserul Chrome, folosit pentru ciorna proiectului până la 18.10.2026. Termenii Google, https://policies.google.com/terms, secțiunea „Your content”: „Some of our services allow you to generate original content. Google won't claim ownership over that content.”
-[^claude]: Anthropic, *Claude* (model Claude Opus 5.5, ID `claude-opus-5-5`), asistent AI generativ, rulat prin *Claude Code* (aplicația Claude pentru desktop), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni: Consumer Terms, § 4 („we assign to you all our right, title, and interest (if any) in Outputs”), https://www.anthropic.com/legal/consumer-terms; Usage Policy, care interzice predarea lucrărilor asistate de AI fără permisiune sau atribuire („Plagiarize or submit AI-assisted work without proper permission or attribution”), https://www.anthropic.com/legal/aup; accesate 26.10.2026. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13). Pentru loturile prin interfața de programare, din 1.11.2026: Commercial Terms, https://www.anthropic.com/legal/commercial-terms.
+[^claude]: Anthropic, *Claude* (modelele Claude Opus 5.5, ID `claude-opus-5-5`, până pe 10.11.2026, și Claude Fable 5.2, ID `claude-fable-5-2`, din 10.11.2026), asistent AI generativ, rulat prin *Claude Code* (aplicația Claude pentru desktop), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni: Consumer Terms, § 4 („we assign to you all our right, title, and interest (if any) in Outputs”), https://www.anthropic.com/legal/consumer-terms; Usage Policy, care interzice predarea lucrărilor asistate de AI fără permisiune sau atribuire („Plagiarize or submit AI-assisted work without proper permission or attribution”), https://www.anthropic.com/legal/aup; accesate 26.10.2026. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13). Pentru loturile prin interfața de programare, din 1.11.2026: Commercial Terms, https://www.anthropic.com/legal/commercial-terms.
 
 [^anthropic-sdk]: Anthropic, *anthropic-sdk-python* 2.3.0, https://github.com/anthropics/anthropic-sdk-python (Apache-2.0).
 [^agpl]: Free Software Foundation, *GNU Affero General Public License*, versiunea 3, 19.11.2007, https://www.gnu.org/licenses/agpl-3.0.html; textul integral în `LICENSE`.
