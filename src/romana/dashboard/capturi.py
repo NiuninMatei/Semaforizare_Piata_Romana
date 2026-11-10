@@ -4,6 +4,8 @@ Pagina reală (versiunile `m1` și `m2`, păstrate neschimbate, sau cea curentă
 repeta: flux normal, cameră veche, server căzut, confirmare și așa mai departe. Imaginea camerei e fotografia publicată, cu persoanele estompate.
 
 Rulare:  python -m romana.dashboard.capturi --versiune m1 --out outputs/evaluare/m1
+Prezentarea M3, ecranul de acum (cu --versiune m2, cel de „înainte”), implicit în outputs/prezentare/surse_m3/capturi_<versiune>:
+         python -m romana.dashboard.capturi --versiune curent --prezentare
 """
 from __future__ import annotations
 
@@ -45,6 +47,11 @@ const __CAM={_varsta_s:0.9,fps:5.94,conectat:true,reconectari:0,vehicule_urmarit
 const __SIM={_varsta_s:0.5,timp_sim:500,mod:"program",mod_program:"plan_observat",sursa:"camera live",faza:0,faza_nume:__FAZE[0],etapa:"green",verde_s:9,faze:__FAZE,model_ai:true,
   coada_brate:{magheru:3,catargiu:12,dacia_est:5,dacia_vest:21,pietoni:4},coada_total:41,vehicule_in_retea:123,pietoni_in_retea:8,
   istoric_coada:Array.from({length:40},(_,i)=>[i*5,10+Math.round(8*Math.sin(i/4))])};
+// geamănul de acum publică și pașii schimbării de fază (src/romana/control/pasi.py): __SIM_PASI e __SIM cu ei, cu valorile controlerului real
+// (faze.SemaforCuPietoni) la timp_sim 500, după 9 s de verde pe Magheru–Catargiu. __SIM rămâne fără ei, ca un geamăn mai vechi: așa îl folosesc testele (teste-15)
+const __SIM_PASI=Object.assign(JSON.parse(JSON.stringify(__SIM)),{pas:"verde",pas_ramas_s:null,faza_tinta:0,pana_la_tinta_s:0,verde_min_s:35,verde_max_s:90,cadenta_s:5,
+  citire_peste_s:0,pana_la_faza_s:[0,41,35,41,41],durate_s:{galben:3,rosu:2,degajare:6},comanda_citita_ts:1000});
+const __pasi=o=>{ const s=Object.assign(JSON.parse(JSON.stringify(__SIM_PASI)),o); s.etapa={verde:"green",degajare:"green",galben:"yellow",rosu:"red"}[s.pas]; return s };   // etapa, din pas, ca în geamăn
 function __st(cam,sim,extra){ window.__stare=Object.assign({camera:cam,simulare:sim,comanda:null,ora_server:0},extra||{}); }   // extra: comanda, comenzi, ora_server
 __st(__CAM,__SIM);
 // răspunsul de exemplu al lui /api/senzor, cu orele mutate la „acum”: ultimul sfert de oră încheiat, rulările de noapte la 00:15 și 03:30, iar fișa publicată din 6.11
@@ -96,6 +103,35 @@ STARI = {
               'if(typeof citesteSenzorul=="function") await citesteSenzorul(); document.activeElement.blur(); '
               'try{ localStorage.removeItem("dispecerat.imagine") }catch(e){}',
 }
+# Prezentarea M3 (--prezentare), separat de STARI, ca evaluarea din § 8 să rămână pe aceleași stări. Imaginea camerei e ascunsă, cu starea senzorului
+# în locul ei: ce face ?imagine=0, care nu ajunge la pagină într-o ramă srcdoc. Senzorul, ca pe 9.11, la ≈19:30, după prima cădere a sursei
+# (outputs/logs/paznic_2026-11-09.log, veghe_2026-11-01.csv): veghea a pornit din nou după alertă, iar ultima notă a paznicului nu e „în regulă”,
+# deci paznicul e de urmărit; %FISA% e cea mai nouă fișă, aleasă în main.
+SENZOR_M3 = ('{ const s=JSON.parse(JSON.stringify(__SENZOR)), c=s.calculat_la, v=k=>s.verigi.find(x=>x.cheie==k); '
+             'Object.assign(v("veghea"),{randuri_ora:44,pauze_ora:1,alerta:{ora:c-990,semne:["fără cadre: niciun cadru prelucrat de 181 s"],dupa_ultimul_rand:false}}); '
+             'Object.assign(v("paznicul"),{stare:"atent",in_regula:false,text:"starea s-a refăcut singură înaintea opririi",ultima_dovada:c-643,varsta_s:643}); '
+             's.fisa=%FISA%; window.__senzor=s; } ' + STARI["senzor"] + "; ")
+# Comanda urmărită pas cu pas, într-un caz lung (48 s de la citire până la verde; cel mai lung caz are 60 s: tests/test_pasi.py), cu pașii
+# controlerului real (faze.SemaforCuPietoni, în ordinea buclei din live_twin; aceleași valori ies la rejucarea pe controler): Bd. Dacia,
+# cerut la 1 s după ce Magheru–Catargiu a primit verde. Clicul vine după starea 502, simularea citește comanda la 503 și dă verde Daciei la 551.
+# Pe ceasul paginii, clicul se mută înapoi cu secundele trecute în simulare (__muta): pagina de acum ține termenul pe timp_sim, dar cea de la M2
+# (--versiune m2) oprește urmărirea după 30 s pe ceasul ei, deci aceleași stări dau și imaginea de „înainte”.
+PASI_M3 = ('const __P=o=>__pasi(Object.assign({mod:"manual",mod_program:null},o)); let __t=502; '
+           'const __muta=t=>{ const d=(t-__t)*1000; __t=t; if(cerere) cerere.la-=d; const i=istoric[istoric.length-1]; if(i) i.la-=d }; '
+           '__st(__CAM,__P({timp_sim:502,verde_s:1,citire_peste_s:3,pana_la_faza_s:[0,49,43,49,49]})); await actualizeaza(); '
+           'document.querySelector(\'[data-faza="1"]\').click(); await new Promise(r=>setTimeout(r,20)); const __ts=__ultimTs; '
+           '__muta(503); __st(__CAM,__P({timp_sim:503,verde_s:2,citire_peste_s:2,pana_la_faza_s:[0,48,42,48,48],comanda_citita_ts:__ts})); await actualizeaza(); ')
+DEGAJARE = ('__muta(541); __st(__CAM,__P({timp_sim:541,verde_s:40,pas:"degajare",pas_ramas_s:5,faza_tinta:1,pana_la_tinta_s:10,verde_min_s:10,citire_peste_s:4,'
+            'pana_la_faza_s:[35,10,29,35,35],comanda_citita_ts:__ts})); await actualizeaza(); ')
+GALBEN = ('__muta(546); __st(__CAM,__P({timp_sim:546,verde_s:45,pas:"galben",pas_ramas_s:3,faza_tinta:1,pana_la_tinta_s:5,verde_min_s:10,citire_peste_s:4,'
+          'pana_la_faza_s:[30,5,24,30,30],comanda_citita_ts:__ts})); await actualizeaza(); ')
+# verdele Daciei se vede la 551; captura arată 552, cu 1 s de verde, ca „e verde de 0 s” să nu apară pe ecran
+APLICAT = ('__muta(551); __st(__CAM,__P({timp_sim:551,faza:1,faza_nume:__FAZE[1],verde_s:0,faza_tinta:1,verde_min_s:10,citire_peste_s:4,'
+           'pana_la_faza_s:[25,0,19,25,25],comanda_citita_ts:__ts})); await actualizeaza(); '
+           '__st(__CAM,__P({timp_sim:552,faza:1,faza_nume:__FAZE[1],verde_s:1,faza_tinta:1,verde_min_s:10,citire_peste_s:3,'
+           'pana_la_faza_s:[24,0,18,24,24],comanda_citita_ts:__ts})); await actualizeaza(); ')
+PREZENTARE = {"m3_senzor": SENZOR_M3, "m3_comanda_citita": SENZOR_M3 + PASI_M3, "m3_comanda_degajare": SENZOR_M3 + PASI_M3 + DEGAJARE,
+              "m3_comanda_galben": SENZOR_M3 + PASI_M3 + DEGAJARE + GALBEN, "m3_comanda_aplicata": SENZOR_M3 + PASI_M3 + DEGAJARE + GALBEN + APLICAT}
 # numele stării → lățimea ferestrei, dacă nu e cea implicită
 ECRANE = {"telefon_normal": (375, "normal"), "telefon_confirmare": (375, "confirmare"), "tableta_normal": (768, "normal")}
 # figura din documentație (§ 8): fără imaginea camerei și fără indicatorii ei, care aici ar fi inventați
@@ -123,18 +159,34 @@ def pagina(sursa: str, cod_stare: str) -> str:
     return p.replace("</body>", final + "</body>", 1)
 
 
-def randeaza(sursa: str, cod_stare: str, cale: Path, latime: int = 1366, inaltime: int = 1500, profil: Path | None = None) -> bool:
+# textul vizibil al paginii, ținut la zi într-un element ascuns al ramei, de unde îl ia a doua trecere a lui Chrome (--dump-dom)
+TEXT_VIZIBIL = (' try{ const e=parent.document.createElement("pre"); e.id="__text"; e.hidden=true; parent.document.body.appendChild(e); '
+                'const f=()=>{ e.textContent=document.body.innerText }; f(); setInterval(f,200) }catch(_){} ')
+
+
+def randeaza(sursa: str, cod_stare: str, cale: Path, latime: int = 1366, inaltime: int = 1500, profil: Path | None = None,
+             text: Path | None = None) -> bool:
     """O captură PNG cu Chrome fără fereastră, la prioritate scăzută, ca să nu încurce colectarea. Pagina stă într-o ramă de lățimea cerută:
-    fereastra fără cadru are cel puțin 500 px, deci sub această lățime pagina s-ar așeza la 500 px, iar captura ar tăia-o."""
+    fereastra fără cadru are cel puțin 500 px, deci sub această lățime pagina s-ar așeza la 500 px, iar captura ar tăia-o.
+    Cu `text`, o a doua trecere scrie acolo textul vizibil al aceleiași stări: verificarea frazelor nu poate citi textul din imagini."""
     cale = cale.resolve()            # Chrome se blochează cu un dosar de profil dat relativ
     temp = cale.with_suffix(".html")
+    if text is not None:
+        cod_stare += TEXT_VIZIBIL
     rama = f"<!doctype html><meta charset='utf-8'><style>body{{margin:0}}iframe{{border:0;display:block}}</style><iframe width='{latime}' height='{inaltime}' srcdoc=\"{html.escape(pagina(sursa, cod_stare), quote=True)}\"></iframe>"
     temp.write_text(rama, encoding="utf-8")
     # fără cererile de fundal ale lui Chrome (actualizări de componente și altele): captura nu iese în rețea și nu se lungește din cauza lor
     cmd = [CHROME, "--headless=new", "--disable-gpu", f"--user-data-dir={profil or cale.parent / 'profil'}", "--hide-scrollbars", "--no-first-run",
            "--no-default-browser-check", "--disable-background-networking", "--disable-component-update", "--allow-file-access-from-files",
-           "--virtual-time-budget=6000", f"--window-size={max(latime, 500)},{inaltime}", f"--screenshot={cale}", temp.as_uri()]
-    subprocess.run(cmd, capture_output=True, timeout=120, creationflags=getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0))
+           "--virtual-time-budget=6000", f"--window-size={max(latime, 500)},{inaltime}"]
+    incet = getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0)
+    subprocess.run(cmd + [f"--screenshot={cale}", temp.as_uri()], capture_output=True, timeout=120, creationflags=incet)
+    if text is not None:
+        text.unlink(missing_ok=True)
+        dom = subprocess.run(cmd + ["--dump-dom", temp.as_uri()], capture_output=True, timeout=120, creationflags=incet).stdout.decode("utf-8", "replace")
+        gasit = re.search(r'<pre id="__text"[^>]*>(.*?)</pre>', dom, re.S)
+        if gasit:
+            text.write_text(html.unescape(gasit.group(1)), encoding="utf-8")
     temp.unlink(missing_ok=True)
     return cale.exists()
 
@@ -146,11 +198,22 @@ def main(argv=None) -> None:
 
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--versiune", choices=sorted(VERSIUNI), default="m1")
-    ap.add_argument("--out", default=None, help="implicit outputs/evaluare/<versiune>")
+    ap.add_argument("--out", default=None, help="implicit outputs/evaluare/<versiune>; cu --prezentare, outputs/prezentare/surse_m3/capturi_<versiune>")
     ap.add_argument("--inaltime", type=int, default=1500)
     ap.add_argument("--figura", default=None, help="doar figura din documentație, în acest fișier JPEG, și nimic altceva")
+    ap.add_argument("--prezentare", action="store_true", help="doar stările prezentării M3 (PREZENTARE), fără ecranele mici")
+    ap.add_argument("--fisa", default=None, help="cu --prezentare: dosarul fișelor locale, în locul lui outputs/fisa_senzor; o fișă de aici e „nepublicată”")
     a = ap.parse_args(argv)
-    dosar = Path(a.out) if a.out else OUTPUT_DIR / "evaluare" / a.versiune
+    fisa = None
+    if a.prezentare:
+        if a.versiune == "m1":
+            raise SystemExit("Pagina M1 nu urmărește comenzile: --prezentare merge cu --versiune curent sau m2.")
+        from romana.dashboard import senzor        # doar citire: cea mai nouă fișă, ca în panoul de pe server
+        fisa = senzor.ultima_fisa((senzor.FISE[0], Path(a.fisa)) if a.fisa else senzor.FISE)
+        if a.versiune == "curent" and (not fisa or fisa.get("caderi_sursa") is None):
+            raise SystemExit("Cea mai nouă fișă a senzorului nu numără căderile sursei camerei (o fișă de dinainte de 10.11): refaceți-o sau dați --fisa.")
+    implicit = OUTPUT_DIR / "prezentare" / "surse_m3" / f"capturi_{a.versiune}" if a.prezentare else OUTPUT_DIR / "evaluare" / a.versiune
+    dosar = Path(a.out) if a.out else implicit
     dosar.mkdir(parents=True, exist_ok=True)
     sursa = VERSIUNI[a.versiune].read_text(encoding="utf-8")
     if a.figura:
@@ -164,11 +227,14 @@ def main(argv=None) -> None:
         shutil.rmtree(dosar / "profil", ignore_errors=True)
         print(f"figura: {a.figura}")
         return
-    lista = [(n, 1366, cod, a.inaltime) for n, cod in STARI.items()] + [(n, w, STARI[s], 2400 if w < 500 else 1800) for n, (w, s) in ECRANE.items()]
+    if a.prezentare:
+        lista = [(n, 1366, cod.replace("%FISA%", json.dumps(fisa, ensure_ascii=False)), a.inaltime) for n, cod in PREZENTARE.items()]
+    else:
+        lista = [(n, 1366, cod, a.inaltime) for n, cod in STARI.items()] + [(n, w, STARI[s], 2400 if w < 500 else 1800) for n, (w, s) in ECRANE.items()]
     for nume, latime, cod, inaltime in lista:
         png = dosar / f"{nume}.png"
         png.unlink(missing_ok=True)
-        ok = randeaza(sursa, cod, png, latime, inaltime)
+        ok = randeaza(sursa, cod, png, latime, inaltime, text=dosar / f"{nume}.txt" if a.prezentare else None)
         if ok:                                   # evaluatorii primesc JPEG, mai mic; PNG-ul nu mai trebuie
             cv2.imwrite(str(dosar / f"{nume}.jpg"), cv2.imread(str(png)), [cv2.IMWRITE_JPEG_QUALITY, 88])
             png.unlink()
