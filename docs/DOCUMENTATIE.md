@@ -1328,13 +1328,17 @@ pe 10.11, fișa senzorului nu vedea deci aceste căderi și le socotea minutele 
 „fără cadre” ora ultimului cadru, scrisă în ea, și socotește căderea de acolo până la primul rând al vegherii de după
 repornire: pe 9.11, 19:10–19:30, și pe 10.11, 00:26–01:19, în total cel mult ≈1 h 12 min. E o margine de sus, fiindcă
 veghea a fost pornită din nou abia la câteva minute după revenirea fluxului. Minutele căderii se socotesc fără cadre, dar nu
-ca o oprire, fiindcă în tot acest timp colectarea a rămas pornită.
+ca o oprire, fiindcă în tot acest timp colectarea a rămas pornită. Invers, o alertă „fără cadre” venită dintr-o colectare
+blocată sau oprită nu e o cădere a sursei: golul ei e deja o oprire, cu repornirea scrisă de paznic. Iar dacă în timpul
+golului a mers o veghe pornită cu `--fara cadre`, pauza notată de ea la revenirea cadrelor dă chiar sfârșitul căderii. Pe
+cele două căderi reale, aceste reguli, adăugate tot pe 10.11, după o verificare, nu schimbă nimic.
 
 **Fișa senzorului (5–6.11.2026).** Camera, împreună cu modulul de viziune, este senzorul proiectului, în sensul Internetului
 lucrurilor (§ 3). Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a
 oprit doar de trei ori, anunțat: pe 1.11, pe 5.11 și pe 8.11. Pe 9 și pe 10.11 a lipsit o vreme doar fluxul camerei, cum scrie mai sus. Cât de bine a lucrat o arată fișa senzorului, `python -m romana.vision.fisa_senzor`, care calculează cifrele
-colectării până la ora dată cu `--pana-la`, mereu cu aceleași definiții. Ea citește rândurile de minut ale vegherii, urmele
-paznicului, starea prelucrărilor de noapte și numărătorile din `data/counts/`; imaginile și traiectoriile nu le atinge.
+colectării până la ora dată cu `--pana-la`, mereu cu aceleași definiții. Ea citește rândurile de minut și alertele „fără
+cadre” ale vegherii, urmele paznicului, starea prelucrărilor de noapte și numărătorile din `data/counts/`; imaginile și
+traiectoriile nu le atinge.
 Jurnalele vegherii și ale paznicului rămân pe calculatorul autorului, deci fișa se poate calcula doar acolo. Fișa citată
 aici, calculată până la sfârșitul zilei de 5.11, adică până pe 6.11, la 00:00, e publicată în
 `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul în `docs/rezultate/fisa_senzor_2026-11-06_0000.md`.
