@@ -1315,9 +1315,20 @@ class TestFisa(Baza):
         self.assertEqual(f, {
             "taietura": "2026-06-06T00:00:00", "inceput": "2026-06-01T09:04:46", "ore": 110.92,
             "pondere_minute_cu_cadre": 0.98843, "fps_mediana": 5.98, "opriri_anuntate": 2, "caderi_neprevazute": 0,
-            "pauze": 30, "episoade_reconectare": 10, "lanturi_incheiate": 6, "lanturi_asteptate": 6, "vehicule": 93580,
-            "publica": True})
+            "pauze": 30, "caderi_sursa": None, "episoade_reconectare": 10, "lanturi_incheiate": 6, "lanturi_asteptate": 6,
+            "vehicule": 93580, "publica": True})
         self.assertEqual([type(f[k]) for k in ("vehicule", "lanturi_incheiate", "lanturi_asteptate")], [int] * 3)
+
+    def test_caderile_sursei_din_fisa(self):
+        # o fișă calculată din 10.11 are și căderile sursei; una de dinainte (ca fișa publicată la M2) nu le are: None
+        d = json.loads(fisa_json("2026-06-07T00:00:00"))
+        d["caderi_sursa"] = {"numar": 2, "durata_s": 4303, "lista": []}
+        scrie(self.docs / "fisa_senzor_2026-06-07_0000.json", json.dumps(d, ensure_ascii=False))
+        self.assertEqual(self.stare()["fisa"]["caderi_sursa"], 2)
+        for rau in ({"numar": True}, {"numar": "2"}, ["2"], None):
+            d["caderi_sursa"] = rau
+            scrie(self.docs / "fisa_senzor_2026-06-07_0000.json", json.dumps(d, ensure_ascii=False))
+            self.assertIsNone(self.stare()["fisa"]["caderi_sursa"], rau)
 
     def test_o_suma_care_ar_iesi_infinita_lipseste(self):
         scrie(self.docs / "fisa_senzor_2026-06-06_0000.json", fisa_uriasa())
@@ -1588,8 +1599,8 @@ class TestDosareleReale(unittest.TestCase):
             f = SZ.ultima_fisa((Path(d),))
         self.assertEqual(f, {"taietura": "2026-11-06T00:00:00", "inceput": "2026-11-01T09:04:46", "ore": 110.92,
                              "pondere_minute_cu_cadre": 0.98843, "fps_mediana": 5.98, "opriri_anuntate": 2,
-                             "caderi_neprevazute": 0, "pauze": 30, "episoade_reconectare": 10, "lanturi_incheiate": 6,
-                             "lanturi_asteptate": 6, "vehicule": 284152, "publica": True})
+                             "caderi_neprevazute": 0, "pauze": 30, "caderi_sursa": None, "episoade_reconectare": 10,
+                             "lanturi_incheiate": 6, "lanturi_asteptate": 6, "vehicule": 284152, "publica": True})
 
 
 if __name__ == "__main__":

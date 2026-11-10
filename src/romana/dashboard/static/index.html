@@ -628,7 +628,7 @@ function liniaFisei(f){
   const zo=x=>{ const ms=msDin(x); return isFinite(ms)?`${ziua(ms)}, ${hm(ms)}`:"—" }, n=x=>typeof x=="number"?nr(x):"—";
   const n2=x=>typeof x=="number"?x.toLocaleString("ro-RO",{maximumFractionDigits:2}):"—";   // mediana, cu două zecimale, ca în fișă și în documentație (5,98)
   return `Ultima fișă a senzorului acoperă ${n(f.ore)}\u00a0h, de la ${zo(f.inceput)}, până la ${zo(f.taietura)}; cadre în ${n(typeof f.pondere_minute_cu_cadre=="number"?f.pondere_minute_cu_cadre*100:null)}% din minute, o mediană de ${n2(f.fps_mediana)}\u00a0cadre analizate pe secundă, `+
-    `${numar(f.opriri_anuntate,"opriri anunțate","o oprire anunțată","nicio oprire anunțată")} și ${numar(f.caderi_neprevazute,"căderi neprevăzute","o cădere neprevăzută","nicio cădere neprevăzută")}; prelucrări de noapte încheiate: ${n(f.lanturi_incheiate)} din ${n(f.lanturi_asteptate)}. `+
+    `${numar(f.opriri_anuntate,"opriri anunțate","o oprire anunțată","nicio oprire anunțată")}${typeof f.caderi_sursa=="number"?`, ${numar(f.caderi_neprevazute,"căderi neprevăzute ale colectării","o cădere neprevăzută a colectării","nicio cădere neprevăzută a colectării")} și ${numar(f.caderi_sursa,"căderi ale sursei camerei","o cădere a sursei camerei","nicio cădere a sursei camerei")}`:` și ${numar(f.caderi_neprevazute,"căderi neprevăzute","o cădere neprevăzută","nicio cădere neprevăzută")}`}; prelucrări de noapte încheiate: ${n(f.lanturi_incheiate)} din ${n(f.lanturi_asteptate)}. `+
     (f.publica?"Fișa e publicată în documentație.":"Fișa e calculată doar pe acest calculator, nepublicată.");
 }
 function afiseazaSenzorul(){

@@ -351,6 +351,8 @@ raspuns((s,v)=>{ const [a,b]=v("noaptea").lanturi; v("noaptea").stare="problema"
   v("veghea").stare="atent"; v("veghea").alerta={ora:s.calculat_la-60,semne:"nu e o listă",dupa_ultimul_rand:true}; s.fisa.publica=false });   // veghea, oprită pe o alertă de acum un minut
 rez.stari_4=await citeste(); rez.stari_4_din_nou=await citeste();   // același răspuns: niciun anunț nou
 raspuns(s=>{ s.fisa=null }); rez.fara_fisa=await citeste();
+raspuns(s=>{ Object.assign(s.fisa,{caderi_sursa:2,caderi_neprevazute:1}) }); rez.fisa_caderi=await citeste();   // o fișă din 10.11 încoace
+raspuns(s=>{ s.fisa.caderi_sursa=0 }); rez.fisa_fara_caderi=await citeste();
 raspuns((s,v)=>{ v("veghea").alerta={ora:s.calculat_la-60,semne:["rata mică: jurnal …"]} }); rez.semn_taiat=await citeste();   // un semn tăiat la o cale: fără „….”
 raspuns(()=>{}); rez.din_nou_ok=await citeste();
 // valorile vechi: o citire reușită, dar de acum 30 s
@@ -1324,6 +1326,12 @@ class TestSenzor(unittest.TestCase):
         self.assertIn("Fișa e calculată doar pe acest calculator, nepublicată.", self.r["stari_4"]["fisa"])
         self.assertEqual(self.r["fara_fisa"]["fisa"], "Nu există încă o fișă a senzorului.")
         self.assertEqual(len(self.r["fara_fisa"]["randuri"]), 5)
+        # din 10.11, fișa are și căderile sursei: alături de căderile colectării, fiecare cu numele ei
+        self.assertIn("2 opriri anunțate, o cădere neprevăzută a colectării și 2 căderi ale sursei camerei; prelucrări de noapte",
+                      self.r["fisa_caderi"]["fisa"])
+        self.assertIn("2 opriri anunțate, nicio cădere neprevăzută a colectării și nicio cădere a sursei camerei; ",
+                      self.r["fisa_fara_caderi"]["fisa"])
+        self.assertNotIn("sursei", f)                                  # fișa publicată la M2 nu le socotea
 
     def test_fiecare_stare_are_cuvantul_si_fraza_ei(self):
         self.verifica_stari("stari_1", ["atent", "problema", "ok", "atent", "necunoscut"])

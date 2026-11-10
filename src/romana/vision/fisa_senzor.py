@@ -9,6 +9,7 @@ decât fișierele cerute (--out-json, --out-md):
   * outputs/logs/reporniri_*.csv – golurile colectării, scrise de paznic (`oprire` = ultima dovadă de viață, `repornire` =
     prima traiectorie nouă; un gol peste miezul nopții apare în fișierul fiecărei zile atinse);
   * outputs/logs/paznic_*.log – notele „oprire anunțată” și repornirile paznicului („repornire, încercarea N: motivul”);
+  * outputs/logs/veghe_alerta_*.json – alertele vegherii: doar cele „fără cadre”, cu ora alertei și ora stării live;
   * outputs/logs/viziune_*.log – doar data creării fiecăruia, adică pornirea fiecărei rulări a colectării. Conținutul lor nu
     se numără: ieșirea standard rămâne în tamponul procesului, iar mesajele fluxului din .err (ffmpeg, OpenCV) nu au oră.
     De aceea reconectările se numără din contorul colectării, notat de veghe în fiecare minut;
@@ -29,12 +30,20 @@ Definițiile (aceleași în JSON, în tabel și pe ecran):
   * pauză – un gol de cel puțin 10 s între două cadre prelucrate, cât rulează colectarea, cum îl notează veghea în
     `evenimente` („HH:MM:SS fără cadre N s”): de la ultimul cadru dinaintea golului (ora din starea live, citită o dată pe
     secundă) până la primul cadru de după el, cu N rotunjit la secundă. Golurile de 2,5–10 s nu se notează și nu intră; o
-    pauză care atinge o oprire ține de oprire. Fiecare pauză se încheie cu un cadru nou, fără repornire: s-a refăcut singură.
-  * minut cu cadre – un minut întreg din fereastră care nu stă în întregime într-o oprire sau într-o pauză (două pauze
-    lipite au între ele cel puțin un cadru); ponderea = minute cu cadre / minute întregi. Un minut fără rând al vegherii,
-    în afara opririlor, se socotește cu cadre: bucla vegherii alunecă un minut la ≈4,5 h, iar după o alertă veghea se
-    repornește; câte sunt se arată separat. Pentru comparație: ponderea timpului cu colectarea pornită (fără opriri) și cea a
-    timpului cu cadre (fără opriri și fără pauze).
+    pauză care atinge o oprire ține de oprire, iar una care atinge o cădere a sursei, de cădere. Fiecare pauză se încheie
+    cu un cadru nou, fără repornire: s-a refăcut singură.
+  * cădere a sursei – un gol al fluxului care nu s-a încheiat cât a mers veghea: după 180 s fără cadre, veghea scrie
+    alerta „fără cadre” și se oprește, deci golul nu ajunge pauză, iar până la repornirea ei nu mai are rânduri. Căderea
+    începe la ultimul cadru dinaintea alertei (ora stării live din alertă; fără ea, ora alertei minus secundele din semn) și
+    ține până la începutul primului minut de după alertă cu un rând al vegherii cu starea proaspătă, iar fără un astfel de
+    rând, până la tăietură. Sfârșitul e o margine de sus: veghea se repornește abia după ce fluxul a revenit. Căderile care
+    se suprapun se unesc, iar partea unei căderi care atinge o oprire ține de oprire. Colectarea a rămas pornită și s-a
+    reconectat singură, deci o cădere nu e o oprire.
+  * minut cu cadre – un minut întreg din fereastră care nu stă în întregime într-o oprire, într-o pauză sau într-o cădere a
+    sursei (două pauze lipite au între ele cel puțin un cadru); ponderea = minute cu cadre / minute întregi. Un minut fără
+    rând al vegherii, în afara opririlor și a căderilor, se socotește cu cadre: bucla vegherii alunecă un minut la ≈4,5 h,
+    iar după o alertă de alt fel veghea se repornește; câte sunt se arată separat. Pentru comparație: ponderea timpului cu
+    colectarea pornită (fără opriri) și cea a timpului cu cadre (fără opriri, pauze și căderi).
   * cadre pe secundă – mediana coloanei `fps` (media glisantă a colectării) pe rândurile din fereastră cu starea proaspătă
     (sub 2,5 s, ca la semnul „rata mică” al vegherii): în timpul unei pauze, `fps` e valoarea de dinaintea ei.
   * reconectări – contorul colectării crește la fiecare pierdere a fluxului și la fiecare încercare eșuată de a-l
@@ -82,6 +91,8 @@ MARJA_ANUNT = 600        # s înaintea ultimei dovezi de viață în care o not�
 MARJA_PORNIRE = 120      # s după repornire în care o pornire încă ține de gol (ora rândului poate fi cea dinaintea pornirii)
 MARJA_REFACUT = 300      # s în jurul unui episod de reconectare în care un gol ar însemna că nu s-a refăcut singur
 TACERE_VEGHE = 180       # s fără rând al vegherii înaintea tăieturii de la care se avertizează (veghe.STARE_VECHE)
+FARA_CADRE_S = 180       # s fără cadre după care veghea dă alerta „fără cadre” (veghe.STARE_VECHE); doar dacă semnul n-o are
+STARE_LIVE_MAX_S = 86400  # s; o oră a stării live mai veche decât atât față de alertă nu se crede (alerta minus semnul)
 GATA = ("gata", "gata_fara_simulari")    # rezultatele unui lanț încheiat (zilele sigilate: fără simulări, § 9.11)
 CLASE = {"passenger": "autoturisme", "bus": "autobuze și troleibuze", "truck": "camioane",
          "motorcycle": "motociclete", "bicycle": "biciclete"}
@@ -92,6 +103,8 @@ ANUNT = re.compile(r"oprire anun[țţt]at[ăa]")
 REPORNIRE = re.compile(r"^repornire, încercarea (\d+): (.*)$")
 PORNIRE_PAZNIC = re.compile(r"pornit: lansatorul are PID \d+; jurnale (viziune_[^,;\s]+\.log)")
 EVENIMENT = re.compile(r"(\d{2}):(\d{2}):(\d{2}) f[ăa]r[ăa] cadre (\d+) s")
+SEMN_FARA_CADRE = re.compile(r"f[ăa]r[ăa] cadre\b")    # la începutul semnului: „fără cadre: niciun cadru prelucrat de N s”
+SECUNDE_SEMN = re.compile(r"\bde (\d+) s\b")
 NUME_ZI = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 DEFINITII = {
@@ -100,8 +113,13 @@ DEFINITII = {
     "randuri_veghe": "rândurile al căror minut a început după început și s-a încheiat până la tăietură",
     "oprire": "un gol din reporniri_*.csv (ultima dovadă de viață → prima traiectorie nouă), tăiat la fereastră; anunțat "
               "dacă paznicul a notat „oprire anunțată” între 10 min înaintea opririi și repornire",
-    "pauza": "un gol de cel puțin 10 s între două cadre prelucrate, din coloana `evenimente` a vegherii, în afara opririlor",
-    "minut_cu_cadre": "minut întreg din fereastră care nu stă în întregime într-o oprire sau într-o pauză",
+    "pauza": "un gol de cel puțin 10 s între două cadre prelucrate, din coloana `evenimente` a vegherii, în afara opririlor "
+             "și a căderilor sursei",
+    "cadere_sursa": "un gol al fluxului care a oprit veghea cu alerta „fără cadre” (veghe_alerta_*.json): de la ultimul "
+                    "cadru dinaintea alertei până la începutul primului minut de după ea cu un rând al vegherii cu starea "
+                    "proaspătă (o margine de sus) sau până la tăietură, în afara opririlor",
+    "minut_cu_cadre": "minut întreg din fereastră care nu stă în întregime într-o oprire, într-o pauză sau într-o cădere a "
+                      "sursei",
     "cadre_pe_secunda": "mediana coloanei `fps` pe rândurile din fereastră cu vârsta stării sub 2,5 s",
     "reconectari": "creșterile contorului colectării (pierderi ale fluxului și încercări eșuate de redeschidere), pe toate "
                    "rulările; episod = creșteri la cel mult 2 min una de alta",
@@ -127,6 +145,13 @@ class Gol:
     repornire: float             # prima traiectorie nouă (sau, până se află, momentul pornirii)
     anuntat: bool = False
     motiv: str = ""              # motivul repornirii, din jurnalul paznicului
+
+
+@dataclass
+class Cadere:
+    inceput: float               # ultimul cadru dinaintea alertei „fără cadre”
+    sfarsit: float | None        # începutul primului minut de după alertă cu starea proaspătă; None = niciunul până acum
+    alerte: list[float] = field(default_factory=list)       # orele alertelor care țin de ea
 
 
 @dataclass
@@ -234,6 +259,39 @@ def citeste_goluri(loguri: Path) -> list[Gol]:
     return goluri
 
 
+def citeste_caderi(loguri: Path, randuri: list[RandVeghe]) -> list[Cadere]:
+    """Căderile sursei, în ordine: una pentru fiecare alertă „fără cadre” din veghe_alerta_*.json, unite cele care se
+    suprapun (o veghe pornită din nou cât fluxul încă lipsește dă o alertă nouă pentru același gol). Începutul e ora stării
+    live din alertă, dacă nu e după alertă și nici mai veche de STARE_LIVE_MAX_S față de ea, altfel ora alertei minus
+    secundele din semn; sfârșitul, începutul primului minut de după alertă cu un rând al vegherii cu starea proaspătă
+    (`randuri`, în ordinea minutelor). Un fișier necitibil sau de altă formă și o alertă de alt fel se sar."""
+    caderi: list[Cadere] = []
+    for f in sorted(Path(loguri).glob("veghe_alerta_*.json")):
+        try:
+            d = json.loads(_citeste_text(f) or "")
+            alerta = ora(d["ora"])
+            semn = next(s for s in d["semne"] if isinstance(s, str) and SEMN_FARA_CADRE.match(s))
+        except (ValueError, TypeError, KeyError, AttributeError, StopIteration):
+            continue
+        live = d.get("stare_live")
+        inceput = _numar(live.get("timestamp")) if isinstance(live, dict) else None
+        if inceput is None or not alerta - STARE_LIVE_MAX_S <= inceput <= alerta:
+            m = SECUNDE_SEMN.search(semn)
+            inceput = alerta - (int(m.group(1)) if m else FARA_CADRE_S)
+        sfarsit = next((max(r.t, alerta) for r in randuri
+                        if r.t + 60 > alerta and (r.varsta is None or r.varsta < STARE_PROASPATA)), None)
+        caderi.append(Cadere(inceput, sfarsit, [alerta]))
+    unite: list[Cadere] = []
+    for c in sorted(caderi, key=lambda x: x.inceput):
+        u = unite[-1] if unite else None
+        if u is not None and (u.sfarsit is None or c.inceput <= u.sfarsit):
+            u.sfarsit = None if u.sfarsit is None or c.sfarsit is None else max(u.sfarsit, c.sfarsit)
+            u.alerte += c.alerte
+        else:
+            unite.append(c)
+    return unite
+
+
 def citeste_paznic(loguri: Path) -> JurnalPaznic:
     """Notele paznicului care contează aici; rândurile unei erori (urma apelurilor) nu încep cu ora și se sar."""
     j = JurnalPaznic()
@@ -310,6 +368,22 @@ def minute_in(a: float, b: float, minute: range) -> range:
 
 def _taie(a: float, b: float, t0: float, t1: float) -> float:
     return max(0.0, min(b, t1) - max(a, t0))
+
+
+def _uneste(intervale) -> list[tuple[float, float]]:
+    out: list[tuple[float, float]] = []
+    for a, b in sorted(intervale):
+        if out and a <= out[-1][1]:
+            out[-1] = (out[-1][0], max(out[-1][1], b))
+        else:
+            out.append((a, b))
+    return out
+
+
+def secunde_in_afara(intervale, scoase) -> float:
+    """Câte secunde acoperă `intervale`, unite, în afara intervalelor `scoase` (amândouă perechi (a, b))."""
+    scoase = _uneste(scoase)
+    return sum(b - a - sum(_taie(x, y, a, b) for x, y in scoase) for a, b in _uneste(intervale))
 
 
 def reconectari(randuri: list[RandVeghe], porniri: list[tuple[float, str]], goluri: list[Gol], t0: float,
@@ -470,18 +544,24 @@ def fisa(taietura: float, de_la: float | None = None, loguri: Path = LOG_DIR, ve
     if t1 <= t0:
         raise ValueError(f"tăietura ({iso(t1)}) nu e după început ({iso(t0)})")
 
-    # opririle și pauzele din fereastră
+    # opririle, căderile sursei și pauzele din fereastră
     goluri_fer = [g for g in goluri if _taie(g.oprire, g.repornire, t0, t1) > 0]
     toate_randurile, dublate = citeste_veghe(fis_veghe)
+    # o cădere fără sfârșit încă ține până la tăietură
+    caderi = [(c, c.inceput, math.inf if c.sfarsit is None else c.sfarsit) for c in citeste_caderi(loguri, toate_randurile)]
+    caderi_fer = [(c, max(a, t0), min(b, t1)) for c, a, b in caderi if _taie(a, b, t0, t1) > 0]
+    opriri_fer = [(max(g.oprire, t0), min(g.repornire, t1)) for g in goluri_fer]
     # o pauză încă în curs la tăietură se numără până la ea, în secunde întregi
     pauze = [(a, min(d, math.floor(t1 - a))) for a, d in pauze_din(toate_randurile)
-             if t0 <= a < t1 and not any(a < g.repornire and a + d > g.oprire for g in goluri)]
+             if t0 <= a < t1 and not any(a < g.repornire and a + d > g.oprire for g in goluri)
+             and not any(a < cb and a + d > ca for _, ca, cb in caderi)]
     minute = minute_intregi(t0, t1)
     fara = set()
-    for a, b in [(g.oprire, g.repornire) for g in goluri_fer] + [(a, a + d) for a, d in pauze]:
+    for a, b in opriri_fer + [(a, a + d) for a, d in pauze] + [(a, b) for _, a, b in caderi_fer]:
         fara.update(minute_in(a, b, minute))
-    oprit_s = sum(_taie(g.oprire, g.repornire, t0, t1) for g in goluri_fer)
+    oprit_s = sum(b - a for a, b in opriri_fer)
     pauze_s = sum(d for _, d in pauze)
+    caderi_s = secunde_in_afara([(a, b) for _, a, b in caderi_fer], opriri_fer)
     durata = t1 - t0
 
     # rândurile vegherii din fereastră: cadrele pe secundă și reconectările
@@ -502,7 +582,7 @@ def fisa(taietura: float, de_la: float | None = None, loguri: Path = LOG_DIR, ve
     lant = lanturi_noapte(LANTURI if lanturi is None else lanturi, t0, t1)
     num = numaratori(dosar_numaratori, t0, t1)
     citite = [*fis_veghe, *sorted(loguri.glob("reporniri_*.csv")), *sorted(loguri.glob("paznic_*.log")),
-              *[loguri / n for _, n in porniri]]
+              *sorted(loguri.glob("veghe_alerta_*.json")), *[loguri / n for _, n in porniri]]
 
     return {
         "taietura": iso(t1), "inceput": iso(t0), "sursa_inceputului": sursa,
@@ -510,9 +590,9 @@ def fisa(taietura: float, de_la: float | None = None, loguri: Path = LOG_DIR, ve
         "minute": {"intregi": len(minute), "cu_cadre": len(minute) - len(fara), "fara_cadre": len(fara),
                    "pondere_cu_cadre": round((len(minute) - len(fara)) / len(minute), 5) if len(minute) else None,
                    "fara_rand_veghe": fara_rand},
-        "timp": {"oprit_s": round(oprit_s), "pauze_s": round(pauze_s),
+        "timp": {"oprit_s": round(oprit_s), "pauze_s": round(pauze_s), "caderi_s": round(caderi_s),
                  "pondere_colectare_pornita": round(1 - oprit_s / durata, 5),
-                 "pondere_cu_cadre": round(1 - (oprit_s + pauze_s) / durata, 5)},
+                 "pondere_cu_cadre": round(1 - (oprit_s + pauze_s + caderi_s) / durata, 5)},
         "veghe": {"randuri": len(randuri), "randuri_dublate_lasate": dublate,
                   "primul": iso(randuri[0].t) if randuri else None, "ultimul": iso(randuri[-1].t) if randuri else None,
                   "tacere_inainte_de_taietura_s": None if tacere is None else round(tacere)},
@@ -525,6 +605,12 @@ def fisa(taietura: float, de_la: float | None = None, loguri: Path = LOG_DIR, ve
                   "cea_mai_lunga_s": max((d for _, d in pauze), default=None),
                   "mediana_s": statistics.median([d for _, d in pauze]) if pauze else None,
                   "lista": [{"inceput": iso(a), "durata_s": d} for a, d in pauze]},
+        "caderi_sursa": {"numar": len(caderi_fer), "durata_s": round(caderi_s),
+                         "lista": [{"inceput": iso(a), "sfarsit": iso(b),
+                                    "durata_s": round(secunde_in_afara([(a, b)], opriri_fer)),
+                                    "alerte": [iso(x) for x in c.alerte],
+                                    "in_curs_la_taietura": c.sfarsit is None or c.sfarsit > t1}
+                                   for c, a, b in caderi_fer]},
         "reconectari": {"cresteri_contor": sum(n for _, n in cresteri), "episoade": len(ep), "refacute_singure": refacute,
                         "lista": [{"de_la": iso(a), "pana_la": iso(b), "cresteri": n} for a, b, n in ep]},
         "opriri": {"anuntate": len(anuntate), "caderi_neprevazute": len(neprevazute),
@@ -586,6 +672,17 @@ def _clase_text(pe_clase: dict) -> str:
     return ", ".join(f"{CLASE.get(k, k)} {nr(n)}" for k, n in pe_clase.items())
 
 
+def _caderi_text(cs: dict | None) -> str:
+    """Numărul căderilor sursei și durata lor, o margine de sus (§ 4.6); o fișă dinaintea lor n-are câmpul."""
+    if not cs:
+        return "nesocotite în această fișă"
+    if not cs["numar"]:
+        return "0"
+    in_curs = sum(1 for x in cs["lista"] if x["in_curs_la_taietura"])
+    return (f"{nr(cs['numar'])}, în total cel mult {durata_text(cs['durata_s'])}"
+            + (f" ({'una' if in_curs == 1 else nr(in_curs)} în curs la tăietură)" if in_curs else ""))
+
+
 def _lanturi_text(lant: dict) -> str:
     parti = []
     for k, v in lant.items():
@@ -610,6 +707,7 @@ def rezumat(f: dict) -> str:
         f"  cadre analizate pe secundă     mediana {nr(c['mediana'], 2)} ({nr(c['randuri'])} minute cu starea proaspătă)",
         f"  pauze fără cadre, de ≥ 10 s    {nr(p['numar'])}, în total {durata_text(p['durata_s'])}"
         + (f"; cea mai lungă {nr(p['cea_mai_lunga_s'])} s, mediana {nr(p['mediana_s'])} s" if p["numar"] else ""),
+        f"  căderi ale sursei camerei      {_caderi_text(f.get('caderi_sursa'))}",
         f"  reconectări la fluxul camerei  {nr(r['episoade'])} episoade ({nr(r['cresteri_contor'])} creșteri ale "
         f"contorului), refăcute singure: {nr(r['refacute_singure'])}",
         f"  opriri                         {nr(o['anuntate'])} anunțate, {nr(o['caderi_neprevazute'])} căderi neprevăzute"
@@ -643,6 +741,7 @@ def tabel_md(f: dict) -> str:
            f"| Cadre analizate pe secundă (mediana) | {nr(c['mediana'], 2)} |",
            f"| Pauze fără cadre, de cel puțin 10 s | {nr(p['numar'])} ({nr(p['durata_s'])} s în total"
            + (f"; cea mai lungă {nr(p['cea_mai_lunga_s'])} s)" if p["numar"] else ")") + " |",
+           f"| Căderi ale sursei camerei (veghea oprită de „fără cadre”) | {_caderi_text(f.get('caderi_sursa'))} |",
            f"| Reconectări la fluxul camerei | {nr(r['episoade'])} episoade ({nr(r['cresteri_contor'])} creșteri ale "
            f"contorului) |",
            f"| Opriri anunțate / căderi neprevăzute | {nr(o['anuntate'])} / {nr(o['caderi_neprevazute'])} |",

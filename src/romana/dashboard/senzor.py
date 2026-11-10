@@ -797,6 +797,7 @@ def ultima_fisa(fise=FISE) -> dict | None:
             "pondere_minute_cu_cadre": _nr(din("minute", "pondere_cu_cadre")),
             "fps_mediana": _nr(din("cadre_pe_secunda", "mediana")), "opriri_anuntate": _nr(din("opriri", "anuntate")),
             "caderi_neprevazute": _nr(din("opriri", "caderi_neprevazute")), "pauze": _nr(din("pauze", "numar")),
+            "caderi_sursa": _nr(din("caderi_sursa", "numar")),      # None: o fișă dinaintea lor (până la 10.11)
             "episoade_reconectare": _nr(din("reconectari", "episoade")),
             "lanturi_incheiate": _suma(_nr(x.get("incheiate")) for x in lanturi),
             "lanturi_asteptate": _suma(_nr(x.get("asteptate")) for x in lanturi),

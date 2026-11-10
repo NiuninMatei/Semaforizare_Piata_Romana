@@ -352,6 +352,118 @@ class TestPiese(unittest.TestCase):
         self.assertEqual(fs.durata_text(715), "11 min 55 s")
 
 
+def scrie_alerta(dosar: Path, alerta: float, semne: list, ultimul_cadru: float | None = None) -> None:
+    """O alertă a vegherii, cu câmpurile pe care le citește fișa (`ora`, `semne` și ora stării live)."""
+    d = {"semne": semne, "ora": datetime.fromtimestamp(alerta).isoformat(timespec="seconds")}
+    if ultimul_cadru is not None:
+        d["stare_live"] = {"timestamp": ultimul_cadru, "fps": 4.8, "conectat": True}
+    (dosar / f"veghe_alerta_{datetime.fromtimestamp(alerta):%Y-%m-%d_%H%M%S}.json").write_text(
+        json.dumps(d, ensure_ascii=False), encoding="utf-8")
+
+
+def randuri_veghe(f: Path, randuri: dict) -> None:
+    """Un CSV al vegherii din {minutul: (vârsta stării, evenimentele)}."""
+    with open(f, "w", newline="", encoding="utf-8") as fo:
+        w = csv.writer(fo)
+        w.writerow(CSV_CAP)
+        for t, (varsta, ev) in sorted(randuri.items()):
+            r = dict.fromkeys(CSV_CAP, "")
+            r.update(ora=datetime.fromtimestamp(t).strftime("%Y-%m-%d %H:%M"), fps=6.0, varsta_stare_s=varsta,
+                     reconectari=0, evenimente=ev)
+            w.writerow([r[c] for c in CSV_CAP])
+
+
+class TestCaderiSursei(unittest.TestCase):
+    """Ca pe 9 și 10.11: fluxul lipsește, colectarea rămâne pornită, iar veghea se oprește cu alerta „fără cadre” și e
+    pornită din nou abia după ce fluxul revine. Golul nu ajunge pauză, iar până la repornire veghea nu are rânduri."""
+
+    T0, T1 = Z(20, 8), Z(20, 12)
+    ULTIM = Z(20, 9, 10, 49) + 0.7          # ultimul cadru: ora stării live din alertă
+    ALERTA = Z(20, 9, 13, 50)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.loguri = Path(cls.tmp.name)
+        lipsa = {*range(int(Z(20, 9, 14)), int(Z(20, 9, 30)), 60),       # veghea oprită de alertă, până la repornire
+                 *range(int(Z(20, 10, 31)), int(Z(20, 10, 35)), 60)}     # oprită de o alertă „rata mică”: cu cadre
+        randuri = {t: (0.5, "") for t in range(int(cls.T0), int(cls.T1 + 120), 60) if t not in lipsa}
+        randuri.update({Z(20, 9, 11): (42.4, ""), Z(20, 9, 12): (102.5, ""), Z(20, 9, 13): (162.7, ""),   # golul în curs
+                        Z(20, 8, 31): (0.5, _eveniment((Z(20, 8, 30, 5), 25), None)),
+                        # o pauză care atinge căderea ține de cădere
+                        Z(20, 9, 30): (0.9, _eveniment((cls.ULTIM, 1150), None))})
+        randuri_veghe(cls.loguri / "veghe_2026-06-20.csv", randuri)
+        scrie_alerta(cls.loguri, cls.ALERTA, ["fără cadre: niciun cadru prelucrat de 181 s"], cls.ULTIM)
+        scrie_alerta(cls.loguri, Z(20, 10, 30, 30), ["rata mică: 3.4 cadre/s (mediana ultimelor 3 min)"], Z(20, 10, 30, 29))
+        (cls.loguri / "veghe_alerta_2026-06-20_111111.json").write_text("{nu e JSON", encoding="utf-8")
+        cls.f = fs.fisa(cls.T1, de_la=cls.T0, loguri=cls.loguri, lanturi={}, dosar_numaratori=cls.loguri,
+                        nastere=lambda p: None)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_caderea_de_la_ultimul_cadru_pana_la_primul_rand_proaspat(self):
+        c = self.f["caderi_sursa"]
+        self.assertEqual(c["numar"], 1)
+        x = c["lista"][0]
+        self.assertEqual((x["inceput"], x["sfarsit"], x["alerte"], x["in_curs_la_taietura"]),
+                         ("2026-06-20T09:10:49", "2026-06-20T09:30:00", ["2026-06-20T09:13:50"], False))
+        self.assertEqual((x["durata_s"], c["durata_s"], self.f["timp"]["caderi_s"]), (1150, 1150, 1150))
+        self.assertEqual(self.f["opriri"]["lista"], [])                  # colectarea a rămas pornită: nu e o oprire
+
+    def test_minutele_caderii_sunt_fara_cadre_nu_fara_rand(self):
+        m = self.f["minute"]
+        self.assertEqual((m["intregi"], m["fara_cadre"], m["cu_cadre"]), (240, 19, 221))   # 09:11–09:29
+        self.assertEqual(m["fara_rand_veghe"], 4)              # 10:31–10:34, după alerta „rata mică”: cu cadre
+
+    def test_pauzele_si_timpul_cu_cadre(self):
+        p, t = self.f["pauze"], self.f["timp"]
+        self.assertEqual((p["numar"], p["durata_s"]), (1, 25))
+        self.assertEqual(t["pondere_cu_cadre"], round(1 - (25 + 1150.3) / (4 * 3600), 5))
+        self.assertEqual(t["pondere_colectare_pornita"], 1.0)
+
+    def test_alertele_de_alt_fel_sau_stricate_se_sar(self):
+        caderi = fs.citeste_caderi(self.loguri, [])
+        self.assertEqual([(c.inceput, c.sfarsit) for c in caderi], [(self.ULTIM, None)])   # fără rânduri: fără sfârșit
+
+    def test_rezumatul_si_tabelul(self):
+        self.assertIn("căderi ale sursei camerei      1, în total cel mult 19 min 10 s\n", fs.rezumat(self.f))
+        self.assertIn("| Căderi ale sursei camerei (veghea oprită de „fără cadre”) | 1, în total cel mult 19 min 10 s |",
+                      fs.tabel_md(self.f))
+        self.assertTrue(any(Path(x).name == "veghe_alerta_2026-06-20_091350.json" for x in self.f["fisiere_citite"]))
+
+    def test_caderea_in_curs_la_taietura_si_alertele_aceluiasi_gol(self):
+        # veghea pornită din nou cât fluxul încă lipsește: rânduri cu starea veche, apoi o a doua alertă pentru același gol,
+        # aici fără starea live (începutul vine din semn); niciun rând proaspăt până la tăietură
+        with tempfile.TemporaryDirectory() as d:
+            loguri, ultim = Path(d), Z(21, 9, 20, 30)
+            randuri = {t: (0.5, "") for t in range(int(Z(21, 8)), int(Z(21, 9, 21)), 60)}
+            randuri.update({Z(21, 9, 21): (30.0, ""), Z(21, 9, 22): (90.0, ""), Z(21, 9, 23): (150.0, ""),
+                            Z(21, 9, 31): (630.0, ""), Z(21, 9, 32): (690.0, ""), Z(21, 9, 33): (750.0, "")})
+            randuri_veghe(loguri / "veghe_2026-06-21.csv", randuri)
+            scrie_alerta(loguri, Z(21, 9, 23, 30), ["fără cadre: niciun cadru prelucrat de 180 s"], ultim)
+            scrie_alerta(loguri, Z(21, 9, 33, 40), ["fără cadre: niciun cadru prelucrat de 790 s", "rata mică: 0 cadre/s"])
+            caderi = fs.citeste_caderi(loguri, fs.citeste_veghe([loguri / "veghe_2026-06-21.csv"])[0])
+            self.assertEqual([(c.inceput, c.sfarsit, c.alerte) for c in caderi],
+                             [(ultim, None, [Z(21, 9, 23, 30), Z(21, 9, 33, 40)])])
+            f = fs.fisa(Z(21, 10), de_la=Z(21, 8), loguri=loguri, lanturi={}, dosar_numaratori=loguri,
+                        nastere=lambda p: None)
+        x = f["caderi_sursa"]["lista"]
+        self.assertEqual([(y["inceput"], y["sfarsit"], y["durata_s"], y["in_curs_la_taietura"]) for y in x],
+                         [("2026-06-21T09:20:30", "2026-06-21T10:00:00", 2370, True)])
+        self.assertEqual((f["minute"]["fara_cadre"], f["minute"]["fara_rand_veghe"]), (39, 0))     # 09:21–09:59
+        self.assertIn("1, în total cel mult 39 min 30 s (una în curs la tăietură)", fs.rezumat(f))
+
+    def test_secundele_in_afara_opririlor(self):
+        self.assertEqual(fs.secunde_in_afara([(0, 10), (5, 20), (30, 40)], [(8, 12), (11, 35)]), 8 + 5)
+        self.assertEqual(fs.secunde_in_afara([], [(0, 1)]), 0)
+
+    def test_o_fisa_dinaintea_caderilor_nu_le_socoteste(self):
+        self.assertEqual(fs._caderi_text(None), "nesocotite în această fișă")
+        self.assertEqual(fs._caderi_text({"numar": 0, "durata_s": 0, "lista": []}), "0")
+
+
 def _jurnale_reale() -> bool:
     """Jurnalele colectării de la 01.11, cu datele de creare păstrate (o copie a dosarului le-ar schimba)."""
     pornire = fs.LOG_DIR / "viziune_2026-11-01.log"
@@ -376,6 +488,15 @@ class TestJurnaleReale(unittest.TestCase):
         self.assertEqual((f["reconectari"]["cresteri_contor"], f["reconectari"]["episoade"]), (15, 10))
         self.assertEqual((f["opriri"]["anuntate"], f["opriri"]["caderi_neprevazute"]), (2, 0))
         self.assertEqual(f["lanturi"]["total"], {"asteptate": 6, "incheiate": 6})
+        self.assertEqual(f["caderi_sursa"]["numar"], 0)
+
+    def test_caderile_sursei_din_9_si_10_11(self):
+        # veghea s-a oprit cu „fără cadre” la 19:13:50 și la 00:29:27 și a fost pornită din nou la 19:29 și la 01:18
+        f = fs.fisa(fs.ora("2026-11-10 10:00"))
+        self.assertEqual([(x["inceput"], x["sfarsit"], x["in_curs_la_taietura"]) for x in f["caderi_sursa"]["lista"]],
+                         [("2026-11-09T19:10:49", "2026-11-09T19:30:00", False),
+                          ("2026-11-10T00:26:26", "2026-11-10T01:19:00", False)])
+        self.assertEqual(f["opriri"]["caderi_neprevazute"], 0)
 
 
 if __name__ == "__main__":

@@ -158,7 +158,7 @@ trimitere la locul unde sunt prezentate în detaliu.
 | `calitate` | Modulul `romana.vision.calitate`: verifică, după colectare, cât de continuă a fost urmărirea. Măsoară golurile dintre punctele traiectoriilor, densitatea punctelor și pașii lungi, apoi marchează intervalele încetinite. | § 4.6 |
 | `veghe` | Modulul `romana.vision.veghe`: rulează alături de analiza camerei și urmărește în fiecare secundă starea prelucrării. La primul semn de problemă se oprește cu o alertă și un diagnostic, ca problema să fie analizată pe loc, nu a doua zi. | § 4.6 |
 | `paznic` | Modulul `romana.vision.paznic`, paznicul colectării: o dată pe minut verifică dacă analiza camerei rulează și dă semne de viață. Dacă procesul lipsește la două verificări la rând sau tace de 5 minute, deși camera răspunde, îl repornește singur; dacă problema e la cameră sau la rețea, doar așteaptă. Înaintea unei opriri voite se pune fișierul `outputs/live/fara_repornire`, iar fiecare gol se trece în `outputs/logs/reporniri_<zi>.csv`. | § 4.6 |
-| fișa senzorului, `fisa_senzor` | Modulul `romana.vision.fisa_senzor`: reface din jurnalele laptopului, până la o oră aleasă și cu aceleași definiții de fiecare dată, cifrele colectării: de când merge, câte opriri anunțate și câte căderi neprevăzute au fost, ce parte din minute au cadre, câte cadre se analizează pe secundă, câte pauze și reconectări au fost, câte prelucrări de noapte s-au încheiat și câte vehicule s-au numărat; pietonii, doar ca total pe zi. | § 4.6 |
+| fișa senzorului, `fisa_senzor` | Modulul `romana.vision.fisa_senzor`: reface din jurnalele laptopului, până la o oră aleasă și cu aceleași definiții de fiecare dată, cifrele colectării: de când merge, câte opriri anunțate și câte căderi neprevăzute au fost, câte căderi ale sursei camerei, ce parte din minute au cadre, câte cadre se analizează pe secundă, câte pauze și reconectări au fost, câte prelucrări de noapte s-au încheiat și câte vehicule s-au numărat; pietonii, doar ca total pe zi. | § 4.6 |
 | starea senzorului, `?imagine=0` | Panoul din dispecerat, din 9.11, care spune în cuvinte cum merg cele cinci verigi ale colectării: camera, numărătorile, veghea, paznicul și prelucrarea de noapte. Fiecare are una dintre stările „în regulă”, „de urmărit”, „problemă” sau „nu se știe”, cu regula scrisă sub ea. Panoul stă în locul imaginii camerei, când aceasta e ascunsă; adresa paginii terminată în `?imagine=0` o deschide direct așa, de exemplu la o prezentare online. | § 4.6, § 8 |
 | microînghețare | Oprire a imaginii de 10–30 s, de câteva ori pe zi, cam 0,1–0,2% din timpul înregistrat, când un segment al fluxului întârzie. Trece singură; efectul asupra numărătorilor e neglijabil, dar nu nul. | § 4.6 |
 | pas, pași lungi | Pasul este timpul dintre două puncte consecutive ale unei traiectorii, în mod normal ≈0,17–0,2 s. Un pas lung, de peste 0,5 s, înseamnă cadre pierdute. | § 4.6 |
@@ -1323,9 +1323,12 @@ mergea. Pe 9.11, ≈19:10–19:24, serverul fluxului n-a mai primit conexiuni, c
 reconectat singur, iar paznicul n-a repornit nimic, fiindcă lista de redare a camerei nu se putea citi. Veghea s-a oprit cu
 alerta „fără cadre”, la 19:13:50 și la 00:29:27, și n-a repornit singură: a fost pornită din nou abia după 5 minute de cadre
 neîntrerupte, la 19:29 și la 01:18, de un script de lucru care nu face parte din depozit. Golul care a dus la alertă nu s-a
-încheiat cât a mers veghea, deci nu e notat ca pauză, iar de la alertă până la repornire veghea nu are rânduri de minut. Fișa
-senzorului nu vede deci aceste căderi și, după regula de mai jos, le socotește minutele cu cadre: o fișă care le cuprinde pe
-amândouă numără ≈1 h fără cadre ca minute cu cadre, iar doar minutele dintre alertă și repornire apar în `fara_rand_veghe`.
+încheiat cât a mers veghea, deci nu e notat ca pauză, iar de la alertă până la repornire veghea nu are rânduri de minut. Până
+pe 10.11, fișa senzorului nu vedea deci aceste căderi și le socotea minutele cu cadre. De atunci, fișa ia din fiecare alertă
+„fără cadre” ora ultimului cadru, scrisă în ea, și socotește căderea de acolo până la primul rând al vegherii de după
+repornire: pe 9.11, 19:10–19:30, și pe 10.11, 00:26–01:19, în total cel mult ≈1 h 12 min. E o margine de sus, fiindcă
+veghea a fost pornită din nou abia la câteva minute după revenirea fluxului. Minutele căderii se socotesc fără cadre, dar nu
+ca o oprire, fiindcă în tot acest timp colectarea a rămas pornită.
 
 **Fișa senzorului (5–6.11.2026).** Camera, împreună cu modulul de viziune, este senzorul proiectului, în sensul Internetului
 lucrurilor (§ 3). Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a
@@ -1336,8 +1339,9 @@ Jurnalele vegherii și ale paznicului rămân pe calculatorul autorului, deci fi
 aici, calculată până la sfârșitul zilei de 5.11, adică până pe 6.11, la 00:00, e publicată în
 `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul în `docs/rezultate/fisa_senzor_2026-11-06_0000.md`.
 Definițiile sunt în `python -m romana.vision.fisa_senzor --help`, iar testele, în `tests/test_fisa_senzor.py`. Fișa află
-pauzele doar din rândurile vegherii: un minut fără rândul ei, în afara opririlor, se socotește cu cadre, iar câte astfel de
-minute sunt arată câmpul `fara_rand_veghe` din fișierul JSON: 31 în fișa citată aici. Fiindcă e calculată fix până la
+pauzele și, din 10.11, căderile sursei doar din jurnalele vegherii: un minut fără rândul ei, în afara opririlor și a
+căderilor, se socotește cu cadre, iar câte astfel de minute sunt arată câmpul `fara_rand_veghe` din fișierul JSON: 31 în
+fișa citată aici, care nu cuprinde nicio cădere a sursei. Fiindcă e calculată fix până la
 miezul nopții, tabelul ei are și un rând al zilei de 6.11, doar cu zerouri; din 10.11, fișa nu mai scrie acest rând, iar
 totalurile rămân aceleași.
 
@@ -1357,7 +1361,7 @@ prezentării bornei M2.
 dacă senzorul merge, dispeceratul are panoul „Starea senzorului”, care stă în locul imaginii camerei când aceasta e ascunsă (§ 4.5, § 8).
 Panoul arată cinci verigi, în ordinea drumului datelor. Fiecare are una dintre stările „în regulă”, „de urmărit”, „problemă”
 sau „nu se știe”, o frază, ora ultimului semn de viață și regula ei, scrisă dedesubt. Ultimul rând arată ultima fișă a
-senzorului, publicată sau nu.
+senzorului, publicată sau nu; o fișă calculată din 10.11 spune acolo și câte căderi ale sursei camerei a avut.
 
 | Veriga | Ce citește | De urmărit | Problemă |
 |---|---|---|---|
@@ -4537,7 +4541,7 @@ Tabelul adună problemele întâlnite cel mai des și soluția fiecăreia.
 | strategiile, cu teleportări și ciocniri | `python -m romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1-10 --fara-alegere --out outputs/validare/<fișier>.csv` |
 | decizia zilei de validare, 4.11 (§ 9.11) | `python -m romana.lant_cor --zi 2026-11-04 --uscat` arată, fără să ruleze nimic, comenzile exacte ale zilei: geamănul față de cameră, cu poarta, strategiile pe seed-urile 11–15 și regula din § 9.11. Decizia scrisă de lanț e copiată octet cu octet în `docs/rezultate/cor_decizie_2026-11-04.json`, iar poarta zilei e în `docs/rezultate/poarta_cor_2026-11-04.json` |
 
-**Fișa senzorului** (§ 4.6) se calculează cu `python -m romana.vision.fisa_senzor --pana-la "AAAA-LL-ZZ HH:MM" --out-json outputs/fisa.json --out-md outputs/fisa.md`. Modulul citește jurnalele locale ale colectării, ale paznicului, ale vegherii și ale lanțurilor de noapte, din `outputs/`, care nu intră în depozit, plus numărătorile din `data/counts/`; pe o copie a depozitului fără aceste jurnale, fișa nu se poate reface. Rezultatul publicat, la tăietura din 6.11, 00:00, e `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul scurt în fișierul `.md` cu același nume. Din 10.11, la o tăietură fix la miezul nopții, fișa nu mai scrie rândul gol al zilei care abia începe, ca rândul „vin. 06.11” din tabelul publicat; totalurile nu se schimbă, fiindcă rândul are doar zerouri.
+**Fișa senzorului** (§ 4.6) se calculează cu `python -m romana.vision.fisa_senzor --pana-la "AAAA-LL-ZZ HH:MM" --out-json outputs/fisa.json --out-md outputs/fisa.md`. Modulul citește jurnalele locale ale colectării, ale paznicului, ale vegherii și ale lanțurilor de noapte, din `outputs/`, care nu intră în depozit, plus numărătorile din `data/counts/`; pe o copie a depozitului fără aceste jurnale, fișa nu se poate reface. Rezultatul publicat, la tăietura din 6.11, 00:00, e `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul scurt în fișierul `.md` cu același nume. Din 10.11, la o tăietură fix la miezul nopții, fișa nu mai scrie rândul gol al zilei care abia începe, ca rândul „vin. 06.11” din tabelul publicat; totalurile nu se schimbă, fiindcă rândul are doar zerouri. Tot din 10.11, fișa citește și alertele vegherii, `outputs/logs/veghe_alerta_*.json`, iar căderile sursei din alertele „fără cadre” le socotește ca minute fără cadre, cu o margine de sus (§ 4.6).
 
 Această secțiune arată cum se verifică rezultatele: statisticile din capitolul 9 se recalculează exact din fișierele
 publicate, iar o simulare repetată cu aceleași date dă exact același rezultat. Comenzile, de la paragraful „Pentru
@@ -5023,7 +5027,8 @@ se află în `docs/prezentari/`.
   ≈00:26–01:13; colectarea s-a reconectat singură, iar veghea, care nu repornește singură, a fost pornită din nou după 5 minute de cadre
   neîntrerupte (§ 4.6).
 * **Fișa senzorului (10.11):** la o tăietură fix la miezul nopții, nu mai scrie rândul gol al zilei care abia începe (commitul
-  `fee7395`).
+  `fee7395`). Tot atunci, fișa a început să vadă căderile sursei: le socotește din alertele vegherii, de la ultimul cadru
+  până la repornirea ei, ca minute fără cadre, iar panoul le pomenește la ultima fișă (§ 4.6).
 * **Istoricul de pe GitHub (9.11):** la cererea autorului, GitHub a anunțat că a șters referința `refs/pull/1/head` și
   commit-urile vechi pe care le mai ținea (§ 12.5).
 
