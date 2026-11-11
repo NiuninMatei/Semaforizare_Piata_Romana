@@ -2431,6 +2431,16 @@ anunțat ≈46 s, iar verdele a venit în 47 s. Revenirea la „Planul observat�
 ≈6 cadre/s. Orele cererilor sunt în jurnalul comenzilor serverului, care rămâne pe calculatorul autorului; secundele anunțate
 și orele aplicării sunt cele scrise de bandă.
 
+**Așezarea pe ecranul unui laptop (11.11.2026).** Aceeași probă, refăcută la mărimea ferestrei de pe laptopul autorului, de
+1536 × 730 px, a arătat două neajunsuri. După preluarea comenzii, explicația de sub „Comandă manuală” împingea butoanele
+direcțiilor sub marginea de jos a ferestrei, iar confirmarea întoarcerii la program se deschidea sub ele și trăgea pagina
+≈700 px în jos, scoțând din vedere starea senzorului. De aceea, în comanda manuală, butoanele direcțiilor stau acum înaintea
+explicației, iar confirmarea se deschide imediat sub cartonașele modurilor. La aceeași mărime, butoanele, banda și rândul de
+rezumat al stării senzorului se văd deodată, iar la confirmarea întoarcerii pagina se mișcă doar ≈25 px. La proba de după
+schimbare, banda a anunțat ≈18 s, iar verdele a venit în 18 s. Cât e deschisă confirmarea unei faze cu risc, celelalte butoane
+ale comenzii manuale nu se pot apăsa cu mausul, ca un al doilea clic, dat din greșeală, să nu trimită o comandă neconfirmată.
+Șase teste țin această așezare la 1536 × 730 și la 1536 × 700 (`tests/test_dispecerat.py`, commitul `3dbddd4`).
+
 **Evaluarea cu evaluatori AI.** Pagina a fost arătată unor evaluatori care nu știau ce defecte cunoaște autorul: 5 evaluatori
 euristici, fiecare cu alt rol, un evaluator care parcurge 5 sarcini de operator și un audit de accesibilitate. Rolurile sunt un
 specialist în ergonomie, un dispecer de trafic, cineva fără nicio pregătire în trafic, un specialist în erori și stări degradate
@@ -5097,6 +5107,9 @@ prezentarea bornei M3, pe 15.11.2026, e în commit-urile „Borna M3: …”. Pe
 * **Capturile prezentării (10.11):** unealta de capturi fotografiază și stările comenzii urmărite pas cu pas, cu pașii
   controlerului real, și panoul senzorului, cu starea lui reală de la ora capturii, toate cu același ceas (commiturile
   `9cc7b73` și `99cccfa`, § 8).
+* **Proba demonstrației și așezarea pe laptop (11.11):** la proba cap-coadă a demonstrației, cinci faze cerute pe rând au
+  venit toate la cel mult o secundă de cât anunțase banda. Măsurată apoi la mărimea ferestrei de pe laptop, pagina a primit
+  butoanele direcțiilor și confirmarea pe primul ecran, lângă starea senzorului (commitul `3dbddd4`, § 8).
 
 ### 12.4 Ce am învățat
 
