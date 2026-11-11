@@ -2419,6 +2419,15 @@ cu alt ceas, starea se socotește la acel ceas, dar din fișierele de acum, deci
 el, iar unealta avertizează. Cu `--scara 2` capturile ies de două ori mai mari; cu `--versiune m2` și același ceas se fac
 capturile ecranului de la borna M2.
 
+**Proba cap-coadă (11.11.2026).** Pe laptopul autorului, cu colectarea pornită, lansatorul bornei M3 a pornit dispeceratul și
+geamănul, iar pagina s-a deschis cu `?imagine=0`, fără imaginea camerei și cu toate cele cinci verigi ale senzorului „în
+regulă”. Între 09:26 și 09:31, comanda manuală s-a aplicat în 2 s, apoi cinci faze cerute pe rând au venit toate la cel mult
+o secundă de cât anunțase banda. De trei ori, cu verdele minim deja împlinit, banda a anunțat ≈10–12 s, iar verdele a venit
+în 11–12 s. O dată, cu 7 s de verde minim rămase pe Dacia, a anunțat ≈22 s și a venit în 22 s. O dată, cu 31 s de verde minim
+rămase pe Magheru și Lascăr Catargiu, banda a anunțat ≈46 s, iar verdele a venit în 47 s. Revenirea la „Planul observat” s-a
+aplicat în 3 s, iar colectarea a rămas la ≈6 cadre/s. Orele cererilor sunt în jurnalul comenzilor serverului, care rămâne pe
+calculatorul autorului; secundele anunțate și orele aplicării sunt cele scrise de bandă.
+
 **Evaluarea cu evaluatori AI.** Pagina a fost arătată unor evaluatori care nu știau ce defecte cunoaște autorul: 5 evaluatori
 euristici, fiecare cu alt rol, un evaluator care parcurge 5 sarcini de operator și un audit de accesibilitate. Rolurile sunt un
 specialist în ergonomie, un dispecer de trafic, cineva fără nicio pregătire în trafic, un specialist în erori și stări degradate
