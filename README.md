@@ -484,7 +484,7 @@ colectarea datelor, antrenarea și evaluarea. Commiturile lui, adică versiunile
 - colectarea are, de la M1, un paznic, care o pornește la loc dacă se oprește; ea merge pe laptop din 1.11, 09:04, zi și
   noapte, iar procesul ei n-a căzut niciodată neprevăzut; până la M2 s-a oprit de două ori, anunțat. Fișa senzorului,
   `romana.vision.fisa_senzor`, socotește din jurnalele locale ale colectării orele de colectare, minutele cu cadre,
-  cadrele pe secundă, pauzele, reconectările, opririle, căderile sursei camerei și vehiculele numărate (§ 4.6). Jurnalele de traiectorii s-au
+  cadrele pe secundă, pauzele, reconectările, opririle și vehiculele numărate (§ 4.6). Jurnalele de traiectorii s-au
   publicat până la ziua de 7.11; de la 8.11 se publică doar numărătorile.
 
 De la M2, în dispecerat, o fază cerută de mână e urmărită pas cu pas până la verdele ei, iar în locul imaginii camerei poate
