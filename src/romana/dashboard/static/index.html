@@ -95,9 +95,10 @@ button:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
 #blocat{margin:8px 0 0;color:var(--rosu);font-weight:500}
 .manual{display:none;margin-top:10px}
 .manual.vizibil{display:block}
-.manual p{margin:0 0 6px}
+.manual>p{margin:8px 0 0}   /* explicația, sub butoanele direcțiilor și sub fazele cu risc */
 .manual .faze{display:grid;gap:6px}
 .manual details{margin-top:6px;font-size:14px}
+.manual details[open]{padding-bottom:10px;border-bottom:1px solid var(--linie)}   /* lista deschisă se încheie cu o linie: explicația de sub ea ține de orice schimbare, nu de fazele cu risc */
 .manual details p{margin:4px 0 6px;color:var(--rosu)}
 .confirm{display:none;margin-top:10px;padding:10px 12px;border-radius:var(--r-mic);background:#fff4d6;border:1px solid var(--galben)}
 .confirm.vizibil{display:block}
@@ -106,6 +107,7 @@ button:focus-visible{outline:3px solid var(--albastru);outline-offset:2px}
 .confirm .rand{display:flex;gap:8px;margin-top:8px}
 .confirm .da{background:var(--cerneala);color:var(--hartie)}
 .confirm.risc{background:#fde8e6;border-color:var(--rosu)}
+#confirm.risc.vizibil~#manual{pointer-events:none}   /* confirmarea unei faze cu risc se deschide deasupra butoanelor și le coboară sub cursor: cât e deschisă, nimic din comanda manuală nu se apasă cu mausul din greșeală (al doilea clic al unui dublu clic); „Renunț” ori Esc le redau, iar tastatura merge ca înainte */
 #rezultat{margin:0;min-height:1.45em;font-weight:500}
 .banda.urmarire #rezultat{min-height:2.9em;display:flex;align-items:center}   /* de la prima comandă urmărită, loc pentru două rânduri: banda crește o dată, la clic, și nu mai sare între pași; un text de un rând stă la mijloc, în dreptul celorlalte */
 #rezultat.bun{color:var(--verde)} #rezultat.rau{color:var(--rosu)}
@@ -187,15 +189,17 @@ footer a{color:inherit;text-decoration:underline}
         <button data-mod="manual"><kbd>5</kbd><b>Comandă manuală</b><span>Alegeți ce direcție primește verde.</span></button>
       </div>
       <p id="blocat" hidden tabindex="-1"></p>
-      <div class="manual" id="manual">
-        <p class="sub">Alegeți direcția. Schimbarea se face singură, pe pași, iar banda de sus spune unde a ajuns: pietonii își termină traversarea, 6&nbsp;s, dacă li se închide trecerea; galben 3&nbsp;s; roșu 2&nbsp;s pentru cine trebuie să oprească, cât se eliberează intersecția. Semaforul hotărăște la fiecare 5&nbsp;s. Un verde ține cel puțin 10&nbsp;s, iar cel pe Magheru și Lascăr Catargiu, cel puțin 35&nbsp;s, ca să apuce și pietonii verdele lor. Verdele ales ține cel mult ≈100&nbsp;s. Apoi semaforul trece singur, o vreme, pe altă fază: ≈20&nbsp;s pe Dacia, dacă ați ales Magheru și Lascăr Catargiu, altfel ≈40–45&nbsp;s pe Magheru și Lascăr Catargiu, după care revine singur la alegerea dumneavoastră.</p>
-        <div class="faze" id="faze"></div>
-        <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
-      </div>
+      <!-- Ordinea ține de ecranul unui laptop (1536 × 700–730): confirmarea stă imediat sub cartonașele modurilor, iar în comanda manuală butoanele
+           direcțiilor stau înaintea explicației, ca să se vadă deodată cu banda și cu panoul „Starea senzorului”, fără derulare. -->
       <div class="confirm" id="confirm" role="alertdialog" aria-labelledby="confirm-t" aria-describedby="confirm-text" tabindex="-1">
         <h3 id="confirm-t">Confirmați comanda</h3>
         <div id="confirm-text"></div>
         <div class="rand"><button class="da" id="da">Confirm</button><button id="nu">Renunț</button></div>
+      </div>
+      <div class="manual" id="manual">
+        <div class="faze" id="faze"></div>
+        <details><summary>Faze cu risc de blocare</summary><p>Pe lângă direcția care are verde, rămân deschise și celelalte intrări: vehiculele de acolo intră în piață și așteaptă în ea, deci piața se poate bloca. Cer confirmare.</p><div class="faze" id="faze-risc"></div></details>
+        <p class="sub">Schimbarea se face singură, pe pași, iar banda de sus spune unde a ajuns: pietonii își termină traversarea, 6&nbsp;s, dacă li se închide trecerea; galben 3&nbsp;s; roșu 2&nbsp;s pentru cine trebuie să oprească, cât se eliberează intersecția. Semaforul hotărăște la fiecare 5&nbsp;s. Un verde ține cel puțin 10&nbsp;s, iar cel pe Magheru și Lascăr Catargiu, cel puțin 35&nbsp;s, ca să apuce și pietonii verdele lor. Verdele ales ține cel mult ≈100&nbsp;s. Apoi semaforul trece singur, o vreme, pe altă fază: ≈20&nbsp;s pe Dacia, dacă ați ales Magheru și Lascăr Catargiu, altfel ≈40–45&nbsp;s pe Magheru și Lascăr Catargiu, după care revine singur la alegerea dumneavoastră.</p>
       </div>
       <div id="istoric"><div id="istoric-parte" hidden><b>Ultimele comenzi</b><ol id="istoric-lista"></ol></div></div>
     </section>

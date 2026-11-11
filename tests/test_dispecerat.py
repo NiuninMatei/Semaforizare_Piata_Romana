@@ -100,7 +100,7 @@ cerere.la-=40000; await actualizeaza(); rez.faza_in_curs_40=text("rezultat"); ce
 rez.faza_expirata=Object.assign(instantaneu(),{istoric:text("istoric-lista"),clasa:document.querySelector('[data-faza="1"]').className});
 __st(__CAM,nou(s=>{man(s);s.faza=3})); await actualizeaza(); rez.risc_3={lumini:titluri(),legenda:!$("leg-plus").hidden}; document.querySelector('[data-faza="4"]').click(); rez.risc_3.confirmare=text("confirm-text"); $("nu").click();
 __st(__CAM,nou(s=>{man(s);s.faza=4})); await actualizeaza(); rez.risc_4={lumini:titluri()};
-__st(__CAM,nou(man)); await actualizeaza(); rez.manual_text=$("manual").querySelector("p").textContent; rez.legenda_fara_risc=$("leg-plus").hidden;
+__st(__CAM,nou(man)); await actualizeaza(); rez.manual_text=document.querySelector("#manual > p.sub").textContent; rez.legenda_fara_risc=$("leg-plus").hidden;
 __st(__CAM,nou(s=>{s.model_ai=false})); await actualizeaza(); rez.fara_ai_stil={opacitate:stilul(bt("ai")).opacity,culoare:stilul($("d-ai")).color}; __st(__CAM,__SIM); await actualizeaza();
 await new Promise(r=>{ $("cadru").addEventListener("error",r,{once:true}); $("cadru").src="data:,nimic" }); await actualizeaza();
 rez.imagine_cazuta={stare:text("s-cam"),gol:text("cadru-gol"),vizibil:vizibil($("cadru-gol")),punct:$("p-cam").className};
@@ -618,6 +618,57 @@ rez.aplicata=Object.assign(stare(),{revino:!$("revino").hidden});
 window.scrollBy(0,700); await asteapta(20); const a=stare(); rezultat(LUNG); await asteapta(1100); rez.departe={inainte:a,dupa:stare()};
 rezultat(""); await asteapta(1100);
 window.scrollBy(0,r(bt).top-r(banda).bottom+10); await asteapta(20); const b=stare(); rezultat(LUNG); await asteapta(1100); rez.sub_banda={inainte:b,dupa:stare()};
+}catch(e){ rez.__eroare=String(e&&e.stack||e) }   // o eroare ajunge în rezultat, cu locul ei, iar ruleaza_pagina o arată
+const pre=document.createElement("pre"); pre.id="rez"; pre.textContent=JSON.stringify(rez); document.body.appendChild(pre);
+"""
+
+# fereastra mărită a lui Chrome pe laptopul prezentării, 1536×730 și 1536×700 (în ramă), cu imaginea ascunsă: drumul din demonstrație, fără nicio
+# derulare făcută de scenariu (pagina se derulează doar singură, când mută focusul): tasta 5, „Da, preiau comanda”, „Reveniți la …” din bandă;
+# apoi butoanele și confirmarea, ca înainte: o direcție obișnuită dintr-un clic, o fază cu risc cu confirmare, Esc, întoarcerea la program.
+# La faza cu risc, scenariul derulează ca omul, până la buton: confirmarea se deschide deasupra butoanelor și le coboară sub cursor, deci se
+# apasă din nou în locul clicului (sus, la mijloc și jos pe buton), ca la un dublu clic. La sfârșit, același drum a doua oară, pe aceeași pagină:
+# banda ține de la prima comandă loc pentru două rânduri, deci coloana stă cu ≈21 px mai jos (așa a fost măsurată pagina reală pe 11.11.2026)
+LAPTOP = r"""
+const rez={};
+try{
+const asteapta=ms=>new Promise(r=>setTimeout(r,ms)), text=id=>$(id).textContent, banda=$("banda"), fz=f=>document.querySelector(`[data-faza="${f}"]`);
+const loc=el=>{ const b=el.getBoundingClientRect(); return {sus:b.top,jos:b.bottom} }, inainte=(a,b)=>!!(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING);
+const focus=()=>{ const a=document.activeElement; return a.id||(a.dataset.mod?"mod:"+a.dataset.mod:a.dataset.faza!==undefined?"faza:"+a.dataset.faza:a.tagName) };
+const stare=()=>({y:scrollY,vh:innerHeight,banda:loc(banda),rezumat:loc($("senzor-rezumat")),faze:[...document.querySelectorAll("#faze button")].map(loc),
+  confirm:loc($("confirm")),da:loc($("da")),deschisa:$("confirm").classList.contains("vizibil"),risc:$("confirm").classList.contains("risc"),focus:focus(),text:text("confirm-text"),buton:text("da")});
+const debit={debit_echilibrat_veh_h:1854,varsta_debite_s:1};   // ca geamănul în timp real (live_twin)
+__st(__CAM,Object.assign(JSON.parse(JSON.stringify(__SIM_PASI)),debit)); await actualizeaza(); await asteapta(50); rez.ecran=[innerWidth,innerHeight];
+if(!imagineOprita) $("b-imagine").click(); await asteapta(1100); window.scrollTo(0,0); await asteapta(20);
+const ex=document.querySelector("#manual > p.sub");
+rez.ordine={blocat_confirm:inainte($("blocat"),$("confirm")),confirm_manual:inainte($("confirm"),$("manual")),faze_risc:inainte($("faze"),$("faze-risc")),risc_explicatie:inainte($("faze-risc"),ex),
+  faze_explicatie:inainte($("faze"),ex),explicatia_incheie:$("manual").lastElementChild===ex,manual_istoric:inainte($("manual"),$("istoric")),explicatie:ex.textContent,
+  cartonas:document.querySelector("[data-mod=manual] span").textContent,pagina:document.querySelector("main").textContent.includes("Alegeți direcția")};
+document.dispatchEvent(new KeyboardEvent("keydown",{key:"5"})); await asteapta(1100); rez.preluare=stare();
+let n=__posts.length; $("da").click(); await asteapta(50); const ts=__ultimTs; rez.preluare.trimise=__posts.slice(n);
+__st(__CAM,__pasi(Object.assign({mod:"manual",mod_program:null,timp_sim:503,verde_s:12,comanda_citita_ts:ts},debit)),{comanda:{mod:"manual",faza:0,timestamp:ts,_varsta_s:1}});
+await actualizeaza(); await asteapta(1100); rez.manual=Object.assign(stare(),{rezultat:text("rezultat"),revino:$("revino").hidden?null:text("revino")});
+$("revino").click(); await asteapta(1100); rez.revenire=stare();
+$("nu").click(); await asteapta(50); rez.renuntat={deschisa:$("confirm").classList.contains("vizibil"),focus:focus()};
+n=__posts.length; fz(1).click(); await asteapta(50); rez.directa={trimise:__posts.slice(n),deschisa:$("confirm").classList.contains("vizibil")};
+document.querySelector("#manual details").open=true; await asteapta(50);   // butoanele fazelor cu risc se pot apăsa doar cu lista deschisă
+const rb=fz(3), maus=()=>[fz(0),fz(1),fz(3),document.querySelector("#manual summary")].map(e=>getComputedStyle(e).pointerEvents);
+rb.scrollIntoView({block:"end"}); await asteapta(50); const q=rb.getBoundingClientRect(), cx=q.left+q.width/2, puncte=[q.top+4,q.top+q.height/2,q.bottom-4];
+n=__posts.length; rb.focus(); rb.click(); await asteapta(50); rez.risc=Object.assign(stare(),{trimise:__posts.length-n,derulat_de_om:scrollY,mutat:rb.getBoundingClientRect().top-q.top,maus:maus()});
+// câte dintre punctele clicului cad acum, ca loc, peste un buton al direcțiilor; apoi clicul din nou, pe ce găsește mausul acolo
+rez.risc.peste_directii=puncte.filter(y=>[...document.querySelectorAll("#faze button")].some(b=>{ const r=b.getBoundingClientRect(); return y>=r.top&&y<=r.bottom&&cx>=r.left&&cx<=r.right })).length;
+rez.risc.sub_cursor=puncte.map(y=>{ const e=document.elementFromPoint(cx,y), b=e&&e.closest("button,summary"); if(e) e.click(); return b?(b.id||(b.dataset.faza!==undefined?"faza:"+b.dataset.faza:b.tagName)):"" });
+await asteapta(50); rez.risc.dupa_clicuri={trimise:__posts.length-n,deschisa:$("confirm").classList.contains("vizibil"),risc:$("confirm").classList.contains("risc"),focus:focus()};
+document.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape"})); await asteapta(50); rez.risc_esc={deschisa:$("confirm").classList.contains("vizibil"),focus:focus(),trimise:__posts.length-n,maus:maus()};
+$("revino").click(); await asteapta(50); rez.intoarcere_maus=maus(); n=__posts.length; $("da").click(); await asteapta(50); rez.intoarcere={trimise:__posts.slice(n),deschisa:$("confirm").classList.contains("vizibil")};
+// a doua oară, pe aceeași pagină: simularea e din nou pe program, lista fazelor cu risc e închisă, pagina e sus
+const ts2=__ultimTs; document.querySelector("#manual details").open=false;
+__st(__CAM,Object.assign(JSON.parse(JSON.stringify(__SIM_PASI)),debit,{timp_sim:520,verde_s:29,comanda_citita_ts:ts2}),{comanda:{mod:"program",timestamp:ts2,_varsta_s:1}});
+await actualizeaza(); await asteapta(1100); window.scrollTo(0,0); await asteapta(20); rez.program2={banda:loc(banda),loc_de_doua_randuri:banda.classList.contains("urmarire"),rezultat:text("rezultat")};
+document.dispatchEvent(new KeyboardEvent("keydown",{key:"5"})); await asteapta(1100); rez.preluare2=stare();
+$("da").click(); await asteapta(50); const ts3=__ultimTs;
+__st(__CAM,__pasi(Object.assign({mod:"manual",mod_program:null,timp_sim:523,verde_s:32,comanda_citita_ts:ts3},debit)),{comanda:{mod:"manual",faza:0,timestamp:ts3,_varsta_s:1}});
+await actualizeaza(); await asteapta(1100); rez.manual2=Object.assign(stare(),{rezultat:text("rezultat")});
+$("revino").click(); await asteapta(1100); rez.revenire2=stare(); $("nu").click(); await asteapta(50);
 }catch(e){ rez.__eroare=String(e&&e.stack||e) }   // o eroare ajunge în rezultat, cu locul ei, iar ruleaza_pagina o arată
 const pre=document.createElement("pre"); pre.id="rez"; pre.textContent=JSON.stringify(rez); document.body.appendChild(pre);
 """
@@ -1951,6 +2002,123 @@ class TestBandaPesteButon(unittest.TestCase):
                 self.assertGreater(s["dupa"]["banda"], s["inainte"]["banda"])
                 self.assertGreater(s["inainte"]["acoperit"], 0)
                 self.assertGreater(s["dupa"]["acoperit"], 0)
+
+
+@unittest.skipUnless(Path(C.CHROME).exists(), "Chrome nu e instalat aici")
+class TestComandaPeLaptop(unittest.TestCase):
+    """Pe laptopul prezentării, în fereastra mărită a lui Chrome (1536×730 și 1536×700, în ramă), cu imaginea ascunsă: confirmarea stă înaintea
+    comenzii manuale, iar butoanele direcțiilor, înaintea explicației. Așa, în comanda manuală, primele două butoane de direcție, banda și
+    rândul de rezumat al panoului „Starea senzorului” se văd deodată, iar confirmarea întoarcerii la program se deschide pe ecran, fără să
+    scoată panoul din vedere, și la prima comandă, și a doua oară pe aceeași pagină. Butoanele și confirmarea merg ca înainte; cât e deschisă
+    confirmarea unei faze cu risc, butoanele coborâte sub cursor nu se apasă cu mausul."""
+
+    ECRANE = ((1536, 730), (1536, 700))
+    DERULARE = 70            # cât are voie pagina să coboare singură, în px: ținta e ≈60
+
+    @classmethod
+    def setUpClass(cls):
+        cls.d = Path(tempfile.mkdtemp())
+        cls.addClassCleanup(shutil.rmtree, cls.d, True)      # și când scenariul eșuează în setUpClass
+        pagina = C.pagina(C.VERSIUNI["curent"].read_text(encoding="utf-8"), LAPTOP)
+        cls.r = {}
+        for w, h in cls.ECRANE:
+            (cls.d / str(h)).mkdir()
+            cls.r[(w, h)] = ruleaza_pagina(cls.d / str(h), pagina, ecran=(w, h))
+
+    def pe_ecran(self, s, *locuri):
+        """Fiecare loc e întreg în fereastră și sub bandă, iar banda se vede întreagă (cu o toleranță de 1 px, pentru rotunjirile așezării)."""
+        self.assertGreaterEqual(s["banda"]["sus"], 0, s)
+        for x in locuri:
+            self.assertGreater(x["jos"], x["sus"], s)                     # se vede, nu e ascuns
+            self.assertGreaterEqual(x["sus"], s["banda"]["jos"] - 1, s)
+            self.assertLessEqual(x["jos"], s["vh"] + 1, s)
+
+    def test_ordinea_blocurilor(self):
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                self.assertEqual(r["ecran"], list(ecran))
+                o = r["ordine"]
+                self.assertTrue(o["blocat_confirm"] and o["confirm_manual"] and o["manual_istoric"], o)      # confirmarea, imediat sub cartonașele modurilor
+                self.assertTrue(o["faze_risc"] and o["risc_explicatie"] and o["faze_explicatie"] and o["explicatia_incheie"], o)   # butoanele, apoi fazele cu risc, apoi explicația
+                self.assertTrue(o["explicatie"].startswith("Schimbarea se face singură, pe pași, iar banda de sus spune unde a ajuns"), o)
+                self.assertFalse(o["pagina"])                # „Alegeți direcția.” ar trimite la butoane aflate acum deasupra; o spune cartonașul
+                self.assertEqual(o["cartonas"], "Alegeți ce direcție primește verde.")
+
+    def test_in_comanda_manuala_butoanele_banda_si_panoul_se_vad_deodata(self):
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                p = r["preluare"]                            # tasta 5: confirmarea preluării, pe ecran
+                self.assertTrue(p["deschisa"])
+                self.assertEqual(p["focus"], "confirm")
+                self.assertEqual(p["buton"], "Da, preiau comanda")
+                self.assertEqual(p["trimise"], [{"mod": "manual", "faza": 0}])
+                self.assertLessEqual(p["y"], self.DERULARE)
+                self.pe_ecran(p, p["confirm"], p["da"], p["rezumat"])
+                m = r["manual"]
+                self.assertFalse(m["deschisa"])
+                self.assertEqual(m["focus"], "mod:manual")   # focusul s-a întors la „Comandă manuală”
+                self.assertIn("Aplicat", m["rezultat"])
+                self.assertEqual(m["revino"], "Reveniți la „Planul observat”")
+                self.assertEqual(len(m["faze"]), 3)
+                self.assertLessEqual(m["y"], self.DERULARE)
+                self.pe_ecran(m, m["faze"][0], m["faze"][1], m["rezumat"])
+
+    def test_a_doua_oara_pe_aceeasi_pagina_tot_incap(self):
+        """După prima comandă, banda păstrează loc pentru două rânduri, deci coloana stă cu ≈21 px mai jos, iar la tasta 5 pagina coboară
+        cu atât mai mult (pe pagina reală, la 1536×730: 28 px, nu 7). Butoanele, banda și rândul de rezumat se văd tot deodată."""
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                g = r["program2"]
+                self.assertTrue(g["loc_de_doua_randuri"], g)
+                self.assertGreater(g["banda"]["jos"] - g["banda"]["sus"], r["preluare"]["banda"]["jos"] - r["preluare"]["banda"]["sus"] + 10, g)
+                p, m, v = r["preluare2"], r["manual2"], r["revenire2"]
+                self.assertTrue(p["deschisa"])
+                self.assertEqual(p["buton"], "Da, preiau comanda")
+                self.assertGreater(p["y"], r["preluare"]["y"] + 10)          # banda mai înaltă: pagina coboară mai mult decât prima oară
+                self.pe_ecran(p, p["confirm"], p["da"], p["rezumat"])
+                self.assertFalse(m["deschisa"])
+                self.assertIn("Aplicat", m["rezultat"])
+                self.pe_ecran(m, m["faze"][0], m["faze"][1], m["rezumat"])
+                self.assertTrue(v["deschisa"])
+                self.assertIn("către „Planul observat”", v["text"])
+                self.pe_ecran(v, v["confirm"], v["da"], v["rezumat"])
+                for s in (p, m, v):
+                    self.assertLessEqual(s["y"], self.DERULARE, s)
+
+    def test_confirmarea_intoarcerii_se_deschide_pe_ecran(self):
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                v = r["revenire"]
+                self.assertTrue(v["deschisa"])
+                self.assertEqual(v["focus"], "confirm")
+                self.assertIn("către „Planul observat”", v["text"])
+                self.assertLessEqual(v["y"], self.DERULARE)
+                self.pe_ecran(v, v["confirm"], v["da"], v["rezumat"])       # panoul senzorului nu iese din vedere
+                self.assertEqual(r["renuntat"], {"deschisa": False, "focus": "revino"})
+
+    def test_butoanele_si_confirmarea_merg_ca_inainte(self):
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                self.assertEqual(r["directa"], {"trimise": [{"mod": "manual", "faza": 1}], "deschisa": False})   # o direcție obișnuită, dintr-un clic
+                k = r["risc"]                                # o fază cu risc cere confirmare și nu trimite nimic până atunci
+                self.assertTrue(k["deschisa"] and k["risc"], k)
+                self.assertEqual((k["focus"], k["buton"], k["trimise"]), ("confirm", "Da, cu risc de blocare", 0))
+                e = r["risc_esc"]                            # Esc: focusul, înapoi pe butonul fazei
+                self.assertEqual((e["deschisa"], e["focus"], e["trimise"]), (False, "faza:3", 0))
+                self.assertEqual(r["intoarcere"], {"trimise": [{"mod": "program"}], "deschisa": False})
+
+    def test_la_confirmarea_unei_faze_cu_risc_butoanele_coborate_sub_cursor_nu_se_apasa(self):
+        """Confirmarea se deschide deasupra butoanelor și le coboară cu înălțimea ei: în locul clicului ajung butoanele direcțiilor, care
+        se trimit dintr-un clic. Al doilea clic al unui dublu clic nu trimite nimic, nu închide confirmarea și nu nimerește „Da”."""
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                k = r["risc"]
+                self.assertGreater(k["mutat"], 100, k)                       # butonul apăsat a coborât cu înălțimea confirmării
+                self.assertEqual(k["maus"], ["none"] * 4, k)                 # direcțiile, fazele cu risc și titlul listei: fără maus
+                self.assertEqual(k["sub_cursor"], ["", "", ""], k)           # nici „Da”, nici „Renunț”, nici alt buton
+                self.assertEqual(k["dupa_clicuri"], {"trimise": 0, "deschisa": True, "risc": True, "focus": "confirm"})
+                self.assertEqual(r["risc_esc"]["maus"], ["auto"] * 4)        # Esc le redă
+                self.assertEqual(r["intoarcere_maus"], ["auto"] * 4)         # o confirmare obișnuită nu oprește nimic
 
 
 class TestServer(unittest.TestCase):
