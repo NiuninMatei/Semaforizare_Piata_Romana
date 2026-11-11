@@ -2441,6 +2441,19 @@ schimbare, banda a anunțat ≈18 s, iar verdele a venit în 18 s. Cât e deschi
 ale comenzii manuale nu se pot apăsa cu mausul, ca un al doilea clic, dat din greșeală, să nu trimită o comandă neconfirmată.
 Șase teste țin această așezare la 1536 × 730 și la 1536 × 700 (`tests/test_dispecerat.py`, commitul `3dbddd4`).
 
+**Proba cu partajarea ecranului (11.11.2026).** Bornele se prezintă online, cu fereastra browserului partajată, iar partajarea
+cere și ea putere de calcul, pe același laptop pe care merge colectarea. De aceea, seara, între 18:26 și 18:45, demonstrația
+s-a repetat cu autorul într-o întâlnire video de probă, pe Google Meet, în care era singur: a partajat fereastra de Chrome cu
+prezentarea și cu dispeceratul și a trecut de trei ori prin comanda manuală, de fiecare dată până la întoarcerea la „Planul
+observat”. În acest timp, un program de măsurare, rămas pe calculatorul autorului, a citit la fiecare 2 s rata cadrelor
+colectării și, la fiecare 10 s, starea senzorului. În cele 564 de citiri, rata n-a coborât sub 3,81 cadre/s, deci a rămas
+peste pragul de 3,5 al panoului (§ 4.6), iar mediile pe minut au fost între 5,3 și 6,0 cadre/s, cele mai mici în minutele
+demonstrației. Starea camerei n-a fost niciodată mai veche de 1,3 s, iar cele cinci verigi ale senzorului au fost „în regulă”
+la toate cele 113 citiri ale lor. Butoanele celor trei direcții s-au văzut fără derulare. Bara plutitoare prin care Chrome
+anunță partajarea a acoperit o parte din pagină până când autorul a ascuns-o, deci ascunderea ei ține de pregătirea
+prezentării. Întâlnirea de probă nu s-a ținut pe platforma prezentării, așa că măsurătoarea se repetă la repetiția dinaintea
+bornei.
+
 **Evaluarea cu evaluatori AI.** Pagina a fost arătată unor evaluatori care nu știau ce defecte cunoaște autorul: 5 evaluatori
 euristici, fiecare cu alt rol, un evaluator care parcurge 5 sarcini de operator și un audit de accesibilitate. Rolurile sunt un
 specialist în ergonomie, un dispecer de trafic, cineva fără nicio pregătire în trafic, un specialist în erori și stări degradate
@@ -5110,6 +5123,13 @@ prezentarea bornei M3, pe 15.11.2026, e în commit-urile „Borna M3: …”. Pe
 * **Proba demonstrației și așezarea pe laptop (11.11):** la proba cap-coadă a demonstrației, cinci faze cerute pe rând au
   venit toate la cel mult o secundă de cât anunțase banda. Măsurată apoi la mărimea ferestrei de pe laptop, pagina a primit
   butoanele direcțiilor și confirmarea pe primul ecran, lângă starea senzorului (commitul `3dbddd4`, § 8).
+* **Proba cu partajarea ecranului (11.11):** cu fereastra browserului partajată într-o întâlnire video de probă, colectarea a
+  rămas peste pragul de 3,5 cadre/s la toate cele 564 de citiri, făcute la 2 s, iar cele cinci verigi ale senzorului au fost
+  „în regulă” tot timpul (§ 8).
+* **Prezentarea bornei M3 (11.11):** la prezentare, autorul are în față un singur fișier, PDF-ul ei. De aceea, primele cinci
+  pagini poartă chiar propozițiile pe care le spune, numărate dinainte, ca totul să încapă, cu demonstrația, în cele 5 minute,
+  iar a șasea, „Precizări”, adună precizările despre limitele lucrului și despre împărțirea lui, fiecare cu paragraful ei
+  din documentație.
 
 ### 12.4 Ce am învățat
 
