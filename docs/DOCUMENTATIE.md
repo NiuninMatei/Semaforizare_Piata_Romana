@@ -197,7 +197,7 @@ trimitere la locul unde sunt prezentate în detaliu.
 
 | Termen sau notație | Ce înseamnă, pe scurt | Unde |
 |---|---|---|
-| AI, IA | Inteligență artificială: AI vine din engleză, de la *artificial intelligence*, iar IA e prescurtarea românească. Pe butonul dispeceratului, „Agent IA”, numit la M1 „Agent AI”, înseamnă un agent de învățare prin întărire, iar „adnotatorii AI” sunt instanțe ale asistentului Claude. | § 4.3, § 7, § 8 |
+| AI, IA | Inteligență artificială: AI vine din engleză, de la *artificial intelligence*, iar IA e prescurtarea românească. Numele butonului „Agent IA” din dispecerat, care la M1 era „Agent AI”, înseamnă un agent de învățare prin întărire, iar „adnotatorii AI” sunt instanțe ale asistentului Claude. | § 4.3, § 7, § 8 |
 | RL | Învățare prin întărire, din engleză *reinforcement learning*. | § 7 |
 | IoT | Internetul lucrurilor, din engleză *Internet of Things*: dispozitive conectate la internet, de exemplu senzori, ale căror date sunt folosite de alte programe. Aici, camera publică joacă rolul senzorului: al traficului și, prin valurile de vehicule care pornesc la verde, al semaforului. Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a oprit doar de patru ori, anunțat. Pe 9 și pe 10.11 a lipsit o vreme doar fluxul camerei, iar colectarea s-a reconectat singură. | § 3, § 4.6, § 6.5 |
 | MQTT | Protocol de mesaje pentru Internetul lucrurilor. Modulul de viziune îl poate folosi, opțional, ca să publice starea camerei și numărătorile. | § 3 |
@@ -1329,8 +1329,9 @@ neîntrerupte, la 19:29 și la 01:18, de un script de lucru care nu face parte d
 încheiat cât a mers veghea, deci nu e notat ca pauză, iar de la alertă până la repornire veghea nu are rânduri de minut. Până
 pe 10.11, fișa senzorului nu vedea deci aceste căderi și le socotea minutele cu cadre. De atunci, fișa ia din fiecare alertă
 „fără cadre” ora ultimului cadru, scrisă în ea, și socotește căderea de acolo până la primul rând al vegherii de după
-repornire: pe 9.11, 19:10–19:30, și pe 10.11, 00:26–01:19, adică 20 și, respectiv, 53 de minute, cu marginile rotunjite în
-afară, la minut; în total, cel mult 1 h 13 min. E o margine de sus, fiindcă
+repornire: pe 9.11, de la 19:10 la 19:30, și pe 10.11, de la 00:26 la 01:19. Fișa le socotește la secundă, 19 min 10 s și,
+respectiv, 52 min 33 s, în total cel mult 1 h 11 min 43 s; în minute întregi, cu marginile rotunjite în afară, ele țin 20 și
+53 de minute, adică cel mult 1 h 13 min. E o margine de sus, fiindcă
 veghea a fost pornită din nou abia la câteva minute după revenirea fluxului. Minutele căderii se socotesc fără cadre, dar nu
 ca o oprire, fiindcă în tot acest timp colectarea a rămas pornită. Invers, o alertă „fără cadre” venită dintr-o colectare
 blocată sau oprită nu e o cădere a sursei: golul ei e deja o oprire, cu repornirea scrisă de paznic. Iar dacă în timpul
@@ -1341,8 +1342,11 @@ cele două căderi reale, aceste reguli, adăugate tot pe 10.11, după o verific
 au ieșit. Sunt incomplete sferturile de oră care încep pe 9.11 la 19:00 și la 19:15 și pe 10.11 la 00:15 și la 01:00, iar
 cele de la 00:30 și de la 00:45 lipsesc cu totul. Prelucrarea de noapte scoate din alegerea orelor pentru scenarii sferturile
 atinse de opririle notate de paznic. Lanțul măsurii vechi scoate și sferturile fără date, împreună cu primul de după ele, deci
-pe 10.11 a lăsat deoparte intervalul 00:30–01:15; lanțul măsurii noi nu se uită la goluri. Un sfert doar incomplet, în care
-colectarea a mers, dar fluxul a lipsit o parte din timp, nu e scos de niciunul. Pe 9 și pe 10.11, nicio oră aleasă pentru
+pe 10.11 a lăsat deoparte intervalul 00:30–01:15; lanțul măsurii noi nu se uită la sferturile goale. Un sfert doar incomplet, în care
+colectarea a mers, dar fluxul a lipsit o parte din timp, nu e scos ca atare de niciunul: lanțul măsurii vechi l-a lăsat
+deoparte pe cel de la 01:00 din 10.11 doar fiindcă venea chiar după sferturile goale. Au rămas deci în ambele măsuri
+sferturile de la 19:00 și 19:15 din 9.11 și cel de la 00:15 din 10.11, iar în măsura nouă și cel de la 01:00 din 10.11.
+Pe 9 și pe 10.11, nicio oră aleasă pentru
 scenarii nu atinge aceste sferturi, deci scenariile și poarta nu sunt atinse; cine folosește numărătorile publicate trebuie
 însă să le lase deoparte.
 
@@ -1595,7 +1599,8 @@ scenariile, ce scenarii s-au construit, cât de fidele sunt și unde sunt folosi
 - **din duminică 1.11.2026, de la 09:04**: colectarea merge pe laptop zi și noapte, iar procesul ei n-a căzut niciodată
   neprevăzut; s-a oprit doar de patru ori, anunțat, pe 1.11, pe 5.11, pe 8.11 și pe 10.11. Pe 9 și pe 10.11 a lipsit o vreme doar fluxul
   camerei. Veghea și paznicul o urmăresc, opririle și repornirile se notează, iar
-  sferturile de oră atinse ies din scenarii (§ 4.6). Zilele 1, 2 și 3.11 sunt de antrenare, 4.11 e ziua de validare, 5 și 6.11 sunt
+  sferturile de oră atinse de opriri ies din scenarii; cele atinse de căderile sursei au rămas în numărători așa cum au ieșit,
+  incomplete ori lipsă, dar nicio oră aleasă pentru scenarii nu le atinge (§ 4.6). Zilele 1, 2 și 3.11 sunt de antrenare, 4.11 e ziua de validare, 5 și 6.11 sunt
   zilele de test, iar 7.11, ziua de generalizare; ultimele trei s-au prelucrat fără simulările strategiilor, fiindcă niciun candidat
   n-a trecut de validare (§ 9.11). Datele zilelor 1–7.11 sunt publicate, cu jurnalul vehiculelor, iar orele scenariilor măsurii noi,
   `cor_zi_*`, făcute pentru 1–7.11, sunt în câmpul `ferestre` din `sumo/demand/cor_zi_<zi>_rezumat.json`; în text, cele din
@@ -1762,8 +1767,8 @@ varianta veche, pornită acum doar cu `--geaman-vechi` (§ 5.4); cu cererea efec
 mai veche de 60 s, sau dacă intervalul de numărare de 15 minute abia a început, geamănul păstrează ultimele debite
 bune ale camerei, cel mult 20 de minute. După aceea trece pe profilul de referință și **afișează explicit** acest
 lucru în dispecerat. Colectarea se reconectează automat la cameră, paznicul o repornește dacă procesul cade, iar veghea dă
-alerta pe loc. În dispecerat, starea senzorului arată care verigă s-a oprit, iar fișa senzorului numără pauzele notate de
-veghe (§ 4.6).
+alerta pe loc. În dispecerat, starea senzorului arată care verigă s-a oprit, iar fișa senzorului arată cât timp au lipsit
+cadrele: opririle, pauzele notate de veghe și căderile sursei (§ 4.6).
 
 **Pașii simulării.** Simularea avansează în pași de 0,2 s, repartizați de-a lungul fiecărei secunde reale, ca
 mișcarea să pară fluentă în SUMO-GUI. Controlerul semaforului lucrează însă pe secunde întregi.
@@ -2396,20 +2401,23 @@ sus, care rămâne pe ecran și la derulare, iar modurile sunt împărțite dup�
 
 **Ce s-a schimbat după M2.** Fiecare comandă e urmărită în banda de sus până se aplică, iar o fază aleasă în modul manual, pas
 cu pas, până la verdele cerut. Banda spune pasul de acum și cât mai ține, de exemplu „pietonii își termină traversarea, încă
-4 s”, apoi peste câte secunde hotărăște semaforul din nou, fiindcă hotărăște la fiecare 5 s, și în cât timp vine verdele cerut;
+4 s”, sau, cât e încă verde, cât mai cere verdele minim ori peste câte secunde hotărăște semaforul din nou,
+fiindcă hotărăște la fiecare 5 s; la fiecare pas spune și în cât timp vine verdele cerut;
 pe geamănul corectat, cazul cel mai lung are 60 s simulate. Dacă simularea nu citește sau nu aplică o comandă la timp, pagina o
-spune limpede, iar după o reîncărcare a paginii urmărirea continuă. Butonul „Ascunde imaginea” pune în locul imaginii camerei
+spune limpede, iar după o reîncărcare a paginii urmărirea continuă. Butonul „Ascunde imaginea”, numit la M2 „Oprește imaginea”, pune acum în locul imaginii camerei
 starea senzorului (§ 4.6). Sub imagine, pagina numără acum „participanți urmăriți”, nu „vehicule urmărite”, cum scria pe
-ecranele M1 și M2, pentru că urmărirea ține și pietonii; debitul de pietoni e în „numărări/oră”, nu în „persoane/oră”, ca la
-M2, fiindcă un pieton se numără o dată pe fiecare trecere (§ 4.4).
+ecranele M1 și M2, pentru că urmărirea ține și pietonii; debitul de pietoni e în „numărări/oră”, nu în „persoane/oră”, cum scria
+la M2, fiindcă un pieton se numără o dată pe fiecare trecere (§ 4.4).
 
 **Pentru specialiști.** Termenul unei faze cerute e timpul simulat până la ea, socotit când simularea citește comanda, plus 3 s;
 pagina anunță o comandă pe care simularea n-a citit-o în 10 s sau o fază neaplicată până la termen. După o reîncărcare, ultimele
 5 comenzi se refac din jurnalul serverului, iar ultima, dacă e mai nouă de 70 s și încă neaplicată, e urmărită mai departe.
 Stările acestor pași se pot fotografia fără server și fără colectare: `python -m romana.dashboard.capturi --versiune curent
 --prezentare` face capturile ecranului de acum pentru prezentarea bornei M3, cu pașii controlerului real. Ceasul paginii e
-fixat la clipa pornirii sau la cea dată cu `--ceas`, panoul senzorului arată starea lui reală de la acea clipă, iar cu
-`--scara 2` capturile ies de două ori mai mari; cu `--versiune m2` și același ceas se fac capturile ecranului de la borna M2.
+fixat la clipa pornirii sau la cea dată cu `--ceas`. Fără `--ceas`, panoul senzorului arată starea lui reală din clipa rulării;
+cu alt ceas, starea se socotește la acel ceas, dar din fișierele de acum, deci panoul poate arăta semne de viață de după
+el, iar unealta avertizează. Cu `--scara 2` capturile ies de două ori mai mari; cu `--versiune m2` și același ceas se fac
+capturile ecranului de la borna M2.
 
 **Evaluarea cu evaluatori AI.** Pagina a fost arătată unor evaluatori care nu știau ce defecte cunoaște autorul: 5 evaluatori
 euristici, fiecare cu alt rol, un evaluator care parcurge 5 sarcini de operator și un audit de accesibilitate. Rolurile sunt un
@@ -4426,7 +4434,7 @@ fără a colecta date noi. Jurnalul de traiectorii păstrează drumurile vehicul
 
 | Pasul | Comanda | Ce trebuie să apară |
 |---|---|---|
-| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | mesajul `OK` la sfârșitul celor peste 960 de teste. Unele au nevoie de o unealtă în plus și, fără ea, sunt sărite: cele ale sondării folosesc Node.js și Chrome sau Edge, cele ale paginii dispeceratului, Chrome, iar cele ale pașilor din geamăn, SUMO. Testele verifică numărarea pe origine și destinație (O–D), pietonii, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, recunoașterea prelucrării încetinite (`calitate`), veghea fluxului de cadre (`veghe`), paznicul colectării (`paznic`), fișa senzorului (`fisa_senzor`), starea senzorului (`senzor`), serverul și pagina dispeceratului (`dashboard`), pașii schimbării de fază (`pasi`), lacătul care ține geamănul într-un singur exemplar, programul real al semaforului (`program_real`), comparația geamănului cu camera și poarta (`valideaza_geaman`), lanțurile de noapte (`lant_zilnic`, `lant_cor`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi` |
+| Teste automate | `set PYTHONPATH=src` apoi `.venv\Scripts\python -m unittest discover tests` | mesajul `OK` la sfârșitul celor peste 1 000 de teste. Unele au nevoie de o unealtă în plus și, fără ea, sunt sărite: cele ale sondării folosesc Node.js și Chrome sau Edge, cele ale paginii dispeceratului, Chrome, iar cele ale pașilor din geamăn, SUMO. Testele verifică numărarea pe origine și destinație (O–D), pietonii, sensul de mers, renumărarea, statisticile pe perechi, validarea și comparația cu fișierele publicate, scenariile cu participanți indisciplinați, numărătoarea de referință, calibrarea camerei, recunoașterea prelucrării încetinite (`calitate`), veghea fluxului de cadre (`veghe`), paznicul colectării (`paznic`), fișa senzorului (`fisa_senzor`), starea senzorului (`senzor`), serverul și pagina dispeceratului (`dashboard`), pașii schimbării de fază (`pasi`), capturile prezentării bornei M3 (`capturi`), lacătul care ține geamănul într-un singur exemplar, programul real al semaforului (`program_real`), comparația geamănului cu camera și poarta (`valideaza_geaman`), lanțurile de noapte (`lant_zilnic`, `lant_cor`), verdele continuu pe treceri (`treceri`), golurile și intervalele excluse din `scenarii_zi` |
 | Simulare vizuală | `scripts\8_simulare_gui.bat` | fereastra grafică a simulatorului, SUMO-GUI, cu ora de vârf din 21.10.2026; semaforul pieței este condus de agentul IA |
 | Comparație vizuală | `scripts\8_simulare_gui.bat sumo\scenarios\zi_2026-10-21_varf.sumocfg --strategie fix_referinta` | aceeași oră, cu semaforul pe planul fix |
 | Comparația în geamăn | `scripts\9_demo_comparatie.bat` (~4 min) | vârful din 26.10, simulat cu planul de referință, cu planul observat, cu Presiune maximă, un algoritm clasic fără învățare, și cu agentul IA; rezultatele apar pe categorii de participanți. Arată cum se compară strategiile, nu care e mai bună: pe o singură oră și pe câteva seed-uri, diferențele dintre planurile apropiate nu spun nimic. Pentru altă oră se adaugă `--scenariu` |
@@ -4464,7 +4472,7 @@ același număr, iar sondarea, `7_sondare.bat`, apare ca pasul 7b.
 | 7b | `7_sondare.bat` | sondarea dispeceratului cu oameni (§ 8), pe acest calculator, pentru probe; pagina adevărată e pe GitHub Pages, cu `--linkuri`, `--rezumat`, `--publica` pentru invitații și rezultate | 10–20 min de persoană |
 | – | `PORNESTE_TOT.bat` | pornește pașii 2, 6 și 7 în trei ferestre: sistemul complet, în timp real | continuu |
 | – | `M2_demonstratie.bat` | lansatorul demonstrației de la borna M2, scris pentru laptopul autorului, pe care colectarea merge deja: pornește doar dispeceratul și geamănul, fără SUMO-GUI și fără o a doua colectare, apoi deschide în Chrome prezentarea și dispeceratul; prezentarea o ia de pe laptop, din `outputs/`, care nu intră în depozit | cât ține demonstrația |
-| – | `M3_demonstratie.bat [proba]` | lansatorul demonstrației bornei M3, tot pentru laptopul autorului: pornește doar ce lipsește dintre dispecerat și geamăn, fără SUMO-GUI și fără o a doua colectare, apoi deschide în Chrome prezentarea, `Prezentare_M3.pdf`, pe care o ia de pe Desktop sau din `outputs/prezentare/surse_m3`, care nu intră în depozit, și spune dacă lipsește, iar alături dispeceratul cu `?imagine=0`; cu `proba`, nu deschide Chrome și iese cu codul 1 dacă dispeceratul nu răspunde în 90 s (§ 11.5) | cât ține demonstrația |
+| – | `M3_demonstratie.bat [proba]` | lansatorul demonstrației bornei M3, tot pentru laptopul autorului: pornește doar ce lipsește dintre dispecerat și geamăn, fără SUMO-GUI și fără o a doua colectare. Apoi deschide în Chrome o fereastră cu două file: prezentarea, `Prezentare_M3.pdf`, și dispeceratul cu `?imagine=0`. Prezentarea o caută întâi pe Desktop, apoi în `outputs/prezentare/surse_m3`, un director care nu intră în depozit; dacă nu o găsește, o spune, iar prima filă rămâne goală. Cu `proba`, nu deschide Chrome și iese cu codul 1 dacă dispeceratul nu răspunde în 90 s (§ 11.5) | cât ține demonstrația |
 | 10 | `10_documentatie_pdf.bat` | transformă documentația în PDF, cu pagini numerotate (`docs\DOCUMENTATIE.pdf`) | ~1 min |
 
 ### 11.5 Demonstrația în timp real (~20 de minute)
@@ -4530,6 +4538,8 @@ Tabelul este harta depozitului: ce conține fiecare director și fiecare fișier
 | `docs/antrenare/` | jurnalele de antrenare ale primilor agenți PPO, de la Borna 4 (`monitor_romana.csv`, `monitor_coridor.csv`): recompensa, lungimea și durata fiecărui episod, scrise de Stable-Baselines3 |
 | `docs/corespondenta_commituri.txt` | corespondența dintre identificatorii vechi și cei noi ai commit-urilor, de după curățarea istoricului (§ 12.5) |
 | `docs/img/` | nu mai există: capturile camerei de aici s-au scos din istoric (§ 12.5), iar figurile proprii stau în `docs/imagini/` |
+| `scripts/` | instalarea, `0_instalare.bat` (§ 11.2), câte un script pentru fiecare pas din § 11.4, `PORNESTE_TOT.bat`, lansatoarele demonstrațiilor bornelor M2 și M3 (`M2_demonstratie.bat`, `M3_demonstratie.bat`) și `_mediu.bat`, care pregătește mediul Python pentru celelalte |
+| `tests/` | testele automate, peste 1 000, pornite cu comanda din § 11.3; printre ele, cele ale stării senzorului, ale pașilor schimbării de fază și ale capturilor prezentării |
 | `legacy/google_ai_draft/` | ciorna inițială, păstrată împreună cu raportul de audit |
 | `README.md` | prezentarea scurtă, afișată pe pagina GitHub a proiectului |
 | `LICENSE`, `LICENSES/` | textele licențelor: GNU AGPL v3 pentru cod și modele, ODbL 1.0 pentru date, CC BY 4.0 pentru documentație, CC0 1.0 pentru `build.bat`, `run.bat` și `output.add.xml` din ciornă, generate de osmWebWizard, SIL OFL 1.1 pentru fonturile Barlow ale dispeceratului și ale paginii de sondare, plus nota pentru imaginile camerei (`LicenseRef-Toate-drepturile-rezervate`) |
@@ -4902,9 +4912,16 @@ la geamăn și poartă: poarta a trecut pe câte o oră în zilele de test și p
 în orele încărcate, geamănul rămâne sub cameră. Pe 8.11, regula finală a confirmat că runda s-a încheiat fără un program nou. Programul real
 s-a măsurat, după aceleași criterii, și pe 6 și 7.11, deci toate cele șase zile judecate, 2–7.11, sunt măsurate (§ 6.5, § 9.11).
 Pe 8.11, la 11:12–11:28, colectarea s-a oprit a treia oară, anunțat, pentru actualizările Windows, iar paznicul a găsit jurnalul
-zilei întreg și a pornit-o la loc (§ 4.6). Pe 10.11, la 12:30–13:08, s-a oprit a patra oară, tot anunțat, pentru o repornire a
-laptopului, iar paznicul a pornit-o din nou la loc. Pe 9 și pe 10.11, fluxul camerei a lipsit de două ori, fără ca procesul
-colectării să se oprească (§ 4.6).
+zilei întreg și a pornit-o la loc (§ 4.6).
+
+**Etapa 14 – omul vede ce face semaforul și cum merge senzorul (8–10.11).** După M2, dispeceratul a primit două noutăți. O fază
+cerută de mână e urmărită acum pas cu pas: o funcție calculează din controler verdele, degajarea pietonilor, galbenul și roșul
+până la verdele cerut, geamănul publică acești pași, iar banda de sus a paginii îi arată, cu un termen; pe geamănul corectat,
+cazul cel mai lung are 60 s simulate (§ 8). În locul imaginii camerei, care se poate ascunde, stă starea senzorului: camera,
+numărătorile, veghea, paznicul și prelucrarea de noapte, fiecare cu regula după care e „în regulă” sau nu (§ 4.6, § 8). Pe 9
+și pe 10.11, fluxul camerei a lipsit de două ori, fără ca procesul colectării să se oprească, iar fișa senzorului socotește
+acum aceste goluri ca minute fără cadre (§ 4.6). Pe 10.11, la 12:30–13:08, colectarea s-a oprit a patra oară, tot anunțat,
+pentru o repornire a laptopului, iar paznicul a pornit-o din nou la loc (§ 4.6).
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -5019,8 +5036,8 @@ se află în `docs/prezentari/`.
   doar citirea ecranului, au reușit 3 din 3 pe ambele variante, iar la fiecare dintre cele două în care omul preia comanda sau
   o dă înapoi, 2 din 3 (§ 8).
 
-**Schimbările de la M2 la M3.** Prezentarea bornei M2 e publicată la commitul `9510367`; lucrul de după ea e în commit-urile
-„Borna M3: …”. Pe scurt, până acum:
+**Schimbările de la M2 la M3.** Prezentarea bornei M2 e publicată la commitul `9510367`; lucrul de după ea, până la
+prezentarea bornei M3, pe 15.11.2026, e în commit-urile „Borna M3: …”. Pe scurt, până acum:
 
 * **Ziua de 7.11 și regula finală (8.11):** sâmbăta de 7.11, ziua de generalizare, s-a prelucrat pe 8.11, la 03:30–03:43, doar
   până la geamăn și poartă, fără strategii: poarta trece pe 5 din 5 ore, dar pe Dacia vest, care nu e un rând al porții, geamănul
@@ -5033,6 +5050,8 @@ se află în `docs/prezentari/`.
 * **Datele:** jurnalul de traiectorii al zilei de 7.11 e ultimul publicat; de la 8.11 se publică doar numărătorile (§ 5.4).
   Colectarea s-a oprit anunțat a treia oară pe 8.11, la 11:12–11:28, pentru actualizările Windows, iar paznicul a găsit jurnalul
   zilei întreg și a pornit-o la loc (§ 4.6).
+* **Veghea (8.11):** își citește contoarele de sistem fără să mai deschidă o fereastră de consolă pe ecranul laptopului (commitul
+  `6b6a333`).
 * **Dispeceratul de la M2 (8.11):** copia lui, neschimbată, stă în `src/romana/dashboard/static/m2`; pagina sondării, capturile și
   evaluarea ecranului M2 o citesc de acolo, deci nu se mai schimbă odată cu dispeceratul (§ 8).
 * **Geamănul în timp real (8.11):** rulează într-un singur exemplar: o a doua lansare iese cu codul 3, înainte să pornească SUMO
@@ -5042,8 +5061,6 @@ se află în `docs/prezentari/`.
   60 s simulate (`src/romana/control/pasi.py`, commitul `c2384b1`). Seara, geamănul a început să publice acești pași, iar
   dispeceratul îi arată în banda de sus până la verdele cerut, cu un termen calculat din geamăn și cu urmărirea păstrată după o
   reîncărcare a paginii (commitul `0b72089`, § 8). O verificare adversarială a găsit 26 de constatări, toate reparate.
-* **Veghea:** își citește contoarele de sistem fără să mai deschidă o fereastră de consolă pe ecranul laptopului (commitul
-  `6b6a333`).
 * **Starea senzorului (9.11):** panoul din locul imaginii ascunse arată cum merg camera, numărătorile, veghea, paznicul și
   prelucrarea de noapte, fiecare cu regula ei; adresa cu `?imagine=0` deschide pagina direct așa, iar
   `scripts\M3_demonstratie.bat` pornește doar ce lipsește din demonstrație (commitul `d0a10a9`, § 4.6, § 11.5). O verificare
@@ -5051,20 +5068,23 @@ se află în `docs/prezentari/`.
   și 111 ale dispeceratului.
 * **Căderile sursei (9 și 10.11):** serverul de flux al camerei n-a mai dat fluxul pe 9.11, ≈19:10–19:24, și pe 10.11,
   ≈00:26–01:13; colectarea s-a reconectat singură, iar veghea, care nu repornește singură, a fost pornită din nou după 5 minute de cadre
-  neîntrerupte. Sferturile de oră atinse au rămas incomplete în numărătorile publicate; nicio oră aleasă pentru scenarii nu
-  le atinge (§ 4.6).
+  neîntrerupte. Sferturile de oră atinse au rămas incomplete în numărătorile publicate, iar două lipsesc cu totul; nicio oră
+  aleasă pentru scenarii nu le atinge (§ 4.6).
+* **Istoricul de pe GitHub (9.11):** la cererea autorului, GitHub a anunțat că a șters referința `refs/pull/1/head` și
+  commit-urile vechi pe care le mai ținea (§ 12.5).
 * **Fișa senzorului (10.11):** la o tăietură fix la miezul nopții, nu mai scrie rândul gol al zilei care abia începe (commitul
   `fee7395`). Tot atunci, fișa a început să vadă căderile sursei: le socotește din alertele vegherii, de la ultimul cadru
-  până la repornirea ei, ca minute fără cadre, iar panoul le pomenește la ultima fișă (§ 4.6).
+  până la primul rând al vegherii de după repornirea ei, ca minute fără cadre, iar panoul le pomenește la ultima fișă
+  (commiturile `b75a774` și `8aa3a98`, § 4.6).
 * **A patra oprire anunțată (10.11):** colectarea s-a oprit curat la 12:30, pentru o repornire a laptopului, iar paznicul,
   pornit de mână, a găsit jurnalul zilei întreg și a pornit-o la loc la 13:08 (§ 4.6).
 * **Asistentul (10.11):** modelul de lucru al asistentului Claude este, din 10.11, Claude Fable 5.2, ales de autor; până
   atunci a fost Claude Opus 5.5 (§ 13).
+* **Licențele (10.11):** arhiva stărilor de lucru ale asistentului, `.claude/stare_arhiva.md`, e și ea sub CC BY 4.0, ca
+  restul textelor (commitul `381ec5d`, § 14.1).
 * **Capturile prezentării (10.11):** unealta de capturi fotografiază și stările comenzii urmărite pas cu pas, cu pașii
   controlerului real, și panoul senzorului, cu starea lui reală de la ora capturii, toate cu același ceas (commiturile
   `9cc7b73` și `99cccfa`, § 8).
-* **Istoricul de pe GitHub (9.11):** la cererea autorului, GitHub a anunțat că a șters referința `refs/pull/1/head` și
-  commit-urile vechi pe care le mai ținea (§ 12.5).
 
 ### 12.4 Ce am învățat
 
@@ -5362,7 +5382,7 @@ ai fiecărei resurse folosite efectiv în proiect.
 
 | Resursa folosită | Licența sau termenii de utilizare |
 |---|---|
-| Claude (Anthropic), prin Claude Code, cu modelul Claude Opus 5.5 până pe 10.11.2026 și cu modelul Claude Fable 5.2 de atunci – asistentul AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic: drepturile Anthropic asupra rezultatelor, dacă există, sunt cedate utilizatorului; folosirea AI trebuie atribuită, adică menționată explicit (§ 13)[^claude] |
+| Claude (Anthropic), prin Claude Code, cu modelul Claude Opus 5.5 până pe 10.11.2026 și cu modelul Claude Fable 5.2 de atunci, lângă care unele verificări rulează tot cu Claude Opus 5.5 – asistentul AI care a scris cea mai mare parte a codului și a documentației (§ 13) | Termenii Anthropic: drepturile Anthropic asupra rezultatelor, dacă există, sunt cedate utilizatorului; folosirea AI trebuie atribuită, adică menționată explicit (§ 13)[^claude] |
 | Modulul AI Google din Chrome – ciorna inițială (`legacy/`) | Termenii Google: Google nu revendică proprietatea asupra conținutului generat[^google-ai] |
 | Datele OpenStreetMap: extrasul, rețeaua rutieră, rutele | ODbL 1.0 – „© OpenStreetMap contributors”; bazele derivate rămân tot sub ODbL 1.0[^osm][^osmf-atribuire] |
 | Eclipse SUMO 1.28.0: simulatorul, `sumolib`, `traci`, `libsumo`, `routeSampler` | EPL-2.0 OR GPL-2.0-or-later; codul proiectului este un client TraCI, iar pentru un pachet combinat se folosește opțiunea GPL-2.0-or-later[^sumo] |
@@ -5435,7 +5455,7 @@ ai fiecărei resurse folosite efectiv în proiect.
 [^flask]: Pallets, *Flask*, https://flask.palletsprojects.com (BSD-3-Clause).
 [^barlow]: J. Tribby, *Barlow* și *Barlow Semi Condensed* (familii de fonturi), Google Fonts, https://fonts.google.com/specimen/Barlow (SIL OFL 1.1, https://openfontlicense.org). Subseturile latin și latin-ext sunt incluse în `src/romana/dashboard/static/fonturi` și în `docs/sondare/fonturi`; textul licenței, în `LICENSES/OFL-1.1.txt`.
 [^google-ai]: Google, modulul de asistență AI integrat în browserul Chrome, folosit pentru ciorna proiectului până la 18.10.2026. Termenii Google, https://policies.google.com/terms, secțiunea „Your content”: „Some of our services allow you to generate original content. Google won't claim ownership over that content.”
-[^claude]: Anthropic, *Claude* (modelele Claude Opus 5.5, ID `claude-opus-5-5`, până pe 10.11.2026, și Claude Fable 5.2, ID `claude-fable-5-2`, din 10.11.2026), asistent AI generativ, rulat prin *Claude Code* (aplicația Claude pentru desktop), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni: Consumer Terms, § 4 („we assign to you all our right, title, and interest (if any) in Outputs”), https://www.anthropic.com/legal/consumer-terms; Usage Policy, care interzice predarea lucrărilor asistate de AI fără permisiune sau atribuire („Plagiarize or submit AI-assisted work without proper permission or attribution”), https://www.anthropic.com/legal/aup; accesate 26.10.2026. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13). Pentru loturile prin interfața de programare, din 1.11.2026: Commercial Terms, https://www.anthropic.com/legal/commercial-terms.
+[^claude]: Anthropic, *Claude* (modelul Claude Opus 5.5, ID `claude-opus-5-5`, din 20.10.2026, iar din 10.11.2026 modelul de lucru Claude Fable 5.2, ID `claude-fable-5-2`, lângă care unele instanțe separate, puse să citească sau să verifice, rulează în continuare cu Claude Opus 5.5), asistent AI generativ, rulat prin *Claude Code* (aplicația Claude pentru desktop), https://www.anthropic.com/claude, https://www.anthropic.com/claude-code; termeni: Consumer Terms, § 4 („we assign to you all our right, title, and interest (if any) in Outputs”), https://www.anthropic.com/legal/consumer-terms; Usage Policy, care interzice predarea lucrărilor asistate de AI fără permisiune sau atribuire („Plagiarize or submit AI-assisted work without proper permission or attribution”), https://www.anthropic.com/legal/aup; accesate 26.10.2026. Folosit începând cu 20.10.2026 pentru implementare, experimente și documentație (contribuția detaliată în § 13). Pentru loturile prin interfața de programare, din 1.11.2026: Commercial Terms, https://www.anthropic.com/legal/commercial-terms.
 
 [^anthropic-sdk]: Anthropic, *anthropic-sdk-python* 2.3.0, https://github.com/anthropics/anthropic-sdk-python (Apache-2.0).
 [^agpl]: Free Software Foundation, *GNU Affero General Public License*, versiunea 3, 19.11.2007, https://www.gnu.org/licenses/agpl-3.0.html; textul integral în `LICENSE`.
