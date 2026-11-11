@@ -4526,6 +4526,9 @@ Tabelul este harta depozitului: ce conține fiecare director și fiecare fișier
 | `docs/rezultate/` | datele brute ale evaluărilor, adică tabele CSV, grafice și tabelul detaliat generat automat, plus numărătorile de referință (`referinta/`, `referinta_v2/`). Cele mai multe fișiere sunt descrise în Anexa A; evaluările dispeceratului (`evaluare_m1/`, `evaluare_m2/`), în § 8, iar fișa senzorului (`fisa_senzor_2026-11-06_0000.json` și `.md`), în § 4.6 |
 | `docs/imagini/` | figurile documentației. Două sunt imaginile camerei, figurile 4.1 și 4.2 (`camera_*.jpg`), obținute dintr-un singur cadru estompat din 28.10.2026 și publicate cu acordul scris al Webcam România; ele nu intră sub licențele proiectului (`LicenseRef-Toate-drepturile-rezervate`, § 14.1). Celelalte, figurile 6.1, 6.2 și 8.1, sunt figuri proprii, fără imagini ale camerei, sub licența documentației, CC BY 4.0 |
 | `docs/prezentari/` | prezentările bornelor cursului, la disciplinele *Interfețe om-calculator* și *Internet of Things*, în PDF. Prezentarea M1 folosește același cadru estompat al camerei, cu sursa indicată; prezentarea M2 nu are imagini ale camerei |
+| `docs/sondare/` | pagina publică a sondării (§ 8), construită cu `python -m romana.dashboard.sondare --pachet` din sursele dispeceratului și servită de GitHub Pages |
+| `docs/antrenare/` | jurnalele de antrenare ale primilor agenți PPO, de la Borna 4 (`monitor_romana.csv`, `monitor_coridor.csv`): recompensa, lungimea și durata fiecărui episod, scrise de Stable-Baselines3 |
+| `docs/corespondenta_commituri.txt` | corespondența dintre identificatorii vechi și cei noi ai commit-urilor, de după curățarea istoricului (§ 12.5) |
 | `docs/img/` | nu mai există: capturile camerei de aici s-au scos din istoric (§ 12.5), iar figurile proprii stau în `docs/imagini/` |
 | `legacy/google_ai_draft/` | ciorna inițială, păstrată împreună cu raportul de audit |
 | `README.md` | prezentarea scurtă, afișată pe pagina GitHub a proiectului |
@@ -5044,7 +5047,7 @@ se află în `docs/prezentari/`.
 * **Starea senzorului (9.11):** panoul din locul imaginii ascunse arată cum merg camera, numărătorile, veghea, paznicul și
   prelucrarea de noapte, fiecare cu regula ei; adresa cu `?imagine=0` deschide pagina direct așa, iar
   `scripts\M3_demonstratie.bat` pornește doar ce lipsește din demonstrație (commitul `d0a10a9`, § 4.6, § 11.5). O verificare
-  adversarială a confirmat 45 de constatări, reparate în patru runde, fiecare verificată din nou; trec 105 teste ale panoului
+  adversarială a confirmat 45 de constatări, reparate în patru runde, fiecare verificată din nou; atunci treceau 105 teste ale panoului
   și 111 ale dispeceratului.
 * **Căderile sursei (9 și 10.11):** serverul de flux al camerei n-a mai dat fluxul pe 9.11, ≈19:10–19:24, și pe 10.11,
   ≈00:26–01:13; colectarea s-a reconectat singură, iar veghea, care nu repornește singură, a fost pornită din nou după 5 minute de cadre
@@ -5207,7 +5210,7 @@ Pe scurt, cele trei licențe principale ale proiectului prevăd următoarele:
 | Extrasul OSM, rețeaua, cererea, scenariile | `data/osm/`, `sumo/`, `legacy/google_ai_draft/osm*` | ODbL 1.0 | impusă de OpenStreetMap: sunt baze de date derivate, care trebuie să păstreze aceeași licență |
 | Fișierele ciornei generate de osmWebWizard | `legacy/google_ai_draft/build.bat`, `run.bat`, `output.add.xml` | CC0 1.0 | generate automat de `osmWebWizard.py` (Eclipse SUMO 1.28.0): nu se revendică drepturi asupra lor; în măsura în care ar exista, autorul renunță la ele |
 | Numărătorile și traiectoriile | `data/counts/`, `data/counts_cor/`, `data/trajectories/`; traiectoriile vehiculelor din clipurile numărătorii de referință (`docs/rezultate/referinta/clip*/traiectorii/`) | ODbL 1.0, în măsura în care asupra lor există drepturi | alegerea autorului: aceeași licență ca a cererii care încorporează numărătorile; faptele în sine nu sunt protejate |
-| Documentația, rezultatele, figurile proprii | `docs/` (fără pagina sondării, din rândul următor, fără traiectoriile de mai sus și fără imaginile camerei din `docs/imagini/` și din PDF-uri), `README.md`, `NOTICE` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
+| Documentația, rezultatele, figurile proprii | `docs/` (fără pagina sondării, din rândul următor, fără traiectoriile de mai sus și fără imaginile camerei din `docs/imagini/` și din PDF-uri), `README.md`, `NOTICE`, `legacy/google_ai_draft/README.md`, `.claude/CLAUDE.md` și `.claude/stare_arhiva.md` | CC BY 4.0[^ccby] | alegerea autorului; nicio sursă nu impune alt regim |
 | Pagina publică a sondării | `docs/sondare/` și `docs/.nojekyll`, fără fonturile `.woff2` din rândul următor | AGPL-3.0-or-later | e cod, construit din dispecerat și pus în `docs/` doar ca să-l servească GitHub Pages |
 | Fonturile Barlow și Barlow Semi Condensed | fișierele `.woff2` din `src/romana/dashboard/static/fonturi/` și din `docs/sondare/fonturi/` | SIL OFL 1.1[^barlow] | impusă de autorii fonturilor |
 
