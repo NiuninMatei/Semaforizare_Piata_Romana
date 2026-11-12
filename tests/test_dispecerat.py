@@ -669,6 +669,22 @@ $("da").click(); await asteapta(50); const ts3=__ultimTs;
 __st(__CAM,__pasi(Object.assign({mod:"manual",mod_program:null,timp_sim:523,verde_s:32,comanda_citita_ts:ts3},debit)),{comanda:{mod:"manual",faza:0,timestamp:ts3,_varsta_s:1}});
 await actualizeaza(); await asteapta(1100); rez.manual2=Object.assign(stare(),{rezultat:text("rezultat")});
 $("revino").click(); await asteapta(1100); rez.revenire2=stare(); $("nu").click(); await asteapta(50);
+// dublul clic pe „Da” al întoarcerii la program, din comanda manuală (a doua oară pe aceeași pagină): confirmarea se închide, iar butoanele
+// direcțiilor urcă în locul lui „Da”. Fiecare clic merge, ca la mausul adevărat, la elementul pe care îl dă `document.elementFromPoint` în
+// locul lui (funcția ține seama de pointer-events), nu direct la un buton: primul, la mijlocul lui „Da”; apoi, ca al doilea clic al unui dublu
+// clic, în trei locuri ale lui „Da” (sus, la mijloc, jos), la 150 ms și din nou la 450 ms (dublul clic din Windows are 500 ms); la ≈1,5 s, încă
+// un clic, în primul dintre locuri care a ajuns peste o direcție: acum clicurile merg din nou
+const numeEl=e=>{ const b=e&&e.closest("button,summary"); return b?(b.id||(b.dataset.faza!==undefined?"faza:"+b.dataset.faza:b.dataset.mod?"mod:"+b.dataset.mod:b.tagName)):"" };
+const clicIn=(x,y)=>{ const e=document.elementFromPoint(x,y); if(e) e.click(); return numeEl(e) };
+const peDirectie=(x,y)=>[...document.querySelectorAll("#faze button")].find(b=>{ const q=b.getBoundingClientRect(); return y>=q.top&&y<=q.bottom&&x>=q.left&&x<=q.right });
+$("revino").click(); await asteapta(1100);
+const qd=$("da").getBoundingClientRect(), dx=qd.left+qd.width/2, locuri=[qd.top+4,qd.top+qd.height/2,qd.bottom-4];
+n=__posts.length; rez.dublu={deschisa:$("confirm").classList.contains("vizibil"),buton:text("da"),primul:clicIn(dx,locuri[1])};
+await asteapta(150); const peste=locuri.map(y=>{ const b=peDirectie(dx,y); return b?"faza:"+b.dataset.faza:"" });
+Object.assign(rez.dublu,{inchisa:!$("confirm").classList.contains("vizibil"),peste,maus:getComputedStyle($("manual")).pointerEvents,al_doilea:locuri.map(y=>clicIn(dx,y))});
+await asteapta(300); rez.dublu.al_treilea=locuri.map(y=>clicIn(dx,y)); await asteapta(50); rez.dublu.trimise=__posts.slice(n);
+await asteapta(1000); n=__posts.length; rez.dublu.maus_dupa=getComputedStyle($("manual")).pointerEvents;
+const yd=locuri[peste.findIndex(Boolean)]; rez.dublu.dupa=yd===undefined?null:clicIn(dx,yd); await asteapta(50); rez.dublu.trimise_dupa=__posts.slice(n);
 }catch(e){ rez.__eroare=String(e&&e.stack||e) }   // o eroare ajunge în rezultat, cu locul ei, iar ruleaza_pagina o arată
 const pre=document.createElement("pre"); pre.id="rez"; pre.textContent=JSON.stringify(rez); document.body.appendChild(pre);
 """
@@ -2010,7 +2026,8 @@ class TestComandaPeLaptop(unittest.TestCase):
     comenzii manuale, iar butoanele direcțiilor, înaintea explicației. Așa, în comanda manuală, primele două butoane de direcție, banda și
     rândul de rezumat al panoului „Starea senzorului” se văd deodată, iar confirmarea întoarcerii la program se deschide pe ecran, fără să
     scoată panoul din vedere, și la prima comandă, și a doua oară pe aceeași pagină. Butoanele și confirmarea merg ca înainte; cât e deschisă
-    confirmarea unei faze cu risc, butoanele coborâte sub cursor nu se apasă cu mausul."""
+    confirmarea unei faze cu risc, butoanele coborâte sub cursor nu se apasă cu mausul, iar după „Da”, al doilea clic al unui dublu clic nu
+    nimerește o direcție."""
 
     ECRANE = ((1536, 730), (1536, 700))
     DERULARE = 70            # cât are voie pagina să coboare singură, în px: ținta e ≈60
@@ -2119,6 +2136,25 @@ class TestComandaPeLaptop(unittest.TestCase):
                 self.assertEqual(k["dupa_clicuri"], {"trimise": 0, "deschisa": True, "risc": True, "focus": "confirm"})
                 self.assertEqual(r["risc_esc"]["maus"], ["auto"] * 4)        # Esc le redă
                 self.assertEqual(r["intoarcere_maus"], ["auto"] * 4)         # o confirmare obișnuită nu oprește nimic
+
+    def test_al_doilea_clic_al_unui_dublu_clic_pe_da_nu_trimite_o_directie(self):
+        """După „Da, trec la „Planul observat””, confirmarea se închide și butoanele direcțiilor urcă în locul lui „Da”, iar cât simularea e
+        încă în comanda manuală, un clic pe o direcție o trimite fără confirmare. Clicurile trec prin `document.elementFromPoint`, ca mausul
+        adevărat: al doilea și al treilea clic, la 150 ms și la 450 ms, în trei locuri ale lui „Da”, nu trimit nimic în afara întoarcerii la
+        program (700 ms comanda manuală nu primește clicuri de maus), iar după ≈1,5 s un clic în același loc trimite direcția de acolo."""
+        for ecran, r in self.r.items():
+            with self.subTest(ecran=ecran):
+                d = r["dublu"]
+                self.assertEqual((d["deschisa"], d["buton"], d["primul"], d["inchisa"]), (True, "Da, trec la „Planul observat”", "da", True), d)
+                self.assertTrue(any(d["peste"]), d)            # măcar un loc al lui „Da” a ajuns peste o direcție: fără pază, clicul de acolo o trimite
+                self.assertEqual(d["maus"], "none", d)
+                for clicuri in (d["al_doilea"], d["al_treilea"]):
+                    self.assertFalse([c for c in clicuri if c.startswith("faza:")], d)   # nicio direcție sub cursor
+                self.assertEqual(d["trimise"], [{"mod": "program"}], d)                  # doar întoarcerea la program
+                self.assertEqual(d["maus_dupa"], "auto", d)
+                f = next(p for p in d["peste"] if p)
+                self.assertEqual(d["dupa"], f, d)
+                self.assertEqual(d["trimise_dupa"], [{"mod": "manual", "faza": int(f.split(":")[1])}], d)
 
 
 class TestServer(unittest.TestCase):

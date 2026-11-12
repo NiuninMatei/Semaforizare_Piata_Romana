@@ -676,7 +676,7 @@ function apasaMod(mod,b){
   cere(mod,undefined,b);
 }
 $("nu").onclick=()=>{ inchide(); rezultat("Ați renunțat. Nu s-a schimbat nimic.") };
-$("da").onclick=()=>trimite(modCerut,fazaCeruta);
+$("da").onclick=()=>{ const m=$("manual"); m.style.pointerEvents="none"; setTimeout(()=>{ m.style.pointerEvents="" },700); return trimite(modCerut,fazaCeruta) };
 $("revino").onclick=()=>{ if(modAnterior) cere(modAnterior,undefined,$("revino")) };
 document.addEventListener("keydown",e=>{
   if(e.key=="Escape"&&$("confirm").classList.contains("vizibil")){ inchide(); rezultat("Ați renunțat. Nu s-a schimbat nimic."); return }

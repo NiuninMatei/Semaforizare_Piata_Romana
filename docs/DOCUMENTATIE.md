@@ -2440,6 +2440,12 @@ rezumat al stării senzorului se văd deodată, iar la confirmarea întoarcerii 
 schimbare, banda a anunțat ≈18 s, iar verdele a venit în 18 s. Cât e deschisă confirmarea unei faze cu risc, celelalte butoane
 ale comenzii manuale nu se pot apăsa cu mausul, ca un al doilea clic, dat din greșeală, să nu trimită o comandă neconfirmată.
 Șase teste țin această așezare la 1536 × 730 și la 1536 × 700 (`tests/test_dispecerat.py`, commitul `3dbddd4`).
+După orice „Da” din confirmare, butoanele comenzii manuale nu răspund la maus timp de 0,7 s. Confirmarea se închide, butoanele
+urcă în locul ei, iar fără această pauză al doilea clic al unui dublu clic ar cădea pe un buton de direcție și l-ar trimite pe
+loc, fără confirmare: la 1536 × 730, pe „Verde pentru pietoni, pe toate trecerile”, iar la 1536 × 700, pe „Verde pe Bd. Dacia,
+est și vest”. Tastatura merge ca înainte. Un al șaptelea test ține această pază, iar la proba pe viu din 12.11.2026, cu un
+dublu clic pe „Da, trec la „Planul observat””, al doilea clic a venit la 10 ms după primul, când butonul pietonilor urcase
+deja sub cursor, și nu a trimis nimic: a plecat o singură comandă, întoarcerea la plan.
 
 **Proba cu partajarea ecranului (11.11.2026).** Bornele se prezintă online, cu fereastra browserului partajată, iar partajarea
 cere și ea putere de calcul, pe același laptop pe care merge colectarea. De aceea, seara, între 18:26 și 18:45, demonstrația
