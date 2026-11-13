@@ -199,7 +199,7 @@ trimitere la locul unde sunt prezentate în detaliu.
 |---|---|---|
 | AI, IA | Inteligență artificială: AI vine din engleză, de la *artificial intelligence*, iar IA e prescurtarea românească. Numele butonului „Agent IA” din dispecerat, care la M1 era „Agent AI”, înseamnă un agent de învățare prin întărire, iar „adnotatorii AI” sunt instanțe ale asistentului Claude. | § 4.3, § 7, § 8 |
 | RL | Învățare prin întărire, din engleză *reinforcement learning*. | § 7 |
-| IoT | Internetul lucrurilor, din engleză *Internet of Things*: dispozitive conectate la internet, de exemplu senzori, ale căror date sunt folosite de alte programe. Aici, camera publică joacă rolul senzorului: al traficului și, prin valurile de vehicule care pornesc la verde, al semaforului. Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a oprit doar de cinci ori, anunțat. Pe 9 și pe 10.11 a lipsit o vreme doar fluxul camerei, iar colectarea s-a reconectat singură. | § 3, § 4.6, § 6.5 |
+| IoT | Internetul lucrurilor, din engleză *Internet of Things*: dispozitive conectate la internet, de exemplu senzori, ale căror date sunt folosite de alte programe. Aici, camera publică joacă rolul senzorului: al traficului și, prin valurile de vehicule care pornesc la verde, al semaforului. Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a oprit doar de cinci ori, anunțat. Pe 9, pe 10 și pe 13.11 a lipsit o vreme doar fluxul camerei, iar colectarea s-a reconectat singură. | § 3, § 4.6, § 6.5 |
 | MQTT | Protocol de mesaje pentru Internetul lucrurilor. Modulul de viziune îl poate folosi, opțional, ca să publice starea camerei și numărătorile. | § 3 |
 | OSM | OpenStreetMap, harta deschisă din care s-a construit replica rețelei de străzi; datele ei se folosesc sub licența ODbL. | § 6.1, § 14.1 |
 | CPU, GPU | Procesorul și placa grafică ale calculatorului. Laptopul proiectului nu are placă grafică NVIDIA, așa că detectorul rulează pe placa grafică Intel integrată. | § 4.1 |
@@ -356,8 +356,8 @@ local (§ 4.5). Astfel se trimit mai puține date prin rețea și, mai ales, se 
 a datelor” din Regulamentul general privind protecția datelor (GDPR)[^gdpr].
 
 **Paza colectării.** Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a
-oprit doar de cinci ori, anunțat: pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9 și pe 10.11 a lipsit o vreme doar
-fluxul camerei, iar colectarea s-a reconectat singură (§ 4.6). Două programe o urmăresc.
+oprit doar de cinci ori, anunțat: pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9, pe 10 și pe 13.11 a lipsit o
+vreme doar fluxul camerei, iar colectarea s-a reconectat singură (§ 4.6). Două programe o urmăresc.
 Veghea, `romana.vision.veghe`, introdusă pe 29.10, citește în fiecare secundă
 starea prelucrării și, la primul semn de problemă, se oprește cu o alertă și un diagnostic. Paznicul, `romana.vision.paznic`, nou de
 la borna M1, repornește colectarea dacă procesul a dispărut sau nu mai dă semne de viață, iar camera răspunde; dacă problema e la
@@ -1323,40 +1323,51 @@ de mână la 13:06, a găsit din nou jurnalul zilei întreg și a pornit colecta
 la 11:38, laptopul a fost repornit, iar paznicul, pornit de mână la 12:05, a găsit jurnalul zilei întreg și a pornit
 colectarea la loc la 12:07 (`outputs/logs/reporniri_2026-11-12.csv`).
 
-**Căderile sursei (9 și 10.11.2026).** De două ori, fluxul n-a mai sosit de la serverul camerei, deși internetul laptopului
-mergea. Pe 9.11, ≈19:10–19:24, serverul fluxului n-a mai primit conexiuni, cu o revenire scurtă pe la 19:19–19:20; pe 10.11,
-≈00:26–01:13, serverul răspundea, dar spunea că fluxul nu există. De fiecare dată, `run_vision` a rămas pornit și s-a
+**Căderile sursei (9, 10 și 13.11.2026).** De trei ori, fluxul n-a mai sosit de la serverul camerei, deși internetul
+laptopului mergea. Pe 9.11, ≈19:10–19:24, serverul fluxului n-a mai primit conexiuni, cu o revenire scurtă pe la 19:19–19:20; pe 10.11,
+≈00:26–01:13, serverul răspundea, dar spunea că fluxul nu există. În ambele zile, `run_vision` a rămas pornit și s-a
 reconectat singur, iar paznicul n-a repornit nimic, fiindcă lista de redare a camerei nu se putea citi. Veghea s-a oprit cu
 alerta „fără cadre”, la 19:13:50 și la 00:29:27, și n-a repornit singură: a fost pornită din nou abia după 5 minute de cadre
-neîntrerupte, la 19:29 și la 01:18, de un script de lucru care nu face parte din depozit. Golul care a dus la alertă nu s-a
+neîntrerupte, la 19:29 și la 01:18, de un script de lucru care nu face parte din depozit. A treia oară, pe 13.11, imediat
+după miezul nopții, semnele au fost aceleași ca pe 10.11, deci lipsea transmisia camerei spre serverul fluxului: după două
+pauze scurte, ultimul cadru a sosit la 00:08:51, lista de redare n-a mai înaintat, iar apoi serverul a răspuns că fluxul nu
+există. Și de data aceasta `run_vision` a rămas pornit și s-a reconectat singur, iar cadrele au curs din nou de la 00:12:47,
+după ≈4 minute. Paznicul n-a repornit nimic, fiindcă procesul trăia, și a notat doar că lista de redare nu răspunde. Veghea
+s-a oprit cu alerta „fără cadre” la 00:11:51 și a fost pornită din nou la 00:17:47, tot după 5 minute de cadre neîntrerupte,
+dar, spre deosebire de primele două căderi, fără nicio intervenție: din 12.11, o buclă de lucru, ținută tot în afara
+depozitului, așteaptă după
+fiecare alertă 5 minute de cadre neîntrerupte și pornește veghea la loc. Golul care a dus la alertă nu s-a
 încheiat cât a mers veghea, deci nu e notat ca pauză, iar de la alertă până la repornire veghea nu are rânduri de minut. Până
-pe 10.11, fișa senzorului nu vedea deci aceste căderi și le socotea minutele cu cadre. De atunci, fișa ia din fiecare alertă
+pe 10.11, fișa senzorului nu vedea deci astfel de căderi și le socotea minutele cu cadre. De atunci, fișa ia din fiecare alertă
 „fără cadre” ora ultimului cadru, scrisă în ea, și socotește căderea de acolo până la primul rând al vegherii de după
-repornire: pe 9.11, de la 19:10 la 19:30, și pe 10.11, de la 00:26 la 01:19. Fișa le socotește la secundă, 19 min 10 s și,
-respectiv, 52 min 33 s, în total cel mult 1 h 11 min 43 s; în minute întregi, cu marginile rotunjite în afară, ele țin 20 și
-53 de minute, adică cel mult 1 h 13 min. E o margine de sus, fiindcă
+repornire: pe 9.11, de la 19:10 la 19:30, pe 10.11, de la 00:26 la 01:19, și pe 13.11, de la 00:08 la 00:18. Fișa le
+socotește la secundă: 19 min 10 s, 52 min 33 s și, respectiv, 9 min 9 s; în minute întregi, cu marginile rotunjite în
+afară, ele țin 20, 53 și 10 minute, adică cel mult 1 h 23 min. E o margine de sus, fiindcă
 veghea a fost pornită din nou abia la câteva minute după revenirea fluxului. Minutele căderii se socotesc fără cadre, dar nu
 ca o oprire, fiindcă în tot acest timp colectarea a rămas pornită. Invers, o alertă „fără cadre” venită dintr-o colectare
 blocată sau oprită nu e o cădere a sursei: golul ei e deja o oprire, cu repornirea scrisă de paznic. Iar dacă în timpul
 golului a mers o veghe pornită cu `--fara cadre`, pauza notată de ea la revenirea cadrelor dă chiar sfârșitul căderii. Pe
-cele două căderi reale, aceste reguli, adăugate tot pe 10.11, după o verificare, nu schimbă nimic.
+cele două căderi reale de până atunci, aceste reguli, adăugate tot pe 10.11, după o verificare, nu schimbă nimic.
 
 **Sferturile de oră incomplete.** Cât a lipsit fluxul, camera n-a avut ce număra, iar numărătorile au rămas publicate așa cum
-au ieșit. Sunt incomplete sferturile de oră care încep pe 9.11 la 19:00 și la 19:15 și pe 10.11 la 00:15 și la 01:00, iar
-cele de la 00:30 și de la 00:45 lipsesc cu totul. Prelucrarea de noapte scoate din alegerea orelor pentru scenarii sferturile
+au ieșit. Sunt incomplete sferturile de oră care încep pe 9.11 la 19:00 și la 19:15, pe 10.11 la 00:15 și la 01:00 și
+pe 13.11 la 00:00, iar cele de la 00:30 și de la 00:45 din 10.11 lipsesc cu totul; pe 13.11, sfertului de la 00:00 îi
+lipsesc ≈4 minute, iar cel de la 00:15 e întreg. Prelucrarea de noapte scoate din alegerea orelor pentru scenarii sferturile
 atinse de opririle notate de paznic. Lanțul măsurii vechi scoate și sferturile fără date, împreună cu primul de după ele, deci
 pe 10.11 a lăsat deoparte intervalul 00:30–01:15; lanțul măsurii noi nu se uită la sferturile goale. Un sfert doar incomplet, în care
 colectarea a mers, dar fluxul a lipsit o parte din timp, nu e scos ca atare de niciunul: lanțul măsurii vechi l-a lăsat
 deoparte pe cel de la 01:00 din 10.11 doar fiindcă venea chiar după sferturile goale. Au rămas deci în ambele măsuri
 sferturile de la 19:00 și 19:15 din 9.11 și cel de la 00:15 din 10.11, iar în măsura nouă și cel de la 01:00 din 10.11.
+Pe 13.11, niciun sfert n-a lipsit cu totul, deci, după aceleași reguli, niciun lanț nu scoate sfertul de la 00:00, care
+rămâne în ambele măsuri.
 Pe 9 și pe 10.11, nicio oră aleasă pentru
 scenarii nu atinge aceste sferturi, deci scenariile și poarta nu sunt atinse; cine folosește numărătorile publicate trebuie
 însă să le lase deoparte.
 
 **Fișa senzorului (5–6.11.2026).** Camera, împreună cu modulul de viziune, este senzorul proiectului, în sensul Internetului
 lucrurilor (§ 3). Colectarea merge pe laptop din 1.11, 09:04, zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a
-oprit doar de cinci ori, anunțat: pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9 și pe 10.11 a lipsit o vreme doar
-fluxul camerei, cum scrie mai sus. Cât de bine a lucrat o arată fișa senzorului, `python -m romana.vision.fisa_senzor`,
+oprit doar de cinci ori, anunțat: pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9, pe 10 și pe 13.11 a lipsit o
+vreme doar fluxul camerei, cum scrie mai sus. Cât de bine a lucrat o arată fișa senzorului, `python -m romana.vision.fisa_senzor`,
 care calculează cifrele colectării până la ora dată cu `--pana-la`, mereu cu aceleași definiții.
 Ea citește rândurile de minut și alertele „fără
 cadre” ale vegherii, urmele paznicului, starea prelucrărilor de noapte și numărătorile din `data/counts/`; imaginile și
@@ -1602,10 +1613,10 @@ scenariile, ce scenarii s-au construit, cât de fidele sunt și unde sunt folosi
 - **vineri 30.10.2026, de la 00:00 la 08:30**: noaptea și dimineața. Atunci colectarea s-a oprit, iar pe 1.11 s-a reluat. Datele
   sunt publicate, dar nu au scenarii;
 - **din duminică 1.11.2026, de la 09:04**: colectarea merge pe laptop zi și noapte, iar procesul ei n-a căzut niciodată
-  neprevăzut; s-a oprit doar de cinci ori, anunțat, pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9 și pe 10.11 a lipsit
-  o vreme doar fluxul camerei. Veghea și paznicul o urmăresc, opririle și repornirile se notează, iar
+  neprevăzut; s-a oprit doar de cinci ori, anunțat, pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9, pe 10 și pe 13.11
+  a lipsit o vreme doar fluxul camerei. Veghea și paznicul o urmăresc, opririle și repornirile se notează, iar
   sferturile de oră atinse de opriri ies din scenarii; cele atinse de căderile sursei au rămas în numărători așa cum au ieșit,
-  incomplete ori lipsă, dar nicio oră aleasă pentru scenarii nu le atinge (§ 4.6). Zilele 1, 2 și 3.11 sunt de antrenare, 4.11 e ziua de validare, 5 și 6.11 sunt
+  incomplete ori lipsă, dar pe 9 și pe 10.11 nicio oră aleasă pentru scenarii nu le atinge (§ 4.6). Zilele 1, 2 și 3.11 sunt de antrenare, 4.11 e ziua de validare, 5 și 6.11 sunt
   zilele de test, iar 7.11, ziua de generalizare; ultimele trei s-au prelucrat fără simulările strategiilor, fiindcă niciun candidat
   n-a trecut de validare (§ 9.11). Datele zilelor 1–7.11 sunt publicate, cu jurnalul vehiculelor, iar orele scenariilor măsurii noi,
   `cor_zi_*`, făcute pentru 1–7.11, sunt în câmpul `ferestre` din `sumo/demand/cor_zi_<zi>_rezumat.json`; în text, cele din
@@ -4307,7 +4318,8 @@ Primele limite țin de datele camerei:
   ca ipoteză: 15% din traficul observat.
 * **Zilele de date:** din octombrie, cinci zile lucrătoare și o duminică, plus părți din 27 și 30.10. Din 1.11, 09:04,
   colectarea merge pe laptop zi și noapte, iar procesul ei n-a căzut niciodată neprevăzut; s-a oprit doar de cinci ori, anunțat.
-  Pe 9.11, ≈19:10–19:24, și pe 10.11, ≈00:26–01:13, a lipsit doar fluxul camerei, iar colectarea s-a reconectat singură. O urmăresc
+  Pe 9.11, ≈19:10–19:24, pe 10.11, ≈00:26–01:13, și pe 13.11, ≈00:09–00:13, a lipsit doar fluxul camerei, iar colectarea
+  s-a reconectat singură. O urmăresc
   veghea, din 29.10, și paznicul, din 1.11 (fișa senzorului, § 4.6). Duminica de 1.11, zilele lucrătoare 2–6.11 și sâmbăta
   de 7.11 sunt publicate, cu scenariile măsurii noi. Zilele de test, 5 și 6.11, și ziua de generalizare, 7.11, s-au prelucrat
   doar până la geamăn și poartă, fără strategii (§ 9.11). De la 8.11 se publică doar numărătorile. Toate zilele sunt de
@@ -4602,7 +4614,7 @@ Tabelul adună problemele întâlnite cel mai des și soluția fiecăreia.
 | `DLL load failed ... _libsumo` | calea adăugată în PYTHONPATH de instalatorul SUMO are întâietate față de pachetul instalat cu pip. Proiectul ocolește automat problema (`control/env.py`). Dacă eroarea persistă: `set ROMANA_USE_TRACI=1`, varianta mai lentă |
 | viziunea prelucrează sub 2 cadre/s | fără placă grafică dedicată, verificați că în `config/camera.json` scrie `runtime: "openvino"`; cu placă grafică NVIDIA: `runtime: "pytorch"` și `--device 0` |
 | `Cannot use optimization (scipy not installed)` | lipsește biblioteca scipy: rulați `pip install scipy` în `.venv` |
-| camera nu răspunde | fluxul public al camerei poate fi temporar indisponibil, cum a fost pe 9 și pe 10.11 (§ 4.6). Colectarea se reconectează singură, iar geamănul digital păstrează ultimele debite bune cel mult 20 de minute, apoi trece pe profilul de trafic de referință și afișează acest lucru. Veghea se oprește cu alerta „fără cadre” și nu mai pornește singură: după ce fluxul revine și merge 5 minute fără întrerupere, porniți-o din nou cu `scripts\2d_veghe.bat`, doar dacă nu rulează deja una (§ 4.6, pasul 2d din § 11.4). În dispecerat, starea senzorului arată care verigă s-a oprit |
+| camera nu răspunde | fluxul public al camerei poate fi temporar indisponibil, cum a fost pe 9, pe 10 și pe 13.11 (§ 4.6). Colectarea se reconectează singură, iar geamănul digital păstrează ultimele debite bune cel mult 20 de minute, apoi trece pe profilul de trafic de referință și afișează acest lucru. Veghea se oprește cu alerta „fără cadre” și nu mai pornește singură: după ce fluxul revine și merge 5 minute fără întrerupere, porniți-o din nou cu `scripts\2d_veghe.bat`, doar dacă nu rulează deja una (§ 4.6, pasul 2d din § 11.4). În dispecerat, starea senzorului arată care verigă s-a oprit |
 | imaginea pare înghețată sau numărătorile scad brusc | o oprire de 10–30 s, de câteva ori pe zi, este o microînghețare și trece singură; dispeceratul arată atunci, în locul imaginii, „Imaginea s-a oprit de N s. De obicei revine singură.”, iar după 3 minute doar de cât timp s-a oprit; cu imaginea ascunsă, vechimea apare în rândul de stare al camerei (§ 4.6). Altfel, `2d_veghe.bat` arată pe loc dacă a scăzut rata cadrelor prelucrate sau dacă fluxul camerei nu mai avansează. Rata scade din cauza calculelor grele rulate în paralel: porniți-le la prioritate scăzută. Diagnosticul este în `outputs\logs\veghe_alerta_*.json`, iar explicațiile, în § 4.6 |
 
 ### 11.8 Reproducerea rezultatelor și a calibrării
@@ -4960,7 +4972,7 @@ s-a măsurat, după aceleași criterii, și pe 6 și 7.11, deci toate cele șase
 Pe 8.11, la 11:12–11:28, colectarea s-a oprit a treia oară, anunțat, pentru actualizările Windows, iar paznicul a găsit jurnalul
 zilei întreg și a pornit-o la loc (§ 4.6).
 
-**Etapa 14 – omul vede ce face semaforul și cum merge senzorul (8–12.11).** După M2, dispeceratul a primit două noutăți. O fază
+**Etapa 14 – omul vede ce face semaforul și cum merge senzorul (8–13.11).** După M2, dispeceratul a primit două noutăți. O fază
 cerută de mână e urmărită acum pas cu pas: o funcție calculează din controler verdele, degajarea pietonilor, galbenul și roșul
 până la verdele cerut, geamănul publică acești pași, iar banda de sus a paginii îi arată, cu un termen; pe geamănul corectat,
 cazul cel mai lung are 60 s simulate (§ 8). În locul imaginii camerei, care se poate ascunde, stă starea senzorului: camera,
@@ -4968,7 +4980,9 @@ numărătorile, veghea, paznicul și prelucrarea de noapte, fiecare cu regula du
 și pe 10.11, fluxul camerei a lipsit de două ori, fără ca procesul colectării să se oprească, iar fișa senzorului socotește
 acum aceste goluri ca minute fără cadre (§ 4.6). Pe 10.11, la 12:30–13:08, colectarea s-a oprit a patra oară, tot anunțat,
 pentru o repornire a laptopului, iar paznicul a pornit-o din nou la loc (§ 4.6). Pe 12.11, la 11:38–12:07, s-a oprit a
-cincea oară, tot anunțat și tot pentru o repornire a laptopului, iar paznicul a pornit-o iarăși la loc (§ 4.6).
+cincea oară, tot anunțat și tot pentru o repornire a laptopului, iar paznicul a pornit-o iarăși la loc (§ 4.6). Pe 13.11,
+imediat după miezul nopții, fluxul camerei a lipsit a treia oară, ≈4 minute; colectarea s-a reconectat singură, iar veghea
+a fost pornită la loc fără nicio intervenție (§ 4.6).
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -5154,6 +5168,10 @@ prezentarea bornei M3, pe 15.11.2026, e în commit-urile „Borna M3: …”. Pe
 * **Paza dublului clic (12.11):** după orice „Da” din confirmarea comenzii, butoanele comenzii manuale nu răspund la maus
   timp de 0,7 s, ca al doilea clic al unui dublu clic să nu trimită, fără confirmare, direcția ajunsă sub cursor (commitul
   `35a3b09`, § 8). După această schimbare, toată suita, de 1 021 de teste, a trecut.
+* **A treia cădere a sursei (13.11):** la 00:08:51, fluxul camerei n-a mai sosit, ca pe 10.11, iar cadrele au curs din nou
+  de la 00:12:47; colectarea s-a reconectat singură, iar paznicul n-a repornit nimic. Veghea, oprită de alerta „fără
+  cadre”, a fost pornită la loc la 00:17:47, după 5 minute de cadre neîntrerupte, de data aceasta fără nicio intervenție.
+  În numărători, sfertul de oră de la 00:00 a rămas așa cum a ieșit, cu ≈4 minute lipsă, iar cel de la 00:15 e întreg (§ 4.6).
 
 ### 12.4 Ce am învățat
 
