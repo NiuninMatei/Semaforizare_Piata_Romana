@@ -27,15 +27,14 @@ lucrului stă într-un fișier local, neversionat.
   la 23:00, niciodată înainte (un blocaj oprește lucrul); cele mai bune rezultate la consumurile cele mai mici, cu consum
   mai mare doar unde aduce rezultate net superioare. Detaliile și măsurătorile: memoria buget-tokeni.
 - Lucrați **local, pe calculatorul autorului** cât timp e posibil; cloud doar dacă local nu se poate.
-- **Laptopul e al autorului (din 13.11.2026):** cât e folosit, local rulează doar text, git și citire; lucrul greu (teste,
-  SUMO, capturi, exporturi, Chrome fără fereastră) rulează doar când calculatorul stă nefolosit, după controlul din
-  `outputs/plan_m4/unelte/inactiv.ps1`, și se oprește la prima folosire. Colectarea continuă se încheie duminică, 15.11,
-  după „gata” la M3; de atunci, nimic al proiectului nu mai rulează de la sine pe laptop. Hotărârile de după o analiză le
-  ia asistentul și le spune scurt.
-- **Viața privată a autorului (regulă din 14.11.2026):** în depozit nu intră nimic despre persoana autorului în afara
-  numelui și a calității de autor: nici program, nici ocupație, nici absențe, nici obiceiuri, nici mesajele lui redate.
-  Regula privește fișierele, mesajele de commit, documentația, prezentările și orice alt loc public. Starea amănunțită a
-  lucrului și arhiva ei stau doar local, neversionate, iar un control la commit și la push refuză ce o încalcă.
+- **Lucrul greu pe laptop (din 13.11.2026):** testele, SUMO, capturile, exporturile și Chrome fără fereastră rulează doar
+  când calculatorul stă nefolosit, după controlul din `outputs/plan_m4/unelte/inactiv.ps1`, și se opresc la prima folosire;
+  altfel, local rulează doar text, git și citire. Colectarea continuă se încheie duminică, 15.11, după „gata” la M3; de
+  atunci, nimic al proiectului nu mai rulează de la sine. Hotărârile de după o analiză le ia asistentul și le spune scurt.
+- **Doar proiectul (regulă din 14.11.2026):** în depozit intră doar proiectul. Despre autor apar numele, calitatea de autor
+  și de student și hotărârile lui despre proiect; nimic despre viața cuiva din afara proiectului. Regula privește fișierele,
+  mesajele de commit, documentația, prezentările și orice alt loc public. Starea amănunțită a lucrului și arhiva ei stau
+  doar local, neversionate, iar un control la commit și la push refuză ce o încalcă.
 
 ## Mediul local (Windows)
 
@@ -84,7 +83,7 @@ lucrului stă într-un fișier local, neversionat.
   cel mult 1–2 capturi estompate, cu sursa „Webcam România – https://webcamromania.ro”. Clipurile de calibrare rămân doar
   local, nu intră în commit, se șterg după folosire (memoria borne-curs).
 - **Rămase pentru autor:** după evaluarea academică, ștergerea jurnalului local
-  complet (data/trajectories_brute, outputs/referinta, outputs/sondare, outputs/copie_scratchpad_*, copia istoricului original,
+  complet (data/trajectories_brute, outputs/referinta, outputs/sondare, outputs/copie_scratchpad_*,
   imaginile și textele sondării din jurnalele sesiunilor, copiile de lucru ale sondării din scratchpad; § 4.5), plus formularul și
   foaia de calcul ale sondării, din contul Google (primirea răspunsurilor e oprită din 8.11).
 - **Portul dispeceratului:** se verifică cu `curl -s -o /dev/null -m 3 http://127.0.0.1:8050/` (codul 7 = liber) ori
@@ -93,10 +92,10 @@ lucrului stă într-un fișier local, neversionat.
   ceva rămas de la ele, citesc `journal.jsonl` din dosarul lor: un agent cu rând „result” nu mai rulează la reluare.
 - **Istoricul stărilor de lucru:** `.claude/stare_arhiva.md`, local, neversionat din 14.11.2026; nu se încarcă automat, se
   citește la nevoie.
-- **Paza datelor personale (din 14.11.2026):** `.git/hooks/pre-commit`, `commit-msg` și `pre-push` (locale) refuză
-  fișierele locale de stare, cuvintele care țin de persoana autorului și orice commit din istoricul vechi; nu se ocolesc
-  (`--no-verify` e interzis). Istoricul dinaintea rescrierii din 14.11 stă doar local (`refs/copie/2026-11-14/*`) și nu
-  se publică niciodată; se șterge odată cu jurnalul local, după evaluare.
+- **Paza de la commit și push (din 14.11.2026):** `.git/hooks/pre-commit`, `commit-msg` și `pre-push` (locale) refuză
+  fișierele locale de stare și orice formulare despre viața cuiva din afara proiectului, în text și în PDF-uri, iar la
+  push, orice altă ramură decât `main`; nu se ocolesc (`--no-verify` e interzis). Istoricul dinaintea rescrierii din
+  14.11 nu mai există nicăieri, nici pe GitHub, nici local.
 
 # Compact instructions
 
