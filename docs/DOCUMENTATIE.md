@@ -4883,9 +4883,7 @@ plan fix, iar cel pentru trafic lejer (E9) a fost puțin, dar sigur, mai bun.
 Diferențele de 1–2 puncte procentuale își schimbau semnul între seed-urile de validare și cele de test. Un seed este
 valoarea care pornește generatorul de numere aleatoare al simulării: seed-urile de validare servesc la alegerea
 strategiei, iar cele de test la verificarea ei. De aici au venit validarea cu 5 seed-uri, stabilită dinainte, și
-testele statistice pe perechi, în care două strategii sunt comparate pe aceleași scenarii și seed-uri. S-a lucrat
-în condiții reale: dintr-o cafenea cu prize, până la plecarea autobuzului, cu opriri pentru masă și cu procesorul
-limitat cât timp autorul avea nevoie de el.
+testele statistice pe perechi, în care două strategii sunt comparate pe aceleași scenarii și seed-uri.
 
 **Etapa 7 – „ești sigur că numeri corect?” (25.10).** Întrebarea autorului a dus la o verificare amănunțită a
 numărării. Camera număra 1,6 ieșiri pentru fiecare intrare. Explicația: pe inelul din fundal, detectorul pierde
