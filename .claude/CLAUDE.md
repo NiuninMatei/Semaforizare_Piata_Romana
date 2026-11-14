@@ -83,8 +83,8 @@ lucrului stă într-un fișier local, neversionat.
   cel mult 1–2 capturi estompate, cu sursa „Webcam România – https://webcamromania.ro”. Clipurile de calibrare rămân doar
   local, nu intră în commit, se șterg după folosire (memoria borne-curs).
 - **Rămase pentru autor:** după evaluarea academică, ștergerea jurnalului local
-  complet (data/trajectories_brute, outputs/referinta, outputs/sondare, outputs/copie_scratchpad_*,
-  imaginile și textele sondării din jurnalele sesiunilor, copiile de lucru ale sondării din scratchpad; § 4.5), plus formularul și
+  complet (data/trajectories_brute, outputs/referinta, outputs/sondare, outputs/copie_scratchpad_*, copia istoricului
+  original din 26.10, imaginile și textele sondării din jurnalele sesiunilor, copiile de lucru ale sondării din scratchpad; § 4.5), plus formularul și
   foaia de calcul ale sondării, din contul Google (primirea răspunsurilor e oprită din 8.11).
 - **Portul dispeceratului:** se verifică cu `curl -s -o /dev/null -m 3 http://127.0.0.1:8050/` (codul 7 = liber) ori
   după procese; `Get-NetTCPConnection -LocalPort 8050 -State Listen` a dat 0 pe 14.11, cât serverul răspundea cu 200.
@@ -94,8 +94,8 @@ lucrului stă într-un fișier local, neversionat.
   citește la nevoie.
 - **Paza de la commit și push (din 14.11.2026):** `.git/hooks/pre-commit`, `commit-msg` și `pre-push` (locale) refuză
   fișierele locale de stare și orice formulare despre viața cuiva din afara proiectului, în text și în PDF-uri, iar la
-  push, orice altă ramură decât `main`; nu se ocolesc (`--no-verify` e interzis). Istoricul dinaintea rescrierii din
-  14.11 nu mai există nicăieri, nici pe GitHub, nici local.
+  push, orice altă ramură decât `main`; nu se ocolesc (`--no-verify` e interzis). Istoricul public dinaintea rescrierii
+  din 14.11 nu mai există nici pe GitHub, nici local.
 
 # Compact instructions
 
