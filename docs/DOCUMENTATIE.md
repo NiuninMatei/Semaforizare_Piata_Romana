@@ -1360,7 +1360,7 @@ deoparte pe cel de la 01:00 din 10.11 doar fiindcă venea chiar după sferturile
 sferturile de la 19:00 și 19:15 din 9.11 și cel de la 00:15 din 10.11, iar în măsura nouă și cel de la 01:00 din 10.11.
 Pe 13.11, niciun sfert n-a lipsit cu totul, deci, după aceleași reguli, niciun lanț nu scoate sfertul de la 00:00, care
 rămâne în ambele măsuri.
-Pe 9 și pe 10.11, nicio oră aleasă pentru
+Pe 9, pe 10 și pe 13.11, nicio oră aleasă pentru
 scenarii nu atinge aceste sferturi, deci scenariile și poarta nu sunt atinse; cine folosește numărătorile publicate trebuie
 însă să le lase deoparte.
 
@@ -1372,15 +1372,15 @@ care calculează cifrele colectării până la ora dată cu `--pana-la`, mereu c
 Ea citește rândurile de minut și alertele „fără
 cadre” ale vegherii, urmele paznicului, starea prelucrărilor de noapte și numărătorile din `data/counts/`; imaginile și
 traiectoriile nu le atinge.
-Jurnalele vegherii și ale paznicului rămân pe calculatorul autorului, deci fișa se poate calcula doar acolo. Fișa citată
-aici, calculată până la sfârșitul zilei de 5.11, adică până pe 6.11, la 00:00, e publicată în
+Jurnalele vegherii și ale paznicului rămân pe calculatorul autorului, deci fișa se poate calcula doar acolo. Prima fișă
+publicată, citată la borna M2 și calculată până la sfârșitul zilei de 5.11, adică până pe 6.11, la 00:00, e în
 `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul în `docs/rezultate/fisa_senzor_2026-11-06_0000.md`.
 Definițiile sunt în `python -m romana.vision.fisa_senzor --help`, iar testele, în `tests/test_fisa_senzor.py`. Fișa află
 pauzele și, din 10.11, căderile sursei doar din jurnalele vegherii: un minut fără rândul ei, în afara opririlor și a
 căderilor, se socotește cu cadre, iar câte astfel de minute sunt arată câmpul `fara_rand_veghe` din fișierul JSON: 31 în
-fișa citată aici, care nu cuprinde nicio cădere a sursei. Fiindcă e calculată fix până la
-miezul nopții, tabelul ei are și un rând al zilei de 6.11, doar cu zerouri; din 10.11, fișa nu mai scrie acest rând, iar
-totalurile rămân aceleași.
+prima fișă, care nu cuprinde nicio cădere a sursei, și 93 în a doua, cea de la borna M3, descrisă mai jos. Amândouă
+sunt calculate fix până la miezul nopții, dar numai tabelul primei are și un rând al zilei de 6.11, doar cu zerouri: din
+10.11, fișa nu mai scrie un astfel de rând, iar totalurile rămân aceleași.
 
 În cele ≈111 ore scurse între 1.11, 09:04, și 6.11, 00:00, colectarea a fost pornită 98,8% din timp, adică ≈110 ore, iar analiza a
 avut cadre în 98,8% din minute, cu o mediană de 5,98 cadre analizate pe secundă. Au fost 30 de pauze de cel puțin 10 s, de
@@ -1393,6 +1393,21 @@ biciclete. Pietonii apar doar ca totaluri pe zi, 120 076 de numărări în total
 Fișierul zilei de 1.11 din `data/counts/` mai are intervalul 08:15–08:27, din timpul prezentării bornei M1, dinaintea colectării
 continue: cu el, pe 1–5.11 sunt 284 247 de intrări de vehicule și 120 095 de numărări de pietoni, cifrele din banda paginii 6 a
 prezentării bornei M2.
+
+**Fișa de la borna M3 (până pe 14.11.2026, 00:00).** Fișa citată pe pagina 4 a prezentării bornei M3 e calculată cu aceleași
+definiții, până la sfârșitul zilei de 13.11, și e publicată în `docs/rezultate/fisa_senzor_2026-11-14_0000.json`, cu tabelul
+în `docs/rezultate/fisa_senzor_2026-11-14_0000.md`. În cele ≈303 ore scurse între 1.11, 09:04, și 14.11, 00:00, colectarea a
+fost pornită 99,1% din timp, adică ≈300 de ore, iar analiza a avut cadre în 98,7% din minute, cu o mediană de 6,00 cadre
+analizate pe secundă. Au fost 86 de pauze de cel puțin 10 s, de 1 967 s în total, cea mai lungă de 64 s, și 30 de episoade de
+reconectare la fluxul camerei (169 de creșteri ale contorului). Fișa socotește refăcute singure 29 dintre episoade; pe al
+treizecilea nu-l socotește așa doar fiindcă oprirea anunțată din 8.11 a venit la ≈3 minute după el. Cele mai multe creșteri,
+135 din 169, vin din timpul celor trei căderi ale sursei: 25, 98 și, respectiv, 12, notate de veghe abia la primul ei rând de
+după fiecare cădere. Cele cinci opriri anunțate de mai sus au ținut, împreună, 2 h 41 min, iar procesul colectării n-a căzut
+niciodată neprevăzut. Cele trei căderi ale sursei au ținut, socotite la secundă, cel mult 1 h 20 min 52 s, iar în minute
+întregi, cel mult 1 h 23 min. Toate cele 22 de prelucrări de noapte s-au încheiat fără eroare: 12 ale măsurii vechi și 10 ale
+măsurii noi. În același timp, modulul de viziune a numărat 785 873 de vehicule intrate în piață, fără factorii de corecție:
+734 142 de autoturisme, 22 273 de autobuze și troleibuze, 26 857 de camioane, 1 451 de motociclete și 1 150 de biciclete.
+Pietonii apar doar ca totaluri pe zi, 334 890 de numărări în total.
 
 **Starea senzorului în dispecerat (9.11.2026).** Fișa se calculează abia mai târziu, din jurnale. Ca operatorul să vadă pe loc
 dacă senzorul merge, dispeceratul are panoul „Starea senzorului”, care stă în locul imaginii camerei când aceasta e ascunsă (§ 4.5, § 8).
@@ -1616,7 +1631,7 @@ scenariile, ce scenarii s-au construit, cât de fidele sunt și unde sunt folosi
   neprevăzut; s-a oprit doar de cinci ori, anunțat, pe 1.11, pe 5.11, pe 8.11, pe 10.11 și pe 12.11. Pe 9, pe 10 și pe 13.11
   a lipsit o vreme doar fluxul camerei. Veghea și paznicul o urmăresc, opririle și repornirile se notează, iar
   sferturile de oră atinse de opriri ies din scenarii; cele atinse de căderile sursei au rămas în numărători așa cum au ieșit,
-  incomplete ori lipsă, dar pe 9 și pe 10.11 nicio oră aleasă pentru scenarii nu le atinge (§ 4.6). Zilele 1, 2 și 3.11 sunt de antrenare, 4.11 e ziua de validare, 5 și 6.11 sunt
+  incomplete ori lipsă, dar pe 9, pe 10 și pe 13.11 nicio oră aleasă pentru scenarii nu le atinge (§ 4.6). Zilele 1, 2 și 3.11 sunt de antrenare, 4.11 e ziua de validare, 5 și 6.11 sunt
   zilele de test, iar 7.11, ziua de generalizare; ultimele trei s-au prelucrat fără simulările strategiilor, fiindcă niciun candidat
   n-a trecut de validare (§ 9.11). Datele zilelor 1–7.11 sunt publicate, cu jurnalul vehiculelor, iar orele scenariilor măsurii noi,
   `cor_zi_*`, făcute pentru 1–7.11, sunt în câmpul `ferestre` din `sumo/demand/cor_zi_<zi>_rezumat.json`; în text, cele din
@@ -4589,7 +4604,7 @@ Tabelul este harta depozitului: ce conține fiecare director și fiecare fișier
 | `data/counts/`, `data/counts_cor/`, `data/trajectories/` | datele reale colectate: numărătorile agregate și traiectoriile vehiculelor, fără imagini și fără identificatori, adică pseudonimizate. Licența lor este în `data/LICENTA.txt`. Jurnalul complet, cu pietoni, rămâne doar local, în `data/trajectories_brute/`, exclus din Git |
 | `sumo/scenarios/` | scenariile construite din date reale: `cor_zi_*` și `indisciplinat_cor_zi_*` sunt cele ale măsurii noi, pe geamănul corectat (§ 6.5, § 9.11); `zi_*`, `indisciplinat_zi_*` și `capacitate_*` sunt cele ale măsurii vechi, pe geamănul cu defectul din § 6.5, păstrate pentru istoric; `referinta_*` sunt scenariile ipotetice de la începutul proiectului |
 | `models/` | agenții antrenați: fișierele `.zip`, în formatul bibliotecii Stable-Baselines3, și fișierele `.npz`, pentru rulare fără PyTorch |
-| `docs/rezultate/` | datele brute ale evaluărilor, adică tabele CSV, grafice și tabelul detaliat generat automat, plus numărătorile de referință (`referinta/`, `referinta_v2/`). Cele mai multe fișiere sunt descrise în Anexa A; evaluările dispeceratului (`evaluare_m1/`, `evaluare_m2/`), în § 8, iar fișa senzorului (`fisa_senzor_2026-11-06_0000.json` și `.md`), în § 4.6 |
+| `docs/rezultate/` | datele brute ale evaluărilor, adică tabele CSV, grafice și tabelul detaliat generat automat, plus numărătorile de referință (`referinta/`, `referinta_v2/`). Cele mai multe fișiere sunt descrise în Anexa A; evaluările dispeceratului (`evaluare_m1/`, `evaluare_m2/`), în § 8, iar cele două fișe ale senzorului (`fisa_senzor_2026-11-06_0000.json` și `fisa_senzor_2026-11-14_0000.json`, fiecare cu tabelul ei, în fișierul `.md` cu același nume), în § 4.6 |
 | `docs/imagini/` | figurile documentației. Două sunt imaginile camerei, figurile 4.1 și 4.2 (`camera_*.jpg`), obținute dintr-un singur cadru estompat din 28.10.2026 și publicate cu acordul scris al Webcam România; ele nu intră sub licențele proiectului (`LicenseRef-Toate-drepturile-rezervate`, § 14.1). Celelalte, figurile 6.1, 6.2 și 8.1, sunt figuri proprii, fără imagini ale camerei, sub licența documentației, CC BY 4.0 |
 | `docs/prezentari/` | prezentările bornelor cursului, la disciplinele *Interfețe om-calculator* și *Internet of Things*, în PDF. Prezentarea M1 folosește același cadru estompat al camerei, cu sursa indicată; prezentarea M2 nu are imagini ale camerei |
 | `docs/sondare/` | pagina publică a sondării (§ 8), construită cu `python -m romana.dashboard.sondare --pachet` din sursele dispeceratului și servită de GitHub Pages |
@@ -4633,7 +4648,7 @@ Tabelul adună problemele întâlnite cel mai des și soluția fiecăreia.
 | strategiile, cu teleportări și ciocniri | `python -m romana.control.validare <strategii> --scenarii "cor_zi_<zi>_*" --seeds 1-10 --fara-alegere --out outputs/validare/<fișier>.csv` |
 | decizia zilei de validare, 4.11 (§ 9.11) | `python -m romana.lant_cor --zi 2026-11-04 --uscat` arată, fără să ruleze nimic, comenzile exacte ale zilei: geamănul față de cameră, cu poarta, strategiile pe seed-urile 11–15 și regula din § 9.11. Decizia scrisă de lanț e copiată octet cu octet în `docs/rezultate/cor_decizie_2026-11-04.json`, iar poarta zilei e în `docs/rezultate/poarta_cor_2026-11-04.json` |
 
-**Fișa senzorului** (§ 4.6) se calculează cu `python -m romana.vision.fisa_senzor --pana-la "AAAA-LL-ZZ HH:MM" --out-json outputs/fisa.json --out-md outputs/fisa.md`. Modulul citește jurnalele locale ale colectării, ale paznicului, ale vegherii și ale lanțurilor de noapte, din `outputs/`, care nu intră în depozit, plus numărătorile din `data/counts/`; pe o copie a depozitului fără aceste jurnale, fișa nu se poate reface. Rezultatul publicat, la tăietura din 6.11, 00:00, e `docs/rezultate/fisa_senzor_2026-11-06_0000.json`, cu tabelul scurt în fișierul `.md` cu același nume. Din 10.11, la o tăietură fix la miezul nopții, fișa nu mai scrie rândul gol al zilei care abia începe, ca rândul „vin. 06.11” din tabelul publicat; totalurile nu se schimbă, fiindcă rândul are doar zerouri. Tot din 10.11, fișa citește și alertele vegherii, `outputs/logs/veghe_alerta_*.json`, iar căderile sursei din alertele „fără cadre” le socotește ca minute fără cadre, cu o margine de sus (§ 4.6).
+**Fișa senzorului** (§ 4.6) se calculează cu `python -m romana.vision.fisa_senzor --pana-la "AAAA-LL-ZZ HH:MM" --out-json outputs/fisa.json --out-md outputs/fisa.md`. Modulul citește jurnalele locale ale colectării, ale paznicului, ale vegherii și ale lanțurilor de noapte, din `outputs/`, care nu intră în depozit, plus numărătorile din `data/counts/`; pe o copie a depozitului fără aceste jurnale, fișa nu se poate reface. Rezultatele publicate, la tăieturile din 6.11, 00:00, și din 14.11, 00:00, sunt `docs/rezultate/fisa_senzor_2026-11-06_0000.json` și `docs/rezultate/fisa_senzor_2026-11-14_0000.json`, fiecare cu tabelul scurt în fișierul `.md` cu același nume. Din 10.11, la o tăietură fix la miezul nopții, fișa nu mai scrie rândul gol al zilei care abia începe, ca rândul „vin. 06.11” din primul tabel publicat; totalurile nu se schimbă, fiindcă rândul are doar zerouri. Tot din 10.11, fișa citește și alertele vegherii, `outputs/logs/veghe_alerta_*.json`, iar căderile sursei din alertele „fără cadre” le socotește ca minute fără cadre, cu o margine de sus (§ 4.6).
 
 Această secțiune arată cum se verifică rezultatele: statisticile din capitolul 9 se recalculează exact din fișierele
 publicate, iar o simulare repetată cu aceleași date dă exact același rezultat. Comenzile, de la paragraful „Pentru
@@ -4982,7 +4997,8 @@ acum aceste goluri ca minute fără cadre (§ 4.6). Pe 10.11, la 12:30–13:08, 
 pentru o repornire a laptopului, iar paznicul a pornit-o din nou la loc (§ 4.6). Pe 12.11, la 11:38–12:07, s-a oprit a
 cincea oară, tot anunțat și tot pentru o repornire a laptopului, iar paznicul a pornit-o iarăși la loc (§ 4.6). Pe 13.11,
 imediat după miezul nopții, fluxul camerei a lipsit a treia oară, ≈4 minute; colectarea s-a reconectat singură, iar veghea
-a fost pornită la loc fără nicio intervenție (§ 4.6).
+a fost pornită la loc fără nicio intervenție (§ 4.6). Fișa de la sfârșitul zilei de 13.11 arată că, din 1.11, 09:04,
+analiza a avut cadre în 98,7% din minute, iar colectarea n-a căzut niciodată neprevăzut (§ 4.6).
 
 ### 12.2 Observațiile autorului și corecturile
 
@@ -5172,6 +5188,9 @@ prezentarea bornei M3, pe 15.11.2026, e în commit-urile „Borna M3: …”. Pe
   de la 00:12:47; colectarea s-a reconectat singură, iar paznicul n-a repornit nimic. Veghea, oprită de alerta „fără
   cadre”, a fost pornită la loc la 00:17:47, după 5 minute de cadre neîntrerupte, de data aceasta fără nicio intervenție.
   În numărători, sfertul de oră de la 00:00 a rămas așa cum a ieșit, cu ≈4 minute lipsă, iar cel de la 00:15 e întreg (§ 4.6).
+* **Fișa senzorului de la borna M3 (14.11):** calculată până pe 14.11, la 00:00, și publicată în `docs/rezultate`, ea arată
+  ≈303 ore de la pornirea colectării, cadre în 98,7% din minute, cinci opriri anunțate și nicio cădere neprevăzută a
+  colectării, trei căderi ale sursei camerei și toate cele 22 de prelucrări de noapte încheiate fără eroare (§ 4.6).
 
 ### 12.4 Ce am învățat
 
@@ -5664,7 +5683,8 @@ corectură.
 | `poarta_cor_2026-11-05.json`, `geaman_cor_2026-11-05.csv`, `stare_lant_cor_2026-11-05.json` | Ziua de 5.11, prima zi de test, prelucrată de lanțul măsurii noi pe 6.11 (§ 9.11): doar geamănul și poarta, fără strategii, fiindcă niciun candidat nu a trecut de validare; verdictul porții pe fiecare dintre cele 5 ore. | măsura nouă, `cor_` | `romana.lant_cor --zi 2026-11-05`; comenzile pașilor sunt în `stare_lant_cor_2026-11-05.json` |
 | `poarta_cor_2026-11-06.json`, `geaman_cor_2026-11-06.csv`, `stare_lant_cor_2026-11-06.json` | Ziua de 6.11, a doua zi de test, prelucrată de lanțul măsurii noi pe 7.11 (§ 9.11), în același format ca ziua de 5.11: doar geamănul și poarta, fără strategii, fiindcă niciun candidat nu a trecut de validare; verdictul porții pe fiecare dintre cele 4 ore. | măsura nouă, `cor_` | `romana.lant_cor --zi 2026-11-06`; comenzile pașilor sunt în `stare_lant_cor_2026-11-06.json` |
 | `poarta_cor_2026-11-07.json`, `geaman_cor_2026-11-07.csv`, `stare_lant_cor_2026-11-07.json` | Ziua de 7.11, sâmbăta de generalizare, prelucrată de lanțul măsurii noi pe 8.11 (§ 9.11), în același format ca zilele de test: doar geamănul și poarta, fără strategii, fiindcă niciun candidat nu a trecut de validare; verdictul porții pe fiecare dintre cele 5 ore. Poarta trece pe toate, dar pe Dacia vest, care nu e un rând al porții, geamănul rămâne sub cameră la vârf și la prânz. | măsura nouă, `cor_` | `romana.lant_cor --zi 2026-11-07`; comenzile pașilor sunt în `stare_lant_cor_2026-11-07.json` |
-| `fisa_senzor_2026-11-06_0000.json`, `fisa_senzor_2026-11-06_0000.md` | Fișa senzorului (§ 4.6), la singura tăietură citată, de la 1.11, 09:04:46, până la 6.11, 00:00: timpul scurs și cel cu colectarea pornită, minutele cu cadre, cadrele analizate pe secundă, pauzele, reconectările, opririle anunțate și căderile neprevăzute, prelucrările de noapte și vehiculele intrate, pe zile și pe clase; pietonii, doar ca totaluri pe zi. JSON-ul e fișa întreagă, iar `.md`, tabelul scurt; rândul „vin. 06.11”, doar cu zerouri, e al zilei care abia începea la tăietură, iar codul din 10.11 nu-l mai scrie. | – (din jurnalele locale ale colectării, care nu intră în depozit) | `romana.vision.fisa_senzor --pana-la "2026-11-06 00:00" --out-json … --out-md …`, doar pe calculatorul care a colectat (§ 11.8) |
+| `fisa_senzor_2026-11-06_0000.json`, `fisa_senzor_2026-11-06_0000.md` | Fișa senzorului (§ 4.6), la tăietura citată la borna M2, de la 1.11, 09:04:46, până la 6.11, 00:00: timpul scurs și cel cu colectarea pornită, minutele cu cadre, cadrele analizate pe secundă, pauzele, reconectările, opririle anunțate și căderile neprevăzute, prelucrările de noapte și vehiculele intrate, pe zile și pe clase; pietonii, doar ca totaluri pe zi. JSON-ul e fișa întreagă, iar `.md`, tabelul scurt; rândul „vin. 06.11”, doar cu zerouri, e al zilei care abia începea la tăietură, iar codul din 10.11 nu-l mai scrie. | – (din jurnalele locale ale colectării, care nu intră în depozit) | `romana.vision.fisa_senzor --pana-la "2026-11-06 00:00" --out-json … --out-md …`, doar pe calculatorul care a colectat (§ 11.8) |
+| `fisa_senzor_2026-11-14_0000.json`, `fisa_senzor_2026-11-14_0000.md` | Fișa senzorului (§ 4.6), la tăietura citată la borna M3, de la 1.11, 09:04:46, până la 14.11, 00:00, cu aceleași mărimi ca fișa din 6.11 și, în plus, căderile sursei camerei. JSON-ul e fișa întreagă, iar `.md`, tabelul scurt, cu un rând pentru fiecare zi, de la 1.11 la 13.11, fără rândul gol al zilei de 14.11, care abia începea la tăietură. | – (din jurnalele locale ale colectării, care nu intră în depozit) | `romana.vision.fisa_senzor --pana-la "2026-11-14 00:00" --out-json … --out-md …`, doar pe calculatorul care a colectat (§ 11.8) |
 | `referinta_v2/` | Numărătoarea de referință a măsurii noi pe 11 clipuri din 1.11 și 2.11 (pe ținte și bucăți de 30 s), factorii de corecție pe zi, pe întuneric și pe tot, cu intervalele de încredere, și momentele pietonilor pe valuri, fără imagini (§ 4.3). | – (din clipuri) | `romana.vision.referinta factori` |
 | `grila_calibrat.csv` | Grila de 23 de planuri fixe încercate pe geamănul calibrat (§ 9.9), pe luni 26.10, cu ambele comportamente și seed-urile 11–15, la care se adaugă planul fix de referință. | arborele curent | `romana.control.validare PLAN_a_b_12 …` |
 | `test_28_indisciplinat.csv`, `test_28_normal.csv` | Testul pe miercuri 28.10 (§ 9.10): planul fix, actuated, agentul oficial, E3, E13 și planurile 12/14/12 și 16/10/12, pe seed-urile 1–10. Pierderea de timp e dată și pe tipuri de participanți, în coloanele `pierdere_h_<tip>`. | arborele curent | `romana.control.validare --seeds 1-10 --fara-alegere` |
